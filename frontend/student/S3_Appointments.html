@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments</title>
+    <link rel="stylesheet" href="../visitor/css/styles.css">
+    <link rel="stylesheet" href="../visitor/css/all.min.css">
+</head>
+<body>
+    <header class="student_header">
+        <a href="S1_Student_Dashboard.html" class="to_the_main"><div class="logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell_menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="#" class="bell_div"><div class="bell_image"><img src="../visitor/images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
+
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+                <a href="#"> <li> Home </li></a>
+                <a href="#"> <li> About </li></a>
+                <a href="#"> <li> Info </li></a>
+                <a href="#"> <li> Contact </li></a>
+            </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    
+    <section class="appointments-section">
+
+        <!-- Tabs -->
+        <div class="appointment-tabs">
+          <button class="tab active" data-status="upcoming">Upcoming</button>
+          <button class="tab" data-status="previous">Previous</button>
+          <button class="tab" data-status="pending">Pending</button>
+          <button class="tab" data-status="rejected">Rejected</button>
+        </div>
+      
+        <!-- Appointment Card -->
+       
+<div class="appointments-container"></div>
+
+      
+      </section>
+    
+    
+      
+        
+      
+      
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../visitor/images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    <script>
+        // Sample appointment data
+        const appointments = [
+          {
+            status: 'upcoming',
+            date: '12.05.2025',
+            time: '14:30',
+            consultant: 'AMIDOVICH',
+            topic: 'Visa Application',
+            info: 'Please check my documents.',
+            meetingLink: 'https://zoom.us/meeting-1'
+          },
+          {
+            status: 'pending',
+            date: '20.06.2025',
+            time: '09:00',
+            consultant: 'Mike Brown',
+            topic: 'Finding Apartment',
+            info: 'Still searching for a room.',
+            meetingLink: 'https://zoom.us/meeting-3'
+          },
+          {
+            status: 'previous',
+            date: '10.03.2025',
+            time: '10:00',
+            consultant: 'Julia Weber',
+            topic: 'Blocked Account',
+            info: 'Documents reviewed.',
+            meetingLink: 'https://zoom.us/meeting-2'
+          },
+          {
+            status: 'pending',
+            date: '20.06.2025',
+            time: '09:00',
+            consultant: 'Mike Brown',
+            topic: 'Finding Apartment',
+            info: 'Still searching for a room.',
+            meetingLink: 'https://zoom.us/meeting-3'
+          }
+          
+        ];
+        
+        
+        function renderAppointments(status) {
+  const container = document.querySelector('.appointments-container');
+  container.innerHTML = ''; // Clear old content
+
+  const filteredAppointments = appointments.filter(app => app.status === status);
+
+  if (filteredAppointments.length === 0) {
+    container.innerHTML = '<p>No appointments found.</p>';
+    return;
+  }
+
+  filteredAppointments.forEach(app => {
+    const card = document.createElement('div');
+    card.className = 'appointment-card';
+
+    card.innerHTML = `
+  <div class="appointment-info">
+    <p class="appointment-date">${app.date}, ${app.time}</p>
+    <p class="consultant-name">${app.consultant}</p>
+
+    <label class="meeting_label">Meeting Topic:</label>
+    <select disabled>
+      <option selected>${app.topic}</option>
+    </select>
+
+    <label class="add_label">Additional Info:</label>
+    <textarea disabled>${app.info}</textarea>
+  </div>
+
+  <div class="appointment-actions">
+    ${ (status !== 'pending' && status !== 'rejected') ? `
+      <label>Meeting Link:</label>
+      <input type="text" value="${app.meetingLink}" readonly onclick="window.open('${app.meetingLink}')">
+    ` : '' }
+    <a class="message-btn" href="#">Send a message</a>
+  </div>
+`;
+
+
+    container.appendChild(card);
+  });
+}
+
+        
+const tabs = document.querySelectorAll('.tab');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', function() {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    const status = tab.getAttribute('data-status');
+    renderAppointments(status);
+  });
+});
+
+// Render default "upcoming" appointments on page load
+renderAppointments('upcoming');
+
+        
+        </script>
+</body>
+</html>

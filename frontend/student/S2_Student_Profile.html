@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <link rel="stylesheet" href="../visitor/css/styles.css">
+    <link rel="stylesheet" href="../visitor/css/all.min.css">
+    <!-- Choices.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
+    <!-- Choices.js JS -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+</head>
+<body>
+    <header class="student_header">
+        <a href="S1_Student_Dashboard.html" class="to_the_main"><div class="logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell_menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="#" class="bell_div"><div class="bell_image"><img src="../visitor/images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
+
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+                <a href="#"> <li> Home </li></a>
+                <a href="#"> <li> About </li></a>
+                <a href="#"> <li> Info </li></a>
+                <a href="#"> <li> Contact </li></a>
+            </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    
+    <section class="profile-section">
+        <div class="profile-container">
+          <div class="profile-picture">
+            
+            <img src="../visitor/images/avatar.png" alt="Profile Picture">
+            <a href="#" class="change-pic-link">Change profile picture</a>
+            
+            <div class="language-group">
+                <label>Languages:</label>
+                <select id="language-select" class="select_language" name="languages" multiple>
+                    <option value="english">English</option>
+                    <option value="turkish">Turkish</option>
+                    <option value="german">German</option>
+                    <option value="french">French</option>
+                    <option value="spanish">Spanish</option>
+                    <option value="arabic">Arabic</option>
+                    <option value="russian">Russian</option>
+                  </select>
+                  
+              </div>
+              
+            
+              
+                <div class="city-group">
+                    <label class="city_label" for="city">City:</label>
+                    <input type="text" class="city_input" placeholder="Enter your city" id="city" disabled>
+                </div>
+              
+          </div>
+      
+          <form class="profile-form">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="name_input" id="name" placeholder="Enter your name" disabled/>
+            </div>
+      
+            <div class="form-group">
+                <label for="surname">Last Name:</label>
+                <input type="text" id="surname" class="name_input" placeholder="Enter your surname" disabled/>
+            </div>
+      
+            <div class="form-group">
+                <label for="birthday">Birthday:</label>
+                <input type="date" class="name_input" name="birthday" disabled>
+            </div>
+      
+            <div class="gender_country">
+                <div class="gender-group">
+                    <label>Gender:</label>
+                    <select name="gender" disabled>
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    </select>
+                </div>
+            
+                <div class="country-group">
+                    <label>Country:</label>
+                    <select name="country" disabled>
+                      <option value="">Select</option>
+                      <option value="germany">Germany</option>
+                      <option value="turkey">Turkey</option>
+                      <option value="usa">USA</option>
+                      <option value="canada">Canada</option>
+                      <option value="france">France</option>
+                    </select>
+                  </div>
+                
+                
+            </div>
+      
+            <div class="form-group">
+                <label for="email-id">Email:</label>
+                <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" disabled>
+                <div id="icon">
+                </div>
+                <p id="error-msg">Please Enter A Valid Email</p>
+            </div>
+      
+      
+            <div class="form-buttons">
+              <button type="button" class="edit-btn">Edit</button>
+            </div>
+          </form>
+        </div>
+      </section>
+      
+      
+
+
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../visitor/images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    <script>
+        let emailId = document.getElementById("email-id");
+let errorMsg = document.getElementById("error-msg");
+let icon = document.getElementById("icon");
+let mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
+
+function checker(){
+    icon.style.display="none";
+    if(emailId.value.match(mailRegex)){
+        icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        icon.style.color = '#2ecc71';
+        errorMsg.style.display = 'none';
+        emailId.style.border = '2px solid #2ecc71';
+    }
+    else if(emailId.value == ""){
+        icon.style.display = 'none';
+        errorMsg.style.display = 'none';
+        emailId.style.border = '2px solid #d1d3d4';
+    }
+    else{
+        icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+        icon.style.color = '#ff2851';
+        errorMsg.style.display = 'block';
+        emailId.style.border = '2px solid #ff2851';
+    }
+
+}
+   
+
+
+const languageSelectElement = document.getElementById('language-select');
+
+// Save the original list of languages
+const originalLanguages = [
+  { value: "english", label: "English" },
+  { value: "turkish", label: "Turkish" },
+  { value: "german", label: "German" },
+  { value: "french", label: "French" },
+  { value: "spanish", label: "Spanish" },
+  { value: "arabic", label: "Arabic" },
+  { value: "russian", label: "Russian" },
+];
+
+const languageChoices = new Choices(languageSelectElement, {
+    removeItemButton: true,
+    shouldSort: false,
+});
+
+languageChoices.disable(); // Start disabled
+
+const editButton = document.querySelector('.edit-btn');
+let isEditing = false;
+
+// NEW: Store user's selected languages
+let selectedLanguagesMemory = [];
+
+editButton.addEventListener('click', function() {
+    const fields = document.querySelectorAll(
+        '.profile-form input, .profile-form select, .profile-form textarea, .city_input'
+    );
+
+    if (!isEditing) {
+        // 👉 User clicks "Edit" ➔ Enable fields
+        fields.forEach(field => field.disabled = false);
+        languageChoices.enable();
+
+        // Restore original language list
+        languageChoices.clearStore();
+        languageChoices.setChoices(originalLanguages, 'value', 'label', true);
+
+        // NEW: Pre-select user's previously selected languages
+        if (selectedLanguagesMemory.length > 0) {
+            selectedLanguagesMemory.forEach(lang => {
+                languageChoices.setChoiceByValue(lang.value);
+            });
+        }
+
+        editButton.textContent = 'Save';
+        isEditing = true;
+    } else {
+        // 👉 User clicks "Save" ➔ Disable fields
+        fields.forEach(field => field.disabled = true);
+        languageChoices.disable();
+
+        // Get currently selected languages
+        const selectedLanguages = languageChoices.getValue();
+
+        // Save them into memory for later
+        selectedLanguagesMemory = selectedLanguages;
+
+        const languageCount = selectedLanguages.length;
+
+        if (languageCount > 0) {
+            // Clear existing and show "X languages"
+            languageChoices.clearStore();
+            languageChoices.setChoices(
+              [{ value: "languages", label: `${languageCount} languages`, selected: true }],
+              'value',
+              'label',
+              false
+            );
+        } else {
+            // Reset if none selected
+            languageChoices.clearStore();
+            languageChoices.setChoices(
+              [{ value: '', label: 'Select', selected: true }],
+              'value',
+              'label',
+              false
+            );
+        }
+
+        editButton.textContent = 'Edit';
+        isEditing = false;
+
+        alert('Your changes are saved');
+    }
+});
+
+
+
+
+
+
+
+    </script>
+    
+</body>
+</html>

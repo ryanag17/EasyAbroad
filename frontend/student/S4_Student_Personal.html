@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Chat</title>
+    <link rel="stylesheet" href="../visitor/css/styles.css">
+    <link rel="stylesheet" href="../visitor/css/all.min.css">
+</head>
+<body>
+    <header class="student_header">
+        <a href="S1_Student_Dashboard.html" class="to_the_main"><div class="logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell_menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="#" class="bell_div"><div class="bell_image"><img src="../visitor/images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
+
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+                <a href="#"> <li> Home </li></a>
+                <a href="#"> <li> About </li></a>
+                <a href="#"> <li> Info </li></a>
+                <a href="#"> <li> Contact </li></a>
+            </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    
+    
+    <section class="chat-conversation-section">
+
+        <!-- Header -->
+        <div class="chat-header">
+          <button class="back-button" onclick="goBackToInbox()">← Back to Messages</button>
+          <div class="consultant-info">
+            <img src="../visitor/images/avatar.png" alt="Consultant" class="avatar">
+            <a href="#" class="consultant-name">AMIDOVICH</a>
+          </div>
+          <button class="report-btn">⚠️</button>
+        </div>
+      
+        <!-- Chat messages (scrollable) -->
+        <div class="chat-messages" id="chatMessages">
+          <!-- Messages will be added by JS -->
+        </div>
+      
+        <!-- Message input area -->
+        <div class="chat-input">
+          <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500">
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      
+      </section>
+      
+    
+      <footer>
+        <div>
+            <div class="footer-logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../visitor/images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    
+    <script>
+        const chat = [
+  {
+    from: "consultant",
+    text: "Hi, did you receive the checklist?",
+    date: "29.04.2025 14:15"
+  },
+  {
+    from: "me",
+    text: "Yes, I uploaded everything.",
+    date: "29.04.2025 14:16"
+  },
+  {
+    from: "consultant",
+    text: "Perfect! I’ll review it soon.",
+    date: "29.04.2025 14:17"
+  }
+];
+
+function renderChat() {
+  const container = document.getElementById('chatMessages');
+  container.innerHTML = '';
+
+  chat.forEach(msg => {
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble ' + (msg.from === 'me' ? 'me' : 'consultant');
+
+    bubble.innerHTML = `
+      <div class="bubble-content">
+        <p>${msg.text}</p>
+        <span class="timestamp">${msg.date}</span>
+      </div>
+    `;
+
+    container.appendChild(bubble);
+  });
+
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendMessage() {
+  const input = document.getElementById('messageInput');
+  const text = input.value.trim();
+
+  if (text === "") return;
+
+  const now = new Date();
+  const date = now.toLocaleDateString("en-GB") + " " + now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+  chat.push({
+    from: "me",
+    text,
+    date
+  });
+
+  input.value = '';
+  renderChat();
+}
+
+function goBackToInbox() {
+  // Replace with navigation logic
+  alert("Going back to message list...");
+}
+
+renderChat();
+
+    </script>
+    
+</body>
+</html>

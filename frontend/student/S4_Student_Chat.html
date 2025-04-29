@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="../visitor/css/styles.css">
+    <link rel="stylesheet" href="../visitor/css/all.min.css">
+</head>
+<body>
+    <header class="student_header">
+        <a href="S1_Student_Dashboard.html" class="to_the_main"><div class="logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell_menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="#" class="bell_div"><div class="bell_image"><img src="../visitor/images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
+
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+                <a href="#"> <li> Home </li></a>
+                <a href="#"> <li> About </li></a>
+                <a href="#"> <li> Info </li></a>
+                <a href="#"> <li> Contact </li></a>
+            </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    <section class="chat-overview-section">
+        <div class="chat-list-container"></div>
+      </section>
+      
+    
+    
+    
+    
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../visitor/images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../visitor/images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    <script>
+        const messages = [
+  {
+    id: 1,
+    consultant: "AMIDOVICH",
+    preview: "Hey, please upload your document...",
+    date: "28.04.2025",
+    unread: true,
+    avatar: "../visitor/images/avatar.png"
+  },
+  {
+    id: 2,
+    consultant: "Julia Weber",
+    preview: "Got your papers, I’ll review them tonight.",
+    date: "26.04.2025",
+    unread: false,
+    avatar: "../visitor/images/avatar.png"
+  },
+  {
+    id: 1,
+    consultant: "AMIDOVICH777",
+    preview: "Hey, please upload your document...",
+    date: "28.04.2025",
+    unread: true,
+    avatar: "../visitor/images/avatar.png"
+  }
+];
+
+
+function renderMessages() {
+  const container = document.querySelector('.chat-list-container');
+  container.innerHTML = '';
+
+  if (messages.length === 0) {
+    container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
+    return;
+  }
+
+  messages.forEach(msg => {
+    const card = document.createElement('div');
+    card.className = 'message-card';
+    if (msg.unread) card.classList.add('unread');
+
+    card.innerHTML = `
+      <div class="chat-avatar">
+        <img src="${msg.avatar}" alt="Avatar">
+      </div>
+      <div class="chat-content">
+        <h3>${msg.consultant}</h3>
+        <p class="message-preview">${msg.preview}</p>
+        <span class="message-date">${msg.date}</span>
+      </div>
+      <div class="chat-actions">
+        <button onclick="confirmDelete(${msg.id})">🗑️</button>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      openConversation(msg.id); // Placeholder for next step
+    });
+
+    container.appendChild(card);
+  });
+}
+
+
+function confirmDelete(id) {
+  event.stopPropagation(); // Prevent opening conversation on delete
+
+  const confirm = window.confirm("Are you sure you want to delete this conversation? This cannot be undone.");
+
+  if (confirm) {
+    const index = messages.findIndex(msg => msg.id === id);
+    if (index !== -1) {
+      messages.splice(index, 1);
+      renderMessages();
+    }
+  }
+}
+
+
+renderMessages();
+
+    </script>
+</body>
+</html>

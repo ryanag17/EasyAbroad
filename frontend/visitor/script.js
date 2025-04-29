@@ -55,3 +55,4 @@ toggleCheckbox.addEventListener('change', function () {
     passwordInput.type = 'password';
   }
 });
+
