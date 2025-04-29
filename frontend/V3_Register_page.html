@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/all.min.css">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="to_the_main"><div class="logo"><img src="images/logo.png" alt="" class="pic_logo"></div></a>
+    </header>
+    
+    <div class="container_input">
+        
+        <label for="name">Name</label>
+        <input type="text" class="name_input" id="name" placeholder="Enter your name" />
+        
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" class="name_input" placeholder="Enter your surname" />
+        
+        <label>Role selection</label>
+        <div class="radio-group">
+          <label><input type="radio" name="role" value="student" checked /> Student</label>
+          <label><input type="radio" name="role" value="consultant" /> Consultant</label>
+        </div>
+        
+        <label for="email-id">Email</label>
+        <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" >
+        <div id="icon">
+        </div>
+        <p id="error-msg">Please Enter A Valid Email</p>
+        
+        <label class="pass_label_V3" for="password-id">Password</label>
+        <input type="password" class="password_class" id="password-id" name="password-id" placeholder="Enter Password">
+        <br>
+        <input type="checkbox" id="togglePassword"> Show Password <br>
+        
+        <label class="label_repeat" for="repeat">Repeat</label>
+        <input type="password" id="repeat" class="name_input" placeholder="Repeat your password" />
+        
+        <a href="" class="login_link"><button class="login_link_page" style="cursor: pointer;" onclick="if (validateRegisterForm()) registerUser()">Register</button>
+        </a><br>
+        <a href="V2_Log-in_page.html" class="forgot">Already have an account? Click here to log in!</a>
+    </div>
+    
+    
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+    <script>
+        window.onload = () => {
+          const token = localStorage.getItem("auth_token");
+          const loginBtn = document.querySelector(".login_link");
+          const registerBtn = document.querySelector(".register_link");
+      
+          if (token) {
+            if (loginBtn) loginBtn.style.display = "none";
+            if (registerBtn) registerBtn.style.display = "none";
+            // Optionally show a "Logout" or "Welcome" section
+          }
+        };
+      </script>      
+</body>
+</html>
