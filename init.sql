@@ -1,10 +1,14 @@
+CREATE DATABASE IF NOT EXISTS easyabroad;
+
+USE easyabroad;
+
 CREATE TABLE IF NOT EXISTS users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
-    surname VARCHAR(100),
-    role VARCHAR(20),
-    email VARCHAR(255) UNIQUE,
-    password TEXT,
-    reset_token VARCHAR(255),
-    token_expiry DATETIME
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50),
+  surname VARCHAR(50),
+  role VARCHAR(20),
+  email VARCHAR(100) UNIQUE,
+  password TEXT,
+  reset_token VARCHAR(64),
+  token_expiry DATETIME
 );

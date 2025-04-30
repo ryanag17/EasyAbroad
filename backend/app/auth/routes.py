@@ -1,10 +1,9 @@
+from fastapi import APIRouter, Depends
 from app.auth.token_verification import token_required
-from fastapi import APIRouter
 from app.auth.models import UserLogin, UserCreate, ForgotPasswordRequest, ResetPasswordRequest
 from app.auth.controller import register, login, forgot_password, reset_password
 
-router = APIRouter(prefix="/api/auth", tags=["auth"])
-
+router = APIRouter(tags=["auth"])
 
 @router.post("/register")
 def register_user(user: UserCreate):
@@ -21,8 +20,6 @@ def forgot_password_user(data: ForgotPasswordRequest):
 @router.post("/reset-password")
 def reset_password_user(data: ResetPasswordRequest):
     return reset_password(data.token, data.password)
-
-from fastapi import Depends
 
 @router.get("/me")
 async def get_current_user(current_user: dict = Depends(token_required)):

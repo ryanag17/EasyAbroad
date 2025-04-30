@@ -4,6 +4,8 @@ import bcrypt
 import datetime
 from app.auth.token_service import create_access_token, generate_reset_token
 from app.auth.models import UserLogin, UserCreate, ForgotPasswordRequest, ResetPasswordRequest
+from app.auth.email_service import send_reset_email
+
 
 
 def register(user):
@@ -40,7 +42,8 @@ def forgot_password(email):
     conn.commit()
     cursor.close()
     conn.close()
-    return {"message": "Reset token generated", "token": token}
+    send_reset_email(email, token)
+    return {"message": "Reset email sent if the address exists."}
 
 def reset_password(token, new_password):
     conn = get_db_connection()
