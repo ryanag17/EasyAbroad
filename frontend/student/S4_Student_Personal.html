@@ -102,6 +102,29 @@
     </footer>
     
     <script>
+      
+      const urlParams = new URLSearchParams(window.location.search);
+const consultant = urlParams.get('consultant');
+
+// Display name in header
+document.querySelector('.consultant-name').textContent = consultant || 'Consultant';
+
+// Mark this conversation as read
+if (consultant) {
+  const readStatus = JSON.parse(localStorage.getItem('readMessages')) || {};
+  readStatus[consultant] = true;
+  localStorage.setItem('readMessages', JSON.stringify(readStatus));
+}
+
+
+  function goBackToInbox() {
+    window.location.href = 'S4_Student_Chat.html';
+  }
+
+
+
+      
+      
         const chat = [
   {
     from: "consultant",
@@ -158,11 +181,6 @@ function sendMessage() {
 
   input.value = '';
   renderChat();
-}
-
-function goBackToInbox() {
-  // Replace with navigation logic
-  alert("Going back to message list...");
 }
 
 renderChat();
