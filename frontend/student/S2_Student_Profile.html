@@ -34,16 +34,29 @@
 
             <!-- Here menu goes -->
             <ul id="mainMenu">
-                <a href="#"> <li> Home </li></a>
-                <a href="#"> <li> About </li></a>
-                <a href="#"> <li> Info </li></a>
-                <a href="#"> <li> Contact </li></a>
+                <a href="S2_Student_Profile.html"> <li> Profile </li></a>
+                <a href="S3_Appointments.html"> <li> Appointments </li></a>
+                <a href="S4_Student_Chat.html"> <li> Messages </li></a>
+                <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
             </ul>
         </div>
         <!-- Menu function END -->
         </div>
 
     </header>
+    
+    
+    <!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal-overlay">
+    <div class="modal-content">
+      <p>Are you sure you want to sign out?</p>
+      <div class="modal-buttons">
+        <button onclick="confirmSignOut()">Yes</button>
+        <button onclick="closeModal()">No</button>
+      </div>
+    </div>
+  </div>
+    
     
     <section class="profile-section">
         <div class="profile-container">
@@ -119,7 +132,7 @@
       
             <div class="form-group">
                 <label for="email-id">Email:</label>
-                <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" disabled>
+                <input type="email" name="email" id="email-id" placeholder="Enter email" oninput="checker()" disabled>
                 <div id="icon">
                 </div>
                 <p id="error-msg">Please Enter A Valid Email</p>
@@ -228,7 +241,7 @@ let selectedLanguagesMemory = [];
 
 editButton.addEventListener('click', function() {
     const fields = document.querySelectorAll(
-        '.profile-form input, .profile-form select, .profile-form textarea, .city_input'
+        '.profile-form input:not([name="email"]), .profile-form select, .profile-form textarea, .city_input'
     );
 
     if (!isEditing) {
@@ -290,6 +303,17 @@ editButton.addEventListener('click', function() {
 });
 
 
+function showSignOutModal() {
+  document.getElementById('signOutModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('signOutModal').style.display = 'none';
+}
+
+function confirmSignOut() {
+  window.location.href = '../../index.html';
+}
 
 
 
