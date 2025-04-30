@@ -1,0 +1,237 @@
+@import url(fonts.css);
+
+:root{
+    --login_background: #CC2F8B;
+    --register_bcg: #2c2c2c;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+a {
+    text-decoration: none;
+}
+
+ul {
+    list-style: none;
+}
+
+/* Font */
+
+@font-face {
+    font-family: "Baskerville";
+    src: url("../Baskervville-Regular.ttf") format("truetype");
+  }
+
+/* Font END */
+
+body {
+    font-family: "Baskerville", serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f7;
+}
+header {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+}
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+.logo span {
+    color: #e91e63;
+}
+.nav-buttons button {
+    margin-left: 10px;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.login,
+.login_link_page {
+    background-color: var(--login_background);
+    color: white;
+}
+.register {
+    background-color: var(--register_bcg);
+    color: white;
+}
+main {
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: gray;
+}
+footer {
+    background-color: white;
+    border-top: 1px solid #ccc;
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+}
+.footer-logo {
+    font-size: 20px;
+    font-weight: bold;
+}
+.footer-logo span {
+    color: #e91e63;
+}
+.social-icons{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+}
+.social-icons img {
+    width: 24px;
+    margin-right: 10px;
+}
+.footer-links p {
+    margin: 5px 0;
+    font-size: 14px;
+} 
+.twitter_link1{
+    padding-top: 3px;
+}
+.h4_service{
+    padding-top: 0;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+.pic_logo{
+    max-width: 120px;
+    width: 100%;
+}
+
+/* V2_Log-in_page */
+
+*,
+*:before,
+*:after{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.container_input{
+    max-width: 400px;
+    width: 100%;
+    padding: 10px 10px;
+    margin: 0 auto;
+    margin-top: 60px;
+    margin-bottom: 60px;
+}
+label,
+input,
+label{
+    display: inline-block;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+input[type="email"]{
+    display: inline-block;
+    border: 2px solid #d1d3d4;
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    outline: none;
+    letter-spacing: 0.5px;
+    font-weight: 400;
+    padding: 10px;
+}
+
+#error-msg{
+    display: none;
+    color: #ff2851;
+    font-size: 14px;
+}
+
+.pass_label{
+    margin-top: 15px;
+}
+
+.password_class,
+.name_input{
+    display: inline-block;
+    border: 2px solid #d1d3d4;
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    outline: none;
+    letter-spacing: 0.5px;
+    font-weight: 400;
+    padding: 10px;
+}
+
+.forgot{
+    display: inline-block;
+    font-size: 12px;
+    margin-top: 10px;
+    color: #2c2c2c;
+    text-decoration: underline;
+}
+
+.login_link_page {
+    max-width: 400px;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+
+/* V3_Register_Page */
+
+.label_repeat{
+    margin-top: 5px;
+}
+
+/* V4_Forgot_Password */
+
+.forgot_text{
+    font-size: 28px;
+    font-weight: normal;
+    margin-bottom: 10px;
+}
+
+.worries{
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-decoration: underline;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+  
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    width: 300px;
+    margin: 100px auto;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.25);
+}
+
+/* V5_Reset_Password */
+
+.label_repeat_V5{
+    margin-top: 20px;
+}
