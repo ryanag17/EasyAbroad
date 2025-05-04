@@ -37,6 +37,7 @@
                 <a href="S2_Student_Profile.html"> <li> Profile </li></a>
                 <a href="S3_Appointments.html"> <li> Appointments </li></a>
                 <a href="S4_Student_Chat.html"> <li> Messages </li></a>
+                <a href="#"> <li> Settings </li></a>
                 <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
             </ul>
         </div>
@@ -62,8 +63,13 @@
         <div class="profile-container">
           <div class="profile-picture">
             
-            <img src="../visitor/images/avatar.png" alt="Profile Picture">
-            <a href="#" class="change-pic-link">Change profile picture</a>
+            <!-- Profile Picture -->
+            <div class="profile-pic-wrapper">
+                <img id="profilePic" src="../visitor/images/avatar.png" alt="Profile Picture" class="avatar">
+                    <label for="fileInput" class="change-pic-link">Change profile picture</label>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+  
             
             <div class="language-group">
                 <label>Languages:</label>
@@ -184,6 +190,28 @@
         </div>
     </footer>
     <script>
+        
+        // Image selector
+        const fileInput = document.getElementById('fileInput');
+  const profilePic = document.getElementById('profilePic');
+
+  fileInput.addEventListener('change', function () {
+    const file = fileInput.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        profilePic.src = e.target.result; // Set new image
+      };
+      reader.readAsDataURL(file); // Convert image to base64
+    } else {
+      alert("Please select a valid image file.");
+    }
+  });
+        
+        
+        // END
+        
+        
         let emailId = document.getElementById("email-id");
 let errorMsg = document.getElementById("error-msg");
 let icon = document.getElementById("icon");

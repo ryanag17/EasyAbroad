@@ -342,7 +342,7 @@ input[type="email"]{
     padding: 0px;
     right: 0px;
     padding-top: 100px;
-    background: #f1ecec;
+    background: black;
     list-style-type: none;
     transform-origin: 0% 0%;
     transform: translate(0%, -100%); /* Just change the value to animate it from another direction */
@@ -354,12 +354,13 @@ input[type="email"]{
     font-size: 20px;
     background: none;
     text-align: center;
-    border-top: 1px solid #c27c7c;
+    color: white;
 }
 
 #mainMenu li:hover {
-    background: #c27c7c;
-    color: #cdcdcd;
+    background: pink;
+    color: black;
+    font-weight: bold;
 }
 
 /* Slide it on click */
@@ -542,6 +543,26 @@ input[type="email"]{
     cursor: pointer;
     margin-bottom: 50px;
   }
+  
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .change-pic-link {
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .change-pic-link:hover{
+    text-decoration: underline;
+    transition: 0.5s;
+  }
+  
   
   .profile-form {
     flex: 1;
