@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-    <link rel="stylesheet" href="../visitor/css/styles.css">
-    <link rel="stylesheet" href="../visitor/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/css/styles.css">
+    <link rel="stylesheet" href="/frontend/css/all.min.css">
 </head>
 <body>
     <header class="student_header">
-        <a href="home.html" class="to_the_main"><div class="logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div></a>
+        <a href="home.html" class="to_the_main"><div class="logo"><img src="/frontend/images/logo.png" alt="" class="pic_logo"></div></a>
         
         <div class="bell_menu">
             <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-            <a href="#" class="bell_div"><div class="bell_image"><img src="../visitor/images/bell.png" alt="" class="pic_logo"></div></a>
+            <a href="#" class="bell_div"><div class="bell_image"><img src="/frontend/images/bell.png" alt="" class="pic_logo"></div></a>
         <!-- Menu function -->
         <div id="menuHamToggle">
             <!-- Create Hidden Checkbos, that will be used as Click Function-->
@@ -58,19 +58,19 @@
     
     <footer>
         <div>
-            <div class="footer-logo"><img src="../visitor/images/logo.png" alt="" class="pic_logo"></div>
+            <div class="footer-logo"><img src="/frontend/images/logo.png" alt="" class="pic_logo"></div>
             <div class="social-icons">
                 <a href="" class="twitter_link">
-                    <img src="../visitor/images/twitter.png" alt="X">
+                    <img src="/frontend/images/twitter.png" alt="X">
                 </a>
                 <a href="" class="twitter_link">
-                    <img src="../visitor/images/instagram.png" alt="Instagram">
+                    <img src="/frontend/images/instagram.png" alt="Instagram">
                 </a>
                 <a href="" class="twitter_link1">
-                    <img src="../visitor/images/youtube.png" alt="YouTube">
+                    <img src="/frontend/images/youtube.png" alt="YouTube">
                 </a>
                 <a href="" class="twitter_link">
-                    <img src="../visitor/images/linkedin.png" alt="LinkedIn">
+                    <img src="/frontend/images/linkedin.png" alt="LinkedIn">
                 </a>
             </div>
         </div>
@@ -98,7 +98,7 @@
     preview: "Hey, please upload your document...",
     date: "28.04.2025",
     unread: true,
-    avatar: "../visitor/images/avatar.png"
+    avatar: "/frontend/images/avatar.png"
   },
   {
     id: 2,
@@ -106,7 +106,7 @@
     preview: "Got your papers, I’ll review them tonight.",
     date: "26.04.2025",
     unread: false,
-    avatar: "../visitor/images/avatar.png"
+    avatar: "/frontend/images/avatar.png"
   },
   {
     id: 1,
@@ -114,7 +114,7 @@
     preview: "Hey, please upload your document...",
     date: "28.04.2025",
     unread: true,
-    avatar: "../visitor/images/avatar.png"
+    avatar: "/frontend/images/avatar.png"
   }
 ];
 
@@ -158,7 +158,7 @@ if (!isRead && msg.unread) {
 
     card.addEventListener('click', () => {
   const encodedName = encodeURIComponent(msg.consultant);
-  window.location.href = `S4_Student_Personal.html?consultant=${encodedName}`;
+  window.location.href = `s/chat.html?consultant=${encodedName}`; 
 });
 
 

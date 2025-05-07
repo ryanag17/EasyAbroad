@@ -130,7 +130,8 @@ footer {
 }
 label,
 input,
-label{
+label,
+.city_label{
     display: inline-block;
     font-weight: 500;
     margin-bottom: 5px;
@@ -158,7 +159,8 @@ input[type="email"]{
 }
 
 .password_class,
-.name_input{
+.name_input,
+.city_input{
     display: inline-block;
     border: 2px solid #d1d3d4;
     width: 100%;
@@ -235,3 +237,797 @@ input[type="email"]{
 .label_repeat_V5{
     margin-top: 20px;
 }
+
+
+
+
+/* Student Start */
+
+/* S1_Student_Dashboard */
+.student_header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+}
+.bell_menu{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.bell_image{
+    width: 33px;
+    height: 33px;
+    
+}
+.bell_div{
+    padding-right: 20px;
+}
+
+
+
+
+
+/* Menu Button */
+
+#menuHamToggle {
+    display: block;
+    position: relative;
+    top: 3px;
+    z-index: 1;
+    user-select: none;
+}
+
+/* toggle on click item */
+#menuHamToggle input{
+    display: block;
+    width: 40px;
+    height: 32px;
+    position: absolute;
+    top: -7px;
+    left: -5px;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 2;
+}
+
+/* Making hamburger */
+#menuHamToggle span{
+    display: block;
+    width: 33px;
+    height: 4px;
+    margin-bottom: 5px;
+    position: relative;
+    background: #cdcdcd;
+    border-radius: 3px;
+    z-index: 1;
+    transform-origin: 4px 0px;
+    transition: transform 0.7s cubic-bezier(0.1, 0.2, 0.5, 1.0),
+                background 0.7s cubic-bezier(0.1, 0.2, 0.5, 1.0),
+                opacity .7s ease;
+}
+
+
+#menuHamToggle span:first-child{
+    transform-origin: 0% 0%;
+}
+
+#menuHamToggle span:nth-last-child(2){
+    transform-origin: 0% 100%;
+}
+
+/* Rotate the hamburger on cross mark on click */
+#menuHamToggle input:checked ~ span {
+    opacity: 1;
+    transform: rotate(45deg) translate(-2px, -1px);
+    background: #f30606;
+}
+/* Hiding the middle one to make perfect cross */
+#menuHamToggle input:checked ~ span:nth-last-child(3){
+    opacity: 0;
+    transform: rotate(0deg) scale(0.2, 0.2);
+}
+
+/* Change the direction of last one */
+#menuHamToggle input:checked ~ span:nth-last-child(2)
+{
+    transform: rotate(-45deg) translate(0, -1px);
+}
+
+/* Position the menu on the top left */
+#mainMenu {
+    position: absolute;
+    width: 300px;
+    margin: -100px 0 0 -50px;
+    padding: 0px;
+    right: 0px;
+    padding-top: 100px;
+    background: black;
+    list-style-type: none;
+    transform-origin: 0% 0%;
+    transform: translate(0%, -100%); /* Just change the value to animate it from another direction */
+    transition: transform 1s cubic-bezier(0.55, 0.2, 0.05, 1.0);
+}
+
+#mainMenu li{
+    padding: 5px 5px;
+    font-size: 20px;
+    background: none;
+    text-align: center;
+    color: white;
+}
+
+#mainMenu li:hover {
+    background: pink;
+    color: black;
+    font-weight: bold;
+}
+
+/* Slide it on click */
+#menuHamToggle input:checked ~ ul {
+    transform: none;
+}
+/* Menu Button END */
+
+
+
+.user-section {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  
+  .user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .user-fullname {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .action-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 2px solid orange;
+    border-radius: 30px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    color: #000;
+  }
+  
+  .action-button:hover {
+    background-color: orange;
+    color: white;
+  }
+  
+  .welcome{
+    color: #d62d81;
+  }
+  
+  .consultant-section {
+    /* BCG Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Fnews.instant-gaming.com%2Fen%2Farticles%2F11483-a-mod-to-introduce-the-gta-vi-map-into-gta-v-has-been-taken-down-following-a-complaint-from-take-two&psig=AOvVaw2IdzN1LPsz8YauwvokwY_R&ust=1746003166664000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCPDtiebu_IwDFQAAAAAdAAAAABAP) */
+    background-image: url('../../visitor/images/background.jpg'); /* Replace with your actual path */
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    text-align: center;
+  }
+  
+  .consultant-overlay {
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 30px;
+    border-radius: 12px;
+  }
+  
+  .consultant-overlay h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  
+  .highlight {
+    color: #b04aa1; /* Purple text for "Consultant" */
+  }
+  
+  .search-button {
+    padding: 10px 30px;
+    font-size: 18px;
+    border: 3px solid #b04aa1;
+    background-color: transparent;
+    color: #333;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .search-button:hover {
+    background-color: #b04aa1;
+    color: white;
+  }
+  
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none; /* hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  
+  .modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .modal-buttons button:first-child {
+    background-color: #d62d81;
+    color: #fff;
+  }
+  
+  .modal-buttons button:last-child {
+    background-color: #ddd;
+  }
+  
+  
+  
+/* S1_Student_Dashboard END */
+/* S2_Student_Profile */
+
+.profile-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    padding: 40px 20px;
+  }
+  
+  .profile-picture {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .profile-picture img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .change-pic-link {
+    display: block;
+    margin-top: 10px;
+    font-size: 20px;
+    color: #000;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-bottom: 50px;
+  }
+  
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .change-pic-link {
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .change-pic-link:hover{
+    text-decoration: underline;
+    transition: 0.5s;
+  }
+  
+  
+  .profile-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .form-group, 
+  .country-group,
+  .gender-group {
+    margin-bottom: 20px;
+    max-width: 600px;
+    width: 100%;
+  }
+  
+  .gender-group{
+    max-width: 200px;
+    width: 100%;
+  }
+  
+  .form-group label,
+  .country-group label,
+  .gender-group label,
+  .city_label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+  }
+  
+  .profile-form input,
+  .profile-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f8f8f8;
+    font-size: 14px;
+    resize: vertical;
+  }
+  
+  .profile-form textarea {
+    min-height: 70px;
+  }
+  
+  .profile-form input[disabled],
+  .profile-form textarea[disabled] {
+    color: #777;
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+  }
+  
+  .form-buttons {
+    text-align: right;
+    margin-top: 20px;
+  }
+  
+  .edit-btn {
+    background: white;
+    color: #d62d81;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 2px solid #d62d81;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .edit-btn:hover {
+    background: #d62d81;
+    color: white;
+  }
+  
+  .language-group,
+  .country-group,
+  .city-group {
+    width: 100%;
+   text-align: start;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .language-group label {
+    display: block;
+    font-weight: bold;
+  
+  }
+  
+  .language-group textarea {
+
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f8f8f8;
+    font-size: 14px;
+    resize: vertical;
+    margin-top: 5px;
+  }
+  
+  .language-group textarea:disabled {
+    color: #777;
+    background-color: #f0f0f0;
+  }
+  
+  .language-group select,
+  .country-group select,
+  .gender-group select,
+  .select_language select {
+    width: 180px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f8f8f8;
+    font-size: 14px;
+  }
+  
+  .language-group select:disabled,
+  .country-group select:disabled,
+  .gender-group select:disabled,
+  .city-group select:disabled,
+  .select_language select:disabled {
+    color: #777;
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+  }
+  
+  .language-group{
+    margin-top: 4px;
+    max-width: 200px;
+  }
+  
+  .gender_country{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .city-group{
+    margin-top: 21px;
+    text-align: start;
+    
+  }
+  
+.city_input[disabled] {
+  color: #777;
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+.city_input{
+  border: 1px solid #ccc;
+  width: 180px;
+}
+
+.city_input{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f8f8f8;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.profile-picture{margin-right: 50px;}
+  
+
+
+/* S2_Student_Profile END */
+
+/* S3_Appointments */
+.appointments-section{
+    align-items: center;
+    margin-bottom: 40px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.appointment-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .tab {
+    background-color: white;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-bottom: 2px solid transparent;
+  }
+  
+  .tab.active {
+    border-bottom: 2px solid #d62d81;
+    font-weight: bold;
+  }
+  
+  .appointment-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    background-color: #fafafa;
+    max-width: 800px;
+    width: 100%;
+    margin-bottom: 30px;
+    align-items: center;
+  }
+  
+  .appointment-info {
+    flex: 2;
+  }
+  
+  .appointment-info p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+  .appointment-info select,
+  .appointment-info textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    resize: vertical;
+  }
+  
+  textarea[disabled] {
+    color: #555;
+    cursor: not-allowed;
+  }
+  
+  .appointment-actions {
+    flex: 1;
+  }
+  
+  .appointment-actions input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+  
+  .message-btn {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin-top: 20px;
+    max-width: 300px;
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #d62d81;
+    background-color: white;
+    color: #d62d81;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .message-btn:hover {
+    background-color: #d62d81;
+    color: white;
+  }
+  
+  .add_label{
+    margin-top: 20px;
+  }
+  
+  .meeting_label{
+    margin-top: 10px;
+  }
+  
+
+
+/* S3_Appointments END */
+
+/* S4_Student_Chat */
+
+.chat-list-container {
+    padding: 20px;
+  }
+  
+  .message-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .message-card:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .message-card.unread {
+    background-color: #fff2f6;
+    font-weight: bold;
+  }
+  
+  .chat-avatar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  .chat-content {
+    flex: 1;
+  }
+  
+  .chat-content h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .message-preview {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  .message-date {
+    font-size: 12px;
+    color: #888;
+  }
+  
+  .chat-actions button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #c00;
+  }
+  
+  .no-messages {
+    text-align: center;
+    padding: 40px;
+    font-style: italic;
+  }
+
+  
+  /* S4_Student_Chat END */
+  
+  /* S4_Student_Personal */
+  .chat-conversation-section {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+  }
+  
+  .back-button, .report-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .consultant-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .consultant-info .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  .consultant-name {
+    font-weight: bold;
+    text-decoration: none;
+    color: #000;
+  }
+  
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+  }
+  
+  .message-bubble {
+    max-width: 60%;
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-radius: 15px;
+    position: relative;
+  }
+  
+  .message-bubble.me {
+    background-color: #dcf8c6;
+    align-self: flex-end;
+    margin-left: auto;
+  }
+  
+  .message-bubble.consultant {
+    background-color: #fff;
+    align-self: flex-start;
+    margin-right: auto;
+  }
+  
+  .bubble-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .timestamp {
+    font-size: 11px;
+    color: #777;
+    margin-top: 5px;
+    align-self: flex-end;
+  }
+  
+  .chat-input {
+    display: flex;
+    padding: 10px 20px;
+    border-top: 1px solid #ccc;
+    background-color: #fff;
+  }
+  
+  .chat-input input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+  }
+  
+  .chat-input button {
+    margin-left: 10px;
+    padding: 5px 20px;
+    background-color: #d62d81;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    height: 35px;
+  }
+  
+  .chat-input button:hover {
+    background-color: #f5017b;
+  }
+  
+  /* S4_Student_Personal END */
+
+
+/* Student END */
