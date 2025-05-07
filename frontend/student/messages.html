@@ -98,7 +98,7 @@
     preview: "Hey, please upload your document...",
     date: "28.04.2025",
     unread: true,
-    avatar: "/frontend/images/avatar.png"
+    avatar: "../images/avatar.png"
   },
   {
     id: 2,
@@ -106,7 +106,7 @@
     preview: "Got your papers, I’ll review them tonight.",
     date: "26.04.2025",
     unread: false,
-    avatar: "/frontend/images/avatar.png"
+    avatar: "../images/avatar.png"
   },
   {
     id: 1,
@@ -114,7 +114,7 @@
     preview: "Hey, please upload your document...",
     date: "28.04.2025",
     unread: true,
-    avatar: "/frontend/images/avatar.png"
+    avatar: "../images/avatar.png"
   }
 ];
 
@@ -158,7 +158,7 @@ if (!isRead && msg.unread) {
 
     card.addEventListener('click', () => {
   const encodedName = encodeURIComponent(msg.consultant);
-  window.location.href = `s/chat.html?consultant=${encodedName}`; 
+  window.location.href = `chat.html?consultant=${encodedName}`; 
 });
 
 
@@ -195,7 +195,7 @@ function closeModal() {
 }
 
 function confirmSignOut() {
-  window.location.href = "/index.html";
+  window.location.href = "../../index.html";
 }
 
 localStorage.removeItem('readMessages');
