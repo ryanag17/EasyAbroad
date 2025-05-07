@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log-in</title>
+    <title>Register Page</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/all.min.css">
 </head>
@@ -13,21 +13,37 @@
     </header>
     
     <div class="container_input">
+        
+        <label for="name">Name</label>
+        <input type="text" class="name_input" id="name" placeholder="Enter your name" />
+        
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" class="name_input" placeholder="Enter your surname" />
+        
+        <label>Role selection</label>
+        <div class="radio-group">
+          <label><input type="radio" name="role" value="student" checked /> Student</label>
+          <label><input type="radio" name="role" value="consultant" /> Consultant</label>
+        </div>
+        
         <label for="email-id">Email</label>
-        <input type="email" id="email-id" placeholder="Enter email" oninput="checker()">
+        <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" >
         <div id="icon">
         </div>
         <p id="error-msg">Please Enter A Valid Email</p>
-        <label class="pass_label" for="password-id">Password</label>
-        <input type="password" class="password_class" id="password-id" name="password-id" placeholder="Enter password">
+        
+        <label class="pass_label_V3" for="password-id">Password</label>
+        <input type="password" class="password_class" id="password-id" name="password-id" placeholder="Enter Password">
         <br>
         <input type="checkbox" id="togglePassword"> Show Password <br>
-        <a href="V4_Forgot_Password.html" class="forgot">Forgot password?</a><br>
+        
+        <label class="label_repeat" for="repeat">Repeat</label>
+        <input type="text" id="repeat" class="name_input" placeholder="Repeat your password" />
+        
         <a href="" class="login_link"><button class="login_link_page" style="cursor: pointer;">Log in</button>
         </a><br>
-        <a href="V3_Register_page.html" class="forgot">Do not you have an account? Click here to register</a>
+        <a href="log-in.html" class="forgot">Already have an account? Click here to log in!</a>
     </div>
-    
     
     
     <footer>
