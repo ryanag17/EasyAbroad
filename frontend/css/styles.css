@@ -336,31 +336,31 @@ input[type="email"]{
 
 /* Position the menu on the top left */
 #mainMenu {
-    position: absolute;
-    width: 300px;
-    margin: -100px 0 0 -50px;
-    padding: 0px;
-    right: 0px;
-    padding-top: 100px;
-    background: black;
-    list-style-type: none;
-    transform-origin: 0% 0%;
-    transform: translate(0%, -100%); /* Just change the value to animate it from another direction */
-    transition: transform 1s cubic-bezier(0.55, 0.2, 0.05, 1.0);
+  position: absolute;
+  width: 300px;
+  margin: -100px 0 0 -50px;
+  padding: 0px;
+  right: 0px;
+  padding-top: 100px;
+  background: white;
+  list-style-type: none;
+  transform-origin: 0% 0%;
+  transform: translate(0%, -100%); /* Just change the value to animate it from another direction */
+  transition: transform 1s cubic-bezier(0.55, 0.2, 0.05, 1.0);
 }
 
 #mainMenu li{
-    padding: 5px 5px;
-    font-size: 20px;
-    background: none;
-    text-align: center;
-    color: white;
+  padding: 5px 5px;
+  font-size: 20px;
+  background: none;
+  text-align: center;
+  color: black;
 }
 
 #mainMenu li:hover {
-    background: pink;
-    color: black;
-    font-weight: bold;
+  background: pink;
+  color: black;
+  font-weight: bold;
 }
 
 /* Slide it on click */
