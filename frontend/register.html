@@ -40,7 +40,7 @@
         <label class="label_repeat" for="repeat">Repeat</label>
         <input type="text" id="repeat" class="name_input" placeholder="Repeat your password" />
         
-        <a href="" class="login_link"><button class="login_link_page" style="cursor: pointer;">Log in</button>
+        <a href="" class="login_link"><button class="login_link_page" style="cursor: pointer;" onclick="if (validateRegisterForm()) registerUser()">Log in</button>
         </a><br>
         <a href="log-in.html" class="forgot">Already have an account? Click here to log in!</a>
     </div>
@@ -81,5 +81,21 @@
         </div>
     </footer>
     <script src="script.js"></script>
+    
+    
+    <!-- Vanya and Ximena script -->
+    <script>
+        window.onload = () => {
+          const token = localStorage.getItem("auth_token");
+          const loginBtn = document.querySelector(".login_link");
+          const registerBtn = document.querySelector(".register_link");
+      
+          if (token) {
+            if (loginBtn) loginBtn.style.display = "none";
+            if (registerBtn) registerBtn.style.display = "none";
+            // Optionally show a "Logout" or "Welcome" section
+          }
+        };
+      </script>  
 </body>
 </html>

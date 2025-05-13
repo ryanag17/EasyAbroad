@@ -418,7 +418,7 @@ input[type="email"]{
   
   .consultant-section {
     /* BCG Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Fnews.instant-gaming.com%2Fen%2Farticles%2F11483-a-mod-to-introduce-the-gta-vi-map-into-gta-v-has-been-taken-down-following-a-complaint-from-take-two&psig=AOvVaw2IdzN1LPsz8YauwvokwY_R&ust=1746003166664000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCPDtiebu_IwDFQAAAAAdAAAAABAP) */
-    background-image: url('../../visitor/images/background.jpg'); /* Replace with your actual path */
+    background-image: url('../images/background.jpg'); /* Replace with your actual path */
     background-size: cover;
     background-position: center;
     height: 400px;
