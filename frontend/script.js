@@ -15,6 +15,44 @@ fetch('http://localhost:8000/')
 });
 
 
+// FAQ
+document.addEventListener("DOMContentLoaded", () => {
+  const faqs = document.querySelectorAll("[unique-script-id='w-w-dm-id'] .faq .faq-question-container");
+
+  faqs.forEach(faq => {
+    faq.addEventListener("click", () => {
+      faq.closest(".faq").classList.toggle("active");
+    });
+  });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("search");
+
+  // Prevent Enter from submitting the form
+  if (searchInput) {
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault(); // Stops page reload
+      }
+    });
+
+    const faqs = document.querySelectorAll(".faq");
+
+    searchInput.addEventListener("input", () => {
+      const value = searchInput.value.toLowerCase();
+      faqs.forEach(faq => {
+        const text = faq.textContent.toLowerCase();
+        faq.style.display = text.includes(value) ? "" : "none";
+      });
+    });
+  }
+});
+
+
+
+
 // V2_Log-in_page
 
 let emailId = document.getElementById("email-id");
