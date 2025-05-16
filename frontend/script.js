@@ -14,6 +14,29 @@ fetch('http://localhost:8000/')
     });
 });
 
+// Index picture slider
+
+let currentIndex = 0;
+
+function moveSlide(direction) {
+    const slides = document.getElementById("slider-track");
+    const totalSlides = slides.children.length;
+    const slideWidth = slides.children[0].offsetWidth + 50;
+
+    currentIndex += direction;
+
+    if (currentIndex < 0) {
+        currentIndex = totalSlides - 1;
+    } else if (currentIndex >= totalSlides) {
+        currentIndex = 0;
+    }
+
+    slides.scrollTo({
+        left: slideWidth * currentIndex,
+        behavior: 'smooth'
+    });
+}
+
 
 // FAQ
 document.addEventListener("DOMContentLoaded", () => {

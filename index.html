@@ -19,17 +19,64 @@
     </header>
 
     <main class="image_cube">
-        
-        <div class="gallery">
-            <img src="frontend/images/bcg_1.jpeg">
-            <img src="frontend/images/bcg_2.jpeg">
-            <img src="frontend/images/bcg_3.jpeg">
-            <img src="frontend/images/bcg_4.jpeg" >
-            <img src="frontend/images/bcg_5.jpeg" >
-            <img src="frontend/images/bcg_6.jpeg" >
-            <img src="frontend/images/bcg_7.jpeg" >
-            <img src="frontend/images/bcg_8.jpeg" >
-            <img src="frontend/images/bcg_9.jpeg" >
+          
+        <div class="slider">
+  
+            <!-- <a href="#slide-1">1</a>
+            <a href="#slide-2">2</a>
+            <a href="#slide-3">3</a>
+            <a href="#slide-4">4</a>
+            <a href="#slide-5">5</a>
+            <a href="#slide-6">6</a>
+            <a href="#slide-7">7</a>
+            <a href="#slide-8">8</a>
+            <a href="#slide-9">9</a> -->
+            
+            <button class="nav-btn left" onclick="moveSlide(-1)">&#8592;</button>
+            <button class="nav-btn right" onclick="moveSlide(1)">&#8594;</button>
+          
+            <!-- <div class="slides">
+              <div id="slide-1">
+                <img src="frontend/images/bcg_1.jpeg" alt="" class="slider_img">
+              </div>
+              <div id="slide-2">
+                <img src="frontend/images/bcg_2.jpeg" alt="" class="slider_img">
+              </div>
+              <div id="slide-3">
+                <img src="frontend/images/bcg_3.jpeg" alt="" class="slider_img">
+              </div>
+              <div id="slide-4">
+                <img src="frontend/images/bcg_4.jpeg" alt="" class="slider_img">
+              </div>
+              <div id="slide-5">
+                <img src="frontend/images/bcg_5.jpeg" alt="" class="slider_img">
+              </div>
+              <div id="slide-6">
+                <img src="frontend/images/bcg_6.jpeg" alt="" class="slider_img">
+              </div>
+              <div id="slide-7">
+                <img src="frontend/images/bcg_7.jpeg" alt="" class="slider_img">
+              </div>
+              <div id="slide-8">
+                <img src="frontend/images/bcg_8.jpeg" alt="" class="slider_img">
+              </div>
+              <div id="slide-9">
+                <img src="frontend/images/bcg_9.jpeg" alt="" class="slider_img">
+              </div>
+            </div> -->
+            
+            <div class="slides" id="slider-track">
+                <div id="slide-1"><img src="frontend/images/bcg_1.jpeg" class="slider_img"></div>
+                <div id="slide-2"><img src="frontend/images/bcg_2.jpeg" class="slider_img"></div>
+                <div id="slide-3"><img src="frontend/images/bcg_3.jpeg" class="slider_img"></div>
+                <div id="slide-4"><img src="frontend/images/bcg_4.jpeg" class="slider_img"></div>
+                <div id="slide-5"><img src="frontend/images/bcg_5.jpeg" class="slider_img"></div>
+                <div id="slide-6"><img src="frontend/images/bcg_6.jpeg" class="slider_img"></div>
+                <div id="slide-7"><img src="frontend/images/bcg_7.jpeg" class="slider_img"></div>
+                <div id="slide-8"><img src="frontend/images/bcg_8.jpeg" class="slider_img"></div>
+                <div id="slide-9"><img src="frontend/images/bcg_9.jpeg" class="slider_img"></div>
+              </div>
+            
           </div>
           
           <p class="image_cube-text">
@@ -93,12 +140,12 @@
     
     <!-- Vanya and Ximena script -->
     <script>
-        const token = localStorage.getItem('authToken');
+        /* const token = localStorage.getItem('authToken');
 
 if (!token) {
     alert('No authentication token found. Please log in first.');
     window.location.href = 'frontend/log-in.html';
-    }
+    } */
     </script> 
 </body>
 </html>
