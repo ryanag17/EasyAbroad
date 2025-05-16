@@ -1,5 +1,12 @@
 @import url(fonts.css);
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #f7f7f7;
+}
+
 :root{
     --login_background: #CC2F8B;
     --register_bcg: #2c2c2c;
@@ -27,11 +34,14 @@ ul {
 /* Font END */
 
 body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;  
     font-family: "Baskerville", serif;
     margin: 0;
     padding: 0;
-    background-color: #f7f7f7;
 }
+
 header {
     background-color: white;
     display: flex;
@@ -40,13 +50,16 @@ header {
     padding: 10px 20px;
     border-bottom: 1px solid #ccc;
 }
+
 .logo {
     font-size: 24px;
     font-weight: bold;
 }
+
 .logo span {
     color: #e91e63;
 }
+
 .nav-buttons button {
     margin-left: 10px;
     padding: 8px 16px;
@@ -54,11 +67,13 @@ header {
     cursor: pointer;
     border-radius: 4px;
 }
+
 .login,
 .login_link_page {
     background-color: var(--login_background);
     color: white;
 }
+
 .register {
     background-color: var(--register_bcg);
     color: white;
@@ -70,35 +85,44 @@ footer {
     padding: 20px 20px;
     display: flex;
     justify-content: space-between;
+    margin-top: auto;
 }
+
 .footer-logo {
     font-size: 20px;
     font-weight: bold;
 }
+
 .footer-logo span {
     color: #e91e63;
 }
+
 .social-icons{
     margin-top: 10px;
     display: flex;
     flex-direction: row;
 }
+
 .social-icons img {
     width: 24px;
     margin-right: 10px;
 }
+
 .footer-links p {
     margin: 5px 0;
     font-size: 14px;
 } 
+
 .twitter_link1{
     padding-top: 3px;
 }
+
 .h4_service{
     padding-top: 0;
     margin-top: 0;
     margin-bottom: 15px;
 }
+
 .pic_logo{
     max-width: 120px;
     width: 100%;
@@ -1104,7 +1128,7 @@ span {
 /* Privacy-policy */
 
 
-/* Provacy-policy END */
+/* Privacy-policy END */
 
 /* Student Start */
 
@@ -1903,3 +1927,11 @@ span {
 
 
 /* Student END */
+
+/* Consultant START */
+
+  /* Consultant/home */
+  
+
+
+/* Consultant END */
