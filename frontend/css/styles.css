@@ -173,7 +173,7 @@ footer {
 
 /* index pictures slider END */
 
-/* V2_Log-in_page */
+/* Log-in */
 
 *,
 *:before,
@@ -252,14 +252,17 @@ input[type="email"]{
     margin-bottom: 5px;
 }
 
+/* Log-in END */
 
-/* V3_Register_Page */
+/* Register */
 
 .label_repeat{
     margin-top: 5px;
 }
 
-/* V4_Forgot_Password */
+/* Register END */
+
+/* Forgot-password */
 
 .forgot_text{
     font-size: 28px;
@@ -294,11 +297,15 @@ input[type="email"]{
     box-shadow: 0 0 10px rgba(0,0,0,0.25);
 }
 
-/* V5_Reset_Password */
+/* Forgot-password END */
+
+/* Reset-password */
 
 .label_repeat_V5{
     margin-top: 20px;
 }
+
+/* Reset-password END */
 
 /* FAQ */
 
@@ -667,7 +674,7 @@ input[type="email"]{
 }
 /* FAQ END */
 
-/* Contact Us */
+/* Contact-us */
 .body_contact {
   background: #f7f7f7;
   margin: 0;
@@ -794,9 +801,9 @@ span {
   margin: 0 5px 0 15px;
 }
 
-/* Contact Us END */
+/* Contact-us END */
 
-/* About Us */
+/* About-us */
 
 .responsive-container-block {
   min-height: 75px;
@@ -1092,16 +1099,16 @@ span {
   }
 }
 
-/* About Us END */
+/* About-us END */
 
-/* Privacy & Policy */
+/* Privacy-policy */
 
 
-/* Provacy & Policy END */
+/* Provacy-policy END */
 
 /* Student Start */
 
-/* S1_Student_Dashboard */
+/* Student/home */
 .student_header{
     display: flex;
     flex-direction: row;
@@ -1367,8 +1374,9 @@ span {
   
   
   
-/* S1_Student_Dashboard END */
-/* S2_Student_Profile */
+/* Student/home END */
+
+/* Student/profile */
 
 .profile-container {
     display: flex;
@@ -1596,9 +1604,9 @@ span {
   
 
 
-/* S2_Student_Profile END */
+/* Student/profile END */
 
-/* S3_Appointments */
+/* Student/appointments */
 .appointments-section{
     align-items: center;
     margin-bottom: 40px;
@@ -1713,9 +1721,9 @@ span {
   
 
 
-/* S3_Appointments END */
+/* Student/appointments END */
 
-/* S4_Student_Chat */
+/* Student/messages */
 
 .chat-list-container {
     padding: 20px;
@@ -1780,9 +1788,9 @@ span {
   }
 
   
-  /* S4_Student_Chat END */
+  /* Student/messages END */
   
-  /* S4_Student_Personal */
+  /* Student/chat */
   .chat-conversation-section {
     display: flex;
     flex-direction: column;
@@ -1891,7 +1899,7 @@ span {
     background-color: #f5017b;
   }
   
-  /* S4_Student_Personal END */
+  /* Student/chat END */
 
 
 /* Student END */
