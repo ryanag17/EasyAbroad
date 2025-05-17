@@ -269,7 +269,7 @@ let selectedLanguagesMemory = [];
 
 editButton.addEventListener('click', function() {
     const fields = document.querySelectorAll(
-        '.profile-form input:not([name="email"]), .profile-form select, .profile-form textarea, .city_input'
+        '.profile-form input:not([name="email"]):not([name="birthday"]), .profile-form select, .profile-form textarea, .city_input'
     );
 
     if (!isEditing) {

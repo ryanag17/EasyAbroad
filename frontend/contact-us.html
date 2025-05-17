@@ -6,6 +6,16 @@
     <title>Contact us</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/all.min.css">
+    <style>
+        .mail_contact,
+        .name_input{
+            background-color: #e6e6e6;
+        }
+        .contact_message{
+            border: 2px solid #d1d3d4;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body class="body_contact">
     <header>
@@ -23,8 +33,11 @@
     <form class="form_contact">
         <h2 class="contact_h2">Send Us a Message:</h2>
         <p class="contact_p_text">Fill out the form below, and we’ll get back to you as soon as possible. We typically reply within 24 hours!</p>
-        <p class="contact_p" type="Name:"><input class="contact_input" placeholder="Write your name here.."></p>
-        <p class="contact_p" type="Email:"><input class="contact_input" placeholder="Let us know how to contact you back.."></p>
+        <p class="contact_p" type="Name:"><input type="text" class="name_input" id="name" placeholder="Write your name here..." /></p>
+        <p class="contact_p" type="Email:"><input type="email" id="email-id" placeholder="How to contact you..." oninput="checker()" class="mail_contact"></p>
+        <div id="icon">
+        </div>
+        <p id="error-msg">Please Enter A Valid Email</p>
         <p class="contact_p" type="Message:">
             <textarea class="contact_message" placeholder="What would you like to tell us.."></textarea>
         </p>          
@@ -53,18 +66,21 @@
         </div>
         <div class="footer-links">
             <h4 class="h4_service">Service & Contacts</h4>
-            <a href="" class="class_footer">
+            <a href="FAQ.html" class="class_footer">
                 <p>FAQ</p> 
             </a>
-            <a href="" class="class_footer">
+            <a href="contact-us.html" class="class_footer">
                 <p>Contact Us</p> 
             </a>
-            <a href="" class="class_footer">
+            <a href="privacy-policy.html" class="class_footer">
                 <p>Privacy Policy</p> 
             </a>
-            <a href="" class="class_footer">
+            <a href="about-us.html" class="class_footer">
                 <p>About Us</p>
             </a>
+            <a href="terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
         </div>
     </footer>
       <script src="script.js"></script>

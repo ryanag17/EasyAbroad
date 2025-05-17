@@ -195,9 +195,6 @@ footer {
   align-items: center;
   font-size: 100px;
 }
-.slides > div:target {
-/*   transform: scale(0.8); */
-}
 
 
 .slider_img {
@@ -337,6 +334,29 @@ input[type="email"]{
 .label_repeat{
     margin-top: 5px;
 }
+
+.radio-group{
+  margin-bottom: 5px;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* space for the eye icon */
+}
+
+.toggle-password {
+  position: absolute;
+  top: 40%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+}
+
 
 /* Register END */
 
@@ -829,13 +849,7 @@ input[type="email"]{
   background: none;
   outline: none;
   border: 0;
-  border-bottom: 2px solid #bebed2;
   
-}
-
-.contact_message:focus {
-  border-bottom: 2px solid #78788c;
-  transition: 0.3s;
 }
 
 .contact_input:focus {
@@ -1872,7 +1886,10 @@ span {
   .chat-conversation-section {
     display: flex;
     flex-direction: column;
+    margin: 0 auto;
     height: 100vh;
+    max-width: 730px;
+    width: 100%;
   }
   
   .chat-header {
