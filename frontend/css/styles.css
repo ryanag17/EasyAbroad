@@ -2617,21 +2617,15 @@ textarea#reviewText {
   .page-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 700px;
   }
   
   
-  .filter-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    align-items: center;
-  }
+
   #map {
     width: 100%;
-    max-width: 1100px;
-    height: 450px; /* was 600px */
-    margin: 0 auto 30px auto;
+    height: 300px; /* was 600px */
+    margin: 0 auto;
     border: 1px solid #ccc;
     border-radius: 8px;
     display: block;
@@ -2646,6 +2640,7 @@ textarea#reviewText {
   
   .filter-container {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin: 20px auto;
     padding: 10px 20px;
