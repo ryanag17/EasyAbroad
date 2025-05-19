@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete account</title>
+    <title>Notifications</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
 </head>
@@ -40,6 +40,7 @@
  
     </header>
     
+    
     <!-- Sign Out Confirmation Modal -->
 <div id="signOutModal" class="modal-overlay">
     <div class="modal-content">
@@ -50,31 +51,11 @@
       </div>
     </div>
   </div>
-
-    <main>
-    <section class="delete-account-container">
-        <h1>Delete account</h1>
-        <p>Are you sure you want to delete your account? Once you delete your account, it cannot be undone.</p>
-
-        <form id="deleteAccountForm">
-        <div class="form-group">
-            <label for="email">Email address:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-
-        <div class="form-group">
-            <label for="deletePassword">Password:</label>
-            <div class="password-wrapper">
-            <input type="password" id="deletePassword" name="deletePassword" required>
-            <button type="button" class="toggle-password" data-target="deletePassword">Show</button>
-            </div>
-        </div>
-
-        <p id="deleteError" class="warning-text" style="display: none;">Email or password is incorrect.</p>
-
-        <button type="submit" class="delete-button">Delete my account</button>
-        </form>
-    </section>
+  
+    <main class="notifications-container">
+      <h2>Notifications</h2>
+      <div id="notificationArea">
+      </div>
     </main>
 
     <footer>
@@ -111,6 +92,7 @@
             </a>
         </div>
     </footer>
+
     <script>
         function showSignOutModal() {
   document.getElementById('signOutModal').style.display = 'flex';
@@ -124,57 +106,90 @@ function confirmSignOut() {
   window.location.href = "../../index.html";
 }
 
-  const deleteForm = document.getElementById("deleteAccountForm");
-  const deleteEmail = document.getElementById("email");
-  const deletePassword = document.getElementById("deletePassword");
-  const deleteError = document.getElementById("deleteError");
-  let deleteFormDirty = false;
 
-  // dummy data
-  const dummyEmail = "user@example.com";
-  const dummyPassword = "123456";
+const notifications = [
+      {
+        id: 1,
+        type: "message",
+        text: "You have a message! Check your new message.",
+        read: false,
+        redirect: "messages.html"
+      },
+      {
+        id: 2,
+        type: "appointment",
+        text: "The status of your requested meeting has changed. Click to see the details.",
+        read: false,
+        redirect: "appointments.html"
+      }
+    ];
 
-  deleteForm.addEventListener("input", () => {
-    deleteFormDirty = true;
-    deleteError.style.display = "none";
-  });
+    let selected = [];
 
-  deleteForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+    const notificationArea = document.getElementById("notificationArea");
 
-    const email = deleteEmail.value.trim();
-    const password = deletePassword.value;
+    function renderNotifications() {
+      notificationArea.innerHTML = "";
 
-    if (email !== dummyEmail || password !== dummyPassword) {
-      deleteError.style.display = "block";
-      return;
+      if (notifications.length === 0) {
+        notificationArea.innerHTML = `<p>There are currently no notifications.</p>`;
+        return;
+      }
+
+      // Select All
+        const selectAllDiv = document.createElement("div");
+        selectAllDiv.classList.add("select-all-row");
+        selectAllDiv.innerHTML = `
+          <div>
+            <input type="checkbox" id="selectAll" />
+            <label for="selectAll"> Select all </label>
+          </div>
+          <button class="select-toggle" id="toggleAllBtn">Unselect All</button>
+        `;
+        notificationArea.appendChild(selectAllDiv);
+
+        document.getElementById("selectAll").addEventListener("change", (e) => {
+          const isChecked = e.target.checked;
+          document.querySelectorAll(".notif-checkbox").forEach(cb => {
+            cb.checked = isChecked;
+          });
+          document.getElementById("toggleAllBtn").textContent = isChecked ? "Unselect All" : "Select All";
+        });
+
+      // Notification items
+      notifications.forEach((notif, index) => {
+        const div = document.createElement("div");
+        div.className = `notification-row ${notif.read ? "read" : "unread"}`;
+        div.innerHTML = `
+          <input type="checkbox" class="notif-checkbox" data-id="${notif.id}" />
+          <span class="notif-text" onclick="window.location.href='${notif.redirect}'">${notif.text}</span>
+          <button class="mark-btn" onclick="toggleRead(${notif.id})">${notif.read ? "Mark as Unread" : "Mark as Read"}</button>
+          <button class="delete-btn" onclick="deleteNotification(${notif.id})">🗑️</button>
+        `;
+        notificationArea.appendChild(div);
+      });
     }
 
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      deleteFormDirty = false;
-      alert("Your account has been deleted.");
-      window.location.href = "../../index.html";
+    function toggleRead(id) {
+      const notif = notifications.find(n => n.id === id);
+      if (notif) {
+        notif.read = !notif.read;
+        renderNotifications();
+      }
     }
-  });
 
-  window.addEventListener("beforeunload", (e) => {
-    if (deleteFormDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
+    function deleteNotification(id) {
+      if (confirm("Are you sure you want to delete this notification?")) {
+        const index = notifications.findIndex(n => n.id === id);
+        if (index !== -1) {
+          notifications.splice(index, 1);
+          renderNotifications();
+        }
+      }
     }
-  });
 
-  // Toggle show/hide password
-  document.querySelectorAll(".toggle-password").forEach(button => {
-    button.addEventListener("click", () => {
-      const targetId = button.getAttribute("data-target");
-      const input = document.getElementById(targetId);
-      const isPassword = input.type === "password";
+    renderNotifications();
 
-      input.type = isPassword ? "text" : "password";
-      button.textContent = isPassword ? "Hide" : "Show";
-    });
-  });
 
     </script>
     <script src="/frontend/script.js"></script>

@@ -1399,13 +1399,13 @@ span {
   }
   
   .highlight {
-    color: #b04aa1; /* Purple text for "Consultant" */
+    color: #d62d81; /* Purple text for "Consultant" */
   }
   
   .search-button {
     padding: 10px 30px;
     font-size: 18px;
-    border: 3px solid #b04aa1;
+    border: 3px solid #d62d81;
     background-color: transparent;
     color: #333;
     border-radius: 25px;
@@ -1414,7 +1414,7 @@ span {
   }
   
   .search-button:hover {
-    background-color: #b04aa1;
+    background-color: #d62d81;
     color: white;
   }
   
@@ -1468,7 +1468,7 @@ span {
   
 /* Student/home END */
 
-/* Student/profile */
+/* Student/profile START */
 
 .profile-container {
     display: flex;
@@ -1698,7 +1698,7 @@ span {
 
 /* Student/profile END */
 
-/* Student/appointments */
+/* Student/appointments START */
 .appointments-section{
     align-items: center;
     margin-bottom: 40px;
@@ -1807,7 +1807,7 @@ span {
     display: flex;
     text-align: center;
     justify-content: center;
-    margin-top: 12px; /* Slight gap from message button */
+    margin-top: 12px;
     max-width: 300px;
     width: 100%;
     padding: 10px;
@@ -1839,7 +1839,7 @@ span {
 
 /* Student/appointments END */
 
-/* Student/messages */
+/* Student/messages START */
 
 .chat-list-container {
     padding: 20px;
@@ -1906,7 +1906,7 @@ span {
   
 /* Student/messages END */
   
-/* Student/chat */
+/* Student/chat START */
   .chat-conversation-section {
     display: flex;
     flex-direction: column;
@@ -2015,7 +2015,7 @@ span {
   }
   
   .chat-input button:hover {
-    background-color: #f5017b;
+    background-color: #d62d81;
   }
   
 /* Student/chat END */
@@ -2340,6 +2340,145 @@ textarea#reviewText {
   margin-top: 4px;
 }
 /* Student/review-consultant END */  
+
+/* Student/reviews START */  
+
+.reviews-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.reviews-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.reviews-summary {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #444;
+}
+
+.summary-rating {
+  font-size: 20px;
+  color: #f1c40f;
+  margin-bottom: 4px;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-card {
+  background-color: #f5f5f5;
+  padding: 15px 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.avatar-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.review-text {
+  font-size: 15px;
+  color: #333;
+}
+
+/* Student/review-consultant END */  
+
+/* Student/notifications START */  
+
+.notifications-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  background-color: #fff;
+}
+
+.notification-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  border-top: 1px solid #eee;
+  min-height: 80px; /* Fixed height */
+  overflow-wrap: break-word;
+}
+
+.notification-row:first-of-type {
+  border-top: none;
+}
+
+.notification-row .notif-text {
+  flex: 1;
+  padding: 0 10px;
+  word-break: break-word;
+  white-space: normal;
+  max-width: 600px;
+  font-size: 1rem;
+}
+
+.read {
+  background-color: #fefefe;
+}
+
+.unread {
+  background-color: #fffbe8;
+}
+
+.mark-btn,
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d62d81;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.delete-btn {
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.select-all-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #eee;
+}
+
+.select-toggle {
+  padding: 5px 10px;
+  background-color: #d62d81;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+/* Student/notifications END */  
+
 
 /* Student END */
 
