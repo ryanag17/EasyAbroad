@@ -6,14 +6,16 @@
     <title>Delete account</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
+
 <body>
-    <header class="student_header">
+    <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
             
-            <div class="bell_menu">
+            <div class="bell-menu">
                 <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="notifications.html" class="bell_div"><div class="bell_image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
             <!-- Menu function -->
             <div id="menuHamToggle">
                 <!-- Create Hidden Checkbos, that will be used as Click Function-->
@@ -66,7 +68,7 @@
             <label for="deletePassword">Password:</label>
             <div class="password-wrapper">
             <input type="password" id="deletePassword" name="deletePassword" required>
-            <button type="button" class="toggle-password" data-target="deletePassword">Show</button>
+            <i class="fas fa-eye toggle-password" toggle="#deletePassword"></i>
             </div>
         </div>
 
@@ -177,6 +179,6 @@ function confirmSignOut() {
   });
 
     </script>
-    <script src="/frontend/script.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@ html, body {
 }
 
 :root{
-    --login_background: #CC2F8B;
+    --login_background: #d62d81;
     --register_bcg: #2c2c2c;
 }
 * {
@@ -57,7 +57,7 @@ header {
 }
 
 .logo span {
-    color: #e91e63;
+    color: #d62d81;
 }
 
 .nav-buttons button {
@@ -95,7 +95,7 @@ footer {
 }
 
 .footer-logo span {
-    color: #e91e63;
+    color: #d62d81;
 }
 
 .social-icons{
@@ -339,25 +339,6 @@ input[type="email"]{
 .radio-group{
   margin-bottom: 5px;
 }
-
-.password-wrapper {
-  position: relative;
-}
-
-.password-wrapper input {
-  width: 100%;
-  padding-right: 40px; /* space for the eye icon */
-}
-
-.toggle-password {
-  position: absolute;
-  top: 40%;
-  right: 10px;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #999;
-}
-
 
 /* Register END */
 
@@ -1202,23 +1183,23 @@ span {
 /* Student Start */
 
 /* Student/home */
-.student_header{
+.user-header{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     
 }
-.bell_menu{
+.bell-menu{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 }
-.bell_image{
+.bell-image{
     width: 33px;
     height: 33px;
     
 }
-.bell_div{
+.bell-div{
     padding-right: 20px;
 }
 
@@ -2084,32 +2065,45 @@ span {
 }
 
 .password-wrapper {
+  position: relative;
   display: flex;
   align-items: stretch;
   gap: 10px;
 }
 
+input[type="email"],
 .password-wrapper input[type="password"],
 .password-wrapper input[type="text"] {
+  height: 40px;
   flex-grow: 1;
   padding: 10px 12px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 6px;
   box-sizing: border-box;
+  width: 100%;
 }
 
 .toggle-password {
-  padding: 0 16px;
-  font-size: 13px;
-  cursor: pointer;
-  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 60px;
+  height: 40px;
+
   background-color: black;
+  color: white;
+  font-size: 16px;
+
   border: 1px solid #ccc;
   border-radius: 6px;
-  white-space: nowrap;
+
+  cursor: pointer;
   transition: background-color 0.2s ease;
+  padding: 10px 16px;
 }
+
 
 .toggle-password:hover {
   background-color: #d62d81;
@@ -2167,23 +2161,7 @@ span {
   color: #333;
 }
 
-.password-wrapper {
-  display: flex;
-  align-items: stretch;
-  gap: 10px;
-}
 
-input[type="email"],
-.password-wrapper input[type="password"],
-.password-wrapper input[type="text"] {
-  flex-grow: 1;
-  padding: 10px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
-  width: 100%;
-}
 
 
 .delete-button {
@@ -2588,7 +2566,7 @@ textarea#reviewText {
     font-size: 16px;
     border-radius: 30px;
     border: none;
-    background-color: #cc2f8b;
+    background-color: #d62d81;
     color: #fff;
     font-weight: bold;
     cursor: pointer;
@@ -2596,7 +2574,7 @@ textarea#reviewText {
   }
   
   .consult-button:hover {
-    background-color: #a7206f;
+    background-color: #d62d81;
   }
   
   .profile-box h2 {
@@ -2676,7 +2654,7 @@ textarea#reviewText {
   }
   .profile-btn {
     padding: 6px 12px;
-    background: #cc2f8b;
+    background: #d62d81;
     color: white;
     border: none;
     border-radius: 6px;

@@ -14,12 +14,12 @@
 
 </head>
 <body>
-    <header class="student_header">
+    <header class="user-header">
         <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
         
-        <div class="bell_menu">
+        <div class="bell-menu">
             <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-            <a href="#" class="bell_div"><div class="bell_image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+            <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
         <!-- Menu function -->
         <div id="menuHamToggle">
             <!-- Create Hidden Checkbos, that will be used as Click Function-->
@@ -34,12 +34,10 @@
 
             <!-- Here menu goes -->
             <ul id="mainMenu">
-                <a href=""> <li> Profile </li></a>
-                <a href=""> <li> Appointments </li></a>
-                <a href=""> <li> Messages </li></a>
-                <a href=""> <li> Consultancy areas </li></a>
-                <a href=""> <li> Timetable </li></a>
-                <a href="#"> <li> Settings & support </li></a>
+                <a href="profile.html"> <li> Profile </li></a>
+                <a href="appointments.html"> <li> Appointments </li></a>
+                <a href="messages.html"> <li> Messages </li></a>
+                <a href="settings-support.html"> <li> Settings & support </li></a>
                 <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
             </ul>
         </div>
@@ -108,7 +106,7 @@
             </div>
       
             <div class="form-group">
-                <label for="birthday">Date of birth:</label>
+                <label for="birthday">Birthday:</label>
                 <input type="date" class="name_input" name="birthday" disabled>
             </div>
       
@@ -141,6 +139,9 @@
             <div class="form-group">
                 <label for="email-id">Email:</label>
                 <input type="email" name="email" id="email-id" placeholder="Enter email" oninput="checker()" disabled>
+                <div id="icon">
+                </div>
+                <p id="error-msg">Please Enter A Valid Email</p>
             </div>
       
       
@@ -268,7 +269,7 @@ let selectedLanguagesMemory = [];
 
 editButton.addEventListener('click', function() {
     const fields = document.querySelectorAll(
-        '.profile-form input:not([name="email"]), .profile-form select, .profile-form textarea, .city_input'
+        '.profile-form input:not([name="email"]):not([name="birthday"]), .profile-form select, .profile-form textarea, .city_input'
     );
 
     if (!isEditing) {
