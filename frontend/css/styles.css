@@ -2675,7 +2675,64 @@ textarea#reviewText {
   
   /* find-consultants END */
   
+/* make-appointment */
+  
+.calendar-wrapper {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
 
+#calendar {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.fc .fc-button {
+  background-color: #d62d81;
+  border: none;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: #d62d81;
+}
+
+.previous_week,
+.next_week{
+  padding: 5px;
+  background-color: #d62d81;
+  color: white;
+  border-radius: 10px;
+  width: 130px;
+}
+
+.previous_week:hover,
+.next_week:hover{
+  background-color: #d62d81;
+  cursor: pointer;
+}
+
+.continue-btn {
+  display: block;
+  margin: 30px auto 0;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.continue-btn:hover {
+  background-color: #218838;
+}
+/* make-appointment END */
+  
 /* Student END */
 
 /* Consultant START */

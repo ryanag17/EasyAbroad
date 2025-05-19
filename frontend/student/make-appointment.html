@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Appointment</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            }
+/* for modal window */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-content {
+    background-color: #fff0f5;
+    padding: 30px;
+    border-radius: 12px;
+    width: 95%;
+    max-width: 500px;
+    text-align: left;
+    font-family: 'Segoe UI', sans-serif;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal h3 {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .modal label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+  .modal select, .modal textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    resize: vertical;
+  }
+  .modal .button-group {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .modal .confirm {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .modal .cancel {
+    background-color: #ccc;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 14px;
+  }         
+    </style>
+</head>
+<body>
+    <header class="student_header">
+        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell_menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="#" class="bell_div"><div class="bell_image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
+
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+              <a href="profile.html"> <li> Profile </li></a>
+              <a href="appointments.html"> <li> Appointments </li></a>
+              <a href="messages.html"> <li> Messages </li></a>
+              <a href="#"> <li> Settings & support </li></a>
+              <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+          </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    
+    <!-- Modal window -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+          <h3>Book a Consultation</h3>
+          <p id="selectedTimeText">Selected time: </p>
+      
+          <label>Please provide the reason of your request.</label>
+          <select>
+            <option value="">-- Select an option --</option>
+            <option value="accommodation">Finding accommodation</option>
+            <option value="social">Social life and making friends</option>
+            <option value="university">University information</option>
+            <option value="cityspots">Best/worst city spots, weekend plans</option>
+          </select>
+      
+          <label>Which video chat platform would you prefer?</label>
+          <select>
+            <option value="">-- Select a platform --</option>
+            <option value="zoom">Zoom</option>
+            <option value="teams">Microsoft Teams</option>
+            <option value="meet">Google Meet</option>
+            <option value="facetime">Apple FaceTime</option>
+          </select>
+      
+          <label>Anything else the consultant should know?</label>
+          <textarea rows="3" placeholder="Your message to the consultant..."></textarea>
+      
+          <div class="button-group">
+            <button class="confirm" onclick="confirmBooking()">Confirm</button>
+            <button class="cancel" onclick="closeModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    <!-- Modal window END -->
+     
+    <div class="calendar-wrapper">
+        <div class="header">
+          <h2>Timetable of <span id="consultant-name">[consultant name]</span></h2>
+          <div>
+            <button onclick="changeWeek(-1)" class="previous_week">&lt; previous week</button>
+            <button onclick="changeWeek(1)" class="next_week">next week &gt;</button>
+          </div>
+        </div>
+        <div id="calendar"></div>
+      </div>
+      <button class="continue-btn">Continue</button>
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    let calendar;
+    let currentDate = new Date();
+    let selectedEvent = null;
+
+    function renderCalendar(startDate) {
+      const calendarEl = document.getElementById('calendar');
+      if (calendar) calendar.destroy();
+
+
+      calendar = new FullCalendar.Calendar(calendarEl, {
+  initialView: 'timeGridWeek',
+  initialDate: startDate,
+  allDaySlot: false,
+  slotMinTime: '08:00:00',
+  slotMaxTime: '18:00:00',
+  expandRows: true,
+  headerToolbar: false,
+  firstDay: 1,
+  selectable: false,
+  eventClick: function(info) {
+    if (selectedEvent) {
+      selectedEvent.setProp('color', '#28a745'); // reset previous
+    }
+    selectedEvent = info.event;
+    selectedEvent.setProp('color', '#1e7e34'); // dark green highlight
+  },
+  events: [
+    {
+      title: 'Available',
+      startRecur: '2024-01-01',
+      daysOfWeek: ['2'],
+      startTime: '09:00:00',
+      endTime: '10:00:00',
+      color: '#28a745'
+    },
+    {
+      title: 'Available',
+      startRecur: '2024-01-01',
+      daysOfWeek: ['2'],
+      startTime: '11:00:00',
+      endTime: '12:00:00',
+      color: '#28a745'
+    },
+    {
+      title: 'Available',
+      startRecur: '2024-01-01',
+      daysOfWeek: ['3'],
+      startTime: '09:00:00',
+      endTime: '10:00:00',
+      color: '#28a745'
+    },
+    {
+      title: 'Available',
+      startRecur: '2024-01-01',
+      daysOfWeek: ['2'],
+      startTime: '14:00:00',
+      endTime: '15:00:00',
+      color: '#28a745'
+    }
+  ],
+  eventTimeFormat: { hour: 'numeric', minute: '2-digit', meridiem: false }
+});
+
+const continueBtn = document.querySelector(".continue-btn");
+continueBtn.addEventListener("click", function () {
+  if (selectedEvent) {
+    const time = selectedEvent.start;
+    openBookingPopup(time);
+  } else {
+    alert("Please select a time slot first.");
+  }
+});
+
+
+
+      calendar.render();
+    }
+
+    // Modal window
+    function openBookingPopup(time) {
+  const modal = document.getElementById("bookingModal");
+  const text = document.getElementById("selectedTimeText");
+  text.textContent = "Selected time: " + time.toLocaleString();
+  modal.style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("bookingModal").style.display = "none";
+}
+
+function confirmBooking() {
+  closeModal();
+  alert("Your appointment has been confirmed!");
+}
+    // Modal window END
+
+    function changeWeek(offset) {
+      currentDate.setDate(currentDate.getDate() + (offset * 7));
+      renderCalendar(currentDate);
+    }
+
+    window.onload = () => {
+      renderCalendar(currentDate);
+    };
+  </script>
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    
+    <script src="../script.js"></script>
+</body>
+</html>
