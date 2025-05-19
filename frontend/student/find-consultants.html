@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consultants Map</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/all.min.css">
+  <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha512-pw5I+P6Sx3rIEQ3nFmy5j5...=="
+  crossorigin=""/>
+
+</head>
+<style>
+    html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+</style>
+<body>
+    <header class="student_header">
+        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell_menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="#" class="bell_div"><div class="bell_image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
+
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+              <a href="profile.html"> <li> Profile </li></a>
+              <a href="appointments.html"> <li> Appointments </li></a>
+              <a href="messages.html"> <li> Messages </li></a>
+              <a href="#"> <li> Settings & support </li></a>
+              <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+          </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    
+<div class="page-wrapper">
+    <div class="filter-container">
+        <label for="country">Country:</label>
+        <select id="country">
+          <option value="">Select</option>
+          <option value="Germany">Germany</option>
+          <option value="France">France</option>
+        </select>
+    
+        <label for="city">City:</label>
+        <input type="text" id="city" placeholder="Enter city">
+    
+        <label for="focus">Focus:</label>
+        <select id="focus">
+          <option value="">Select</option>
+          <option value="study">Study Abroad</option>
+          <option value="internship">Internship Abroad</option>
+        </select>
+      </div>
+    
+        <div class="map-wrapper">
+            <div id="map"></div>
+        </div>
+      <div id="consultant-info" class="consultant-info-box">
+        <div class="no-selection">Click a consultant on the map to see more info.</div>
+      </div>
+</div>
+  
+  <footer>
+    <div>
+        <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+        <div class="social-icons">
+            <a href="" class="twitter_link">
+                <img src="../images/twitter.png" alt="X">
+            </a>
+            <a href="" class="twitter_link">
+                <img src="../images/instagram.png" alt="Instagram">
+            </a>
+            <a href="" class="twitter_link1">
+                <img src="../images/youtube.png" alt="YouTube">
+            </a>
+            <a href="" class="twitter_link">
+                <img src="../images/linkedin.png" alt="LinkedIn">
+            </a>
+        </div>
+    </div>
+    <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="" class="class_footer">
+            <p>FAQ</p> 
+        </a>
+        <a href="" class="class_footer">
+            <p>Contact Us</p> 
+        </a>
+        <a href="" class="class_footer">
+            <p>Privacy Policy</p> 
+        </a>
+        <a href="" class="class_footer">
+            <p>About Us</p>
+        </a>
+    </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([50, 10], 5);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  const consultantInfoBox = document.getElementById('consultant-info');
+
+  const consultants = [
+    {
+      name: "Emma Johnson",
+      country: "Germany",
+      city: "Berlin",
+      focus: "study",
+      institution: "Berlin University of Technology",
+      period: { from: "10.2020", to: "03.2024" },
+      location: [52.52, 13.405],
+      rating: 4.5
+    },
+    {
+      name: "Liam Dupont",
+      country: "France",
+      city: "Paris",
+      focus: "internship",
+      institution: "Capgemini",
+      period: { from: "01.2022", to: "06.2022" },
+      location: [48.8566, 2.3522],
+      rating: null
+    }
+  ];
+
+  consultants.forEach((consultant) => {
+    const marker = L.marker(consultant.location).addTo(map);
+    marker.bindPopup(`<strong>${consultant.name}</strong><br>${consultant.city}, ${consultant.country}`).on('click', () => {
+      showConsultantDetails(consultant);
+    });
+  });
+
+  function showConsultantDetails(consultant) {
+    consultantInfoBox.innerHTML = `
+      <div class="consultant-header">
+        <img src="../images/avatar.png" alt="Avatar">
+        <div>
+          <strong>${consultant.name}</strong><br>
+          ${consultant.country}, ${consultant.city}
+        </div>
+      </div>
+      <div class="consultant-details">
+        Focus: ${consultant.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}<br>
+        Institution: ${consultant.institution}<br>
+        <span class="consultant-period">
+          Date of mobility: from ${consultant.period.from} to ${consultant.period.to}
+        </span><br>
+        <strong>
+          ${consultant.rating ? `Currently rated ${consultant.rating}/5` : 'Currently have no reviews'}
+        </strong>
+      </div>
+      <button class="profile-btn">Profile</button>
+    `;
+  }
+  
+  setTimeout(() => {
+  map.invalidateSize();
+}, 300);
+
+</script>
+  <script src="../script.js"></script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultant Study Profile</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+</head>
+<body>
+    <header class="student_header">
+        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell_menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="#" class="bell_div"><div class="bell_image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
+
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+              <a href="profile.html"> <li> Profile </li></a>
+              <a href="appointments.html"> <li> Appointments </li></a>
+              <a href="messages.html"> <li> Messages </li></a>
+              <a href="#"> <li> Settings & support </li></a>
+              <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+          </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    
+    <main class="consultant-profile">
+        <a href="find-consultants.html" class="back-link">← Back to Consultant Search</a>
+      
+        <section class="profile-box">
+          <div class="profile-header">
+            <img src="../images/avatar.png" alt="Consultant Avatar" class="avatar">
+            <div>
+              <h2>First name, Last name <span class="review">(currently have no review or 4.5/5)</span></h2>
+              <div class="info-row"><strong>Focus of consultancy:</strong> Study abroad</div>
+              <div class="info-row"><strong>University name:</strong> [University Name]</div>
+              <div class="info-row"><strong>Course name:</strong> [Course Name]</div>
+              <div class="info-row"><strong>Education period:</strong> From [mm.yyyy] to [mm.yyyy]</div>
+              <div class="info-row"><strong>Location of study abroad:</strong> [City], [Country]</div>
+              <div class="info-row"><strong>Current location:</strong> [City], [Country]</div>
+            </div>
+          </div>
+      
+          <div class="help-contact">
+            <div class="help-list">
+              <h3>[First name] can help you with:</h3>
+              <ul>
+                <li> Finding accommodation</li>
+                <li> Social life and making friends</li>
+                <li> University information</li>
+                <li> Best and worst city spots including travel and weekend plans</li>
+              </ul>
+            </div>
+            <div class="call-list">
+              <h3>[First name] can call you via:</h3>
+              <ul>
+                <li> Zoom</li>
+                <li> Microsoft Teams</li>
+                <li> Google Meet</li>
+                <li> Apple FaceTime</li>
+              </ul>
+            </div>
+          </div>
+      
+          <div class="button-container">
+            <a href=""><button class="consult-button">Book a consultation meeting!</button></a>
+          </div>
+        </section>
+      
+      </main>
+      
+      
+      <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    
+    <script src="../script.js"></script>
+</body>
+</html>

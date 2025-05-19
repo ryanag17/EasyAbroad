@@ -137,6 +137,28 @@ toggleCheckbox.addEventListener('change', function () {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Backend part (Vanya & Ximena)
 
 
