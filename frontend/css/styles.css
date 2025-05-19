@@ -1802,6 +1802,30 @@ span {
     background-color: #d62d81;
     color: white;
   }
+
+  .review-btn {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin-top: 12px; /* Slight gap from message button */
+    max-width: 300px;
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #d62d81;
+    background-color: white;
+    color: #d62d81;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+  }
+
+  .review-btn:hover {
+    background-color: #d62d81;
+    color: white;
+  }
+
   
   .add_label{
     margin-top: 20px;
@@ -1880,9 +1904,9 @@ span {
   }
 
   
-  /* Student/messages END */
+/* Student/messages END */
   
-  /* Student/chat */
+/* Student/chat */
   .chat-conversation-section {
     display: flex;
     flex-direction: column;
@@ -1994,9 +2018,9 @@ span {
     background-color: #f5017b;
   }
   
-  /* Student/chat END */
+/* Student/chat END */
 
-  /* Student/setting-support START */
+/* Student/setting-support START */
 .settings-support-section {
     padding-right: 20px;
     max-width: 800px;
@@ -2029,10 +2053,9 @@ span {
 .settings-support-section li a:hover {
     color: #d62d81;
 }  
-  /* Student/setting-support END */
+/* Student/setting-support END */
 
-  /* Student/change-password START */
-  /* Container for the whole section */
+/* Student/change-password START */
 .change-password-container {
   max-width: 500px;
   margin: 60px auto;
@@ -2075,12 +2098,6 @@ span {
   box-sizing: border-box;
 }
 
-.warning-text {
-  color: red;
-  font-size: 13px;
-  margin-top: 5px;
-}
-
 .toggle-password {
   padding: 0 16px;
   font-size: 13px;
@@ -2114,9 +2131,9 @@ span {
   background-color: #d62d81;
 }
 
-  /* Student/change-password END */
+/* Student/change-password END */
 
-  /* Student/delete-account START */
+/* Student/delete-account START */
 .delete-account-container {
   max-width: 500px;
   margin: 60px auto;
@@ -2185,19 +2202,150 @@ input[type="email"],
   background-color: #d62d81;
 } 
 
-  /* Student/delete-account END */
+/* Student/delete-account END */
 
-  /* Student/support-ticket START */
-  /* Student/support-ticket END */
+/* Student/support-ticket START */
+.support-ticket-container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
 
-  /* Student/review-consultant START */
-  /* Student/review-consultant END */  
+.support-ticket-container h1 {
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.warning-text {
+  color: red;
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: 15px;
+}
+
+.send-button {
+  display: block;
+  margin: 30px auto 0;
+  padding: 10px 24px;
+  font-size: 15px;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.send-button:hover {
+  background-color: #d62d81;
+}
+
+
+/* Student/support-ticket END */
+
+/* Student/review-consultant START */
+.review-container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.review-container h1 {
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 20px;
+}
+
+.review-container p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.star-rating {
+  display: flex;
+  gap: 10px;
+  font-size: 24px;
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+
+.star {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.1s ease;
+}
+
+.star.filled {
+  color: #f1c40f;
+}
+
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+textarea#reviewText {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  box-sizing: border-box;
+  min-height: 120px;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 13px;
+  color: #555;
+  margin-top: 4px;
+}
+/* Student/review-consultant END */  
 
 /* Student END */
 
 /* Consultant START */
 
-  /* Consultant/home */
+/* Consultant/home */
   
 
 

@@ -168,28 +168,31 @@
     const card = document.createElement('div');
     card.className = 'appointment-card';
 
-    card.innerHTML = `
-  <div class="appointment-info">
-    <p class="appointment-date">${app.date}, ${app.time}</p>
-    <p class="consultant-name">${app.consultant}</p>
+  card.innerHTML = `
+    <div class="appointment-info">
+      <p class="appointment-date">${app.date}, ${app.time}</p>
+      <p class="consultant-name">${app.consultant}</p>
 
-    <label class="meeting_label">Meeting Topic:</label>
-    <select disabled>
-      <option selected>${app.topic}</option>
-    </select>
+      <label class="meeting_label">Meeting Topic:</label>
+      <select disabled>
+        <option selected>${app.topic}</option>
+      </select>
 
-    <label class="add_label">Additional Info:</label>
-    <textarea disabled>${app.info}</textarea>
-  </div>
+      <label class="add_label">Additional Info:</label>
+      <textarea disabled>${app.info}</textarea>
+    </div>
 
-  <div class="appointment-actions">
-    ${ (status !== 'pending' && status !== 'rejected') ? `
-      <label>Meeting Link:</label>
-      <input type="text" value="${app.meetingLink}" readonly onclick="window.open('${app.meetingLink}')">
-    ` : '' }
-    <a class="message-btn" href="#">Send a message</a>
-  </div>
-`;
+    <div class="appointment-actions">
+      ${ (status !== 'pending' && status !== 'rejected') ? `
+        <label>Meeting Link:</label>
+        <input type="text" value="${app.meetingLink}" readonly onclick="window.open('${app.meetingLink}')">
+      ` : '' }
+
+      <a class="message-btn" href="#">Send a message</a>
+      ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?name=${encodeURIComponent(app.consultant)}">Review</a>` : ''}
+    </div>
+  `;
+
 
 
     container.appendChild(card);
@@ -225,8 +228,17 @@ function confirmSignOut() {
   window.location.href = "../../index.html";
 }
 
+// Render default tab based on hash
+const defaultTab = window.location.hash.replace("#", "") || "upcoming";
+renderAppointments(defaultTab);
 
-
+tabs.forEach(t => {
+  if (t.dataset.status === defaultTab) {
+    t.classList.add('active');
+  } else {
+    t.classList.remove('active');
+  }
+});
 
         </script>
 </body>

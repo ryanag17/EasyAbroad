@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a support ticket</title>
+    <title>Review your consultant</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
 </head>
@@ -51,25 +51,24 @@
     </div>
   </div>
 
-
     <main>
-    <section class="support-ticket-container">
-        <h1>Create a Support Ticket</h1>
-        <form id="supportTicketForm">
-        <div class="form-group">
-            <label for="topic">Topic:</label>
-            <input type="text" id="topic" name="topic" required>
+    <section class="review-container">
+        <h1>Time to review the consultant</h1>
+        <p id="reviewPrompt">How did you find your meeting with <span id="consultantName">[Name]</span>?</p>
+
+        <div class="star-rating" id="starRating">
+        <!-- Stars inserted dynamically -->
         </div>
 
         <div class="form-group">
-            <label for="message">Your message:</label>
-            <textarea id="message" name="message" rows="6" required></textarea>
+        <label for="reviewText">Write a review</label>
+        <textarea id="reviewText" placeholder="What is most important to know?" maxlength="500"></textarea>
+        <div class="char-count"><span id="charCount">0</span>/500</div>
         </div>
 
-        <p id="supportError" class="warning-text" style="display: none;">Both fields are required.</p>
+        <p id="reviewError" class="warning-text" style="display: none;"></p>
 
-        <button type="submit" class="send-button">Send</button>
-        </form>
+        <button type="submit" id="submitReview" class="send-button">Submit</button>
     </section>
     </main>
 
@@ -120,46 +119,83 @@ function confirmSignOut() {
   window.location.href = "../../index.html";
 }
 
- const supportForm = document.getElementById("supportTicketForm");
-  const topicInput = document.getElementById("topic");
-  const messageInput = document.getElementById("message");
-  const supportError = document.getElementById("supportError");
-  let isSupportDirty = false;
+  const consultantName = "Julia Weber";
+  const urlParams = new URLSearchParams(window.location.search);
+  document.getElementById("consultantName").textContent = consultantName;
 
-  supportForm.addEventListener("input", () => {
-    isSupportDirty = true;
-    supportError.style.display = "none";
+  const starRating = document.getElementById("starRating");
+  const reviewText = document.getElementById("reviewText");
+  const charCount = document.getElementById("charCount");
+  const submitBtn = document.getElementById("submitReview");
+  const reviewError = document.getElementById("reviewError");
+
+  let selectedRating = 0;
+  let isDirty = false;
+
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement("span");
+    star.classList.add("star");
+    star.innerHTML = "★";
+    star.dataset.value = i;
+    starRating.appendChild(star);
+  }
+
+  starRating.addEventListener("mouseover", (e) => {
+    if (e.target.classList.contains("star")) {
+      const hoverValue = parseInt(e.target.dataset.value);
+      updateStars(hoverValue);
+    }
   });
 
-    supportForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+  starRating.addEventListener("mouseout", () => {
+    updateStars(selectedRating);
+  });
 
-    const topic = topicInput.value.trim();
-    const message = messageInput.value.trim();
-
-    // Spam prevention
-    if (topic.length < 20) {
-        supportError.textContent = "Topic must be at least 20 characters.";
-        supportError.style.display = "block";
-        return;
+  starRating.addEventListener("click", (e) => {
+    if (e.target.classList.contains("star")) {
+      selectedRating = parseInt(e.target.dataset.value);
+      updateStars(selectedRating);
+      isDirty = true;
     }
+  });
 
-    if (message.length < 50) {
-        supportError.textContent = "Message must be at least 50 characters.";
-        supportError.style.display = "block";
-        return;
-    }
-
-    if (confirm("Are you sure you want to send this support ticket?")) {
-        isSupportDirty = false;
-        alert("Your support ticket has been submitted.");
-        window.location.href = "messages.html";
-    }
+  function updateStars(value) {
+    document.querySelectorAll(".star").forEach((star, index) => {
+      star.classList.toggle("filled", index < value);
     });
+  }
 
+  reviewText.addEventListener("input", () => {
+    const length = reviewText.value.length;
+    charCount.textContent = length;
+    reviewError.style.display = "none";
+    isDirty = true;
+  });
+
+  submitBtn.addEventListener("click", () => {
+    const text = reviewText.value.trim();
+
+    if (selectedRating === 0) {
+      reviewError.textContent = "Please select a star rating.";
+      reviewError.style.display = "block";
+      return;
+    }
+
+    if (text.length < 30) {
+      reviewError.textContent = "Review must be at least 30 characters.";
+      reviewError.style.display = "block";
+      return;
+    }
+
+    if (confirm("Are you sure you want to submit your review?")) {
+      alert("Your review has been submitted.");
+      isDirty = false;
+      window.location.href = "appointments.html#previous"; 
+    }
+  });
 
   window.addEventListener("beforeunload", (e) => {
-    if (isSupportDirty) {
+    if (isDirty) {
       e.preventDefault();
       e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
     }
