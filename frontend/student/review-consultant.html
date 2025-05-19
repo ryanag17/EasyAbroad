@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Review your consultant</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
 </head>
@@ -40,7 +40,6 @@
  
     </header>
     
-    
     <!-- Sign Out Confirmation Modal -->
 <div id="signOutModal" class="modal-overlay">
     <div class="modal-content">
@@ -51,31 +50,28 @@
       </div>
     </div>
   </div>
-  
-    
-    
-    
-    <section class="user-section">
-        <img src="../images/avatar.png" alt="User Avatar" class="user-avatar">
-        <h2 class="welcome">Welcome</h2>
-        <h2 class="user-fullname">Name!</h2>
-        
-        <div class="button-group">
-          <a href="profile.html" class="action-button">Profile</a>
-          <a href="appointments.html" class="action-button">Appointments</a>
-          <a href="messages.html" class="action-button">Messages</a>
-          <a href="settings-support.html" class="action-button">Settings & support</a>
-          <a href="#" onclick="showSignOutModal()" class="action-button"> Sign Out</a>
+
+    <main>
+    <section class="review-container">
+        <h1>Time to review the consultant</h1>
+        <p id="reviewPrompt">How did you find your meeting with <span id="consultantName">[Name]</span>?</p>
+
+        <div class="star-rating" id="starRating">
+        <!-- Stars inserted dynamically -->
         </div>
-      </section>
-      
-      <section class="consultant-section">
-        <div class="consultant-overlay">
-          <h2>Find a <span class="highlight">Consultant</span> Now!</h2>
-          <a href="" class="search-button">Explore</a>
+
+        <div class="form-group">
+        <label for="reviewText">Write a review</label>
+        <textarea id="reviewText" placeholder="What is most important to know?" maxlength="500"></textarea>
+        <div class="char-count"><span id="charCount">0</span>/500</div>
         </div>
-      </section>
-    
+
+        <p id="reviewError" class="warning-text" style="display: none;"></p>
+
+        <button type="submit" id="submitReview" class="send-button">Submit</button>
+    </section>
+    </main>
+
     <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
@@ -122,6 +118,88 @@ function closeModal() {
 function confirmSignOut() {
   window.location.href = "../../index.html";
 }
+
+  const consultantName = "Julia Weber";
+  const urlParams = new URLSearchParams(window.location.search);
+  document.getElementById("consultantName").textContent = consultantName;
+
+  const starRating = document.getElementById("starRating");
+  const reviewText = document.getElementById("reviewText");
+  const charCount = document.getElementById("charCount");
+  const submitBtn = document.getElementById("submitReview");
+  const reviewError = document.getElementById("reviewError");
+
+  let selectedRating = 0;
+  let isDirty = false;
+
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement("span");
+    star.classList.add("star");
+    star.innerHTML = "★";
+    star.dataset.value = i;
+    starRating.appendChild(star);
+  }
+
+  starRating.addEventListener("mouseover", (e) => {
+    if (e.target.classList.contains("star")) {
+      const hoverValue = parseInt(e.target.dataset.value);
+      updateStars(hoverValue);
+    }
+  });
+
+  starRating.addEventListener("mouseout", () => {
+    updateStars(selectedRating);
+  });
+
+  starRating.addEventListener("click", (e) => {
+    if (e.target.classList.contains("star")) {
+      selectedRating = parseInt(e.target.dataset.value);
+      updateStars(selectedRating);
+      isDirty = true;
+    }
+  });
+
+  function updateStars(value) {
+    document.querySelectorAll(".star").forEach((star, index) => {
+      star.classList.toggle("filled", index < value);
+    });
+  }
+
+  reviewText.addEventListener("input", () => {
+    const length = reviewText.value.length;
+    charCount.textContent = length;
+    reviewError.style.display = "none";
+    isDirty = true;
+  });
+
+  submitBtn.addEventListener("click", () => {
+    const text = reviewText.value.trim();
+
+    if (selectedRating === 0) {
+      reviewError.textContent = "Please select a star rating.";
+      reviewError.style.display = "block";
+      return;
+    }
+
+    if (text.length < 30) {
+      reviewError.textContent = "Review must be at least 30 characters.";
+      reviewError.style.display = "block";
+      return;
+    }
+
+    if (confirm("Are you sure you want to submit your review?")) {
+      alert("Your review has been submitted.");
+      isDirty = false;
+      window.location.href = "appointments.html#previous"; 
+    }
+  });
+
+  window.addEventListener("beforeunload", (e) => {
+    if (isDirty) {
+      e.preventDefault();
+      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
+    }
+  });
 
     </script>
     <script src="/frontend/script.js"></script>

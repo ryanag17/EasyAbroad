@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Delete account</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
 </head>
@@ -40,7 +40,6 @@
  
     </header>
     
-    
     <!-- Sign Out Confirmation Modal -->
 <div id="signOutModal" class="modal-overlay">
     <div class="modal-content">
@@ -51,31 +50,33 @@
       </div>
     </div>
   </div>
-  
-    
-    
-    
-    <section class="user-section">
-        <img src="../images/avatar.png" alt="User Avatar" class="user-avatar">
-        <h2 class="welcome">Welcome</h2>
-        <h2 class="user-fullname">Name!</h2>
-        
-        <div class="button-group">
-          <a href="profile.html" class="action-button">Profile</a>
-          <a href="appointments.html" class="action-button">Appointments</a>
-          <a href="messages.html" class="action-button">Messages</a>
-          <a href="settings-support.html" class="action-button">Settings & support</a>
-          <a href="#" onclick="showSignOutModal()" class="action-button"> Sign Out</a>
+
+    <main>
+    <section class="delete-account-container">
+        <h1>Delete account</h1>
+        <p>Are you sure you want to delete your account? Once you delete your account, it cannot be undone.</p>
+
+        <form id="deleteAccountForm">
+        <div class="form-group">
+            <label for="email">Email address:</label>
+            <input type="email" id="email" name="email" required>
         </div>
-      </section>
-      
-      <section class="consultant-section">
-        <div class="consultant-overlay">
-          <h2>Find a <span class="highlight">Consultant</span> Now!</h2>
-          <a href="" class="search-button">Explore</a>
+
+        <div class="form-group">
+            <label for="deletePassword">Password:</label>
+            <div class="password-wrapper">
+            <input type="password" id="deletePassword" name="deletePassword" required>
+            <button type="button" class="toggle-password" data-target="deletePassword">Show</button>
+            </div>
         </div>
-      </section>
-    
+
+        <p id="deleteError" class="warning-text" style="display: none;">Email or password is incorrect.</p>
+
+        <button type="submit" class="delete-button">Delete my account</button>
+        </form>
+    </section>
+    </main>
+
     <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
@@ -122,6 +123,58 @@ function closeModal() {
 function confirmSignOut() {
   window.location.href = "../../index.html";
 }
+
+  const deleteForm = document.getElementById("deleteAccountForm");
+  const deleteEmail = document.getElementById("email");
+  const deletePassword = document.getElementById("deletePassword");
+  const deleteError = document.getElementById("deleteError");
+  let deleteFormDirty = false;
+
+  // dummy data
+  const dummyEmail = "user@example.com";
+  const dummyPassword = "123456";
+
+  deleteForm.addEventListener("input", () => {
+    deleteFormDirty = true;
+    deleteError.style.display = "none";
+  });
+
+  deleteForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = deleteEmail.value.trim();
+    const password = deletePassword.value;
+
+    if (email !== dummyEmail || password !== dummyPassword) {
+      deleteError.style.display = "block";
+      return;
+    }
+
+    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      deleteFormDirty = false;
+      alert("Your account has been deleted.");
+      window.location.href = "../../index.html";
+    }
+  });
+
+  window.addEventListener("beforeunload", (e) => {
+    if (deleteFormDirty) {
+      e.preventDefault();
+      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
+    }
+  });
+
+  // Toggle show/hide password
+  document.querySelectorAll(".toggle-password").forEach(button => {
+    button.addEventListener("click", () => {
+      const targetId = button.getAttribute("data-target");
+      const input = document.getElementById(targetId);
+      const isPassword = input.type === "password";
+
+      input.type = isPassword ? "text" : "password";
+      button.textContent = isPassword ? "Hide" : "Show";
+    });
+  });
 
     </script>
     <script src="/frontend/script.js"></script>
