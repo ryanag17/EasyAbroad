@@ -1255,7 +1255,7 @@ span {
     height: 4px;
     margin-bottom: 5px;
     position: relative;
-    background: #cdcdcd;
+    background: #d62d81;
     border-radius: 3px;
     z-index: 1;
     transform-origin: 4px 0px;
@@ -1277,7 +1277,7 @@ span {
 #menuHamToggle input:checked ~ span {
     opacity: 1;
     transform: rotate(45deg) translate(-2px, -1px);
-    background: #f30606;
+    background: #d62d81;
 }
 /* Hiding the middle one to make perfect cross */
 #menuHamToggle input:checked ~ span:nth-last-child(3){
@@ -1315,7 +1315,7 @@ span {
 }
 
 #mainMenu li:hover {
-  background: pink;
+  background: #d62d8180;
   color: black;
   font-weight: bold;
 }
@@ -1996,6 +1996,202 @@ span {
   
   /* Student/chat END */
 
+  /* Student/setting-support START */
+.settings-support-section {
+    padding-right: 20px;
+    max-width: 800px;
+    margin: 40px;
+}
+
+.settings-support-section h1 {
+    color: black;
+    margin-bottom: 20px;
+    font-size: 30px;
+}
+
+.settings-support-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.settings-support-section li {
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.settings-support-section li a {
+    color: black;
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.settings-support-section li a:hover {
+    color: #d62d81;
+}  
+  /* Student/setting-support END */
+
+  /* Student/change-password START */
+  /* Container for the whole section */
+.change-password-container {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.change-password-container h1 {
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+  flex-grow: 1;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.warning-text {
+  color: red;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.toggle-password {
+  padding: 0 16px;
+  font-size: 13px;
+  cursor: pointer;
+  color: white;
+  background-color: black;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-password:hover {
+  background-color: #d62d81;
+}
+
+.save-button {
+  margin: 30px auto 0;
+  display: block;
+  padding: 10px 24px;
+  font-size: 15px;
+  background-color: black;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+  background-color: #d62d81;
+}
+
+  /* Student/change-password END */
+
+  /* Student/delete-account START */
+.delete-account-container {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.delete-account-container h1 {
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 15px;
+}
+
+.delete-account-container p {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+input[type="email"],
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+  flex-grow: 1;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+
+.delete-button {
+  margin: 30px auto 0;
+  display: block;
+  padding: 10px 24px;
+  font-size: 15px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #d62d81;
+} 
+
+  /* Student/delete-account END */
+
+  /* Student/support-ticket START */
+  /* Student/support-ticket END */
+
+  /* Student/review-consultant START */
+  /* Student/review-consultant END */  
 
 /* Student END */
 
