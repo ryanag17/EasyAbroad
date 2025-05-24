@@ -2825,6 +2825,131 @@ textarea#reviewText {
 
 /* Consultant/home */
   
+/* Consultant/home END */
 
+/* Consultant/appointments */
+
+.pending-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.accept-btn, .reject-btn {
+  padding: 8px 12px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.accept-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.accept-btn:hover{
+  background-color: #006217;
+  transition: 0.5s;
+}
+
+.reject-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.reject-btn:hover{
+  background-color: #a00010;
+  transition: 0.5s;
+}
+
+#linkModal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+#linkModal .modal-content {
+  background-color: #fff0f5;
+  padding: 20px;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
+
+#linkModal input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+#linkModal button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #d62d81;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#rejectModal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+#rejectModal .modal-content {
+  background: #fff0f5;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  margin: auto;
+}
+
+#rejectModal .modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+#rejectModal .modal-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#rejectModal .modal-buttons button:first-child {
+  background-color: #dc3545;
+  color: white;
+}
+
+#rejectModal .modal-buttons button:last-child {
+  background-color: black;
+  color: white;
+}
+
+
+
+/* Consultant/appointments END */
 
 /* Consultant END */
