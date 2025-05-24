@@ -2393,11 +2393,14 @@ textarea#reviewText {
 .notification-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  border-top: 1px solid #eee;
-  min-height: 80px; /* Fixed height */
-  overflow-wrap: break-word;
+  padding: 12px;
+  gap: 10px;
+  background-color: #fffbe6;
+  border-bottom: 1px solid #eee;
+}
+
+.notification-row.read {
+  opacity: 0.8;
 }
 
 .notification-row:first-of-type {
@@ -2411,6 +2414,7 @@ textarea#reviewText {
   white-space: normal;
   max-width: 600px;
   font-size: 1rem;
+  cursor: pointer;
 }
 
 .read {
@@ -2421,19 +2425,20 @@ textarea#reviewText {
   background-color: #fffbe8;
 }
 
-.mark-btn,
-.delete-btn {
+.mark-btn, .delete-btn {
   background: none;
   border: none;
   cursor: pointer;
   color: #d62d81;
-  font-weight: bold;
-  padding: 5px;
+  font-size: 18px;
 }
 
-.delete-btn {
-  font-size: 16px;
-  margin-left: 10px;
+.mark-btn:hover, .delete-btn:hover {
+  color: black;
+}
+
+.mark-btn i, .delete-btn i {
+  pointer-events: pointer;
 }
 
 .select-all-row {
@@ -2454,6 +2459,22 @@ textarea#reviewText {
   border-radius: 5px;
   cursor: pointer;
 }
+
+.bulk-btn {
+  padding: 6px 12px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.bulk-btn:hover {
+  background-color: #d62d81;
+}
+
 
 
 /* Student/notifications END */  
