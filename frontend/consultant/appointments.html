@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+</head>
+<body>
+    <header class="user-header">
+        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell-menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
+
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+              <a href="profile.html"> <li> Profile </li></a>
+              <a href="appointments.html"> <li> Appointments </li></a>
+              <a href="messages.html"> <li> Messages </li></a>
+              <a href="settings-support.html"> <li> Settings & support </li></a>
+              <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+          </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    
+    
+    <!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal-overlay">
+  <div class="modal-content">
+    <p>Are you sure you want to sign out?</p>
+    <div class="modal-buttons">
+      <button onclick="confirmSignOut()">Yes</button>
+      <button onclick="closeModal()">No</button>
+    </div>
+  </div>
+</div>
+    
+    
+    <section class="appointments-section">
+
+        <!-- Tabs -->
+        <div class="appointment-tabs">
+          <button class="tab active" data-status="upcoming">Upcoming</button>
+          <button class="tab" data-status="previous">Previous</button>
+          <button class="tab" data-status="pending">Pending</button>
+          <button class="tab" data-status="rejected">Rejected</button>
+        </div>
+      
+        <!-- Appointment Card -->
+       
+        <div class="appointments-container"></div>
+
+      
+    </section>
+    
+    
+      <!-- Meeting Accept Link Modal -->
+<div class="modal" id="linkModal">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeLinkModal()">&times;</span>
+    <h3>Meeting link:</h3>
+    <input type="text" id="meetingLinkInput" placeholder="Paste your meeting link here..." />
+    <button onclick="sendMeetingLink()">Send</button>
+  </div>
+</div>
+
+
+<!-- Rejection Modal -->
+<div id="rejectModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeRejectModal()">&times;</span>
+    <p>Are you sure you want to reject this appointment?</p>
+    <div class="modal-buttons">
+      <button onclick="confirmRejection()">Yes, Reject</button>
+      <button onclick="closeRejectModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+        
+      
+      
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    <script>
+        // Sample appointment data
+        const appointments = [
+          {
+            status: 'upcoming',
+            date: '12.05.2025',
+            time: '14:30',
+            consultant: 'AMIDOVICH',
+            topic: 'Visa Application',
+            info: 'Please check my documents.',
+            meetingLink: 'https//zoom.com',
+          },
+          {
+            status: 'pending',
+            date: '20.06.2025',
+            time: '09:00',
+            consultant: 'Mike Brown',
+            topic: 'Finding Apartment',
+            info: 'Still searching for a room.',
+            meetingLink: 'https//zoom.com',
+          },
+          {
+            status: 'previous',
+            date: '10.03.2025',
+            time: '10:00',
+            consultant: 'Julia Weber',
+            topic: 'Blocked Account',
+            info: 'Documents reviewed.',
+            meetingLink: 'https//zoom.com',
+          },
+          {
+            status: 'pending',
+            date: '21.06.2025',
+            time: '10:00',
+            consultant: 'Meg Brown',
+            topic: 'Finding Apartment',
+            info: 'Still searching for a room.',
+            meetingLink: 'https//zoom.com',
+          }
+          
+          
+        ];
+        
+        
+        function renderAppointments(status) {
+  const container = document.querySelector('.appointments-container');
+  container.innerHTML = ''; // Clear old content
+
+  const filteredAppointments = appointments.filter(app => app.status === status);
+
+  if (filteredAppointments.length === 0) {
+    container.innerHTML = '<p>No appointments found.</p>';
+    return;
+  }
+
+  filteredAppointments.forEach(app => {
+    const card = document.createElement('div');
+    card.className = 'appointment-card';
+
+  card.innerHTML = `
+    <div class="appointment-info">
+      <p class="appointment-date">${app.date}, ${app.time} - ${getOneHourLater(app.time)}</p>
+      <p class="consultant-name">${app.consultant}</p>
+
+      <label class="meeting_label">Meeting Topic:</label>
+      <select disabled>
+        <option selected>${app.topic}</option>
+      </select>
+
+      <label class="add_label">Additional Info:</label>
+      <textarea disabled>${app.info}</textarea>
+    </div>
+
+    <div class="appointment-actions">
+${ status === 'pending' ? `
+  <div class="pending-actions">
+    <button class="accept-btn" onclick="openLinkModal('${app.date}', '${app.time}', '${app.consultant}', '${app.topic}', '${app.info}')">Accept</button>
+    <button class="reject-btn" onclick="rejectAppointment('${app.date}', '${app.time}')">Reject</button>
+  </div>
+` : (status === 'upcoming' ? `
+  <label>Meeting Link:</label>
+  <input type="text" value="${app.meetingLink}" readonly onclick="window.open('${app.meetingLink}')">
+` : '') }
+
+
+
+      <a class="message-btn" href="#">Send a message</a>
+      ${status === 'upcoming' ? `<a class="message-btn" href="#">Send a message</a>` : ''}
+    </div>
+  `;
+
+
+
+    container.appendChild(card);
+  });
+}
+
+        
+const tabs = document.querySelectorAll('.tab');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', function() {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    const status = tab.getAttribute('data-status');
+    renderAppointments(status);
+  });
+});
+
+// Render default "upcoming" appointments on page load
+renderAppointments('upcoming');
+
+        
+function showSignOutModal() {
+  document.getElementById('signOutModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('signOutModal').style.display = 'none';
+}
+
+function confirmSignOut() {
+  window.location.href = "../../index.html";
+}
+
+const defaultTab = window.location.hash.replace("#", "") || "upcoming";
+renderAppointments(defaultTab);
+
+function acceptAppointment(date, time) {
+  alert(`Accepted appointment on ${date} at ${time}`);
+}
+
+function rejectAppointment(date, time) {
+  const index = appointments.findIndex(app =>
+    app.date === date &&
+    app.time === time &&
+    app.status === 'pending'
+  );
+
+  if (index !== -1) {
+    const rejectedApp = { ...appointments[index], status: 'rejected' };
+    appointments.splice(index, 1); 
+    appointments.push(rejectedApp); 
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    if (tab.dataset.status === 'rejected') {
+      tab.classList.add('active');
+      tab.click(); 
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+}
+
+
+
+tabs.forEach(t => {
+  if (t.dataset.status === defaultTab) {
+    t.classList.add('active');
+  } else {
+    t.classList.remove('active');
+  }
+});
+
+// Pop-up window logic
+let tempAcceptedData = null;
+
+function openLinkModal(date, time, consultant, topic, info) {
+  document.getElementById('linkModal').style.display = 'flex';
+  document.getElementById('meetingLinkInput').value = '';
+  tempAcceptedData = { date, time, consultant, topic, info };
+}
+
+function closeLinkModal() {
+  document.getElementById('linkModal').style.display = 'none';
+  tempAcceptedData = null;
+}
+
+window.addEventListener("click", function(e) {
+  const modal = document.getElementById('linkModal');
+  if (e.target === modal) closeLinkModal();
+});
+
+function sendMeetingLink() {
+  const link = document.getElementById('meetingLinkInput').value.trim();
+  if (!link) {
+    alert("Please enter a valid meeting link.");
+    return;
+  }
+
+  // Find and remove the exact appointment object
+  const index = appointments.findIndex(app =>
+    app.date === tempAcceptedData.date &&
+    app.time === tempAcceptedData.time &&
+    app.consultant === tempAcceptedData.consultant &&
+    app.topic === tempAcceptedData.topic &&
+    app.info === tempAcceptedData.info
+  );
+
+  if (index !== -1) {
+    appointments.splice(index, 1);
+  }
+
+  appointments.push({
+    ...tempAcceptedData,
+    status: 'upcoming',
+    meetingLink: link
+  });
+
+closeLinkModal();
+
+
+document.querySelectorAll('.tab').forEach(tab => {
+  if (tab.dataset.status === 'upcoming') {
+    tab.classList.add('active');
+    tab.click();
+  } else {
+    tab.classList.remove('active');
+  }
+});
+
+}
+
+
+let tempRejectData = null;
+
+function rejectAppointment(date, time) {
+  tempRejectData = { date, time };
+  document.getElementById('rejectModal').style.display = 'flex';
+}
+
+function closeRejectModal() {
+  document.getElementById('rejectModal').style.display = 'none';
+  tempRejectData = null;
+}
+
+function confirmRejection() {
+  if (!tempRejectData) return;
+
+  const index = appointments.findIndex(app =>
+    app.date === tempRejectData.date &&
+    app.time === tempRejectData.time &&
+    app.status === 'pending'
+  );
+
+  if (index !== -1) {
+    const rejectedApp = { ...appointments[index], status: 'rejected' };
+    appointments.splice(index, 1);
+    appointments.push(rejectedApp);
+  }
+
+  closeRejectModal();
+
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    if (tab.dataset.status === 'rejected') {
+      tab.classList.add('active');
+      tab.click();
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+}
+
+
+window.addEventListener("click", function(e) {
+  const modal = document.getElementById('rejectModal');
+  if (e.target === modal) closeRejectModal();
+});
+
+
+function getOneHourLater(startTime) {
+  const [hour, minute] = startTime.split(':').map(Number);
+  const end = new Date();
+  end.setHours(hour + 1, minute);
+  return end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+
+        </script>
+</body>
+</html>
