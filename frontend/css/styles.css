@@ -2000,6 +2000,46 @@ span {
     background-color: #d62d81;
   }
   
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+  }
+
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+
+  .close-button {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  #reportReason {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    resize: vertical;
+  }
+
+  .modal-content button {
+    cursor: pointer;
+  }
+
+
+  
 /* Student/chat END */
 
 /* Student/setting-support START */
@@ -2228,7 +2268,8 @@ textarea {
   margin-bottom: 15px;
 }
 
-.send-button {
+.send-button,
+.modal-content button {
   display: block;
   margin: 30px auto 0;
   padding: 10px 24px;
@@ -2242,6 +2283,10 @@ textarea {
 }
 
 .send-button:hover {
+  background-color: #d62d81;
+}
+
+.modal-content button:hover{
   background-color: #d62d81;
 }
 
@@ -2730,6 +2775,23 @@ textarea#reviewText {
   width: 130px;
 }
 
+.change_btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.this_week_btn {
+  background-color: #fff7dd;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid black;
+}
+
+
 .previous_week:hover,
 .next_week:hover{
   background-color: #d62d81;
@@ -2752,6 +2814,9 @@ textarea#reviewText {
 .continue-btn:hover {
   background-color: #218838;
 }
+
+
+
 /* make-appointment END */
   
 /* Student END */

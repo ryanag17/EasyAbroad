@@ -152,8 +152,9 @@
     <div class="calendar-wrapper">
         <div class="header">
           <h2>Timetable of <span id="consultant-name">[consultant name]</span></h2>
-          <div>
+          <div class="change_btn">
             <button onclick="changeWeek(-1)" class="previous_week">&lt; previous week</button>
+            <button onclick="goToCurrentWeek()" class="this_week_btn"></button>
             <button onclick="changeWeek(1)" class="next_week">next week &gt;</button>
           </div>
         </div>
@@ -163,17 +164,79 @@
     
     
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script>
+  
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    <script>
     let calendar;
     let currentDate = new Date();
     let selectedEvent = null;
 
     function renderCalendar(startDate) {
+      
+      
       const calendarEl = document.getElementById('calendar');
       if (calendar) calendar.destroy();
 
 
       calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'en-gb',
+        slotLabelFormat: {
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+},
+dayHeaderFormat: {
+  weekday: 'short',
+  day: '2-digit',
+  month: '2-digit'
+},
+// past time
+  nowIndicator: true,
+  slotLabelClassNames: function(arg) {
+    const now = new Date();
+    const slotTime = arg.date;
+    return (slotTime < now) ? ['fc-past-slot'] : '';
+  },
+  slotLaneClassNames: function(arg) {
+    const now = new Date();
+    const slotTime = arg.date;
+    return (slotTime < now) ? ['fc-past-slot'] : '';
+  },
+// past time END
+
   initialView: 'timeGridWeek',
   initialDate: startDate,
   allDaySlot: false,
@@ -184,12 +247,16 @@
   firstDay: 1,
   selectable: false,
   eventClick: function(info) {
-    if (selectedEvent) {
-      selectedEvent.setProp('color', '#28a745'); // reset previous
-    }
-    selectedEvent = info.event;
-    selectedEvent.setProp('color', '#1e7e34'); // dark green highlight
-  },
+  const now = new Date();
+  if (info.event.start < now) {
+    alert("You cannot select a past time slot.");
+    return;
+  }
+  if (selectedEvent) selectedEvent.setProp('color', '#28a745');
+  selectedEvent = info.event;
+  selectedEvent.setProp('color', '#1e7e34');
+},
+
   events: [
     {
       title: 'Available',
@@ -197,6 +264,14 @@
       daysOfWeek: ['2'],
       startTime: '09:00:00',
       endTime: '10:00:00',
+      color: '#28a745'
+    },
+    {
+      title: 'Available',
+      startRecur: '2024-01-01',
+      daysOfWeek: ['6'],
+      startTime: '13:30:00',
+      endTime: '14:30:00',
       color: '#28a745'
     },
     {
@@ -268,42 +343,13 @@ function confirmBooking() {
     window.onload = () => {
       renderCalendar(currentDate);
     };
-  </script>
-    <footer>
-        <div>
-            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
-            <div class="social-icons">
-                <a href="" class="twitter_link">
-                    <img src="../images/twitter.png" alt="X">
-                </a>
-                <a href="" class="twitter_link">
-                    <img src="../images/instagram.png" alt="Instagram">
-                </a>
-                <a href="" class="twitter_link1">
-                    <img src="../images/youtube.png" alt="YouTube">
-                </a>
-                <a href="" class="twitter_link">
-                    <img src="../images/linkedin.png" alt="LinkedIn">
-                </a>
-            </div>
-        </div>
-        <div class="footer-links">
-            <h4 class="h4_service">Service & Contacts</h4>
-            <a href="" class="class_footer">
-                <p>FAQ</p> 
-            </a>
-            <a href="" class="class_footer">
-                <p>Contact Us</p> 
-            </a>
-            <a href="" class="class_footer">
-                <p>Privacy Policy</p> 
-            </a>
-            <a href="" class="class_footer">
-                <p>About Us</p>
-            </a>
-        </div>
-    </footer>
     
+    function goToCurrentWeek() {
+  currentDate = new Date();
+  renderCalendar(currentDate);
+}
+
+  </script>
     <script src="../script.js"></script>
 </body>
 </html>

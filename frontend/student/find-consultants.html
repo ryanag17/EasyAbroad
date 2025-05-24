@@ -71,6 +71,40 @@
   }
 
 
+  /* Customize Leaflet zoom buttons */
+  .leaflet-control-zoom {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .leaflet-control-zoom-in,
+  .leaflet-control-zoom-out {
+    background-color: #ffffff;
+    color: #333;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding-right: 45px;
+  }
+
+  .leaflet-control-zoom-in:hover,
+  .leaflet-control-zoom-out:hover {
+    background-color: #f0f0f0;
+  }
+
+  .leaflet-control-zoom-in:focus,
+  .leaflet-control-zoom-out:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #cc2f8b;
+  }
+
+
 </style>
 <body class="body_map">
     <header class="user-header">

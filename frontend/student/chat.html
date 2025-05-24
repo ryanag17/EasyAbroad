@@ -67,6 +67,16 @@
       
       </section>
       
+      <!-- Report Pop-up window -->
+<div id="reportModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeReportModal()">&times;</span>
+    <h2>Why would you like to report this person?</h2>
+    <textarea id="reportReason" rows="8" maxlength="2500" placeholder="Please explain the reason for your report (max 500 words)..."></textarea>
+    <button onclick="submitReport()">Submit Report</button>
+  </div>
+</div>
+
     
       <footer>
         <div>
@@ -186,6 +196,34 @@ function sendMessage() {
 }
 
 renderChat();
+
+document.getElementById("messageInput").addEventListener("keydown", function (event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault(); 
+    sendMessage(); 
+  }
+});
+
+
+// Report btn
+document.querySelector(".report-btn").addEventListener("click", () => {
+  document.getElementById("reportModal").style.display = "block";
+});
+function closeReportModal() {
+  document.getElementById("reportModal").style.display = "none";
+}
+// Example submit function
+function submitReport() {
+  const reason = document.getElementById("reportReason").value.trim();
+  if (reason === "") {
+    alert("Please provide a reason before submitting.");
+    return;
+  }
+  // Send to backend
+  alert("Thank you for your report. We’ll review it shortly.");
+  closeReportModal();
+}
+
 
     </script>
     
