@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Preview - internship abroad</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
 </head>
+
+
+
 
 <body>
     <header class="user-header">
@@ -44,41 +47,52 @@
  
     </header>
     
-    
-    <!-- Sign Out Confirmation Modal -->
-<div id="signOutModal" class="modal-overlay">
-    <div class="modal-content">
-      <p>Are you sure you want to sign out?</p>
-      <div class="modal-buttons">
-        <button onclick="confirmSignOut()">Yes</button>
-        <button onclick="closeModal()">No</button>
-      </div>
-    </div>
-  </div>
-  
-    
-    
-    
-    <section class="user-section">
-        <img src="../images/avatar.png" alt="User Avatar" class="user-avatar">
-        <h2 class="welcome">Welcome</h2>
-        <h2 class="user-fullname">Name!</h2>
-        
-        <div class="button-group">
-          <a href="profile.html" class="action-button">Profile</a>
-          <a href="appointments.html" class="action-button">Appointments</a>
-          <a href="messages.html" class="action-button">Messages</a>
-          <a href="consultancy-areas.html" class="action-button">Consultancy areas</a>
-          <a href="timetable.html" class="action-button">Timetable</a>
-          <a href="settings-support.html" class="action-button">Settings & support</a>
-          <a href="#" onclick="showSignOutModal()" class="action-button"> Sign Out</a>
-        </div>
-      </section>
+    <main class="consultant-profile">
+        <a href="consultancy-areas.html" class="back-link">← Back to Consultancy Areas page</a>
       
-      <section class="consultant-section">
-      </section>
-    
-    <footer>
+        <section class="profile-box">
+          <div class="profile-header">
+            <img src="../images/avatar.png" alt="Consultant Avatar" class="avatar">
+            <div>
+              <h2>First name, Last name <a href="reviews.html" class="review">(currently have no review or 4.5/5)</a></h2>
+              <div class="info-row"><strong>Focus of consultancy:</strong> Internship abroad</div>
+              <div class="info-row"><strong>Company name:</strong> [Company Name]</div>
+              <div class="info-row"><strong>Department name:</strong> [Department Name]</div>
+              <div class="info-row"><strong>Work period:</strong> From [mm.yyyy] to [mm.yyyy]</div>
+              <div class="info-row"><strong>Location of internship abroad:</strong> [City], [Country]</div>
+              <div class="info-row"><strong>Current location:</strong> [City], [Country]</div>
+              <div class="info-row"><strong>Languages:</strong> [English], [German], [Russian]</div>
+            </div>
+          </div>
+      
+          <div class="help-contact">
+            <div class="help-list">
+              <h3>[First name] can help you with:</h3>
+              <ul>
+                <li> Finding internship</li>
+                <li> Social life and making friends</li>
+                <li> Company information</li>
+                <li> Best and worst city spots including travel and weekend plans</li>
+              </ul>
+            </div>
+            <div class="call-list">
+              <h3>[First name] can call you via:</h3>
+              <ul>
+                <li> Zoom</li>
+                <li> Microsoft Teams</li>
+                <li> Google Meet</li>
+                <li> Apple FaceTime</li>
+              </ul>
+            </div>
+          </div>
+      
+
+        </section>
+      
+      </main>
+      
+      
+      <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
             <div class="social-icons">
@@ -112,20 +126,7 @@
             </a>
         </div>
     </footer>
-    <script>
-        function showSignOutModal() {
-  document.getElementById('signOutModal').style.display = 'flex';
-}
-
-function closeModal() {
-  document.getElementById('signOutModal').style.display = 'none';
-}
-
-function confirmSignOut() {
-  window.location.href = "../../index.html";
-}
-
-    </script>
+    
     <script src="../script.js"></script>
 </body>
 </html>
