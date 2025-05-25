@@ -219,10 +219,6 @@ ${ status === 'pending' ? `
   <label>Meeting Link:</label>
   <input type="text" value="${app.meetingLink}" readonly onclick="window.open('${app.meetingLink}')">
 ` : '') }
-
-
-
-      <a class="message-btn" href="#">Send a message</a>
       ${status === 'upcoming' ? `<a class="message-btn" href="#">Send a message</a>` : ''}
     </div>
   `;

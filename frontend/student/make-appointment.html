@@ -165,7 +165,7 @@
           <h2>Timetable of <span id="consultant-name">[consultant name]</span></h2>
           <div class="change_btn">
             <button onclick="changeWeek(-1)" class="previous_week">&lt; previous week</button>
-            <button onclick="goToCurrentWeek()" class="this_week_btn"></button>
+            <button onclick="goToCurrentWeek()" class="this_week_btn">this week</button>
             <button onclick="changeWeek(1)" class="next_week">next week &gt;</button>
           </div>
         </div>
@@ -270,8 +270,8 @@ dayHeaderFormat: {
   initialView: 'timeGridWeek',
   initialDate: startDate,
   allDaySlot: false,
-  slotMinTime: '08:00:00',
-  slotMaxTime: '18:00:00',
+  slotMinTime: '00:00:00',
+  slotMaxTime: '24:00:00',
   expandRows: true,
   headerToolbar: false,
   firstDay: 1,

@@ -2790,8 +2790,8 @@ textarea#reviewText {
 
 .this_week_btn {
   background-color: #fff7dd;
-  width: 24px;
-  height: 24px;
+  width: 70px;
+  height: 26px;
   border-radius: 6px;
   cursor: pointer;
   border: 2px solid black;
@@ -3262,5 +3262,21 @@ textarea#reviewText {
 
 
 /* Consultant/appointments END */
+
+/* timetable */
+.form-buttons-timetable{
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  text-align: end;
+}
+
+.calendar-disabled .fc-timegrid-slot,
+.calendar-disabled .fc-event {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* timetable END */
 
 /* Consultant END */

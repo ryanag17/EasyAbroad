@@ -198,6 +198,10 @@
 
     
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    
+    <div class="form-buttons-timetable">
+              <button type="button" class="edit-btn">Edit</button>
+            </div>
   
     <footer>
         <div>
@@ -242,6 +246,7 @@ let currentDate = new Date();
 let pendingSlot = null;
 let events = []; // consultant availability
 
+
 function showSignOutModal() {
   document.getElementById('signOutModal').style.display = 'flex';
   document.querySelector('#menuHamToggle input[type="checkbox"]').checked = false;
@@ -265,8 +270,8 @@ calendar = new FullCalendar.Calendar(calendarEl, {
   locale: 'en-gb',
   initialView: 'timeGridWeek',
   initialDate: startDate,
-  slotMinTime: '08:00:00',
-  slotMaxTime: '18:00:00',
+  slotMinTime: '00:00:00',
+  slotMaxTime: '24:00:00',
   slotDuration: '00:30:00',
   expandRows: true,
   eventClick: handleEventClick,
@@ -276,14 +281,21 @@ calendar = new FullCalendar.Calendar(calendarEl, {
   selectable: true,
   selectMirror: true,
   headerToolbar: false,
-  select: handleSlotClick,
+  select: isEditable ? handleSlotClick : null,
   events: events,
   eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
   slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
-  dayHeaderFormat: { weekday: 'short', day: '2-digit', month: '2-digit' },
+  dayHeaderFormat: { weekday: 'long' },
 });
 
-  calendar.render();
+  if (!isEditable) {
+  calendarEl.classList.add('calendar-disabled');
+} else {
+  calendarEl.classList.remove('calendar-disabled');
+}
+
+calendar.render();
+
 }
 
     // Modal window
@@ -313,6 +325,18 @@ function confirmBooking() {
       renderCalendar(currentDate);
     };
     
+    let isEditable = false;
+
+document.querySelector('.edit-btn').addEventListener('click', function () {
+  isEditable = !isEditable;
+
+  this.textContent = isEditable ? "Save" : "Edit";
+
+  // Re-render calendar with editable flag
+  renderCalendar(currentDate);
+});
+
+    
     function goToCurrentWeek() {
   currentDate = new Date();
   renderCalendar(currentDate);
@@ -325,10 +349,7 @@ function handleSlotClick(info) {
   const selectedStart = info.start;
   const selectedEnd = new Date(selectedStart.getTime() + 60 * 60 * 1000);
 
-  if (selectedStart < now) {
-    alert("You cannot add availability in the past.");
-    return;
-  }
+
 
   const hour = selectedStart.getHours();
   const minute = selectedStart.getMinutes();
