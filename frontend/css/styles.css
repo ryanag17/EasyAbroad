@@ -1211,9 +1211,9 @@ span {
 
 #menuHamToggle {
     display: block;
-    position: relative;
     top: 3px;
-    z-index: 1;
+    position: relative;
+  z-index: 10000;
     user-select: none;
 }
 
@@ -1559,6 +1559,9 @@ span {
   .form-buttons {
     text-align: right;
     margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
   }
   
   .edit-btn,
@@ -1573,9 +1576,12 @@ span {
     transition: 0.3s;
   }
   
+
+  
   .edit-btn:hover {
     background: #d62d81;
     color: white;
+    
   }
   
   .contact_btn:hover {
@@ -2004,7 +2010,7 @@ span {
   .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 100000;
     left: 0; top: 0;
     width: 100%; height: 100%;
     overflow: auto;
@@ -2748,7 +2754,7 @@ textarea#reviewText {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 #calendar {
@@ -3051,7 +3057,7 @@ textarea#reviewText {
   background: rgba(0, 0, 0, 0.6);
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 100000;
 }
 
 .modal-content {
