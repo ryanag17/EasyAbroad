@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Appointment</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            }
+/* for modal window */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-content {
+    background-color: #fff0f5;
+    padding: 30px;
+    border-radius: 12px;
+    width: 95%;
+    max-width: 500px;
+    text-align: left;
+    font-family: 'Segoe UI', sans-serif;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal h3 {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .modal label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+  .modal select, .modal textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    resize: vertical;
+  }
+  .modal .button-group {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .modal .confirm {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .modal .cancel {
+    background-color: #ccc;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 14px;
+  }         
+    </style>
+</head>
+<body>
+    <header class="user-header">
+        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell-menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="#" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
+
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+              <a href="profile.html"> <li> Profile </li></a>
+              <a href="appointments.html"> <li> Appointments </li></a>
+              <a href="messages.html"> <li> Messages </li></a>
+              <a href="#"> <li> Settings & support </li></a>
+              <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+          </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    
+    <!-- Modal window -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+          <h3>Book a Consultation</h3>
+          <p id="selectedTimeText">Selected time: </p>
+      
+          <label>Please provide the reason of your request.</label>
+          <select>
+            <option value="">-- Select an option --</option>
+            <option value="accommodation">Finding accommodation</option>
+            <option value="social">Social life and making friends</option>
+            <option value="university">University information</option>
+            <option value="cityspots">Best/worst city spots, weekend plans</option>
+          </select>
+      
+          <label>Which video chat platform would you prefer?</label>
+          <select>
+            <option value="">-- Select a platform --</option>
+            <option value="zoom">Zoom</option>
+            <option value="teams">Microsoft Teams</option>
+            <option value="meet">Google Meet</option>
+            <option value="facetime">Apple FaceTime</option>
+          </select>
+      
+          <label>Anything else the consultant should know?</label>
+          <textarea rows="3" placeholder="Your message to the consultant..."></textarea>
+      
+          <div class="button-group">
+            <button class="confirm" onclick="confirmBooking()">Confirm</button>
+            <button class="cancel" onclick="closeModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    <!-- Modal window END -->
+     
+    <div class="calendar-wrapper">
+        <div class="header">
+          <h2>Timetable of <span id="consultant-name">[consultant name]</span></h2>
+          
+        </div>
+        <div id="calendar"></div>
+      </div>
+      
+      <!-- Modal timeslot confirmation window -->
+    <div class="modal" id="confirmSlotModal">
+  <div class="modal-content">
+    <h3 id="confirmSlotText">Are you sure to book this timeslot?</h3>
+    <div class="button-group">
+      <button class="confirm" onclick="confirmSlotBooking()">Yes</button>
+      <button class="cancel" onclick="closeSlotModal()">No</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Discard Modal window -->
+ 
+
+<div class="modal" id="discardModal">
+  <div class="modal-content">
+    <h3 id="discardSlotText">Are you sure to discard this timeslot of availability?</h3>
+    <div class="button-group">
+      <button class="confirm" onclick="confirmDiscard()">Yes</button>
+      <button class="cancel" onclick="closeDiscardModal()">No</button>
+    </div>
+  </div>
+</div>
+
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="" class="class_footer">
+                <p>About Us</p>
+            </a>
+        </div>
+    </footer>
+    <script>
+    let calendar;
+let currentDate = new Date();
+let pendingSlot = null;
+let events = []; // consultant availability
+
+function renderCalendar(startDate) {
+  const calendarEl = document.getElementById('calendar');
+  if (calendar) calendar.destroy();
+
+calendar = new FullCalendar.Calendar(calendarEl, {
+  locale: 'en-gb',
+  initialView: 'timeGridWeek',
+  initialDate: startDate,
+  slotMinTime: '08:00:00',
+  slotMaxTime: '18:00:00',
+  slotDuration: '00:30:00',
+  expandRows: true,
+  eventClick: handleEventClick,
+  allDaySlot: false,
+  firstDay: 1,
+  nowIndicator: true,
+  selectable: true,
+  selectMirror: true,
+  headerToolbar: false,
+  select: handleSlotClick,
+  events: events,
+  eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+  slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+  dayHeaderFormat: { weekday: 'short', day: '2-digit', month: '2-digit' },
+});
+
+  calendar.render();
+}
+
+    // Modal window
+    function openBookingPopup(time) {
+  const modal = document.getElementById("bookingModal");
+  const text = document.getElementById("selectedTimeText");
+  text.textContent = "Selected time: " + time.toLocaleString();
+  modal.style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("bookingModal").style.display = "none";
+}
+
+function confirmBooking() {
+  closeModal();
+  alert("Your appointment has been confirmed!");
+}
+    // Modal window END
+
+    function changeWeek(offset) {
+      currentDate.setDate(currentDate.getDate() + (offset * 7));
+      renderCalendar(currentDate);
+    }
+
+    window.onload = () => {
+      renderCalendar(currentDate);
+    };
+    
+    function goToCurrentWeek() {
+  currentDate = new Date();
+  renderCalendar(currentDate);
+}
+
+
+
+function handleSlotClick(info) {
+  const now = new Date();
+  const selectedStart = info.start;
+  const selectedEnd = new Date(selectedStart.getTime() + 60 * 60 * 1000);
+
+  if (selectedStart < now) {
+    alert("You cannot add availability in the past.");
+    return;
+  }
+
+  const hour = selectedStart.getHours();
+  const minute = selectedStart.getMinutes();
+  if (hour === 17 && minute === 30) {
+    alert("17:30 is not allowed because meetings are 1 hour long and calendar ends at 18:00.");
+    return;
+  }
+
+  const selectedDay = selectedStart.getDay();
+const selectedTime = selectedStart.toTimeString().slice(0, 5);
+
+const selectedMinutes = selectedStart.getHours() * 60 + selectedStart.getMinutes();
+
+const isConflict = events.some(ev => {
+  if (!ev.daysOfWeek || !ev.startTime || !ev.endTime) return false;
+
+  if (!ev.daysOfWeek.includes(selectedDay)) return false;
+
+  const evStartMinutes = parseInt(ev.startTime.split(':')[0]) * 60 + parseInt(ev.startTime.split(':')[1]);
+  const evEndMinutes = parseInt(ev.endTime.split(':')[0]) * 60 + parseInt(ev.endTime.split(':')[1]);
+
+  return !(selectedMinutes + 60 <= evStartMinutes || selectedMinutes >= evEndMinutes + 30);
+});
+
+
+  if (isConflict) {
+    alert("You cannot choose a time that overlaps or is adjacent to an existing availability.");
+    return;
+  }
+
+  // Prevent more than 10 slots/day
+  const dateStr = selectedStart.toLocaleDateString();
+  const todaysSlots = events.filter(ev => new Date(ev.start).toLocaleDateString() === dateStr);
+  if (todaysSlots.length >= 10) {
+    alert("You can only mark up to 10 available slots per day.");
+    return;
+  }
+
+  // Show confirmation
+  pendingSlot = {
+    title: "Available",
+    start: selectedStart,
+    end: selectedEnd,
+    color: '#28a745'
+  };
+
+  document.getElementById("confirmSlotText").textContent =
+    `Are you sure to book this timeslot (${selectedStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}) for availability?`;
+
+  document.getElementById("confirmSlotModal").style.display = "flex";
+}
+
+function closeSlotModal() {
+  pendingSlot = null;
+  document.getElementById("confirmSlotModal").style.display = "none";
+}
+
+function confirmSlotBooking() {
+  if (pendingSlot) {
+    const dayOfWeek = pendingSlot.start.getDay();
+    const startTimeStr = pendingSlot.start.toTimeString().slice(0, 5); 
+    const endTimeStr = pendingSlot.end.toTimeString().slice(0, 5); 
+
+    events.push({
+    title: "Available",
+    daysOfWeek: [dayOfWeek],
+    startTime: startTimeStr,
+    endTime: endTimeStr,
+    color: '#28a745',
+    extendedProps: {
+    startTime: startTimeStr,
+    endTime: endTimeStr,
+    daysOfWeek: [dayOfWeek]
+    }
+    });
+
+
+
+    closeSlotModal();
+    renderCalendar(currentDate);
+  }
+}
+
+let slotToDiscard = null;
+
+function handleEventClick(info) {
+  const { daysOfWeek, startTime, endTime } = info.event.extendedProps;
+
+  slotToDiscard = { dow: daysOfWeek, start: startTime, end: endTime };
+  document.getElementById("discardModal").style.display = "flex";
+}
+
+
+function closeDiscardModal() {
+  slotToDiscard = null;
+  document.getElementById("discardModal").style.display = "none";
+}
+
+function confirmDiscard() {
+  if (!slotToDiscard) return;
+
+  // Remove the matching event
+  events = events.filter(ev =>
+    !(ev.daysOfWeek[0] === slotToDiscard.dow[0] &&
+      ev.startTime === slotToDiscard.start &&
+      ev.endTime === slotToDiscard.end)
+  );
+
+  closeDiscardModal();
+  renderCalendar(currentDate);
+}
+
+
+
+  </script>
+    <script src="../script.js"></script>
+</body>
+</html>
