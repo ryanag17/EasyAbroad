@@ -125,5 +125,33 @@ function confirmSignOut() {
 
     </script>
     <script src="/frontend/script.js"></script>
+
+<script>
+  // 1) construct your profile fetch
+  async function loadProfile() {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      // not logged in → back to login
+      return window.location.href = "/log-in.html";
+    }
+
+    const resp = await fetch("http://localhost:8000/api/auth/me", {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if (!resp.ok) {
+      // token expired or invalid
+      localStorage.removeItem("accessToken");
+      return window.location.href = "/log-in.html";
+    }
+    const user = await resp.json();
+    document.getElementById("user-name").textContent = user.first_name;
+  }
+
+  // 2) on page load, do it
+  window.addEventListener("DOMContentLoaded", loadProfile);
+</script>
+
 </body>
 </html>

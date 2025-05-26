@@ -9,3 +9,4 @@ email-validator
 flask
 PyJWT
 email-validator
+python-multipart
