@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Make Appointment</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
     <style>
@@ -86,7 +87,7 @@
         
         <div class="bell-menu">
             <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-            <a href="#" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+            <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
         <!-- Menu function -->
         <div id="menuHamToggle">
             <!-- Create Hidden Checkbos, that will be used as Click Function-->
@@ -104,7 +105,7 @@
               <a href="profile.html"> <li> Profile </li></a>
               <a href="appointments.html"> <li> Appointments </li></a>
               <a href="messages.html"> <li> Messages </li></a>
-              <a href="#"> <li> Settings & support </li></a>
+              <a href="settings-support.html"> <li> Settings & support </li></a>
               <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
           </ul>
         </div>
@@ -112,6 +113,17 @@
         </div>
 
     </header>
+    
+        <!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal">
+    <div class="modal-content">
+      <p>Are you sure you want to sign out?</p>
+      <div class="modal-buttons">
+        <button onclick="confirmSignOut()">Yes</button>
+        <button onclick="closeSignOutModal()">No</button>
+      </div>
+    </div>
+  </div>
     
     <!-- Modal window -->
     <div class="modal" id="bookingModal">
@@ -151,8 +163,9 @@
     <div class="calendar-wrapper">
         <div class="header">
           <h2>Timetable of <span id="consultant-name">[consultant name]</span></h2>
-          <div>
+          <div class="change_btn">
             <button onclick="changeWeek(-1)" class="previous_week">&lt; previous week</button>
+            <button onclick="goToCurrentWeek()" class="this_week_btn">this week</button>
             <button onclick="changeWeek(1)" class="next_week">next week &gt;</button>
           </div>
         </div>
@@ -162,33 +175,118 @@
     
     
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script>
+  
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="../faq.html" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="../contact-us.html" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="../privacy-policy.html" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="../about-us.html" class="class_footer">
+                <p>About Us</p>
+            </a>
+            <a href="../terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
+        </div>
+    </footer>
+    <script>
     let calendar;
     let currentDate = new Date();
     let selectedEvent = null;
+    
+    function showSignOutModal() {
+  document.getElementById('signOutModal').style.display = 'flex';
+  document.querySelector('#menuHamToggle input[type="checkbox"]').checked = false;
+}
+
+
+function closeSignOutModal() {
+  document.getElementById("signOutModal").style.display = "none";
+}
+
+
+function confirmSignOut() {
+  window.location.href = "../../index.html";
+}
+    
 
     function renderCalendar(startDate) {
+      
+      
       const calendarEl = document.getElementById('calendar');
       if (calendar) calendar.destroy();
 
 
       calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'en-gb',
+        slotLabelFormat: {
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+},
+dayHeaderFormat: {
+  weekday: 'short',
+  day: '2-digit',
+  month: '2-digit'
+},
+// past time
+  nowIndicator: true,
+  slotLabelClassNames: function(arg) {
+    const now = new Date();
+    const slotTime = arg.date;
+    return (slotTime < now) ? ['fc-past-slot'] : '';
+  },
+  slotLaneClassNames: function(arg) {
+    const now = new Date();
+    const slotTime = arg.date;
+    return (slotTime < now) ? ['fc-past-slot'] : '';
+  },
+// past time END
+
   initialView: 'timeGridWeek',
   initialDate: startDate,
   allDaySlot: false,
-  slotMinTime: '08:00:00',
-  slotMaxTime: '18:00:00',
+  slotMinTime: '00:00:00',
+  slotMaxTime: '24:00:00',
   expandRows: true,
   headerToolbar: false,
   firstDay: 1,
   selectable: false,
   eventClick: function(info) {
-    if (selectedEvent) {
-      selectedEvent.setProp('color', '#28a745'); // reset previous
-    }
-    selectedEvent = info.event;
-    selectedEvent.setProp('color', '#1e7e34'); // dark green highlight
-  },
+  const now = new Date();
+  if (info.event.start < now) {
+    alert("You cannot select a past time slot.");
+    return;
+  }
+  if (selectedEvent) selectedEvent.setProp('color', '#28a745');
+  selectedEvent = info.event;
+  selectedEvent.setProp('color', '#1e7e34');
+},
+
   events: [
     {
       title: 'Available',
@@ -196,6 +294,14 @@
       daysOfWeek: ['2'],
       startTime: '09:00:00',
       endTime: '10:00:00',
+      color: '#28a745'
+    },
+    {
+      title: 'Available',
+      startRecur: '2024-01-01',
+      daysOfWeek: ['6'],
+      startTime: '13:30:00',
+      endTime: '14:30:00',
       color: '#28a745'
     },
     {
@@ -267,42 +373,13 @@ function confirmBooking() {
     window.onload = () => {
       renderCalendar(currentDate);
     };
-  </script>
-    <footer>
-        <div>
-            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
-            <div class="social-icons">
-                <a href="" class="twitter_link">
-                    <img src="../images/twitter.png" alt="X">
-                </a>
-                <a href="" class="twitter_link">
-                    <img src="../images/instagram.png" alt="Instagram">
-                </a>
-                <a href="" class="twitter_link1">
-                    <img src="../images/youtube.png" alt="YouTube">
-                </a>
-                <a href="" class="twitter_link">
-                    <img src="../images/linkedin.png" alt="LinkedIn">
-                </a>
-            </div>
-        </div>
-        <div class="footer-links">
-            <h4 class="h4_service">Service & Contacts</h4>
-            <a href="" class="class_footer">
-                <p>FAQ</p> 
-            </a>
-            <a href="" class="class_footer">
-                <p>Contact Us</p> 
-            </a>
-            <a href="" class="class_footer">
-                <p>Privacy Policy</p> 
-            </a>
-            <a href="" class="class_footer">
-                <p>About Us</p>
-            </a>
-        </div>
-    </footer>
     
+    function goToCurrentWeek() {
+  currentDate = new Date();
+  renderCalendar(currentDate);
+}
+
+  </script>
     <script src="../script.js"></script>
 </body>
 </html>

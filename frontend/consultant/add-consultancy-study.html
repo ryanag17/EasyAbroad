@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Consultancy Study</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+</head>
+
+<body>
+    <header class="user-header">
+            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+            
+            <div class="bell-menu">
+                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+            <!-- Menu function -->
+            <div id="menuHamToggle">
+                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                <input type="checkbox">
+    
+                <!-- Lets create three line hamburger menu
+                Can animate to display as ham menu and closing menu tag.
+                -->
+                <span></span>
+                <span></span>
+                <span></span>
+    
+                <!-- Here menu goes -->
+                <ul id="mainMenu">
+                    <a href="profile.html"> <li> Profile </li></a>
+                    <a href="appointments.html"> <li> Appointments </li></a>
+                    <a href="messages.html"> <li> Messages </li></a>
+                    <a href="consultancy-areas.html"> <li> Consultancy areas </li></a>
+                    <a href="timetable.html"> <li> Timetable </li></a>
+                    <a href="settings-support.html"> <li> Settings & support </li></a>
+                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+                </ul>
+            </div>
+            <!-- Menu function END -->
+            </div>
+ 
+    </header>
+    
+    
+      <!-- Sign Out Confirmation Modal -->
+  <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
+    </div>
+  
+    <main class="consultancy-form-container">
+      <h2 class="form-title">Consultancy for Study Abroad</h2>
+
+      <form id="consultancyForm" class="form-block">
+
+        <div class="form-group">
+          <label for="focus">Focus of Consultancy:</label>
+          <input type="text" id="focus" name="focus" value="Study abroad" disabled>
+        </div>
+
+        <div class="form-group">
+          <label for="university">University name:</label>
+          <input type="text" id="university" name="university" required>
+        </div>
+
+        <div class="form-group">
+          <label for="course">Course name:</label>
+          <input type="text" id="course" name="course" required>
+        </div>
+
+        <div class="form-group education-period">
+          <label>Education period:</label>
+          <div class="period-inputs">
+            <label for="fromDate">From:</label>
+            <input type="month" id="fromDate" name="fromDate" required>
+            <label for="toDate">To:</label>
+            <input type="month" id="toDate" name="toDate" required>
+          </div>
+          <p id="date-warning" class="warning-text" style="display:none;">
+            You cannot offer consultancy if your graduation is older than 5 years based on our Terms and Conditions.
+          </p>
+        </div>
+
+
+        <div class="form-group">
+          <label>Location of study:</label>
+          <div class="horizontal-fields">
+            <div class="half-width">
+              <label for="country">Country:</label>
+              <select id="country" name="country" required>
+                <option value="">Select country</option>
+                <option value="Germany">Germany</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="USA">USA</option>
+                <option value="France">France</option>
+                <!-- Add more countries -->
+              </select>
+            </div>
+
+            <div class="half-width">
+              <label for="city">City:</label>
+              <input type="text" id="city" name="city" required>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="form-group">
+          <label for="proof">Proof of study:</label>
+          <input type="file" id="proof" name="proof" accept=".pdf,.jpg,.jpeg,.png" required>
+        </div>
+
+        <div class="options-section">
+          <div class="options-box">
+          <p><strong>You can help students with:</strong> <br>(Choose at least 2)</p>
+          <label><input type="checkbox" name="help[]" value="Accommodation"> Finding accommodation</label>
+          <label><input type="checkbox" name="help[]" value="Social"> Social life and making friends</label>
+          <label><input type="checkbox" name="help[]" value="University Info"> University information</label>
+          <label><input type="checkbox" name="help[]" value="City Tips"> Best and worst city spots (travel/weekend plans)</label>
+          <p id="help-warning" class="warning-text" style="display:none;">Please select at least 2 help topics.</p>
+        </div>
+
+        <div class="options-box">
+          <p><strong>You can call students via:</strong> <br>(Choose at least 2)</p>
+          <label><input type="checkbox" name="call[]" value="Zoom"> Zoom</label>
+          <label><input type="checkbox" name="call[]" value="Teams"> Microsoft Teams</label>
+          <label><input type="checkbox" name="call[]" value="Google Meet"> Google Meet</label>
+          <label><input type="checkbox" name="call[]" value="FaceTime"> Apple FaceTime</label>
+          <p id="call-warning" class="warning-text" style="display:none;">Please select at least 2 call options.</p>
+        </div>
+        </div>
+
+        <div class="form-buttons">
+          <button type="submit" class="consult-button">Save</button>
+        </div>
+
+      </form>
+    </main>
+
+
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="../faq.html" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="../contact-us.html" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="../privacy-policy.html" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="../about-us.html" class="class_footer">
+                <p>About Us</p>
+            </a>
+            <a href="../terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
+        </div>
+    </footer>
+
+    <script>
+      function showSignOutModal() {
+        document.getElementById("signOutModal").style.display = "flex";
+      }
+
+      function closeModal() {
+        document.getElementById("signOutModal").style.display = "none";
+      }
+
+      function confirmSignOut() {
+        window.location.href = "../../index.html";
+      }
+
+      document.getElementById("consultancyForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent actual form submission
+
+        const toDate = new Date(document.getElementById("toDate").value);
+        const limitDate = new Date();
+        limitDate.setFullYear(limitDate.getFullYear() - 5);
+
+        const helpOptions = document.querySelectorAll('input[name="help[]"]:checked').length;
+        const callOptions = document.querySelectorAll('input[name="call[]"]:checked').length;
+
+        let valid = true;
+
+        if (toDate < limitDate) {
+          document.getElementById("date-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("date-warning").style.display = "none";
+        }
+
+        if (helpOptions < 2) {
+          document.getElementById("help-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("help-warning").style.display = "none";
+        }
+
+        if (callOptions < 2) {
+          document.getElementById("call-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("call-warning").style.display = "none";
+        }
+
+        if (valid) {
+          document.getElementById("confirmModal").style.display = "flex";
+        }
+      });
+
+      function closeConfirmModal() {
+        document.getElementById("confirmModal").style.display = "none";
+      }
+
+      function submitForm() {
+        document.getElementById("confirmModal").style.display = "none";
+        document.getElementById("submittedModal").style.display = "flex";
+      }
+
+      function closeSubmittedModal() {
+        document.getElementById("submittedModal").style.display = "none";
+        window.location.href = "consultancy-areas.html"; // Redirect
+      }
+
+
+    </script>
+    
+    <script src="../script.js"></script>
+
+    <!-- Confirmation Modal -->
+<div id="confirmModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <p>Are you sure all the information is correct?</p>
+    <div class="modal-buttons">
+      <button onclick="submitForm()">Yes</button>
+      <button onclick="closeConfirmModal()">No</button>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div id="submittedModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <p>Your consultancy profile has been submitted.<br>Once approved by the admin, it will become visible.</p>
+    <div class="modal-buttons">
+      <button onclick="closeSubmittedModal()">OK</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

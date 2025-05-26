@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete account</title>
+    <title>Consultancy Areas</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
+
+
+
 
 <body>
     <header class="user-header">
@@ -34,6 +37,8 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
+                    <a href="consultancy-areas.html"> <li> Consultancy areas </li></a>
+                    <a href="timetable.html"> <li> Timetable </li></a>
                     <a href="settings-support.html"> <li> Settings & support </li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
@@ -42,6 +47,7 @@
             </div>
  
     </header>
+    
     
     <!-- Sign Out Confirmation Modal -->
 <div id="signOutModal" class="modal-overlay">
@@ -53,34 +59,23 @@
       </div>
     </div>
   </div>
+  
 
     <main>
-    <section class="delete-account-container">
-        <h1>Delete account</h1>
-        <p>Are you sure you want to delete your account? Once you delete your account, it cannot be undone.</p>
+      <div class="consultancy-section" id="studySection">
+        <h2>Consultancy for Study Abroad</h2>
+        <div id="studyContent"></div>
+      </div>
 
-        <form id="deleteAccountForm">
-        <div class="form-group">
-            <label for="email">Email address:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-
-        <div class="form-group">
-            <label for="deletePassword">Password:</label>
-            <div class="password-wrapper">
-            <input type="password" id="deletePassword" name="deletePassword" required>
-            <i class="fas fa-eye toggle-password" toggle="#deletePassword"></i>
-            </div>
-        </div>
-
-        <p id="deleteError" class="warning-text" style="display: none;">Email or password is incorrect.</p>
-
-        <button type="submit" class="delete-button">Delete my account</button>
-        </form>
-    </section>
+      <div class="consultancy-section" id="internshipSection">
+        <h2>Consultancy for Internship Abroad</h2>
+        <div id="internshipContent"></div>
+      </div>
     </main>
 
-        <footer>
+
+
+    <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
             <div class="social-icons">
@@ -116,73 +111,99 @@
               <p>Terms and Conditions</p>
           </a>
         </div>
-        </footer>
+    </footer>
+
     <script>
-        function showSignOutModal() {
-  document.getElementById('signOutModal').style.display = 'flex';
-}
+      function showSignOutModal() {
+        document.getElementById("signOutModal").style.display = "flex";
+      }
 
-function closeModal() {
-  document.getElementById('signOutModal').style.display = 'none';
-}
+      function closeModal() {
+        document.getElementById("signOutModal").style.display = "none";
+      }
 
-function confirmSignOut() {
-  window.location.href = "../../index.html";
-}
+      function confirmSignOut() {
+        window.location.href = "../../index.html";
+      }
 
-  const deleteForm = document.getElementById("deleteAccountForm");
-  const deleteEmail = document.getElementById("email");
-  const deletePassword = document.getElementById("deletePassword");
-  const deleteError = document.getElementById("deleteError");
-  let deleteFormDirty = false;
+      ///dummy data
+      let studyProfile = {
+        university: "University of Oxford",
+        period: "09/2021 - 06/2024",
+        status: "Pending"
+      };
 
-  // dummy data
-  const dummyEmail = "user@example.com";
-  const dummyPassword = "123456";
+      let internshipProfile = null;
 
-  deleteForm.addEventListener("input", () => {
-    deleteFormDirty = true;
-    deleteError.style.display = "none";
-  });
+      function renderProfile(sectionId, profile, type) {
+        const container = document.getElementById(sectionId);
+        container.innerHTML = "";
 
-  deleteForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+        if (profile) {
+          const status = profile.status || "Pending";
+          let statusClass = "status-pending";
 
-    const email = deleteEmail.value.trim();
-    const password = deletePassword.value;
+          if (status === "Accepted") statusClass = "status-accepted";
+          else if (status === "Rejected") statusClass = "status-rejected";
 
-    if (email !== dummyEmail || password !== dummyPassword) {
-      deleteError.style.display = "block";
-      return;
-    }
+          container.innerHTML += `
+            <div class="profile-card">
+              ${type === "study" ? `
+                <div class="preview-block">
+                  <strong>University name:</strong> ${profile.university}
+                  <span class="status-badge ${statusClass}">${status}</span>
+                </div>
+                <div class="preview-block"><strong>Education period:</strong> ${profile.period}</div>
+              ` : `
+                <div class="preview-block">
+                  <strong>Company name:</strong> ${profile.company}
+                  <span class="status-badge ${statusClass}">${status}</span>
+                </div>
+                <div class="preview-block"><strong>Employment period:</strong> ${profile.period}</div>
+              `}
+            </div>
+            <div class="btn-group">
+              <button class="preview-btn" onclick="previewProfile('${type}')">Preview</button>
+              <button class="delete-btn" onclick="deleteProfile('${type}')">Delete</button>
+            </div>
+          `;
+        } else {
+          const target = type === "study" ? "add-consultancy-study.html" : "add-consultancy-internship.html";
+          container.innerHTML += `
+            <p>Currently, there is no profile. Click Add to create your consultancy profile.</p>
+            <button class="add-btn" onclick="location.href='${target}'">Add</button>
+          `;
+        }
+      }
 
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      deleteFormDirty = false;
-      alert("Your account has been deleted.");
-      window.location.href = "../../index.html";
-    }
-  });
 
-  window.addEventListener("beforeunload", (e) => {
-    if (deleteFormDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-    }
-  });
 
-  // Toggle show/hide password
-  document.querySelectorAll(".toggle-password").forEach(button => {
-    button.addEventListener("click", () => {
-      const targetId = button.getAttribute("data-target");
-      const input = document.getElementById(targetId);
-      const isPassword = input.type === "password";
+      function previewProfile(type) {
+        const target = type === "study" ? "preview-study.html" : "preview-internship.html";
+        window.location.href = target;
+      }
 
-      input.type = isPassword ? "text" : "password";
-      button.textContent = isPassword ? "Hide" : "Show";
-    });
-  });
 
+      function deleteProfile(type) {
+        const confirmDelete = confirm("This action cannot be undone. Do you want to continue?");
+        if (confirmDelete) {
+          if (type === "study") {
+            studyProfile = null;
+          } else if (type === "internship") {
+            internshipProfile = null;
+          }
+          renderAll();
+        }
+      }
+
+      function renderAll() {
+        renderProfile("studyContent", studyProfile, "study");
+        renderProfile("internshipContent", internshipProfile, "internship");
+      }
+
+      window.onload = renderAll;
     </script>
+
     <script src="../script.js"></script>
 </body>
 </html>

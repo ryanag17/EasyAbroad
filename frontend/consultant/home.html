@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
 </head>
+
 <body>
-    <header class="student_header">
+    <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
             
-            <div class="bell_menu">
+            <div class="bell-menu">
                 <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="#" class="bell_div"><div class="bell_image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
             <!-- Menu function -->
             <div id="menuHamToggle">
                 <!-- Create Hidden Checkbos, that will be used as Click Function-->
@@ -29,11 +31,11 @@
                 <!-- Here menu goes -->
                 <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
-                    <a href=""> <li> Appointments </li></a>
-                    <a href=""> <li> Messages </li></a>
-                    <a href=""> <li> Consultancy areas </li></a>
-                    <a href=""> <li> Timetable </li></a>
-                    <a href="#"> <li> Settings & support </li></a>
+                    <a href="appointments.html"> <li> Appointments </li></a>
+                    <a href="messages.html"> <li> Messages </li></a>
+                    <a href="consultancy-areas.html"> <li> Consultancy areas </li></a>
+                    <a href="timetable.html"> <li> Timetable </li></a>
+                    <a href="settings-support.html"> <li> Settings & support </li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -64,11 +66,11 @@
         
         <div class="button-group">
           <a href="profile.html" class="action-button">Profile</a>
-          <a href="" class="action-button">Appointments</a>
-          <a href="" class="action-button">Messages</a>
-          <a href="" class="action-button">Consultancy areas</a>
-          <a href="" class="action-button">Timetable</a>
-          <a href="#" class="action-button">Settings & support</a>
+          <a href="appointments.html" class="action-button">Appointments</a>
+          <a href="messages.html" class="action-button">Messages</a>
+          <a href="consultancy-areas.html" class="action-button">Consultancy areas</a>
+          <a href="timetable.html" class="action-button">Timetable</a>
+          <a href="settings-support.html" class="action-button">Settings & support</a>
           <a href="#" onclick="showSignOutModal()" class="action-button"> Sign Out</a>
         </div>
       </section>
@@ -96,18 +98,21 @@
         </div>
         <div class="footer-links">
             <h4 class="h4_service">Service & Contacts</h4>
-            <a href="" class="class_footer">
+            <a href="../faq.html" class="class_footer">
                 <p>FAQ</p> 
             </a>
-            <a href="" class="class_footer">
+            <a href="../contact-us.html" class="class_footer">
                 <p>Contact Us</p> 
             </a>
-            <a href="" class="class_footer">
+            <a href="../privacy-policy.html" class="class_footer">
                 <p>Privacy Policy</p> 
             </a>
-            <a href="" class="class_footer">
+            <a href="../about-us.html" class="class_footer">
                 <p>About Us</p>
             </a>
+            <a href="../terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
         </div>
     </footer>
     <script>
@@ -124,6 +129,6 @@ function confirmSignOut() {
 }
 
     </script>
-    <script src="/frontend/script.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>

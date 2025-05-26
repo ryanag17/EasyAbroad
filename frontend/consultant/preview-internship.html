@@ -3,57 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultation Profile Work</title>
+    <title>Preview - internship abroad</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
 </head>
+
+
+
+
 <body>
     <header class="user-header">
-        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-        
-        <div class="bell-menu">
-            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-            <a href="#" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-        <!-- Menu function -->
-        <div id="menuHamToggle">
-            <!-- Create Hidden Checkbos, that will be used as Click Function-->
-            <input type="checkbox">
-
-            <!-- Lets create three line hamburger menu
-            Can animate to display as ham menu and closing menu tag.
-            -->
-            <span></span>
-            <span></span>
-            <span></span>
-
-            <!-- Here menu goes -->
-            <ul id="mainMenu">
-              <a href="profile.html"> <li> Profile </li></a>
-              <a href="appointments.html"> <li> Appointments </li></a>
-              <a href="messages.html"> <li> Messages </li></a>
-              <a href="#"> <li> Settings & support </li></a>
-              <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-          </ul>
-        </div>
-        <!-- Menu function END -->
-        </div>
-
+            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+            
+            <div class="bell-menu">
+                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+            <!-- Menu function -->
+            <div id="menuHamToggle">
+                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                <input type="checkbox">
+    
+                <!-- Lets create three line hamburger menu
+                Can animate to display as ham menu and closing menu tag.
+                -->
+                <span></span>
+                <span></span>
+                <span></span>
+    
+                <!-- Here menu goes -->
+                <ul id="mainMenu">
+                    <a href="profile.html"> <li> Profile </li></a>
+                    <a href="appointments.html"> <li> Appointments </li></a>
+                    <a href="messages.html"> <li> Messages </li></a>
+                    <a href="consultancy-areas.html"> <li> Consultancy areas </li></a>
+                    <a href="timetable.html"> <li> Timetable </li></a>
+                    <a href="settings-support.html"> <li> Settings & support </li></a>
+                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+                </ul>
+            </div>
+            <!-- Menu function END -->
+            </div>
+ 
     </header>
     
     <main class="consultant-profile">
-        <a href="find-consultants.html" class="back-link">← Back to Consultant Search</a>
+        <a href="consultancy-areas.html" class="back-link">← Back to Consultancy Areas page</a>
       
         <section class="profile-box">
           <div class="profile-header">
             <img src="../images/avatar.png" alt="Consultant Avatar" class="avatar">
             <div>
-              <h2>First name, Last name <span class="review">(currently have no review or 4.5/5)</span></h2>
+              <h2>First name, Last name <a href="reviews.html" class="review">(currently have no review or 4.5/5)</a></h2>
               <div class="info-row"><strong>Focus of consultancy:</strong> Internship abroad</div>
               <div class="info-row"><strong>Company name:</strong> [Company Name]</div>
               <div class="info-row"><strong>Department name:</strong> [Department Name]</div>
               <div class="info-row"><strong>Work period:</strong> From [mm.yyyy] to [mm.yyyy]</div>
               <div class="info-row"><strong>Location of internship abroad:</strong> [City], [Country]</div>
               <div class="info-row"><strong>Current location:</strong> [City], [Country]</div>
+              <div class="info-row"><strong>Languages:</strong> [English], [German], [Russian]</div>
             </div>
           </div>
       
@@ -61,9 +69,9 @@
             <div class="help-list">
               <h3>[First name] can help you with:</h3>
               <ul>
-                <li> Finding accommodation</li>
+                <li> Finding internship</li>
                 <li> Social life and making friends</li>
-                <li> University information</li>
+                <li> Company information</li>
                 <li> Best and worst city spots including travel and weekend plans</li>
               </ul>
             </div>
@@ -78,9 +86,7 @@
             </div>
           </div>
       
-          <div class="button-container">
-            <a href=""><button class="consult-button">Book a consultation meeting!</button></a>
-          </div>
+
         </section>
       
       </main>
@@ -106,20 +112,23 @@
         </div>
         <div class="footer-links">
             <h4 class="h4_service">Service & Contacts</h4>
-            <a href="" class="class_footer">
+            <a href="../faq.html" class="class_footer">
                 <p>FAQ</p> 
             </a>
-            <a href="" class="class_footer">
+            <a href="../contact-us.html" class="class_footer">
                 <p>Contact Us</p> 
             </a>
-            <a href="" class="class_footer">
+            <a href="../privacy-policy.html" class="class_footer">
                 <p>Privacy Policy</p> 
             </a>
-            <a href="" class="class_footer">
+            <a href="../about-us.html" class="class_footer">
                 <p>About Us</p>
             </a>
+            <a href="../terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
         </div>
-    </footer>
+      </footer>
     
     <script src="../script.js"></script>
 </body>
