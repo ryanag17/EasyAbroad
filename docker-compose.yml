@@ -1,3 +1,4 @@
+
 services:
   backend:
     build: ./backend
@@ -8,11 +9,27 @@ services:
       - db
       - mailhog
     volumes:
-      - ./backend:/app            # ← mount your local code into the container
+      - ./backend:/app            # mount your local code into the container
     working_dir: /app
     command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-    env_file:
-      - ./.env                    # ← load your host .env into the container
+    environment:
+      # Database settings
+      DB_HOST:        easyabroad-db
+      DB_USER:        user
+      DB_PASSWORD:    userpassword
+      DB_NAME:        easyabroad
+
+      # JWT settings
+      JWT_SECRET:     armani
+      JWT_ALGORITHM:  HS256
+
+      # Email settings
+      EMAIL_HOST:     mailhog
+      EMAIL_PORT:     "1025"
+      EMAIL_FROM:     no-reply@easyabroad.com
+
+      # Frontend URL
+      FRONTEND_BASE_URL: http://localhost:8080
 
   frontend:
     build: ./frontend
@@ -28,10 +45,10 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: armani
-      MYSQL_DATABASE: easyabroad
-      MYSQL_USER: user
-      MYSQL_PASSWORD: userpassword
-      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE:      easyabroad
+      MYSQL_USER:          user
+      MYSQL_PASSWORD:      userpassword
+      MYSQL_ROOT_HOST:     "%"
     ports:
       - "3306:3306"
     volumes:

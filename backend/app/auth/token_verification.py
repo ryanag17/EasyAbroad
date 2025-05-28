@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
-import os
+from app.config import settings
 
 security = HTTPBearer()
 
@@ -12,8 +12,8 @@ async def token_required(
     try:
         data = jwt.decode(
             token,
-            os.getenv("JWT_SECRET"),
-            algorithms=[os.getenv("JWT_ALGORITHM")]
+            settings.JWT_SECRET,
+            algorithms=[settings.JWT_ALGORITHM]
         )
         return {"sub": data["sub"], "role": data["role"]}
     except JWTError:

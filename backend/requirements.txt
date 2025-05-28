@@ -3,10 +3,7 @@ uvicorn
 mysql-connector-python
 python-jose
 passlib[bcrypt]
-mysql-connector-python
-python-dotenv
-email-validator
-flask
-PyJWT
+pydantic-settings
+bcrypt
 email-validator
 python-multipart

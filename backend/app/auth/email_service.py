@@ -1,18 +1,18 @@
-import os
+# backend/app/auth/email_service.py
+
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from app.config import settings
 
-# Load from .env via FastAPI's startup (dotenv already loaded in config)
-EMAIL_HOST = os.getenv("EMAIL_HOST", "mailhog")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", 1025))
-EMAIL_FROM = os.getenv("EMAIL_FROM", "no-reply@easyabroad.local")
-
-# URL of your front end (should include protocol & host, no trailing slash)
-FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "http://localhost:8080")
+# Pull values from our Pydantic settings
+EMAIL_HOST         = settings.EMAIL_HOST
+EMAIL_PORT         = settings.EMAIL_PORT
+EMAIL_FROM         = settings.EMAIL_FROM
+FRONTEND_BASE_URL  = settings.FRONTEND_BASE_URL
 
 def send_reset_email(recipient_email: str, reset_token: str):
-    # ← Here’s the updated reset_link
+    # Build the reset link using the frontend base URL
     reset_link = f"{FRONTEND_BASE_URL}/reset-password.html?token={reset_token}"
 
     subject = "Reset Your Password – EasyAbroad"
@@ -28,15 +28,13 @@ def send_reset_email(recipient_email: str, reset_token: str):
     </html>
     """
 
-    # Build the email
+    # Build the email message
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"]    = EMAIL_FROM
     msg["To"]      = recipient_email
     msg.attach(MIMEText(html_body, "html"))
 
-    # Send via MailHog (no auth needed)
+    # Send via SMTP (e.g. MailHog)
     with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as smtp:
         smtp.sendmail(EMAIL_FROM, recipient_email, msg.as_string())
-
-

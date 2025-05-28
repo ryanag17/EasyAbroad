@@ -2,99 +2,61 @@
 const API_BASE = "http://localhost:8000/api/auth";
 window.API_BASE = API_BASE;
 
-// ── 2) QUICK “PING” AT ROOT ─────────────────────────────────────────────────────────
+// ── 2) PING BACKEND ─────────────────────────────────────────────────────────────────
 fetch("http://localhost:8000/")
   .then((res) => res.json())
-  .then((data) => console.log(data));
+  .then((data) => console.log("Backend:", data))
+  .catch(() => console.warn("Backend ping failed"));
 
 // ── 3) DOM-READY LISTENERS ──────────────────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded", () => {
-  // form widgets
+  // form helpers
   initEmailChecker();
   initPasswordToggles();
 
-  // FAQ collapse
-  document
-    .querySelectorAll("[unique-script-id='w-w-dm-id'] .faq .faq-question-container")
-    .forEach((faq) =>
-      faq.addEventListener("click", () =>
-        faq.closest(".faq").classList.toggle("active")
-      )
-    );
-
-  // Search filter
-  const searchInput = document.getElementById("search");
-  if (searchInput) {
-    searchInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") e.preventDefault();
-    });
-    const faqs = document.querySelectorAll(".faq");
-    searchInput.addEventListener("input", () => {
-      const val = searchInput.value.toLowerCase();
-      faqs.forEach((f) => {
-        f.style.display = f.textContent.toLowerCase().includes(val) ? "" : "none";
-      });
+  // Register button
+  const registerBtn = document.getElementById("registerBtn");
+  if (registerBtn) {
+    registerBtn.addEventListener("click", async () => {
+      console.log("🔘 Register clicked");
+      if (!validateRegisterForm()) return;
+      if (!document.getElementById("terms-checkbox").checked) {
+        return alert("Please agree to the Terms and Conditions.");
+      }
+      await registerUser();
     });
   }
 
-  // Log In button
+  // Log In button (if present)
   const loginBtn = document.querySelector(".login");
   if (loginBtn) {
     loginBtn.addEventListener("click", () => {
       if (validateLoginForm()) loginUser();
     });
   }
-
-  // ── SINGLE REGISTER BUTTON BINDING ─────────────────────────────────────────────
-  const registerBtn = document.getElementById("registerBtn");
-  if (registerBtn) {
-    registerBtn.addEventListener("click", async () => {
-      if (!validateRegisterForm()) return;
-      await registerUser();   // only ever called once per click
-    });
-  }
 });
 
-// ── 4) NETWORK HELPERS ──────────────────────────────────────────────────────────────
-function getToken() {
-  return localStorage.getItem("accessToken");
-}
-function isLoggedIn() {
-  return !!getToken();
-}
-function logoutUser() {
-  localStorage.removeItem("accessToken");
-  window.location.href = "index.html";
-}
-
-// ── 5) UI WIDGETS ─────────────────────────────────────────────────────────────────
-let currentIndex = 0;
-function moveSlide(direction) {
-  const slides = document.getElementById("slider-track");
-  if (!slides) return;
-  const total = slides.children.length;
-  const width = slides.children[0].offsetWidth + 50;
-  currentIndex = (currentIndex + direction + total) % total;
-  slides.scrollTo({ left: width * currentIndex, behavior: "smooth" });
-}
-
-// ── 6) REGISTER / LOGIN / PASSWORD FLOWS ───────────────────────────────────────────
+// ── 4) REGISTER / LOGIN / PASSWORD FLOWS ───────────────────────────────────────────
 async function registerUser() {
-  const name     = document.getElementById("name").value.trim();
-  const surname  = document.getElementById("surname").value.trim();
-  const role     = document.querySelector("input[name='role']:checked").value;
-  const email    = document.getElementById("email-id").value.trim();
-  const password = document.getElementById("password-id").value;
+  const first_name = document.getElementById("name").value.trim();
+  const last_name  = document.getElementById("surname").value.trim();
+  const role       = document.querySelector("input[name='role']:checked").value;
+  const birthday   = document.getElementById("birthday").value;       // YYYY-MM-DD
+  const email      = document.getElementById("email-id").value.trim();
+  const password   = document.getElementById("password-id").value;
+
+  const payload = { first_name, last_name, role, birthday, email, password };
+  console.log("📡 POST /register payload:", payload);
 
   try {
     const res = await fetch(`${API_BASE}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, surname, role, email, password })
+      body: JSON.stringify(payload),
     });
-
+    console.log("📶 Status:", res.status);
     const data = await res.json();
-    console.log("Register response:", res.status, data);
+    console.log("↩️ Response:", data);
 
     if (res.ok) {
       alert(data.message);
@@ -103,7 +65,7 @@ async function registerUser() {
       alert("Registration failed: " + (data.detail || data.message));
     }
   } catch (err) {
-    console.error("Network or JS error:", err);
+    console.error("⚠️ registerUser error:", err);
     alert("An unexpected error occurred. See console for details.");
   }
 }
@@ -111,57 +73,85 @@ async function registerUser() {
 async function loginUser() {
   const email    = document.getElementById("email-id").value.trim();
   const password = document.getElementById("password-id").value;
-  const res = await fetch(`${API_BASE}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-  const data = await res.json();
-  console.log("Login response:", res.status, data);
 
-  if (res.ok && data.access_token) {
-    localStorage.setItem("accessToken", data.access_token);
-    window.location.href = "student/home.html";
-  } else {
-    alert("Login failed: " + (data.detail || data.message));
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    console.log("Login status:", res.status);
+    const data = await res.json();
+    console.log("Login response:", data);
+
+    if (res.ok && data.access_token) {
+      localStorage.setItem("accessToken", data.access_token);
+      window.location.href = "student/home.html";
+    } else {
+      alert("Login failed: " + (data.detail || data.message));
+    }
+  } catch (err) {
+    console.error("⚠️ loginUser error:", err);
+    alert("Network error. See console.");
   }
 }
 
 async function forgotPassword() {
   const email = document.getElementById("email-id").value.trim();
-  const res = await fetch(`${API_BASE}/forgot-password`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
-  });
-  const data = await res.json();
-  console.log("Forgot-pw response:", data);
-  if (res.ok) document.getElementById("popup").style.display = "block";
-  else alert("Error: " + (data.detail || data.message));
+  try {
+    const res = await fetch(`${API_BASE}/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    console.log("Forgot-pw status:", res.status);
+    const data = await res.json();
+    console.log("Forgot-pw response:", data);
+
+    if (res.ok) {
+      document.getElementById("popup").style.display = "block";
+    } else {
+      alert("Error: " + (data.detail || data.message));
+    }
+  } catch (err) {
+    console.error("⚠️ forgotPassword error:", err);
+    alert("Network error. See console.");
+  }
 }
 
 async function resetPassword() {
   const token    = new URLSearchParams(window.location.search).get("token");
   const password = document.getElementById("password-id").value;
-  const res = await fetch(`${API_BASE}/reset-password`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token, password }),
-  });
-  const data = await res.json();
-  console.log("Reset-pw response:", data);
-  alert(data.message || "Password reset!");
+
+  try {
+    const res = await fetch(`${API_BASE}/reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, password }),
+    });
+    console.log("Reset-pw status:", res.status);
+    const data = await res.json();
+    console.log("Reset-pw response:", data);
+
+    alert(data.message || data.detail || "Password reset!");
+    if (res.ok) window.location.href = "log-in.html";
+  } catch (err) {
+    console.error("⚠️ resetPassword error:", err);
+    alert("Network error. See console.");
+  }
 }
 
-// ── 7) FORM VALIDATORS ─────────────────────────────────────────────────────────────
+// ── 5) FORM VALIDATORS ─────────────────────────────────────────────────────────────
 function validateRegisterForm() {
   const n = document.getElementById("name").value.trim();
   const s = document.getElementById("surname").value.trim();
+  const b = document.getElementById("birthday").value;
   const e = document.getElementById("email-id").value.trim();
   const p = document.getElementById("password-id").value;
   const r = document.getElementById("repeat").value;
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!n || !s || !e || !p || !r) {
+
+  if (!n || !s || !b || !e || !p || !r) {
     alert("All fields are required.");
     return false;
   }
@@ -184,6 +174,7 @@ function validateLoginForm() {
   const e = document.getElementById("email-id").value.trim();
   const p = document.getElementById("password-id").value;
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   if (!e || !p) {
     alert("Please fill in both email and password.");
     return false;
@@ -195,12 +186,13 @@ function validateLoginForm() {
   return true;
 }
 
-// ── 8) HELPERS FOR EMAIL CHECKER & PASSWORD TOGGLE ─────────────────────────────────
+// ── 6) EMAIL CHECKER & PASSWORD TOGGLE ─────────────────────────────────────────────
 function initEmailChecker() {
   const emailId = document.getElementById("email-id"),
         icon    = document.getElementById("icon"),
         error   = document.getElementById("error-msg"),
-        re      = /^[a-zA-Z][a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
+        re      = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   if (!emailId) return;
   emailId.addEventListener("input", () => {
     icon.style.display = "none";
@@ -223,15 +215,12 @@ function initEmailChecker() {
 
 function initPasswordToggles() {
   document.querySelectorAll(".toggle-password").forEach((toggle) => {
-    toggle.addEventListener("click", function () {
-      const input = document.querySelector(this.getAttribute("toggle"));
+    toggle.addEventListener("click", () => {
+      const input = document.querySelector(toggle.getAttribute("toggle"));
       if (!input) return;
       input.type = input.type === "password" ? "text" : "password";
-      this.classList.toggle("fa-eye");
-      this.classList.toggle("fa-eye-slash");
+      toggle.classList.toggle("fa-eye");
+      toggle.classList.toggle("fa-eye-slash");
     });
   });
 }
-
-window.API_BASE         = API_BASE;
-window.forgotPassword   = forgotPassword;

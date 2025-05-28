@@ -12,7 +12,3 @@ db-data/
 Thumbs.db
 .vscode/
 .idea/
-
-# Environment and secrets
-.env
-venv/
