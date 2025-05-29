@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS students (
   birthday DATE,
   gender ENUM('male','female','other'),
   languages TINYTEXT,
+  profile_picture VARCHAR(255)
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -153,6 +154,16 @@ CREATE TABLE IF NOT EXISTS uploaded_documents (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE refresh_tokens (
+  id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+  token       VARCHAR(64) NOT NULL UNIQUE,
+  user_id     INT NOT NULL,
+  issued_at   DATETIME NOT NULL,
+  expires_at  DATETIME NOT NULL,
+  revoked     BOOLEAN NOT NULL DEFAULT FALSE,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- Seed data (admins, consultants, students, etc.) remains unchanged below
 USE easyabroad;
 
@@ -227,3 +238,4 @@ VALUES (3, 'Password issue', 'I can''t reset my password.', 'resolved', NOW(), N
 -- Upload Document
 INSERT INTO uploaded_documents (user_id, document_name, document_type, upload_date, verification_date, is_valid)
 VALUES (2, 'consult_cv.pdf', 'company', NOW(), NOW(), TRUE);
+

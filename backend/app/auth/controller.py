@@ -31,11 +31,11 @@ async def register(
 
     # 3) Create the User
     new_user = User(
-        name=user.name,
-        surname=user.surname,
+        first_name=user.first_name,
+        last_name=user.last_name,
         email=user.email,
-        hashed_password=hashed_pw,
-        role=user.role.lower(),
+       password_hash=hashed_pw,
+       role=user.role.lower(),
         created_at=datetime.utcnow()
     )
     db.add(new_user)

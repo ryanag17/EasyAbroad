@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from sqlalchemy import (
     Column, BigInteger, String, DateTime, Boolean,
     ForeignKey, Text, Enum
@@ -15,24 +15,24 @@ class UserLogin(BaseModel):
 
 class UserCreate(BaseModel):
     first_name: str = Field(..., alias="name")
-    last_name: str = Field(..., alias="surname")
-    role: str  # student, consultant, admin
-    email: EmailStr
-    password: str
+    last_name:  str = Field(..., alias="surname")
+    role:       str  # student, consultant, admin
+    email:      EmailStr
+    password:   str
 
-    class Config:
-        allow_population_by_field_name = True
+    # Pydantic V2: allow population by alias 'name'/'surname'
+    model_config = ConfigDict(populate_by_name=True)
 
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
 
 class ResetPasswordRequest(BaseModel):
-    token: str
+    token:    str
     password: str
 
 class TokenOut(BaseModel):
     access_token: str
-    token_type: str = "bearer"
+    token_type:   str = "bearer"
 
 
 # === 2) SQLAlchemy ORM Models ===
@@ -40,22 +40,22 @@ class TokenOut(BaseModel):
 class User(Base):
     __tablename__ = "users"
 
-    id              = Column(BigInteger, primary_key=True, index=True)
-    first_name      = Column(String(100), nullable=False)
-    last_name       = Column(String(100), nullable=False)
-    email           = Column(String(255), unique=True, index=True, nullable=False)
-    password_hash   = Column(String(255), nullable=False)
-    reset_token     = Column(String(255), nullable=True)
-    token_expiry    = Column(DateTime, nullable=True)
-    role            = Column(String(20), nullable=False)
-    city            = Column(String(255), nullable=True)
-    country         = Column(String(255), nullable=True)
-    created_at      = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at      = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    id            = Column(BigInteger, primary_key=True, index=True)
+    first_name    = Column(String(100), nullable=False)
+    last_name     = Column(String(100), nullable=False)
+    email         = Column(String(255), unique=True, index=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    reset_token   = Column(String(255), nullable=True)
+    token_expiry  = Column(DateTime, nullable=True)
+    role          = Column(String(20), nullable=False)
+    city          = Column(String(255), nullable=True)
+    country       = Column(String(255), nullable=True)
+    created_at    = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at    = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
-    student         = relationship("Student", back_populates="user", uselist=False, cascade="all, delete-orphan")
-    consultant      = relationship("Consultant", back_populates="user", uselist=False, cascade="all, delete-orphan")
-    refresh_tokens  = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
+    student        = relationship("Student",      back_populates="user", cascade="all, delete-orphan", uselist=False)
+    consultant     = relationship("Consultant",   back_populates="user", cascade="all, delete-orphan", uselist=False)
+    refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
 
 class Student(Base):
     __tablename__ = "students"
@@ -141,8 +141,8 @@ class Booking(Base):
     scheduled_time      = Column(DateTime, nullable=True)
     duration_minutes    = Column(BigInteger, nullable=True)
 
-    student   = relationship("Student")
-    consultant= relationship("Consultant")
+    student    = relationship("Student")
+    consultant = relationship("Consultant")
 
 class Session(Base):
     __tablename__ = "sessions"
@@ -164,9 +164,9 @@ class Message(Base):
     message_text = Column(Text, nullable=True)
     sent_at      = Column(DateTime, nullable=True)
 
-    sender       = relationship("User", foreign_keys=[sender_id])
-    receiver     = relationship("User", foreign_keys=[receiver_id])
-    booking      = relationship("Booking")
+    sender    = relationship("User", foreign_keys=[sender_id])
+    receiver  = relationship("User", foreign_keys=[receiver_id])
+    booking   = relationship("Booking")
 
 class SupportTicket(Base):
     __tablename__ = "support_tickets"
@@ -180,20 +180,20 @@ class SupportTicket(Base):
     resolved_by   = Column(BigInteger, ForeignKey("admins.user_id"), nullable=True)
     resolved_at   = Column(DateTime, nullable=True)
 
-    user          = relationship("User")
-    resolver      = relationship("Admin", foreign_keys=[resolved_by])
+    user      = relationship("User")
+    resolver  = relationship("Admin", foreign_keys=[resolved_by])
 
 class UploadedDocument(Base):
     __tablename__ = "uploaded_documents"
-    id              = Column(BigInteger, primary_key=True, index=True)
-    user_id         = Column(BigInteger, ForeignKey("users.id"))
-    document_name   = Column(String(255), nullable=True)
-    document_type   = Column(Enum('company','school', name='doc_type'), nullable=True)
-    upload_date     = Column(DateTime, nullable=True)
+    id                = Column(BigInteger, primary_key=True, index=True)
+    user_id           = Column(BigInteger, ForeignKey("users.id"))
+    document_name     = Column(String(255), nullable=True)
+    document_type     = Column(Enum('company','school', name='doc_type'), nullable=True)
+    upload_date       = Column(DateTime, nullable=True)
     verification_date = Column(DateTime, nullable=True)
-    is_valid        = Column(Boolean, nullable=True)
+    is_valid          = Column(Boolean, nullable=True)
 
-    user            = relationship("User")
+    user = relationship("User")
 
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"

@@ -11,5 +11,6 @@ SQLAlchemy>=1.4
 josepy
 pydantic
 aiomysql>=0.1.0
+cryptography
 
 

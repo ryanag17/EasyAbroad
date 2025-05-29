@@ -1,11 +1,12 @@
 # backend/app/main.py
+
 import os
 
 # ── 1) Programmatically seed os.environ with defaults ────────────────────────
 #    (these will only apply if no real ENV var is already set)
-os.environ.setdefault("DB_HOST",            "localhost")
-os.environ.setdefault("DB_USER",            "root")
-os.environ.setdefault("DB_PASSWORD",        "your_db_password")
+os.environ.setdefault("DB_HOST",            "127.0.0.1")
+os.environ.setdefault("DB_USER",            "appuser")
+os.environ.setdefault("DB_PASSWORD",        "StrongP@ssw0rd")
 os.environ.setdefault("DB_NAME",            "easyabroad")
 
 os.environ.setdefault("JWT_SECRET",         "changeme-in-prod")
@@ -46,10 +47,13 @@ app.include_router(auth_router, prefix="/auth")
 def root():
     return {"message": "Backend is running"}
 
-# Mount static files from backend/app/static
-BASE_DIR   = Path(__file__).parent        # -> /app/app
-STATIC_DIR = BASE_DIR / "static"          # -> /app/app/static
+# ── MOUNT STATIC FILES ────────────────────────────────────────────────────────
+# Your Dockerfile copies `static/` into /app/static, not /app/app/static,
+# so we must point one level up from this file’s directory:
+BASE_DIR   = Path(__file__).parent.parent  # -> /app
+STATIC_DIR = BASE_DIR / "static"           # -> /app/static
+
 if not STATIC_DIR.exists():
     raise RuntimeError(f"Static directory not found: {STATIC_DIR}")
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")

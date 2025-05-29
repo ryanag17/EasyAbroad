@@ -12,3 +12,4 @@ SOURCE 11_create_messages.sql;
 SOURCE 12_create_support_tickets.sql;
 SOURCE 13_create_uploaded_documents.sql;
 SOURCE 14_seed_data.sql;
+SOURCE 16_refresh_tokens;

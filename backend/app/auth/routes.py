@@ -1,5 +1,3 @@
-# backend/app/auth/routes.py
-
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,7 +7,6 @@ from app.auth.models import UserCreate, UserLogin, TokenOut
 from app.auth.controller import register, login
 from app.auth.token_service import (
     create_access_token,
-    create_refresh_token,
     revoke_refresh_token,
     rotate_refresh_token,
 )
@@ -26,11 +23,12 @@ async def register_endpoint(
 ):
     result = await register(db, user)
     response.set_cookie(
-        name="refresh_token",
+        key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
-        secure=True,
+        secure=False,  # ← on HTTPS in prod switch to True
         samesite="strict",
+        path="/",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400,
     )
     return {"access_token": result["access_token"], "token_type": "bearer"}
@@ -44,11 +42,12 @@ async def login_endpoint(
 ):
     result = await login(db, creds)
     response.set_cookie(
-        name="refresh_token",
+        key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
-        secure=True,
+        secure=False,
         samesite="strict",
+        path="/",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400,
     )
     return {"access_token": result["access_token"], "token_type": "bearer"}
@@ -63,22 +62,23 @@ async def refresh_token_endpoint(
     user_id   = user_data["user_id"]
     old_token = user_data["token_record"].token
 
-    # 1) Rotate old → new
+    # 1) Rotate the old refresh token into a new one
     new_refresh = await rotate_refresh_token(db, old_token, user_id)
 
-    # 2) New JWT
+    # 2) Issue new access token
     access_token = create_access_token({
         "sub": user_id,
         "role": user_data["token_record"].user.role
     })
 
-    # 3) Reset the cookie
+    # 3) Send new refresh cookie
     response.set_cookie(
-        name="refresh_token",
+        key="refresh_token",
         value=new_refresh,
         httponly=True,
-        secure=True,
+        secure=False,
         samesite="strict",
+        path="/",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400,
     )
     return {"access_token": access_token, "token_type": "bearer"}
@@ -90,8 +90,11 @@ async def logout_endpoint(
     user_data=Depends(get_current_user_from_refresh),
     db: AsyncSession = Depends(get_db),
 ):
-    # Revoke in DB
+    # 1) Revoke in DB
     await revoke_refresh_token(db, user_data["token_record"].token)
-    # Clear cookie in browser
-    response.delete_cookie("refresh_token", path="/")
+    # 2) Clear the cookie
+    response.delete_cookie(
+        key="refresh_token",
+        path="/",
+    )
     return
