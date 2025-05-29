@@ -32,12 +32,12 @@ services:
       FRONTEND_BASE_URL: http://localhost:8080
 
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
     container_name: easyabroad-frontend
     ports:
       - "8080:80"
-    volumes:
-      - ./frontend:/usr/share/nginx/html
 
   db:
     image: mysql:8.0
