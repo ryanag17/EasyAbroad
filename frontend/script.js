@@ -213,14 +213,84 @@ function initEmailChecker() {
   });
 }
 
-function initPasswordToggles() {
-  document.querySelectorAll(".toggle-password").forEach((toggle) => {
-    toggle.addEventListener("click", () => {
-      const input = document.querySelector(toggle.getAttribute("toggle"));
-      if (!input) return;
-      input.type = input.type === "password" ? "text" : "password";
-      toggle.classList.toggle("fa-eye");
-      toggle.classList.toggle("fa-eye-slash");
+
+
+
+
+// ────────────────────────────────────────────────────────────────────────────────
+// ────────────────────Must have frontend JS functions─────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
+
+// Index.html picture slider
+
+let currentIndex = 0;
+
+function moveSlide(direction) {
+    const slides = document.getElementById("slider-track");
+    const totalSlides = slides.children.length;
+    const slideWidth = slides.children[0].offsetWidth + 50;
+
+    currentIndex += direction;
+
+    if (currentIndex < 0) {
+        currentIndex = totalSlides - 1;
+    } else if (currentIndex >= totalSlides) {
+        currentIndex = 0;
+    }
+
+    slides.scrollTo({
+        left: slideWidth * currentIndex,
+        behavior: 'smooth'
+    });
+}
+
+// Password show/hide toggle used in log-in, reset-password, delete-account, change-password
+
+document.addEventListener("DOMContentLoaded", function () {
+  const toggles = document.querySelectorAll(".toggle-password");
+
+  toggles.forEach(toggle => {
+    toggle.addEventListener("click", function () {
+      const input = document.querySelector(this.getAttribute("toggle"));
+      const type = input.getAttribute("type") === "password" ? "text" : "password";
+      input.setAttribute("type", type);
+      this.classList.toggle("fa-eye");
+      this.classList.toggle("fa-eye-slash");
     });
   });
-}
+});
+
+// Frequently Asked questions - faq.html 
+document.addEventListener("DOMContentLoaded", () => {
+  const faqs = document.querySelectorAll("[unique-script-id='w-w-dm-id'] .faq .faq-question-container");
+
+  faqs.forEach(faq => {
+    faq.addEventListener("click", () => {
+      faq.closest(".faq").classList.toggle("active");
+    });
+  });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("search");
+
+  // Prevent Enter from submitting the form
+  if (searchInput) {
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault(); // Stops page reload
+      }
+    });
+
+    const faqs = document.querySelectorAll(".faq");
+
+    searchInput.addEventListener("input", () => {
+      const value = searchInput.value.toLowerCase();
+      faqs.forEach(faq => {
+        const text = faq.textContent.toLowerCase();
+        faq.style.display = text.includes(value) ? "" : "none";
+      });
+    });
+  }
+});
