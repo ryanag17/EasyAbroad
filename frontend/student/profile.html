@@ -15,34 +15,41 @@
 
 </head>
 <body>
-  <header class="user-header">
-    <a href="home.html" class="to_the_main">
-      <div class="logo">
-        <img src="../images/logo.png" alt="EasyAbroad" class="pic_logo" />
-      </div>
-    </a>
-    <div class="bell-menu">
-      <a href="notifications.html" class="bell-div">
-        <div class="bell-image">
-          <img src="../images/bell.png" alt="Notifications" class="pic_logo" />
-        </div>
-      </a>
-      <div id="menuHamToggle">
-        <input type="checkbox" />
-        <span></span><span></span><span></span>
-        <ul id="mainMenu">
-          <a href="profile.html"><li>Profile</li></a>
-          <a href="appointments.html"><li>Appointments</li></a>
-          <a href="messages.html"><li>Messages</li></a>
-          <a href="settings-support.html"><li>Settings & support</li></a>
-          <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
-        </ul>
-      </div>
-    </div>
-  </header>
+    <header class="user-header">
+        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+        
+        <div class="bell-menu">
+            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+            <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+        <!-- Menu function -->
+        <div id="menuHamToggle">
+            <!-- Create Hidden Checkbos, that will be used as Click Function-->
+            <input type="checkbox">
 
-  <!-- Sign Out Confirmation Modal -->
-  <div id="signOutModal" class="modal-overlay" style="display:none;">
+            <!-- Lets create three line hamburger menu
+            Can animate to display as ham menu and closing menu tag.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <!-- Here menu goes -->
+            <ul id="mainMenu">
+                <a href="profile.html"> <li> Profile </li></a>
+                <a href="appointments.html"> <li> Appointments </li></a>
+                <a href="messages.html"> <li> Messages </li></a>
+                <a href="settings-support.html"> <li> Settings & support </li></a>
+                <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+            </ul>
+        </div>
+        <!-- Menu function END -->
+        </div>
+
+    </header>
+    
+    
+    <!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal-overlay">
     <div class="modal-content">
       <p>Are you sure you want to sign out?</p>
       <div class="modal-buttons">
@@ -51,72 +58,103 @@
       </div>
     </div>
   </div>
-
-  <section class="profile-section">
-    <div class="profile-container">
-      <div class="profile-picture">
-        <div class="profile-pic-wrapper">
-          <img id="profilePic" src="../images/avatar.png" alt="Profile Picture" class="avatar" />
-          <label for="fileInput" class="change-pic-link">Change profile picture</label>
-          <input type="file" id="fileInput" accept="image/*" style="display:none;" />
-        </div>
-
-        <div class="language-group">
-          <label>Languages:</label>
-          <select id="language-select" multiple></select>
-        </div>
-
-        <div class="city-group">
-          <label for="city">City:</label>
-          <input type="text" id="city" placeholder="Enter your city" disabled/>
-        </div>
-      </div>
-
-      <form class="profile-form" onsubmit="return false;">
-        <div class="form-group">
-          <label for="name">Name:</label>
-          <input type="text" id="name" placeholder="Enter your name" disabled/>
-        </div>
-        <div class="form-group">
-          <label for="surname">Last Name:</label>
-          <input type="text" id="surname" placeholder="Enter your surname" disabled/>
-        </div>
-        <div class="form-group">
-          <label for="birthday">Birthday:</label>
-          <input type="date" id="birthday" disabled/>
-        </div>
-        <div class="gender_country">
-          <div class="gender-group">
-            <label>Gender:</label>
-            <select id="gender" disabled>
-              <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
+    
+    
+    <section class="profile-section">
+        <div class="profile-container">
+          <div class="profile-picture">
+            
+            <!-- Profile Picture -->
+            <div class="profile-pic-wrapper">
+                <img id="profilePic" src="../images/avatar.png" alt="Profile Picture" class="avatar">
+                    <label for="fileInput" class="change-pic-link">Change profile picture</label>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+  
+            
+            <div class="language-group">
+                <label>Languages:</label>
+                <select id="language-select" class="select_language" name="languages" multiple>
+                    <option value="english">English</option>
+                    <option value="turkish">Turkish</option>
+                    <option value="german">German</option>
+                    <option value="french">French</option>
+                    <option value="spanish">Spanish</option>
+                    <option value="arabic">Arabic</option>
+                    <option value="russian">Russian</option>
+                  </select>
+                  
+              </div>
+              
+            
+              
+                <div class="city-group">
+                    <label class="city_label" for="city">City:</label>
+                    <input type="text" class="city_input" placeholder="Enter your city" id="city" disabled>
+                </div>
+              
           </div>
-          <div class="country-group">
-            <label>Country:</label>
-            <select id="country" disabled>
-              <option value="">Select</option>
-              <option value="germany">Germany</option>
-              <option value="turkey">Turkey</option>
-              <option value="usa">USA</option>
-              <option value="canada">Canada</option>
-              <option value="france">France</option>
-            </select>
-          </div>
+      
+          <form class="profile-form">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="name_input" id="name" placeholder="Enter your name" disabled/>
+            </div>
+      
+            <div class="form-group">
+                <label for="surname">Last Name:</label>
+                <input type="text" id="surname" class="name_input" placeholder="Enter your surname" disabled/>
+            </div>
+      
+            <div class="form-group">
+                <label for="birthday">Birthday:</label>
+                <input type="date" class="name_input" name="birthday" disabled>
+            </div>
+      
+            <div class="gender_country">
+                <div class="gender-group">
+                    <label>Gender:</label>
+                    <select name="gender" disabled>
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    </select>
+                </div>
+            
+                <div class="country-group">
+                    <label>Country:</label>
+                    <select name="country" disabled>
+                      <option value="">Select</option>
+                      <option value="germany">Germany</option>
+                      <option value="turkey">Turkey</option>
+                      <option value="usa">USA</option>
+                      <option value="canada">Canada</option>
+                      <option value="france">France</option>
+                    </select>
+                  </div>
+                
+                
+            </div>
+      
+            <div class="form-group">
+                <label for="email-id">Email:</label>
+                <input type="email" name="email" id="email-id" placeholder="Enter email" oninput="checker()" disabled>
+                <div id="icon">
+                </div>
+                <p id="error-msg">Please Enter A Valid Email</p>
+            </div>
+      
+      
+            <div class="form-buttons">
+              <button type="button" class="edit-btn">Edit</button>
+            </div>
+          </form>
         </div>
-        <div class="form-group">
-          <label for="email-id">Email:</label>
-          <input type="email" id="email-id" placeholder="Enter email" disabled/>
-        </div>
-        <div class="form-buttons">
-          <button type="button" class="edit-btn">Edit</button>
-        </div>
-      </form>
-    </div>
-  </section>
+      </section>
+      
+      
+
 
     <footer>
         <div>
@@ -155,6 +193,7 @@
           </a>
         </div>
     </footer>
+
     <script>
         
         // Image selector
