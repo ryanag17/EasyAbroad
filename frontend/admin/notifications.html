@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+
+<body>
+    <header class="user-header">
+            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+            
+            <div class="bell-menu">
+                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+            <!-- Menu function -->
+            <div id="menuHamToggle">
+                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                <input type="checkbox">
+    
+                <!-- Lets create three line hamburger menu
+                Can animate to display as ham menu and closing menu tag.
+                -->
+                <span></span>
+                <span></span>
+                <span></span>
+    
+                <!-- Here menu goes -->
+                <ul id="mainMenu">
+                    <a href="profile.html"> <li> Profile </li></a>
+                    <a href="appointments.html"> <li> Appointments </li></a>
+                    <a href="messages.html"> <li> Messages </li></a>
+                    <a href="consultancy-areas.html"> <li> Consultancy areas </li></a>
+                    <a href="timetable.html"> <li> Timetable </li></a>
+                    <a href="settings-support.html"> <li> Settings & support </li></a>
+                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+                </ul>
+            </div>
+            <!-- Menu function END -->
+            </div>
+ 
+    </header>
+    
+    
+    <!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal-overlay">
+    <div class="modal-content">
+      <p>Are you sure you want to sign out?</p>
+      <div class="modal-buttons">
+        <button onclick="confirmSignOut()">Yes</button>
+        <button onclick="closeModal()">No</button>
+      </div>
+    </div>
+  </div>
+  
+    <main class="notifications-container">
+      <h2>Notifications</h2>
+      <div id="notificationArea">
+      </div>
+    </main>
+
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="../faq.html" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="../contact-us.html" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="../privacy-policy.html" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="../about-us.html" class="class_footer">
+                <p>About Us</p>
+            </a>
+            <a href="../terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
+        </div>
+    </footer>
+
+    <script>
+      function showSignOutModal() {
+        document.getElementById('signOutModal').style.display = 'flex';
+      }
+
+      function closeModal() {
+        document.getElementById('signOutModal').style.display = 'none';
+      }
+
+      function confirmSignOut() {
+        window.location.href = "../../index.html";
+      }
+
+      //dumb dummy data
+
+      const notifications = [
+        {
+          id: 1,
+          type: "message",
+          text: "You have a message! Check your new message.",
+          read: false,
+          redirect: "messages.html"
+        },
+        {
+          id: 2,
+          type: "appointment",
+          text: "You have a new meeting request. Click to see the details.",
+          read: false,
+          redirect: "appointments.html"
+        }
+      ];
+
+      const notificationArea = document.getElementById("notificationArea");
+
+      function renderNotifications(selectedIds = []) {
+        notificationArea.innerHTML = "";
+
+        if (notifications.length === 0) {
+          notificationArea.innerHTML = `<p>There are currently no notifications.</p>`;
+          return;
+        }
+
+        const selectAllDiv = document.createElement("div");
+        selectAllDiv.classList.add("select-all-row");
+        selectAllDiv.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" id="selectAll" />
+              <label for="selectAll">Select all</label>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <button id="toggleReadSelected" class="bulk-btn">Mark Selected</button>
+              <button id="deleteSelected" class="bulk-btn">Delete Selected</button>
+            </div>
+          </div>
+        `;
+        notificationArea.appendChild(selectAllDiv);
+
+        notifications.forEach((notif) => {
+          const div = document.createElement("div");
+          div.className = `notification-row ${notif.read ? "read" : "unread"}`;
+          div.innerHTML = `
+            <input type="checkbox" class="notif-checkbox" data-id="${notif.id}" ${selectedIds.includes(notif.id) ? "checked" : ""} />
+            <span class="notif-text" onclick="window.location.href='${notif.redirect}'" style="cursor: pointer;">
+              ${notif.text}
+            </span>
+            <button class="mark-btn" onclick="toggleRead(${notif.id})">
+              <i class="fas ${notif.read ? 'fa-envelope-open' : 'fa-envelope'}"></i>
+            </button>
+            <button class="trash-btn" onclick="deleteNotification(${notif.id})">
+              <i class="fas fa-trash"></i>
+            </button>
+          `;
+          notificationArea.appendChild(div);
+        });
+
+        document.querySelectorAll(".notif-checkbox").forEach(cb => {
+          cb.addEventListener("change", syncSelectAllCheckbox);
+        });
+
+        syncSelectAllCheckbox();
+        setupEventListeners();
+        updateToggleButtonText();
+      }
+
+      function setupEventListeners() {
+        const toggleReadBtn = document.getElementById("toggleReadSelected");
+        const checkboxes = document.querySelectorAll(".notif-checkbox");
+
+        checkboxes.forEach(cb => {
+          cb.addEventListener("change", () => updateToggleButtonText());
+        });
+
+        document.getElementById("selectAll").addEventListener("change", function () {
+          const isChecked = this.checked;
+          document.querySelectorAll(".notif-checkbox").forEach(cb => {
+            cb.checked = isChecked;
+          });
+          updateToggleButtonText();
+        });
+
+        toggleReadBtn.addEventListener("click", () => {
+          const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
+          if (selectedCheckboxes.length === 0) {
+            alert("Please select at least one notification.");
+            return;
+          }
+
+          const selectedIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.getAttribute("data-id")));
+          const allRead = selectedIds.every(id => {
+            const notif = notifications.find(n => n.id === id);
+            return notif && notif.read;
+          });
+
+          selectedIds.forEach(id => {
+            const notif = notifications.find(n => n.id === id);
+            if (notif) notif.read = !allRead;
+          });
+
+          renderNotifications(selectedIds);
+        });
+
+        document.getElementById("deleteSelected").addEventListener("click", () => {
+          const selected = document.querySelectorAll(".notif-checkbox:checked");
+          if (selected.length === 0) {
+            alert("Please select at least one notification.");
+            return;
+          }
+          if (confirm("Are you sure you want to delete the selected notifications?")) {
+            const idsToDelete = Array.from(selected).map(cb => parseInt(cb.getAttribute("data-id")));
+            for (const id of idsToDelete) {
+              const index = notifications.findIndex(n => n.id === id);
+              if (index !== -1) notifications.splice(index, 1);
+            }
+            renderNotifications();
+          }
+        });
+      }
+
+      function updateToggleButtonText() {
+        const toggleReadBtn = document.getElementById("toggleReadSelected");
+        const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
+
+        if (selectedCheckboxes.length === 0) {
+          toggleReadBtn.textContent = "Mark Selected";
+          return;
+        }
+
+        let anyUnread = false;
+        selectedCheckboxes.forEach(cb => {
+          const notif = notifications.find(n => n.id === parseInt(cb.getAttribute("data-id")));
+          if (notif && !notif.read) anyUnread = true;
+        });
+
+        toggleReadBtn.textContent = anyUnread ? "Mark Selected as Read" : "Mark Selected as Unread";
+      }
+
+      function toggleRead(id) {
+        const notif = notifications.find(n => n.id === id);
+        if (notif) {
+          notif.read = !notif.read;
+          renderNotifications([id]);
+        }
+      }
+
+      function deleteNotification(id) {
+        if (confirm("Are you sure you want to delete this notification?")) {
+          const index = notifications.findIndex(n => n.id === id);
+          if (index !== -1) {
+            notifications.splice(index, 1);
+            renderNotifications();
+          }
+        }
+      }
+
+      function syncSelectAllCheckbox() {
+        const selectAllCheckbox = document.getElementById("selectAll");
+        const checkboxes = document.querySelectorAll(".notif-checkbox");
+        const checked = document.querySelectorAll(".notif-checkbox:checked");
+
+        if (checkboxes.length > 0 && checkboxes.length === checked.length) {
+          selectAllCheckbox.checked = true;
+        } else {
+          selectAllCheckbox.checked = false;
+        }
+      }
+
+      renderNotifications();
+    </script>
+
+    <script src="../script.js"></script>
+</body>
+</html>

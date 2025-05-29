@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete account</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+    <header class="user-header">
+            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+            
+            <div class="bell-menu">
+                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+            <!-- Menu function -->
+            <div id="menuHamToggle">
+                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                <input type="checkbox">
+    
+                <!-- Lets create three line hamburger menu
+                Can animate to display as ham menu and closing menu tag.
+                -->
+                <span></span>
+                <span></span>
+                <span></span>
+    
+                <!-- Here menu goes -->
+                <ul id="mainMenu">
+                    <a href="profile.html"> <li> Profile </li></a>
+                    <a href="appointments.html"> <li> Appointments </li></a>
+                    <a href="messages.html"> <li> Messages </li></a>
+                    <a href="consultancy-areas.html"> <li> Consultancy areas </li></a>
+                    <a href="timetable.html"> <li> Timetable </li></a>
+                    <a href="settings-support.html"> <li> Settings & support </li></a>
+                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+                </ul>
+            </div>
+            <!-- Menu function END -->
+            </div>
+ 
+    </header>
+    
+    <!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal-overlay">
+    <div class="modal-content">
+      <p>Are you sure you want to sign out?</p>
+      <div class="modal-buttons">
+        <button onclick="confirmSignOut()">Yes</button>
+        <button onclick="closeModal()">No</button>
+      </div>
+    </div>
+  </div>
+
+    <main>
+    <section class="delete-account-container">
+        <h1>Delete account</h1>
+        <p>Are you sure you want to delete your account? Once you delete your account, it cannot be undone.</p>
+
+        <form id="deleteAccountForm">
+        <div class="form-group">
+            <label for="email">Email address:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="deletePassword">Password:</label>
+            <div class="password-wrapper">
+            <input type="password" id="deletePassword" name="deletePassword" required>
+            <i class="fas fa-eye toggle-password" toggle="#deletePassword"></i>
+            </div>
+        </div>
+
+        <p id="deleteError" class="warning-text" style="display: none;">Email or password is incorrect.</p>
+
+        <button type="submit" class="delete-button">Delete my account</button>
+        </form>
+    </section>
+    </main>
+
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="../faq.html" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="../contact-us.html" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="../privacy-policy.html" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="../about-us.html" class="class_footer">
+                <p>About Us</p>
+            </a>
+            <a href="../terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
+        </div>
+    </footer>
+    <script>
+        function showSignOutModal() {
+  document.getElementById('signOutModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('signOutModal').style.display = 'none';
+}
+
+function confirmSignOut() {
+  window.location.href = "../../index.html";
+}
+
+  const deleteForm = document.getElementById("deleteAccountForm");
+  const deleteEmail = document.getElementById("email");
+  const deletePassword = document.getElementById("deletePassword");
+  const deleteError = document.getElementById("deleteError");
+  let deleteFormDirty = false;
+
+  // dummy data
+  const dummyEmail = "user@example.com";
+  const dummyPassword = "123456";
+
+  deleteForm.addEventListener("input", () => {
+    deleteFormDirty = true;
+    deleteError.style.display = "none";
+  });
+
+  deleteForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = deleteEmail.value.trim();
+    const password = deletePassword.value;
+
+    if (email !== dummyEmail || password !== dummyPassword) {
+      deleteError.style.display = "block";
+      return;
+    }
+
+    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      deleteFormDirty = false;
+      alert("Your account has been deleted.");
+      window.location.href = "../../index.html";
+    }
+  });
+
+  window.addEventListener("beforeunload", (e) => {
+    if (deleteFormDirty) {
+      e.preventDefault();
+      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
+    }
+  });
+
+  // Toggle show/hide password
+  document.querySelectorAll(".toggle-password").forEach(button => {
+    button.addEventListener("click", () => {
+      const targetId = button.getAttribute("data-target");
+      const input = document.getElementById(targetId);
+      const isPassword = input.type === "password";
+
+      input.type = isPassword ? "text" : "password";
+      button.textContent = isPassword ? "Hide" : "Show";
+    });
+  });
+
+    </script>
+    <script src="../script.js"></script>
+</body>
+</html>
