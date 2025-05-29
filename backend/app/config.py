@@ -1,5 +1,3 @@
-# backend/app/config.py
-
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -10,9 +8,11 @@ class Settings(BaseSettings):
     DB_PASSWORD: str = Field(..., description="Database password")
     DB_NAME:     str = Field(..., description="Database name")
 
-    # JWT
-    JWT_SECRET:    str = Field(..., description="Secret key for signing JWTs")
-    JWT_ALGORITHM: str = Field("HS256", description="JWT signing algorithm")
+    # JWT / Token
+    JWT_SECRET:                  str = Field(..., description="Secret key for signing JWTs")
+    JWT_ALGORITHM:               str = Field("HS256", description="JWT signing algorithm")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(15, description="Access token lifetime in minutes")
+    REFRESH_TOKEN_EXPIRE_DAYS:   int = Field(7,  description="Refresh token lifetime in days")
 
     # Email
     EMAIL_HOST: str = Field(..., description="SMTP server host")
@@ -22,8 +22,6 @@ class Settings(BaseSettings):
     # Frontend
     FRONTEND_BASE_URL: str = Field(..., description="Base URL of the frontend application")
 
-    # Pydantic-v2 settings config — do not load any .env
     model_config = SettingsConfigDict(env_file=None)
 
-# Instantiate — will error immediately if any required var is missing
 settings = Settings()

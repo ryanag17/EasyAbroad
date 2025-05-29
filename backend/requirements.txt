@@ -7,3 +7,9 @@ pydantic-settings
 bcrypt
 email-validator
 python-multipart
+SQLAlchemy>=1.4
+josepy
+pydantic
+aiomysql>=0.1.0
+
+
