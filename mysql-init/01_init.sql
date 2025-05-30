@@ -3,6 +3,7 @@
 CREATE SCHEMA IF NOT EXISTS easyabroad;
 USE easyabroad;
 
+
 -- Users table now includes reset_token & token_expiry
 CREATE TABLE IF NOT EXISTS users (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -38,7 +39,7 @@ CREATE TABLE IF NOT EXISTS students (
   birthday DATE,
   gender ENUM('male','female','other'),
   languages TINYTEXT,
-  profile_picture VARCHAR(255)
+  profile_picture VARCHAR(255),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -170,7 +171,7 @@ USE easyabroad;
 -- Insert Admins
 INSERT INTO users (first_name, last_name, email, password_hash, role, city, country, created_at, updated_at)
 VALUES 
-('Alice', 'Admin', 'admin@example.com', 'hashed_pw_admin', 'admin', 'Berlin', 'Germany', NOW(), NOW());
+('Alice', 'Admin', 'admin@example.com', '$2b$12$wqCq7qphM39u2paD17YxseVoXQocjJBo/1F30Jh9dBYnt3FCRub/K', 'admin', 'Berlin', 'Germany', NOW(), NOW());
 
 INSERT INTO admins (user_id, access_level, notes)
 VALUES (1, 'super', 'Main admin account');
@@ -178,7 +179,7 @@ VALUES (1, 'super', 'Main admin account');
 -- Insert Consultants
 INSERT INTO users (first_name, last_name, email, password_hash, role, city, country, created_at, updated_at)
 VALUES 
-('Clara', 'Consultant', 'clara.consult@example.com', 'hashed_pw_consultant', 'consultant', 'Munich', 'Germany', NOW(), NOW());
+('Clara', 'Consultant', 'clara.consult@example.com', '$2b$12$wqCq7qphM39u2paD17YxseVoXQocjJBo/1F30Jh9dBYnt3FCRub/K', 'consultant', 'Munich', 'Germany', NOW(), NOW());
 
 INSERT INTO consultants (user_id, birthday, gender, focus, languages, place_of_work, proof_of_education, education_period, proof_of_work, internship_period)
 VALUES 
@@ -187,7 +188,7 @@ VALUES
 -- Insert Students
 INSERT INTO users (first_name, last_name, email, password_hash, role, city, country, created_at, updated_at)
 VALUES 
-('Tom', 'Student', 'tom.student@example.com', 'hashed_pw_student', 'student', 'Frankfurt', 'Germany', NOW(), NOW());
+('Tom', 'Student', 'tom.student@example.com', '$2b$12$wqCq7qphM39u2paD17YxseVoXQocjJBo/1F30Jh9dBYnt3FCRub/K', 'student', 'Frankfurt', 'Germany', NOW(), NOW());
 
 INSERT INTO students (user_id, birthday, gender, languages)
 VALUES (3, '2002-11-10', 'male', 'English');

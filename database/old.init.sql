@@ -1,3 +1,4 @@
+
 SOURCE 01_create_schema.sql;
 SOURCE 02_create_users.sql;
 SOURCE 03_create_consultants.sql;
