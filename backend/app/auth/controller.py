@@ -53,10 +53,14 @@ async def register(
         db.add(Consultant(user_id=new_user.id))
     await db.commit()
 
-    # 5) Issue tokens
-    access_token  = create_access_token({"sub": new_user.id, "role": new_user.role})
+    # 5) Issue tokens (cast 'sub' claim to string)
+    access_token = create_access_token({
+        "sub": str(new_user.id),
+        "role": new_user.role
+    })
     refresh_token = await create_refresh_token(db, new_user.id)
     return {"access_token": access_token, "refresh_token": refresh_token}
+
 
 async def login(db: AsyncSession, creds: UserLogin):
     # Fetch user by email
@@ -77,17 +81,21 @@ async def login(db: AsyncSession, creds: UserLogin):
         print("[DEBUG] login: password mismatch, raising 401")
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # Issue tokens
-    access_token = create_access_token({"sub": user.id, "role": user.role})
+    # Issue tokens (cast 'sub' claim to string)
+    access_token = create_access_token({
+        "sub": str(user.id),
+        "role": user.role
+    })
     refresh_token = await create_refresh_token(db, user.id)
     print("[DEBUG] login: issuing tokens")
     return {"access_token": access_token, "refresh_token": refresh_token}
+
 
 async def forgot_password(
     db: AsyncSession,
     data: ForgotPasswordRequest
 ):
-    token  = secrets.token_hex(16)
+    token = secrets.token_hex(16)
     expiry = datetime.utcnow() + timedelta(hours=1)
     await db.execute(
         text("UPDATE users SET reset_token=:t, token_expiry=:e WHERE email=:em"),

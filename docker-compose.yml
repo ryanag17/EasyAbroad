@@ -6,20 +6,22 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
-      - mailhog
+      db:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
     volumes:
       - ./backend:/app            # mount your local code into the container
     working_dir: /app
-    command: 
+    command:
       - uvicorn
-      - app.main:app 
+      - app.main:app
       - --host
       - "0.0.0.0"
       - --port
       - "8000"
     environment:
-      # Database settings — point at the DB service name, not 127.0.0.1
+      # Database settings — point at the DB service name
       DB_HOST:        easyabroad-db
       DB_USER:        user
       DB_PASSWORD:    userpassword
@@ -28,6 +30,8 @@ services:
       # JWT settings
       JWT_SECRET:     armani
       JWT_ALGORITHM:  HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 15
+      REFRESH_TOKEN_EXPIRE_DAYS: 7
 
       # Email settings
       EMAIL_HOST:     mailhog
@@ -57,6 +61,11 @@ services:
       MYSQL_ROOT_HOST:     "%"
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     volumes:
       - ./mysql-init:/docker-entrypoint-initdb.d:ro
 
@@ -68,4 +77,5 @@ services:
       - "1025:1025"  # SMTP
 
 volumes:
-  db-data:
+  db-data: {}
+

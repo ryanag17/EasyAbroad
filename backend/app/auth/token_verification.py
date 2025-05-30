@@ -1,3 +1,6 @@
+
+# backend/app/auth/token_verification.py
+
 from fastapi import HTTPException, Depends, Cookie
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
@@ -13,10 +16,18 @@ security = HTTPBearer()
 async def get_current_user(
     creds: HTTPAuthorizationCredentials = Depends(security)
 ):
+    raw_token = creds.credentials
+    print("🛠️ Raw token:", raw_token)
     try:
-        data = jwt.decode(creds.credentials, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
-        return {"user_id": data["sub"], "role": data.get("role")}
-    except JWTError:
+        payload = jwt.decode(
+            raw_token,
+            settings.JWT_SECRET,
+            algorithms=[settings.JWT_ALGORITHM]
+        )
+        print("🛠️ Decoded payload:", payload)
+        return {"user_id": payload["sub"], "role": payload.get("role")}
+    except JWTError as e:
+        print("❌ JWTError:", str(e))
         raise HTTPException(status_code=401, detail="Invalid or expired access token")
 
 async def get_current_user_from_refresh(
@@ -26,7 +37,9 @@ async def get_current_user_from_refresh(
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Missing refresh token")
 
-    result   = await db.execute(select(RefreshToken).where(RefreshToken.token == refresh_token))
+    result = await db.execute(
+        select(RefreshToken).where(RefreshToken.token == refresh_token)
+    )
     db_token = result.scalars().first()
 
     if (
