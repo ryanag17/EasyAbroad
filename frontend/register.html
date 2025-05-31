@@ -57,7 +57,8 @@
 </div>
 
         
-        <a href="" class="login_link"><button class="login_link_page" style="cursor: pointer;" onclick="if (validateRegisterForm() && document.getElementById('terms-checkbox').checked) { registerUser(); } else { alert('Please agree to the Terms and Conditions.'); }">Register</button>
+        <a href="#" id="registerLink">
+        <button class="login_link_page" type="button">Register</button>
         </a><br>
         <a href="log-in.html" class="forgot">Already have an account? Click here to log in!</a>
     </div>
@@ -105,20 +106,26 @@
     <script src="script.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Wire up the built-in helpers from script.js
-            initEmailChecker();
-            initPasswordToggles();
-            // Hook the register button
-            const registerBtn = document.getElementById("registerBtn");
-            if (registerBtn) {
-                registerBtn.addEventListener("click", async () => {
-                    if (!validateRegisterForm()) return;
-                    await registerUser();
-                    });
-                }
-            }
-        );
+        window.addEventListener("DOMContentLoaded", () => {
+         initEmailChecker();
+             initPasswordToggles();
+
+  // Old button wiring 
+  // document.getElementById("registerBtn")?.addEventListener(...)
+  // NEW: handle click on the <a id="registerLink">
+  document.getElementById("registerLink")?.addEventListener("click", async ev => {
+    ev.preventDefault();
+    if (!validateRegisterForm()) return;
+    if (!document.getElementById("terms-checkbox").checked) {
+      return alert("Please agree to the Terms and Conditions.");
+    }
+    await registerUser();
+  });
+
+  document.getElementById("loginBtn")?.addEventListener("click", () => {
+    if (validateLoginForm()) loginUser();
+  });
+});
     </script>
 </body>
 </html>

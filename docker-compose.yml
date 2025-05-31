@@ -43,8 +43,8 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: easyabroad-frontend
     ports:
       - "8080:80"

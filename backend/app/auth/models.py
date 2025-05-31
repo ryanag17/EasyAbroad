@@ -10,17 +10,19 @@ from app.db import Base
 # === 1) Pydantic Schemas ===
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    email:    EmailStr
     password: str
 
 class UserCreate(BaseModel):
+    # The front-end will send JSON keys "name" / "surname",
+    # but we map those to first_name / last_name internally:
     first_name: str = Field(..., alias="name")
     last_name:  str = Field(..., alias="surname")
-    role:       str  # student, consultant, admin
+    role:       str  # "student", "consultant", or "admin"
     email:      EmailStr
     password:   str
 
-    # Pydantic V2: allow population by alias 'name'/'surname'
+    # This tells Pydantic: populate first_name from JSON key "name", etc.
     model_config = ConfigDict(populate_by_name=True)
 
 class ForgotPasswordRequest(BaseModel):
@@ -33,6 +35,7 @@ class ResetPasswordRequest(BaseModel):
 class TokenOut(BaseModel):
     access_token: str
     token_type:   str = "bearer"
+    role:         str
 
 
 # === 2) SQLAlchemy ORM Models ===
@@ -53,9 +56,11 @@ class User(Base):
     created_at    = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at    = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
+    # One‐to‐one relationships to Student and Consultant:
     student        = relationship("Student",      back_populates="user", cascade="all, delete-orphan", uselist=False)
     consultant     = relationship("Consultant",   back_populates="user", cascade="all, delete-orphan", uselist=False)
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
+
 
 class Student(Base):
     __tablename__ = "students"
@@ -66,6 +71,7 @@ class Student(Base):
     profile_picture = Column(String(255), nullable=True)
 
     user = relationship("User", back_populates="student")
+
 
 class Consultant(Base):
     __tablename__ = "consultants"
@@ -82,6 +88,7 @@ class Consultant(Base):
 
     user = relationship("User", back_populates="consultant")
 
+
 class Admin(Base):
     __tablename__ = "admins"
     user_id     = Column(BigInteger, ForeignKey("users.id"), primary_key=True)
@@ -89,6 +96,7 @@ class Admin(Base):
     notes       = Column(Text, nullable=True)
 
     user = relationship("User")
+
 
 class Education(Base):
     __tablename__ = "Education"
@@ -100,13 +108,14 @@ class Education(Base):
     education_start     = Column(DateTime, nullable=True)
     education_finish    = Column(DateTime, nullable=True)
     proof_of_education  = Column(String(255), nullable=True)
-    accommodation        = Column(Boolean, nullable=True)
+    accommodation       = Column(Boolean, nullable=True)
     social_life         = Column(Boolean, nullable=True)
     uni_info            = Column(Boolean, nullable=True)
     travel_info         = Column(Boolean, nullable=True)
     is_verified         = Column(Boolean, nullable=True)
     verified_by         = Column(BigInteger, ForeignKey("admins.user_id"), nullable=True)
     verified_at         = Column(DateTime, nullable=True)
+
 
 class Internship(Base):
     __tablename__ = "Internship"
@@ -124,12 +133,14 @@ class Internship(Base):
     verified_by           = Column(BigInteger, ForeignKey("admins.user_id"), nullable=True)
     verified_at           = Column(DateTime, nullable=True)
 
+
 class Calendar(Base):
     __tablename__ = "Calendar"
-    user_id             = Column(BigInteger, ForeignKey("consultants.user_id"), primary_key=True)
-    available_day       = Column(String(255), nullable=True)
-    available_time_start= Column(DateTime, nullable=True)
-    available_time_end  = Column(DateTime, nullable=True)
+    user_id               = Column(BigInteger, ForeignKey("consultants.user_id"), primary_key=True)
+    available_day         = Column(String(255), nullable=True)
+    available_time_start  = Column(DateTime, nullable=True)
+    available_time_end    = Column(DateTime, nullable=True)
+
 
 class Booking(Base):
     __tablename__ = "bookings"
@@ -144,6 +155,7 @@ class Booking(Base):
     student    = relationship("Student")
     consultant = relationship("Consultant")
 
+
 class Session(Base):
     __tablename__ = "sessions"
     id          = Column(BigInteger, primary_key=True, index=True)
@@ -154,6 +166,7 @@ class Session(Base):
     notes       = Column(Text, nullable=True)
 
     booking     = relationship("Booking")
+
 
 class Message(Base):
     __tablename__ = "messages"
@@ -167,6 +180,7 @@ class Message(Base):
     sender    = relationship("User", foreign_keys=[sender_id])
     receiver  = relationship("User", foreign_keys=[receiver_id])
     booking   = relationship("Booking")
+
 
 class SupportTicket(Base):
     __tablename__ = "support_tickets"
@@ -183,6 +197,7 @@ class SupportTicket(Base):
     user      = relationship("User")
     resolver  = relationship("Admin", foreign_keys=[resolved_by])
 
+
 class UploadedDocument(Base):
     __tablename__ = "uploaded_documents"
     id                = Column(BigInteger, primary_key=True, index=True)
@@ -194,6 +209,7 @@ class UploadedDocument(Base):
     is_valid          = Column(Boolean, nullable=True)
 
     user = relationship("User")
+
 
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"

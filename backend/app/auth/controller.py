@@ -1,14 +1,11 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, text
+from sqlalchemy import select, text
 from datetime import datetime, timedelta
 import bcrypt
 import secrets
 
-from app.auth.token_service import (
-    create_access_token,
-    create_refresh_token
-)
+from app.auth.token_service import create_access_token, create_refresh_token
 from app.auth.models import User, Student, Consultant
 from app.auth.models import (
     UserLogin,
@@ -18,20 +15,14 @@ from app.auth.models import (
 )
 from app.auth.email_service import send_reset_email
 
-
-async def register(
-    db: AsyncSession,
-    user: UserCreate
-):
+async def register(db: AsyncSession, user: UserCreate):
     # 1) Check email
     result = await db.execute(select(User).where(User.email == user.email))
     if result.scalars().first():
         raise HTTPException(400, "Email already registered")
 
     # 2) Hash pw
-    hashed_pw = bcrypt.hashpw(
-        user.password.encode(), bcrypt.gensalt()
-    ).decode()
+    hashed_pw = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
 
     # 3) Create user
     new_user = User(
@@ -53,43 +44,34 @@ async def register(
         db.add(Consultant(user_id=new_user.id))
     await db.commit()
 
-    # 5) Issue tokens (cast 'sub' claim to string)
-    access_token = create_access_token({
-        "sub": str(new_user.id),
-        "role": new_user.role
-    })
+    # 5) Issue tokens
+    access_token  = create_access_token({"sub": str(new_user.id), "role": new_user.role})
     refresh_token = await create_refresh_token(db, new_user.id)
-    return {"access_token": access_token, "refresh_token": refresh_token}
-
+    return {
+        "access_token":  access_token,
+        "refresh_token": refresh_token,
+        "role":          new_user.role,
+    }
 
 async def login(db: AsyncSession, creds: UserLogin):
     # Fetch user by email
     result = await db.execute(select(User).where(User.email == creds.email))
     user = result.scalars().first()
-    print(f"[DEBUG] login: lookup email={creds.email!r} → user={user!r}")
-
-    # If no user, bail out
     if not user:
-        print("[DEBUG] login: no user found, raising 401")
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Check password
-    print(f"[DEBUG] login: stored_hash={user.password_hash!r}")
-    is_valid = bcrypt.checkpw(creds.password.encode(), user.password_hash.encode())
-    print(f"[DEBUG] login: bcrypt.checkpw → {is_valid}")
-    if not is_valid:
-        print("[DEBUG] login: password mismatch, raising 401")
+    if not bcrypt.checkpw(creds.password.encode(), user.password_hash.encode()):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # Issue tokens (cast 'sub' claim to string)
-    access_token = create_access_token({
-        "sub": str(user.id),
-        "role": user.role
-    })
+    # Issue tokens
+    access_token  = create_access_token({"sub": str(user.id), "role": user.role})
     refresh_token = await create_refresh_token(db, user.id)
-    print("[DEBUG] login: issuing tokens")
-    return {"access_token": access_token, "refresh_token": refresh_token}
-
+    return {
+        "access_token":  access_token,
+        "refresh_token": refresh_token,
+        "role":          user.role,
+    }
 
 async def forgot_password(
     db: AsyncSession,

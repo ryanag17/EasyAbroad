@@ -25,7 +25,7 @@
           <i class="fas fa-eye toggle-password" toggle="#password-id"></i>
         </div>
         <a href="forgot-password.html" class="forgot">Forgot password?</a><br>
-        <a href="" class="login_link"><button class="login_link_page" style="cursor: pointer;" onclick="if (validateLoginForm()) loginUser()">Log in</button>
+        <button type="button" class="login_link_page" id="loginBtn">Log in</button>
         </a><br>
         <a href="register.html" class="forgot">Do not you have an account? Click here to register</a>
     </div>
@@ -75,18 +75,21 @@
     
     <!-- Vanya and Ximena script -->
     <script>
-        window.onload = () => {
-            const token = localStorage.getItem("accessToken");
-            const loginBtn = document.querySelector(".login_link");
-          const registerBtn = document.querySelector(".register_link");
-      
-          if (token) {
-            if (loginBtn) loginBtn.style.display = "none";
-            if (registerBtn) registerBtn.style.display = "none";
-            // Optionally show a "Logout" or "Welcome" section
-          }
-        };
-      </script> 
+     document.addEventListener("DOMContentLoaded", () => {
+    initEmailChecker();
+    initPasswordToggles();
+
+    // Wire login button
+    document.getElementById("loginBtn")
+      .addEventListener("click", () => {
+        if (validateLoginForm()) loginUser();
+      });
+
+    // Hide login if already logged in
+    const token = sessionStorage.getItem("accessToken");
+    if (token) document.getElementById("loginBtn").style.display = "none";
+  });
+  </script>
       
       <script src="script.js"></script>
 </body>
