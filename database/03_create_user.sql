@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash VARCHAR(255),
   role ENUM('student','consultant','admin'),
   city VARCHAR(255),
-  country VARCHAR(255),
+  country_name VARCHAR(255),
   birthday DATE,
   gender ENUM('male','female','other'),
   access_level ENUM('standard','super') DEFAULT 'standard',
