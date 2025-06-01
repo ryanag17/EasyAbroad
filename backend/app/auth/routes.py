@@ -1,24 +1,41 @@
-from fastapi import APIRouter, Depends, Response, status, HTTPException
+# backend/app/auth/routes.py
+
+from fastapi import APIRouter, Depends, Response, status, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_db
 from app.config import settings
-from app.auth.models import UserCreate, UserLogin, TokenOut
+from app.auth.models import (
+    UserCreate,
+    UserLogin,
+    TokenOut,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
+)
 from app.auth.controller import (
     register,
     login,
     get_student_profile,
     get_consultant_profile,
+    forgot_password,
+    reset_password
 )
-from app.auth.token_service import create_access_token, revoke_refresh_token, rotate_refresh_token
-from app.auth.token_verification import get_current_user, get_current_user_from_refresh
+from app.auth.token_service import (
+    create_access_token,
+    revoke_refresh_token,
+    rotate_refresh_token,
+)
+from app.auth.token_verification import (
+    get_current_user,
+    get_current_user_from_refresh,
+)
 
 router = APIRouter(tags=["auth"])
 
 
 def require_role(role_name: str):
     """
-    Dependency that ensures the current JWT-authenticated user has the given role.
+    Dependency that ensures the current JWT‐authenticated user has the given role.
     """
     async def checker(user=Depends(get_current_user)):
         if user["role"] != role_name:
@@ -28,14 +45,6 @@ def require_role(role_name: str):
             )
         return user
     return checker
-
-
-@router.get("/me")
-async def who_am_i(user=Depends(get_current_user)):
-    """
-    Debug endpoint: returns whatever FastAPI decoded from your Bearer JWT.
-    """
-    return user
 
 
 @router.post(
@@ -49,9 +58,10 @@ async def register_endpoint(
     db: AsyncSession = Depends(get_db),
 ):
     """
-    1) Create a new User (student/consultant), hash password, seed the appropriate profile row.
-    2) Issue access & refresh tokens.
-    3) Return the access-token in JSON and set the refresh-token as an HttpOnly cookie.
+    1) Create a new User (with all merged fields).
+    2) Hash password, store languages if provided.
+    3) Issue access & refresh tokens.
+    4) Return the access token in JSON and set the refresh token as an HttpOnly cookie.
     """
     result = await register(db, user)
 
@@ -60,7 +70,7 @@ async def register_endpoint(
         key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
-        secure=False,     # In production, switch this to True
+        secure=False,  # In production, switch this to True
         samesite="strict",
         path="/",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400,
@@ -69,7 +79,7 @@ async def register_endpoint(
     return {
         "access_token": result["access_token"],
         "token_type":   "bearer",
-        "role":         user.role, 
+        "role":         user.role,
     }
 
 
@@ -82,7 +92,7 @@ async def login_endpoint(
     """
     1) Verify credentials, fetch user, compare bcrypt hash.
     2) Issue new access & refresh tokens.
-    3) Return access-token in JSON and set refresh-token as an HttpOnly cookie.
+    3) Return access token in JSON and set refresh token cookie.
     """
     result = await login(db, creds)
 
@@ -90,7 +100,7 @@ async def login_endpoint(
         key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
-        secure=False,
+        secure=False,  # In production, set to True
         samesite="strict",
         path="/",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400,
@@ -110,29 +120,27 @@ async def refresh_token_endpoint(
     db: AsyncSession = Depends(get_db),
 ):
     """
-    1) Read the refresh-token from the HttpOnly cookie, verify it, and load the record from DB.
-    2) Rotate: issue a brand-new refresh token, revoke the old one.
-    3) Issue a fresh access token.
-    4) Return the new access token in JSON and set the new refresh token cookie.
+    1) Read the refresh token from the HttpOnly cookie and verify it in the DB.
+    2) Rotate: revoke the old refresh token, insert a new one.
+    3) Issue a fresh access token (JWT) using the fetched role.
+    4) Set the new refresh token cookie, return the new access token in JSON.
     """
     user_id   = user_data["user_id"]
-    old_token = user_data["token_record"].token
+    old_token = user_data["token"]
+    role      = user_data["role"]
 
-    # Rotate the refresh-token in the DB (invalidate old, insert new):
+    # Rotate the refresh token in the DB (invalidate old, insert new):
     new_refresh = await rotate_refresh_token(db, old_token, user_id)
 
-    # Create new access token:
-    access_token = create_access_token({
-        "sub":  user_id,
-        "role": user_data["token_record"].user.role
-    })
+    # Create new access token using role:
+    access_token = create_access_token({"sub": user_id, "role": role})
 
     # Overwrite the HttpOnly cookie with the new refresh token:
     response.set_cookie(
         key="refresh_token",
         value=new_refresh,
         httponly=True,
-        secure=False,
+        secure=False,  # In production, set to True
         samesite="strict",
         path="/",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400,
@@ -141,7 +149,7 @@ async def refresh_token_endpoint(
     return {
         "access_token": access_token,
         "token_type":   "bearer",
-        "role":         user_data["token_record"].user.role,
+        "role":         role,
     }
 
 
@@ -155,27 +163,59 @@ async def logout_endpoint(
     1) Revoke the provided refresh token (from cookie) in the DB.
     2) Clear the refresh_token cookie.
     """
-    await revoke_refresh_token(db, user_data["token_record"].token)
+    await revoke_refresh_token(db, user_data["token"])
     response.delete_cookie(key="refresh_token", path="/")
 
 
-@router.get("/students/profile")
+@router.post("/forgot-password", status_code=status.HTTP_200_OK)
+async def forgot_password_endpoint(
+    data: ForgotPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    1) Generate a reset token, save it in users.reset_token & token_expiry.
+    2) Send an email with a password-reset link.
+    """
+    return await forgot_password(db, data)
+
+
+@router.post("/reset-password", status_code=status.HTTP_200_OK)
+async def reset_password_endpoint(
+    data: ResetPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    1) Verify the reset token is valid & not expired.
+    2) Hash the new password, update the user record, clear reset_token fields.
+    """
+    return await reset_password(db, data)
+
+
+@router.get("/students/profile", status_code=status.HTTP_200_OK)
 async def student_profile(
     user=Depends(require_role("student")),
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Only a user with role="student" can reach here. Returns that student's profile.
+    Only a user with role="student" can reach here. Returns that student’s merged profile.
     """
     return await get_student_profile(db, user["user_id"])
 
 
-@router.get("/consultants/profile")
+@router.get("/consultants/profile", status_code=status.HTTP_200_OK)
 async def consultant_profile(
     user=Depends(require_role("consultant")),
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Only a user with role="consultant" can reach here. Returns that consultant's profile.
+    Only a user with role="consultant" can reach here. Returns that consultant’s merged profile.
     """
     return await get_consultant_profile(db, user["user_id"])
+
+
+@router.get("/debug-headers", status_code=status.HTTP_200_OK)
+async def debug_headers(request: Request):
+    """
+    Returns a dict of all request headers—useful for debugging CORS or cookie issues.
+    """
+    return {k: v for k, v in request.headers.items()}

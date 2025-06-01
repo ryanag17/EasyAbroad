@@ -2,15 +2,10 @@ fastapi
 uvicorn
 mysql-connector-python
 python-jose
-passlib[bcrypt]
-pydantic-settings
 bcrypt
 email-validator
 python-multipart
 SQLAlchemy>=1.4
-josepy
-pydantic
+pydantic-settings
 aiomysql>=0.1.0
-cryptography
-
-
+python-dotenv==1.0.0

@@ -1,19 +1,16 @@
-# backend/run.py
+# backend/app/run.py
 
-import os
-import sys
+import os, sys
 
-# 1) Add backend/ (where run.py and main.py live) to the path
+# Add backend/ to sys.path so that `uvicorn app.main:app` works
 sys.path.insert(0, os.path.dirname(__file__))
 
 if __name__ == "__main__":
     import uvicorn
-
-    # 2) Point at main.py instead of app/main.py
     uvicorn.run(
-        "main:app",       # ← note: "main", not "app.main"
-        host="127.0.0.1",
+        "app.main:app",  # points to backend/app/main.py
+        host="0.0.0.0",
         port=8000,
-        reload=True,      # you can re-enable reload now
-        reload_dirs=["."],# watch the current dir (backend/)
+        reload=True,
+        reload_dirs=["."],  # watch the current directory for changes
     )

@@ -1,3 +1,4 @@
+version: "3.8"
 
 services:
   backend:
@@ -11,34 +12,25 @@ services:
       mailhog:
         condition: service_started
     volumes:
-      - ./backend:/app            # mount your local code into the container
+      - ./backend:/app
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
     working_dir: /app
-    command:
-      - uvicorn
-      - app.main:app
-      - --host
-      - "0.0.0.0"
-      - --port
-      - "8000"
     environment:
-      # Database settings — point at the DB service name
+      # Must match what 02_native_plugin.sql expects below:
       DB_HOST:        easyabroad-db
       DB_USER:        user
       DB_PASSWORD:    userpassword
       DB_NAME:        easyabroad
 
-      # JWT settings
       JWT_SECRET:     armani
       JWT_ALGORITHM:  HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 15
-      REFRESH_TOKEN_EXPIRE_DAYS: 7
+      REFRESH_TOKEN_EXPIRE_DAYS:   7
 
-      # Email settings
       EMAIL_HOST:     mailhog
       EMAIL_PORT:     "1025"
       EMAIL_FROM:     no-reply@easyabroad.com
 
-      # Frontend URL
       FRONTEND_BASE_URL: http://localhost:8080
 
   frontend:
@@ -67,15 +59,15 @@ services:
       timeout: 3s
       retries: 10
     volumes:
+      - db-data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d:ro
 
   mailhog:
     image: mailhog/mailhog
     container_name: easyabroad-mailhog
     ports:
-      - "8025:8025"  # Web UI
-      - "1025:1025"  # SMTP
+      - "8025:8025"
+      - "1025:1025"
 
 volumes:
-  db-data: {}
-
+  db-data:

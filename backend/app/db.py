@@ -1,30 +1,30 @@
+# backend/app/db.py
+
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import text
 from app.config import settings
 
-
-
-import mysql.connector
-def get_db_connection():
-    return mysql.connector.connect(
-        host=settings.DB_HOST,
-        user=settings.DB_USER,
-        password=settings.DB_PASSWORD,
-        database=settings.DB_NAME,
-    )
-
+# Compose the MySQL URL for aiomysql
 DATABASE_URL = (
-    f"mysql+aiomysql://{settings.DB_USER}:{settings.DB_PASSWORD}"
-    f"@{settings.DB_HOST}/{settings.DB_NAME}"
+    f"mysql+aiomysql://{settings.DB_USER}"
+    f":{settings.DB_PASSWORD}@{settings.DB_HOST}/{settings.DB_NAME}"
 )
-# 1) async engine
+
+# 1) Create async engine
 engine = create_async_engine(DATABASE_URL, echo=False)
-# 2) session factory
-AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
-# 3) base class for models
+
+# 2) Async session factory
+AsyncSessionLocal = sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+
+# 3) Base class for ORM models
 Base = declarative_base()
 
-# Dependency
+# Dependency to get an AsyncSession
 async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
