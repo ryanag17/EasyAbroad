@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS Education (
   city_of_study VARCHAR(255),
   country_of_study VARCHAR(255),
   university_name VARCHAR(255),
-  study_program VARCHAR(255),
+  course_name VARCHAR(255),
   education_start DATETIME,
   education_finish DATETIME,
   proof_of_education VARCHAR(255),
@@ -11,9 +11,14 @@ CREATE TABLE IF NOT EXISTS Education (
   social_life BOOLEAN,
   uni_info BOOLEAN,
   travel_info BOOLEAN,
+  zoom BOOLEAN,
+  microsoft_teams BOOLEAN,
+  google_meet BOOLEAN,
+  apple_facetime BOOLEAN,
   is_verified BOOLEAN,
   verified_by INT,
   verified_at DATETIME,
-  FOREIGN KEY (user_id) REFERENCES consultants(user_id),
-  FOREIGN KEY (verified_by) REFERENCES admins(user_id)
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (verified_by) REFERENCES users(id),
+  FOREIGN KEY (country_of_study) REFERENCES countries(country_name)
 );
