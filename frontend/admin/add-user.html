@@ -6,7 +6,7 @@
     <title>Add User</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -46,7 +46,7 @@
     
     
         <!-- Sign Out Confirmation Modal -->
-    <div id="signOutModal" class="modal-overlay">
+    <div id="signOutModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
           <p>Are you sure you want to sign out?</p>
           <div class="modal-buttons">
@@ -55,6 +55,89 @@
           </div>
         </div>
     </div>
+    <!-- Logic -->
+    
+<div class="centered-add-user">
+  <button id="openAddUserModal" class="add-user-btn">
+    +<br/>Add New<br/>User
+  </button>
+</div>
+
+<!-- Modal Window -->
+<div id="addUserModal" class="modal" style="display: none;">
+  <div class="modal-content">
+  <span class="close-button" onclick="closeModal()">&times;</span>
+  <h2 class="form-title">Add User Form</h2>
+  <form class="user-form">
+    <div class="form-row">
+      <label for="name">Name:</label>
+        <input type="text" class="name_input" id="name" placeholder="Enter your name" />
+    </div>
+    <div class="form-row">
+      <label for="surname">Surname:</label>
+        <input type="text" id="surname" class="name_input" placeholder="Enter your surname" />
+    </div>
+    <div class="form-row">
+      <label for="email-id">Email</label>
+        <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" >
+        <div id="icon">
+        </div>
+        <p id="error-msg">Please Enter A Valid Email</p>
+    </div>
+    <div class="form-row">
+      <label class="pass_label_V3" for="password-id">Password</label>
+        <div class="password-wrapper">
+         <input type="password" class="password_class" id="password-id" placeholder="Enter Password">
+          <i class="fas fa-eye toggle-password" toggle="#password-id"></i>
+        </div>
+    </div>
+    <div class="form-row">
+      <label>Confirm Password:</label>
+      <input type="password" />
+    </div>
+    <div class="form-row">
+      <label>Date of Birth:</label>
+      <input type="date" />
+    </div>
+    <div class="form-row">
+      <label>Gender:</label>
+      <select>
+        <option>Select</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Country:</label>
+      <select>
+        <option>Select</option>
+        <option>Germany</option>
+        <option>USA</option>
+        <option>Turkey</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>City:</label>
+      <input type="text" />
+    </div>
+    <div class="form-row">
+      <label>Role:</label>
+      <select>
+        <option>Student</option>
+        <option>Consultant</option>
+        <option>Admin</option>
+      </select>
+    </div>
+    <div class="form-buttons">
+      <button type="submit">+ Create User</button>
+      <button type="button" onclick="closeModal()">✖ Cancel</button>
+    </div>
+  </form>
+</div>
+
+</div>
+
       
         
     
@@ -109,6 +192,69 @@
       function confirmSignOut() {
         window.location.href = "../../index.html";
       }
+      
+      
+      let emailId = document.getElementById("email-id");
+      let errorMsg = document.getElementById("error-msg");
+      let icon = document.getElementById("icon");
+      let mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
+
+function checker(){
+    icon.style.display="none";
+    if(emailId.value.match(mailRegex)){
+        icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        icon.style.color = '#2ecc71';
+        errorMsg.style.display = 'none';
+        emailId.style.border = '2px solid #2ecc71';
+    }
+    else if(emailId.value == ""){
+        icon.style.display = 'none';
+        errorMsg.style.display = 'none';
+        emailId.style.border = '2px solid #d1d3d4';
+    }
+    else{
+        icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+        icon.style.color = '#ff2851';
+        errorMsg.style.display = 'block';
+        emailId.style.border = '2px solid #ff2851';
+    }
+
+}
+      
+      
+    //   Logic
+
+  const modal = document.getElementById('addUserModal');
+  const openBtn = document.getElementById('openAddUserModal');
+  const warning = document.getElementById('ageWarning');
+
+  openBtn.onclick = () => {
+    modal.style.display = 'flex';
+  };
+
+  function closeModal() {
+    modal.style.display = 'none';
+  }
+
+  function checkAge() {
+    const dob = document.getElementById('dob').value;
+    const dobDate = new Date(dob);
+    const today = new Date();
+    const age = today.getFullYear() - dobDate.getFullYear();
+    const m = today.getMonth() - dobDate.getMonth();
+
+    if (m < 0 || (m === 0 && today.getDate() < dobDate.getDate())) {
+      age--;
+    }
+
+    if (age < 18) {
+      warning.style.display = 'block';
+    } else {
+      warning.style.display = 'none';
+    }
+  }
+
+
     </script>
     
     <script src="../script.js"></script>
