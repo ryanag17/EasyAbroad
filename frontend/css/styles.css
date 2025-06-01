@@ -27,8 +27,8 @@ ul {
 /* Font */
 
 @font-face {
-    font-family: "Baskerville";
-    src: url("../Baskervville-Regular.ttf") format("truetype");
+    font-family: "Roboto";
+    src: url("../Roboto-VariableFont_wdth\,wght.ttf") format("truetype");
   }
 
 /* Font END */
@@ -37,7 +37,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;  
-    font-family: "Baskerville", serif;
+    font-family: "Roboto", serif;
     margin: 0;
     padding: 0;
 }
@@ -758,7 +758,7 @@ input[type="email"]{
 .body_contact {
   background: #f7f7f7;
   margin: 0;
-  font-family: "Baskerville", serif;
+  font-family: "Roboto", serif;
 }
 
 .form_contact {
@@ -824,7 +824,7 @@ input[type="email"]{
   min-height: 0px;
   resize: vertical;
   line-height: 1.2;
-  font-family: "Baskerville", serif;
+  font-family: "Roboto", serif;
   width: 100%;
   padding: 10px;
   box-sizing: border-box;
@@ -1465,6 +1465,7 @@ span {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-width: 200px; /* 👈 guarantees space even if inner content shrinks */
   }
   
   .profile-picture img {
@@ -1512,8 +1513,7 @@ span {
     width: 100%;
   }
   
-  .form-group, 
-  .country-group,
+  .form-group,
   .gender-group {
     margin-bottom: 20px;
     max-width: 600px;
@@ -1526,7 +1526,6 @@ span {
   }
   
   .form-group label,
-  .country-group label,
   .gender-group label,
   .city_label {
     display: block;
@@ -1589,9 +1588,7 @@ span {
     color: white;
   }
   
-  .language-group,
-  .country-group,
-  .city-group {
+  .language-group{
     width: 100%;
    text-align: start;
     display: flex;
@@ -1621,7 +1618,6 @@ span {
   }
   
   .language-group select,
-  .country-group select,
   .gender-group select,
   .select_language select {
     width: 180px;
@@ -1633,9 +1629,8 @@ span {
   }
   
   .language-group select:disabled,
-  .country-group select:disabled,
   .gender-group select:disabled,
-  .city-group select:disabled,
+  .city-country-group select:disabled,
   .select_language select:disabled {
     color: #777;
     background-color: #f0f0f0;
@@ -1659,29 +1654,40 @@ span {
     
   }
   
-.city_input[disabled] {
-  color: #777;
-  background-color: #f0f0f0;
-  cursor: not-allowed;
-}
-
-.city_input{
-  border: 1px solid #ccc;
-  width: 180px;
-}
-
-.city_input{
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #f8f8f8;
-    font-size: 14px;
-    resize: vertical;
-}
 
 .profile-picture{margin-right: 50px;}
   
+.form-row-horizontal {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+
+.form-row-horizontal .city-country-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.city-country-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.city-country-group input,
+.city-country-group select {
+  width: 100%;
+  height: 42px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f8f8f8;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
 
 
 /* Student/profile END */
