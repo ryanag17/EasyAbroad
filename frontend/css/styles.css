@@ -1513,20 +1513,13 @@ span {
     width: 100%;
   }
   
-  .form-group,
-  .gender-group {
+  .form-group{
     margin-bottom: 20px;
     max-width: 600px;
     width: 100%;
   }
-  
-  .gender-group{
-    max-width: 200px;
-    width: 100%;
-  }
-  
+
   .form-group label,
-  .gender-group label,
   .city_label {
     display: block;
     margin-bottom: 6px;
@@ -1618,7 +1611,6 @@ span {
   }
   
   .language-group select,
-  .gender-group select,
   .select_language select {
     width: 180px;
     padding: 10px;
@@ -1629,7 +1621,6 @@ span {
   }
   
   .language-group select:disabled,
-  .gender-group select:disabled,
   .city-country-group select:disabled,
   .select_language select:disabled {
     color: #777;

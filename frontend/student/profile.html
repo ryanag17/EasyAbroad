@@ -75,19 +75,6 @@
           <label for="fileInput" class="change-pic-link">Change profile picture</label>
           <input type="file" id="fileInput" accept="image/*" style="display: none;">
         </div>
-
-        <div class="language-group">
-          <label>Languages:</label>
-          <select id="language-select" class="select_language" name="languages" multiple>
-            <option value="english">English</option>
-            <option value="turkish">Turkish</option>
-            <option value="german">German</option>
-            <option value="french">French</option>
-            <option value="spanish">Spanish</option>
-            <option value="arabic">Arabic</option>
-            <option value="russian">Russian</option>
-          </select>
-        </div>
       </div>
 
       <form class="profile-form">
@@ -122,14 +109,16 @@
           </div>
         </div>
 
-        <div class="gender-group">
-          <label>Gender:</label>
-          <select name="gender" disabled>
-            <option value="">Select</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
+        <div class="form-row-horizontal">
+          <div class="form-group city-country-group">
+            <label for="gender">Gender:</label>
+            <select name="gender" id="gender" disabled>
+              <option value="">Select</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
         </div>
 
         <div class="form-group">
@@ -210,27 +199,10 @@
       }
     }
 
-    const languageSelectElement = document.getElementById('language-select');
-    const originalLanguages = [
-      { value: "english", label: "English" },
-      { value: "turkish", label: "Turkish" },
-      { value: "german", label: "German" },
-      { value: "french", label: "French" },
-      { value: "spanish", label: "Spanish" },
-      { value: "arabic", label: "Arabic" },
-      { value: "russian", label: "Russian" },
-    ];
-
-    const languageChoices = new Choices(languageSelectElement, {
-      removeItemButton: true,
-      shouldSort: false,
-    });
-
-    languageChoices.disable(); // Start disabled
+    // Removed language-select script
 
     const editButton = document.querySelector('.edit-btn');
     let isEditing = false;
-    let selectedLanguagesMemory = [];
 
     editButton.addEventListener('click', function () {
       const fields = document.querySelectorAll(
@@ -239,44 +211,10 @@
 
       if (!isEditing) {
         fields.forEach(field => field.disabled = false);
-        languageChoices.enable();
-        languageChoices.clearStore();
-        languageChoices.setChoices(originalLanguages, 'value', 'label', true);
-
-        if (selectedLanguagesMemory.length > 0) {
-          selectedLanguagesMemory.forEach(lang => {
-            languageChoices.setChoiceByValue(lang.value);
-          });
-        }
-
         editButton.textContent = 'Save';
         isEditing = true;
       } else {
         fields.forEach(field => field.disabled = true);
-        languageChoices.disable();
-
-        const selectedLanguages = languageChoices.getValue();
-        selectedLanguagesMemory = selectedLanguages;
-        const languageCount = selectedLanguages.length;
-
-        if (languageCount > 0) {
-          languageChoices.clearStore();
-          languageChoices.setChoices(
-            [{ value: "languages", label: `${languageCount} languages`, selected: true }],
-            'value',
-            'label',
-            false
-          );
-        } else {
-          languageChoices.clearStore();
-          languageChoices.setChoices(
-            [{ value: '', label: 'Select', selected: true }],
-            'value',
-            'label',
-            false
-          );
-        }
-
         editButton.textContent = 'Edit';
         isEditing = false;
 
