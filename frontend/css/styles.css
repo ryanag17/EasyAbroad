@@ -3558,4 +3558,89 @@ textarea#reviewText {
     }
 /* view-user END */
 
+/* consultant-verification */
+
+.submission-tabs {
+  display: flex;
+  gap: 40px;
+  justify-content: start;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: none;
+  background: white;
+  font-weight: bold;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tab-button:hover{
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  outline-offset: 15px;
+  outline-color: rgba(255, 255, 255, 0);
+  text-shadow: 1px 1px 2px deeppink;
+}
+
+.tab-button.active:hover{
+  text-shadow: none;
+}
+
+.tab-button.active {
+  border-radius: 30px;
+  border-bottom: 3px solid deeppink;
+  color: deeppink;
+}
+
+.submission-table-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+    min-height: 250px;
+}
+
+
+.submission-table {
+    min-width: 800px;
+  width: 98%;
+  border-collapse: collapse;
+
+}
+
+.submission-table th,
+.submission-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.submission-table th {
+  background-color: #f4f4f4;
+  font-weight: 600;
+}
+
+.submission-action-link {
+  color: deeppink;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.submission-action-link:hover {
+  color: #a30056;
+}
+/* consultant-verification END */
+
+
 /* Admin END */

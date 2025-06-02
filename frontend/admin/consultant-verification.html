@@ -56,8 +56,29 @@
         </div>
     </div>
       
-        
-    
+  <div class="submission-tabs">
+    <button class="tab-button active" data-status="pending">Pending</button>
+    <button class="tab-button" data-status="approved">Approved</button>
+    <button class="tab-button" data-status="rejected">Rejected</button>
+  </div>
+
+    <div class="submission-table-container">
+    <table id="submissionTable" class="submission-table">
+      <thead class="submission-header">
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Type</th>
+          <th>Submitted On</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody class="submission-body" id="submissionBody">
+        <!-- Dynamic rows -->
+      </tbody>
+    </table>
+  </div>
   
     <footer>
         <div>
@@ -109,6 +130,68 @@
       function confirmSignOut() {
         window.location.href = "../../index.html";
       }
+        const submissions = [
+      {
+        firstName: 'Serhat',
+        lastName: 'Günay',
+        email: 'serhat@xyz.com',
+        type: 'Study Abroad',
+        submittedOn: '29.05.25',
+        status: 'pending'
+      },
+      {
+        firstName: 'Elif',
+        lastName: 'Kaya',
+        email: 'elif@web.de',
+        type: 'Internship Abroad',
+        submittedOn: '30.05.25',
+        status: 'approved'
+      },
+      {
+        firstName: 'Mehmet',
+        lastName: 'Ali',
+        email: 'mehmet@example.com',
+        type: 'Exchange Program',
+        submittedOn: '28.05.25',
+        status: 'rejected'
+      }
+    ];
+
+    const tbody = document.getElementById('submissionBody');
+    const tabButtons = document.querySelectorAll('.tab-button');
+
+    function renderTable(statusFilter) {
+      tbody.innerHTML = '';
+      submissions.forEach(sub => {
+        if (statusFilter === 'all' || sub.status === statusFilter) {
+          const row = document.createElement('tr');
+          row.setAttribute('data-status', sub.status);
+          row.innerHTML = `
+            <td>${sub.firstName}</td>
+            <td>${sub.lastName}</td>
+            <td>${sub.email}</td>
+            <td>${sub.type}</td>
+            <td>${sub.submittedOn}</td>
+            <td><span class="submission-action-link" onclick="previewSubmission('${sub.firstName}', '${sub.lastName}', '${sub.type}')">Preview</span></td>
+          `;
+          tbody.appendChild(row);
+        }
+      });
+    }
+
+    function previewSubmission(firstName, lastName, type) {
+      alert(`Previewing submission of ${firstName} ${lastName} for ${type}`);
+    }
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        renderTable(this.dataset.status);
+      });
+    });
+
+    renderTable('pending');
     </script>
     
     <script src="../script.js"></script>
