@@ -201,13 +201,13 @@ async function loginUser() {
 
       // 2) redirect based on the role
       if (data.role === "student") {
-        window.location.href = "frontend/student/home.html";
+        window.location.href = "student/home.html";
       }
       else if (data.role === "consultant") {
-        window.location.href = "frontend/consultant/home.html";
+        window.location.href = "consultant/home.html";
       }
       else if (data.role === "admin") {
-        window.location.href = "frontend/admin/home.html";
+        window.location.href = "admin/home.html";
       }
       else {
         alert("Unknown role: " + data.role);
