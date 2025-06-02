@@ -56,7 +56,43 @@
         </div>
     </div>
       
-        
+        <div class="user-management-header">
+  <input type="text" id="searchInput" placeholder="Search by first name..." />
+  
+  <select id="roleFilter">
+    <option value="all">All Roles</option>
+    <option value="student">Student</option>
+    <option value="consultant">Consultant</option>
+    <option value="admin">Admin</option>
+  </select>
+
+  <select id="statusFilter">
+    <option value="all">All Statuses</option>
+    <option value="active">Active</option>
+    <option value="inactive">Inactive</option>
+  </select>
+
+  <button class="user_management-btn" onclick="location.href='add-user.html'">Add New User</button>
+</div>
+<div class="table-responsive">
+<table id="userTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">User ID</th>
+      <th onclick="sortTable(1)">First Name</th>
+      <th onclick="sortTable(2)">Last Name</th>
+      <th onclick="sortTable(3)">Email</th>
+      <th onclick="sortTable(4)">Role</th>
+      <th onclick="sortTable(5)">Account Status</th>
+      <th onclick="sortTable(6)">Registered On</th>
+      <th>Profile</th>
+    </tr>
+  </thead>
+  <tbody id="userTableBody">
+    <!-- JS will populate this -->
+  </tbody>
+</table>
+</div>
     
   
     <footer>
@@ -109,6 +145,69 @@
       function confirmSignOut() {
         window.location.href = "../../index.html";
       }
+      
+          const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    const tbody = document.getElementById('userTableBody');
+    const searchInput = document.getElementById('searchInput');
+    const roleFilter = document.getElementById('roleFilter');
+    const statusFilter = document.getElementById('statusFilter');
+
+    function renderTable(data) {
+      tbody.innerHTML = '';
+      data.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${user.id}</td>
+          <td>${user.firstName}</td>
+          <td>${user.lastName}</td>
+          <td>${user.email}</td>
+          <td>${user.role}</td>
+          <td>${user.status}</td>
+          <td>${user.registered}</td>
+          <td><button class="view-btn" onclick="viewUser('${user.id}')">View</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function viewUser(id) {
+      window.location.href = 'view-user.html?user=' + id;
+    }
+
+    function applyFilters() {
+      const search = searchInput.value.toLowerCase();
+      const role = roleFilter.value;
+      const status = statusFilter.value;
+
+      const filtered = users.filter(user => {
+        const matchesName = user.firstName.toLowerCase().includes(search);
+        const matchesRole = role === 'all' || user.role === role;
+        const matchesStatus = status === 'all' || user.status === status;
+        return matchesName && matchesRole && matchesStatus;
+      });
+
+      renderTable(filtered);
+    }
+
+    function sortTable(colIndex) {
+      const rows = [...tbody.rows];
+      const asc = tbody.getAttribute('data-sort') !== 'asc';
+      rows.sort((a, b) => {
+        const A = a.cells[colIndex].innerText.toLowerCase();
+        const B = b.cells[colIndex].innerText.toLowerCase();
+        return asc ? A.localeCompare(B) : B.localeCompare(A);
+      });
+      tbody.innerHTML = '';
+      rows.forEach(row => tbody.appendChild(row));
+      tbody.setAttribute('data-sort', asc ? 'asc' : 'desc');
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    roleFilter.addEventListener('change', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+
+    renderTable(users);
     </script>
     
     <script src="../script.js"></script>

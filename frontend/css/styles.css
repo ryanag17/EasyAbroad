@@ -298,7 +298,8 @@ input[type="email"]{
 
 .password_class,
 .name_input,
-.city_input{
+.city_input,
+.select_add-user{
     display: inline-block;
     border: 2px solid #d1d3d4;
     width: 100%;
@@ -2107,7 +2108,8 @@ span {
   color: #333;
 }
 
-.password-wrapper {
+.password-wrapper,
+.password-wrapper_add-user {
   position: relative;
   display: flex;
   align-items: stretch;
@@ -2116,7 +2118,8 @@ span {
 
 input[type="email"],
 .password-wrapper input[type="password"],
-.password-wrapper input[type="text"] {
+.password-wrapper input[type="text"],
+.password-wrapper_add-user input[type="password"] {
   height: 40px;
   flex-grow: 1;
   padding: 10px 12px;
@@ -3310,23 +3313,25 @@ textarea#reviewText {
   z-index: 999;
   left: 0;
   top: 0;
-  width: 100%;
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
   justify-content: center;
   align-items: center;
+  
 }
 
 .modal-content {
   background-color: #fefefe;
   margin: auto;
+  max-width: 70%;
   padding: 30px;
   border: 1px solid #888;
-  width: 400px;
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
   border-radius: 8px;
   position: relative;
+  margin-top: 350px;
+  margin-bottom: 30px;
 }
 
 .close-button {
@@ -3351,8 +3356,8 @@ textarea#reviewText {
 }
 
 .user-form label {
-  flex: 1;
-  padding-right: 10px;
+  width: 120px;
+  font-weight: bold;
 }
 
 .user-form input,
@@ -3375,6 +3380,99 @@ textarea#reviewText {
   font-size: 12px;
 }
 
+.password-wrapper_add-user{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+}
+
+.password-wrapper_add-user input {
+  flex: 1;
+  height: 40px;
+  padding: 10px;
+  font-size: 14px;
+  border: 2px solid #d1d3d4;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.label_repeat_add-user{
+  margin-right: 23px;
+}
+
 /* add-user END */
+
+/* user-management */
+    .user-management-header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      margin: 0 auto;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      width: 80%;
+    }
+    
+    #searchInput{
+      width: 50%;
+    }
+    .user-management-header input,
+    .user-management-header select,
+    .user-management-header button {
+      padding: 8px;
+      font-size: 14px;
+    }
+    table {
+      width: 98%;
+      border-collapse: collapse;
+      background: white;
+      margin: 0 auto;
+      margin-bottom: 20px;
+
+    }
+    
+    .table-responsive {
+ overflow-x: auto;
+  min-height: 200px;
+}
+
+.table-responsive table {
+  min-width: 800px; /* Or however wide your table is */
+  width: 98%;
+  border-collapse: collapse;
+}
+
+    
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      cursor: pointer;
+      background: #eee;
+    }
+    .view-btn,
+    .user_management-btn {
+      padding: 5px 10px;
+      background: #d62d81;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    #roleFilter,
+    #statusFilter{
+    display: inline-block;
+    border: 2px solid #d1d3d4;
+    border-radius: 5px;
+    outline: none;
+    }
+    
+/* user-management END */
 
 /* Admin END */
