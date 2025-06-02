@@ -100,11 +100,15 @@
     </div>
     <div class="form-row">
       <label for="birthday">Date of Birth:</label>
-      <input type="date" class="name_input" name="birthday">
+      <input type="date" class="name_input" name="birthday" id="birthday">
     </div>
+    <div id="birthdayWarning">
+     You must be at least 18 years old to create an account.
+    </div>
+
     <div class="form-row">
       <label>Gender:</label>
-      <select class="select_add-user">
+      <select class="select_add-user" id="gender">
         <option>Select</option>
         <option>Male</option>
         <option>Female</option>
@@ -113,7 +117,7 @@
     </div>
     <div class="form-row">
       <label>Country:</label>
-      <select class="select_add-user">
+      <select class="select_add-user" id="country">
         <option>Select</option>
         <option>Germany</option>
         <option>USA</option>
@@ -136,7 +140,7 @@
     <input type="hidden" id="status" value="active" />
 
     <div class="form-buttons">
-      <button type="submit">+ Create User</button>
+      <button type="submit" class="create-user-btn" id="submitBtn" disabled>+ Create User</button>
       <button type="button" onclick="closeModal()">✖ Cancel</button>
     </div>
   </form>
@@ -276,14 +280,19 @@ document.getElementById('addUserForm').addEventListener('submit', function (e) {
   e.preventDefault();
 
   const newUser = {
-    id: Date.now().toString(),
-    firstName: document.getElementById('name').value,
-    lastName: document.getElementById('surname').value,
-    email: document.getElementById('email-id').value,
-    role: document.getElementById('role').value,
-    status: document.getElementById('status').value,
-    registered: new Date().toLocaleDateString('de-DE') 
-  };
+  id: Date.now().toString(),
+  firstName: document.getElementById('name').value,
+  lastName: document.getElementById('surname').value,
+  email: document.getElementById('email-id').value,
+  role: document.getElementById('role').value,
+  status: document.getElementById('status').value,
+  registered: new Date().toLocaleDateString('de-DE'),
+  birthday: document.getElementById('birthday').value,
+  gender: document.getElementById('gender').value,
+  country: document.getElementById('country').value,
+  city: document.getElementById('city').value
+};
+
 
   const users = JSON.parse(localStorage.getItem('users')) || [];
   users.push(newUser);
@@ -293,7 +302,26 @@ document.getElementById('addUserForm').addEventListener('submit', function (e) {
   window.location.href = 'user-management.html';
 });
 
+document.getElementById('birthday').addEventListener('input', function () {
+  const birthday = new Date(this.value);
+  const today = new Date();
+  const age = today.getFullYear() - birthday.getFullYear();
+  const isOldEnough = age > 18 || (age === 18 && (
+    today.getMonth() > birthday.getMonth() ||
+    (today.getMonth() === birthday.getMonth() && today.getDate() >= birthday.getDate())
+  ));
 
+  const warning = document.getElementById('birthdayWarning');
+  const submitBtn = document.getElementById('submitBtn');
+
+  if (!isOldEnough) {
+    warning.style.display = 'block';
+    submitBtn.disabled = true;
+  } else {
+    warning.style.display = 'none';
+    submitBtn.disabled = false;
+  }
+});
     </script>
     
     <script src="../script.js"></script>

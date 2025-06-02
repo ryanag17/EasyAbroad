@@ -3401,6 +3401,13 @@ textarea#reviewText {
   margin-right: 23px;
 }
 
+#birthdayWarning{
+  color: red; 
+  font-size: 0.9em; 
+  display: none; 
+  margin-top: -10px;
+}
+
 /* add-user END */
 
 /* user-management */
@@ -3440,7 +3447,7 @@ textarea#reviewText {
 }
 
 .table-responsive table {
-  min-width: 800px; /* Or however wide your table is */
+  min-width: 800px;
   width: 98%;
   border-collapse: collapse;
 }
@@ -3474,5 +3481,81 @@ textarea#reviewText {
     }
     
 /* user-management END */
+
+/* view-user */
+    .back-button,
+    .deactivate{
+      background-color: #d62d81;
+      padding: 10px;
+      max-width: 200px;
+      width: 100%;
+      text-align: center;
+      border-radius: 30px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      margin-left: 20px;
+      color: white;
+    }
+    
+    .back-button:hover{
+      background-color: #000;
+      transition: 0.5s;
+    }
+
+    .user-card {
+      border-radius: 30px;
+      align-items: center;
+      padding: 20px;
+      background: white;
+      width: 50%;
+      margin: 0 auto;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .user-details {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      row-gap: 10px;
+    }
+    .user-details div {
+      padding: 5px 0;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      margin-top: 20px;
+      font-family: monospace;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+    }
+    .deactivate{
+      background-color: #000;
+    }
+    .activate {
+      background-color: #2ecc71;
+      color: white;
+    }
+    .modal_view {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-content_view {
+      background: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 6px;
+      font-family: monospace;
+    }
+    .modal-buttons button {
+      margin: 10px;
+      padding: 8px 14px;
+    }
+/* view-user END */
 
 /* Admin END */
