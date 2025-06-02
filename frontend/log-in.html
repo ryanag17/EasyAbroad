@@ -74,23 +74,21 @@
     
     
     <!-- Vanya and Ximena script -->
-    <script>
-     document.addEventListener("DOMContentLoaded", () => {
-    initEmailChecker();
-    initPasswordToggles();
+  <script src="script.js"></script>
 
-    // Wire login button
-    document.getElementById("loginBtn")
-      .addEventListener("click", () => {
-        if (validateLoginForm()) loginUser();
+  <!-- 2) Then run your inline code that uses those functions -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("loginBtn").addEventListener("click", () => {
+        if (!validateLoginForm()) return;
+        loginUser();
       });
 
-    // Hide login if already logged in
-    const token = sessionStorage.getItem("accessToken");
-    if (token) document.getElementById("loginBtn").style.display = "none";
-  });
+      const token = sessionStorage.getItem("accessToken");
+      if (token) {
+        document.getElementById("loginBtn").style.display = "none";
+      }
+    });
   </script>
-      
-      <script src="script.js"></script>
 </body>
 </html>

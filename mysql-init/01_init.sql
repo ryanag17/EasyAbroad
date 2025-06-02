@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash   VARCHAR(255)           NOT NULL,
   role            ENUM('student','consultant','admin') NOT NULL,
   city            VARCHAR(255),
-  country_name    VARCHAR(100)           NOT NULL,
+  country_name    VARCHAR(100)            NULL,
   birthday        DATE,
   gender          ENUM('male','female','other'),
   access_level    ENUM('standard','super') DEFAULT 'standard',

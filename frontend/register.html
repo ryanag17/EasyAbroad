@@ -29,7 +29,7 @@
         </div>
         
             <label for="birthday">Birthday</label>
-            <input type="date" class="name_input" name="birthday">
+            <input type="date" class="name_input" id="birthday" name="birthday">
             
         <label for="email-id">Email</label>
         <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" >
@@ -106,26 +106,18 @@
     <script src="script.js"></script>
 
     <script>
-        window.addEventListener("DOMContentLoaded", () => {
-         initEmailChecker();
-             initPasswordToggles();
+ window.addEventListener("DOMContentLoaded", () => {
+    // Removed initEmailChecker() and initPasswordToggles() because they don't exist
 
-  // Old button wiring 
-  // document.getElementById("registerBtn")?.addEventListener(...)
-  // NEW: handle click on the <a id="registerLink">
-  document.getElementById("registerLink")?.addEventListener("click", async ev => {
-    ev.preventDefault();
-    if (!validateRegisterForm()) return;
-    if (!document.getElementById("terms-checkbox").checked) {
-      return alert("Please agree to the Terms and Conditions.");
-    }
-    await registerUser();
+    document.getElementById("registerLink")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      if (!validateRegisterForm()) return;
+      if (!document.getElementById("terms-checkbox").checked) {
+        return alert("Please agree to the Terms and Conditions.");
+      }
+      await registerUser();
+    });
   });
-
-  document.getElementById("loginBtn")?.addEventListener("click", () => {
-    if (validateLoginForm()) loginUser();
-  });
-});
     </script>
 </body>
 </html>

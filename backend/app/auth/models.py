@@ -40,7 +40,7 @@ class UserCreate(BaseModel):
 
     # Make country_name REQUIRED (no longer Optional)
     # Must match the NOT NULL constraint in the SQL schema
-    country_name    : str   = Field(..., alias="country_name")
+    country_name    : Optional[str] = Field(None, alias="country_name")
 
     birthday        : Optional[date] = None
     gender          : Optional[Literal["male","female","other"]] = None

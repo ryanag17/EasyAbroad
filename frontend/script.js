@@ -114,13 +114,16 @@ function checker(){
 const passwordInput = document.getElementById('password-id');
 const toggleCheckbox = document.getElementById('togglePassword');
 
-toggleCheckbox.addEventListener('change', function () {
-  if (this.checked) {
-    passwordInput.type = 'text';
-  } else {
-    passwordInput.type = 'password';
-  }
-});
+if (toggleCheckbox && passwordInput) {
+  toggleCheckbox.addEventListener('change', function () {
+    if (this.checked) {
+      passwordInput.type = 'text';
+    } else {
+      passwordInput.type = 'password';
+    }
+  });
+}
+
 
 // ─────────────────────────────────────────────────────────────
 // DO NOT DELETE
@@ -131,102 +134,180 @@ toggleCheckbox.addEventListener('change', function () {
 
 
 
-
 // ─────────────────────────────────────────────────────────────
 // Backend JS Functions START
 // ─────────────────────────────────────────────────────────────
-// ── 1) YOUR API BASE URL ─────────────────────────────────────────────────────────────
+
+// 1) YOUR API BASE URL
 const API_BASE = "http://localhost:8000/auth";
 
-// ── 2) PING BACKEND ─────────────────────────────────────────────────────────────────
+// 2) PING BACKEND
 fetch("http://localhost:8000/")
-  .then(res => res.json())
-  .then(data => console.log("Backend is running:", data))
+  .then((res) => res.json())
+  .then((data) => console.log("Backend is running:", data))
   .catch(() => console.warn("Backend ping failed"));
 
-// ── 3) FORM HELPERS ─────────────────────────────────────────────────────────────────
-window.addEventListener("DOMContentLoaded", () => {
-  initEmailChecker();
-  initPasswordToggles();
-});
-
-// ── 4) REGISTER USER ───────────────────────────────────────────────────────────────
+// 3) REGISTER USER
 async function registerUser() {
   const payload = {
-    name:     document.getElementById("name").value.trim(),
-    surname:  document.getElementById("surname").value.trim(),
-    role:     document.querySelector("input[name='role']:checked").value,
-    email:    document.getElementById("email-id").value.trim(),
-    password: document.getElementById("password-id").value
+    name: document.getElementById("name").value.trim(),
+    surname: document.getElementById("surname").value.trim(),
+    role: document.querySelector("input[name='role']:checked").value,
+    email: document.getElementById("email-id").value.trim(),
+    password: document.getElementById("password-id").value,
+    birthday: document.getElementById("birthday").value || null,
   };
-  console.log("📡 POST /register payload:", payload);
 
-  const res = await fetch(`${API_BASE}/register`, {
-    method:      "POST",
-    headers:     { "Content-Type": "application/json" },
-    credentials: 'include',  // send/receive refresh_token cookie
-    body:         JSON.stringify(payload)
-  });
-  console.log("📶 Status:", res.status);
+  console.log("📡 POST /auth/register payload:", payload);
 
-  if (res.ok) {
-    // Registration sets refresh cookie; redirect to login
-    window.location.href = "log-in.html";
-  } else {
-    const data = await res.json();
-    alert("Registration failed: " + (data.detail || data.message || res.status));
+  try {
+    const res = await fetch(`${API_BASE}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // HttpOnly refresh_token cookie
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      alert("✅ Registration successful! Redirecting to login…");
+      window.location.href = "log-in.html";
+    } else {
+      const data = await res.json();
+      alert("❌ Registration failed: " + (data.detail || data.message || res.status));
+    }
+  } catch (err) {
+    console.error("Error during register:", err);
+    alert("❌ Registration failed due to network error");
   }
 }
 
-// ── 5) LOGIN USER ──────────────────────────────────────────────────────────────────
+// 4) LOGIN USER
 async function loginUser() {
-  const email    = document.getElementById("email-id").value.trim();
+  const email = document.getElementById("email-id").value.trim();
   const password = document.getElementById("password-id").value;
 
-  const res = await fetch(`${API_BASE}/login`, {
-    method:      "POST",
-    headers:     { "Content-Type": "application/json" },
-    credentials: 'include',
-    body:         JSON.stringify({ email, password }),
-  });
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method:      "POST",
+      headers:     { "Content-Type": "application/json" },
+      credentials: "include",
+      body:        JSON.stringify({ email, password })
+    });
 
-  const data = await res.json();
-  if (res.ok && data.access_token) {
-    // store tokens
-    sessionStorage.setItem("accessToken", data.access_token);
-    // redirect based on role
-    if (data.role === "student") {
-      window.location.href = "student/home.html";
-    } else if (data.role === "consultant") {
-      window.location.href = "consultant/home.html";
-    } else {
-      alert("Unknown role: " + data.role);
+    const data = await res.json();
+    if (res.ok && data.access_token) {
+      // 1) store the JWT
+      sessionStorage.setItem("accessToken", data.access_token);
+
+      // 2) redirect based on the role
+      if (data.role === "student") {
+        window.location.href = "student/home.html";
+      }
+      else if (data.role === "consultant") {
+        window.location.href = "consultant/home.html";
+      }
+      else if (data.role === "admin") {
+        window.location.href = "admin/home.html";
+      }
+      else {
+        alert("Unknown role: " + data.role);
+      }
     }
-  } else {
-    alert("Login failed: " + (data.detail || data.message));
+    else {
+      alert("Login failed: " + (data.detail || data.message));
+    }
+  }
+  catch (err) {
+    console.error("Error during login:", err);
+    alert("❌ Login failed due to network error");
   }
 }
 
 
-// ── 6) FETCH PROFILE (example) ─────────────────────────────────────────────────────
+// 5) FETCH PROFILE
 async function fetchProfile(role) {
   const token = sessionStorage.getItem("accessToken");
   const res = await fetch(`${API_BASE}/${role}/profile`, {
-    method:      "GET",
-    headers:     {
-      "Content-Type":  "application/json",
-      "Authorization": `Bearer ${token}`
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-    credentials: 'include'
+    credentials: "include",
   });
   if (!res.ok) throw new Error(`Failed to fetch ${role} profile (${res.status})`);
   return await res.json();
 }
 
-// Expose to global for inline handlers
-window.registerUser = registerUser;
-window.loginUser    = loginUser;
-window.fetchProfile = fetchProfile;
+// 6) Validate Register Form
+function validateRegisterForm() {
+  const nameVal    = document.getElementById("name").value.trim();
+  const surnameVal = document.getElementById("surname").value.trim();
+  const emailVal   = document.getElementById("email-id").value.trim();
+  const pwVal      = document.getElementById("password-id").value;
+  const repeatVal  = document.getElementById("repeat").value;
+
+  if (!nameVal) {
+    alert("Please enter your name.");
+    document.getElementById("name").focus();
+    return false;
+  }
+  if (!surnameVal) {
+    alert("Please enter your surname.");
+    document.getElementById("surname").focus();
+    return false;
+  }
+  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
+  if (!emailVal.match(mailRegex)) {
+    alert("Please enter a valid email address.");
+    document.getElementById("email-id").focus();
+    return false;
+  }
+  if (pwVal.length < 6) {
+    alert("Password must be at least 6 characters.");
+    document.getElementById("password-id").focus();
+    return false;
+  }
+  if (pwVal !== repeatVal) {
+    alert("Passwords do not match.");
+    document.getElementById("repeat").focus();
+    return false;
+  }
+  return true;
+}
+
+function validateLoginForm() {
+  const email = document.getElementById("email-id").value.trim();
+  const pw    = document.getElementById("password-id").value;
+
+  // 1) Basic email check
+  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
+  if (!email.match(mailRegex)) {
+    alert("Please enter a valid email address.");
+    document.getElementById("email-id").focus();
+    return false;
+  }
+
+  // 2) Ensure password is not empty
+  if (!pw) {
+    alert("Please enter your password.");
+    document.getElementById("password-id").focus();
+    return false;
+  }
+
+  return true;
+}
+
+// Expose it so the login HTML can see it:
+window.validateLoginForm = validateLoginForm;
+
+// Expose functions for inline use
+window.registerUser   = registerUser;
+window.loginUser      = loginUser;
+window.fetchProfile   = fetchProfile;
+window.validateRegisterForm = validateRegisterForm;
+window.validateLoginForm = validateLoginForm;
+
 // ─────────────────────────────────────────────────────────────
 // Backend JS Functions END
 // ─────────────────────────────────────────────────────────────
