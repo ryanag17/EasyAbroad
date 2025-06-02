@@ -1,5 +1,3 @@
-# backend/app/auth/routes.py
-
 from fastapi import APIRouter, Depends, Response, status, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -32,19 +30,33 @@ from app.auth.token_verification import (
 
 router = APIRouter(tags=["auth"])
 
+from app.auth.models import User
+
+@router.get("/me")
+async def get_profile(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    return {
+    "id": current_user.id,
+    "name": current_user.first_name,
+    "surname": current_user.last_name,
+    "email": current_user.email,
+    "role": current_user.role,
+    "city": current_user.city,
+    "country_name": current_user.country_name,
+}
 
 def require_role(role_name: str):
-    """
-    Dependency that ensures the current JWT‐authenticated user has the given role.
-    """
     async def checker(user=Depends(get_current_user)):
-        if user["role"] != role_name:
+        if not user or user.get("role") != role_name:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Insufficient permissions"
             )
         return user
     return checker
+
 
 
 @router.post(
@@ -79,7 +91,7 @@ async def register_endpoint(
     return {
         "access_token": result["access_token"],
         "token_type":   "bearer",
-        "role":         user.role,
+        "role":         result["role"],
     }
 
 

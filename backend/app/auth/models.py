@@ -1,14 +1,19 @@
-# backend/app/auth/models.py
-
 from datetime import datetime, date
-from typing import List, Optional, Literal
+from typing import Literal, List, Optional
+
+from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy import (
-    Column, Integer, String, DateTime, Boolean,
-    Date, Enum, ForeignKey
+    Column,
+    Integer,
+    String,
+    DateTime,
+    Boolean,
+    Date,
+    Enum,
+    ForeignKey,
+    text
 )
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import text as sql_text
-from pydantic import BaseModel, EmailStr, Field
 from pydantic_settings import SettingsConfigDict
 
 from app.db import Base
@@ -24,24 +29,27 @@ class UserLogin(BaseModel):
 
 
 class UserCreate(BaseModel):
-    # incoming JSON: "name" → first_name, "surname" → last_name
-    first_name      : str = Field(..., alias="name")
-    last_name       : str = Field(..., alias="surname")
+    # Incoming JSON: "name" → first_name, "surname" → last_name
+    first_name      : str   = Field(..., alias="name")
+    last_name       : str   = Field(..., alias="surname")
     role            : Literal["student","consultant","admin"]
     email           : EmailStr
     password        : str
 
-    # Merged fields (formerly in separate student/consultant tables):
     city            : Optional[str] = None
-    country_name    : Optional[str] = None
+
+    # Make country_name REQUIRED (no longer Optional)
+    # Must match the NOT NULL constraint in the SQL schema
+    country_name    : str   = Field(..., alias="country_name")
+
     birthday        : Optional[date] = None
     gender          : Optional[Literal["male","female","other"]] = None
     profile_picture : Optional[str] = None
 
-    # Only used if role == "admin"
+    # If role == "admin", they may include an access_level
     access_level    : Optional[Literal["standard","super"]] = None
 
-    # List of language IDs
+    # Instead of a comma-separated string, accept a list of language-IDs
     languages       : Optional[List[int]] = None
 
     model_config = SettingsConfigDict(populate_by_name=True)
@@ -62,9 +70,10 @@ class TokenOut(BaseModel):
     role:         str
 
 
-# =====================
+
+# =========================
 # SQLAlchemy ORM Models
-# =====================
+# =========================
 
 class User(Base):
     __tablename__ = "users"
@@ -74,33 +83,38 @@ class User(Base):
     last_name       = Column(String(255), nullable=False)
     email           = Column(String(255), unique=True, index=True, nullable=False)
     password_hash   = Column(String(255), nullable=False)
-    role            = Column(Enum("student","consultant","admin", name="user_role"), nullable=False)
+    role            = Column(
+        Enum("student","consultant","admin", name="user_role"),
+        nullable=False
+    )
     city            = Column(String(255), nullable=True)
-    country_name    = Column(String(100), nullable=False)
+
+    country_name = Column(String)
 
     birthday        = Column(Date, nullable=True)
     gender          = Column(Enum("male","female","other", name="gender"), nullable=True)
     access_level    = Column(Enum("standard","super", name="access_level"), default="standard")
     profile_picture = Column(String(255), nullable=True)
 
+    # Fields for “forgot password” flows
     reset_token     = Column(String(255), nullable=True)
     token_expiry    = Column(DateTime, nullable=True)
 
     created_at = Column(
         DateTime,
-        server_default=sql_text("CURRENT_TIMESTAMP"),
+        server_default=text("CURRENT_TIMESTAMP"),
         nullable=False
     )
     updated_at = Column(
         DateTime,
-        server_default=sql_text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+        server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
         nullable=False
     )
 
     # Relationship to refresh tokens
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
 
-    # Many-to-many relationship for languages
+    # Many-to-many relationship: users ↔ languages
     languages = relationship("UserLanguage", back_populates="user")
 
 
@@ -116,6 +130,7 @@ class Language(Base):
 
 class UserLanguage(Base):
     __tablename__ = "user_languages"
+
     user_id     = Column(Integer, ForeignKey("users.id"), primary_key=True)
     language_id = Column(Integer, ForeignKey("languages.id"), primary_key=True)
 
@@ -126,10 +141,11 @@ class UserLanguage(Base):
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 
-    id          = Column(Integer, primary_key=True, index=True)
-    token       = Column(String(64), unique=True, nullable=False, index=True)
-    user_id     = Column(Integer, ForeignKey("users.id"), nullable=False)
-    user        = relationship("User", back_populates="refresh_tokens")
-    issued_at   = Column(DateTime, default=datetime.utcnow, nullable=False)
-    expires_at  = Column(DateTime, nullable=False)
-    revoked     = Column(Boolean, default=False, nullable=False)
+    # Use INTEGER to match your MySQL DDL (id INT AUTO_INCREMENT)
+    id         = Column(Integer, primary_key=True, index=True)
+    token      = Column(String(64), unique=True, nullable=False, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user       = relationship("User", back_populates="refresh_tokens")
+    issued_at  = Column(DateTime, default=datetime.utcnow, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    revoked    = Column(Boolean, default=False, nullable=False)

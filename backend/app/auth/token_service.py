@@ -1,35 +1,44 @@
-# backend/app/auth/token_service.py
-
 import secrets
 from datetime import datetime, timedelta
 from jose import jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update
-
+from fastapi import HTTPException
 from app.config import settings
 from app.auth.models import RefreshToken
 
 
 def create_access_token(data: dict) -> str:
-    """
-    Create a JWT access token, embedding `data` (which must include 'sub' and 'role').
-    """
+    # Ensure the required fields exist BEFORE encoding
+    assert "sub" in data and "role" in data, "JWT payload missing 'sub' or 'role'"
+
     expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    payload = { **data, "exp": expire }
+    payload = {**data, "exp": expire}
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
 
 
 async def create_refresh_token(db: AsyncSession, user_id: int) -> str:
-    """
-    Create a new refresh token (a secure random string), store it in DB, and return it.
-    """
-    token   = secrets.token_urlsafe(32)
-    now     = datetime.utcnow()
-    expires = now + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
-    db_token = RefreshToken(token=token, user_id=user_id, issued_at=now, expires_at=expires)
-    db.add(db_token)
-    await db.commit()
-    return token
+    try:
+        token = secrets.token_urlsafe(32)
+        now = datetime.utcnow()
+        expires = now + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+
+        db_token = RefreshToken(
+            token=token,
+            user_id=user_id,
+            issued_at=now,
+            expires_at=expires
+        )
+
+        db.add(db_token)
+        await db.commit()
+
+        return token
+
+    except Exception as e:
+        print("❌ Failed to create refresh token:", e)
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Refresh token error")
 
 
 async def revoke_refresh_token(db: AsyncSession, token: str) -> None:

@@ -1,5 +1,3 @@
-# backend/app/run.py
-
 import os, sys
 
 # Add backend/ to sys.path so that `uvicorn app.main:app` works
