@@ -43,13 +43,11 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .  #root of the project
+      dockerfile: frontend/Dockerfile
     container_name: easyabroad-frontend
     ports:
       - "8080:80"
-    volumes:
-      - ./frontend:/usr/share/nginx/html
 
   db:
     image: mysql:8.0
