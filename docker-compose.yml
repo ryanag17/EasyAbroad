@@ -11,7 +11,7 @@ services:
         condition: service_started
     volumes:
       - ./backend:/app            # mount your local code into the container
-      - ./mysql-init:/docker-entrypoint-initdb.d:ro
+
     working_dir: /app
     command:
       - uvicorn
