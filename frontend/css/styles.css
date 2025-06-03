@@ -3642,5 +3642,166 @@ textarea#reviewText {
 }
 /* consultant-verification END */
 
+/* consultant-preview-study */
+    .preview-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 70%;
+      margin: 0 auto;
+      margin-bottom: 40px;
+    }
+    .preview-section {
+      margin-bottom: 25px;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      row-gap: 10px;
+    }
+    .info-label {
+      font-weight: bold;
+      color: #444;
+    }
+    .checkbox-lists {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .checkbox-column {
+      flex: 1;
+      min-width: 220px;
+    }
+    .checkbox-column label {
+      display: block;
+      margin: 5px 0;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .approve-btn, .reject-btn {
+      padding: 10px 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .approve-btn {
+      background: #2ecc71;
+      color: white;
+    }
+    .reject-btn {
+      background: #e74c3c;
+      color: white;
+    }
+    .modal_preview {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-content_preview {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    .modal-content_preview button {
+      margin: 10px 15px;
+      padding: 8px 16px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #000;
+      border-radius: 30px;
+      width: 70px;
+      color: white;
+      text-align: center;
+    }
+    
+    .modal-content_preview button:hover{
+      background-color: deeppink;
+      transition: 0.5s;
+    }
+/* consultant-preview-study END */
 
+/* consultant-preview-internship */
+    .preview-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 0 auto;
+      margin-bottom: 40px;
+    }
+    .preview-section {
+      margin-bottom: 25px;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      row-gap: 10px;
+    }
+    .info-label {
+      font-weight: bold;
+      color: #444;
+    }
+    .checkbox-lists {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .checkbox-column {
+      flex: 1;
+      min-width: 220px;
+    }
+    .checkbox-column label {
+      display: block;
+      margin: 5px 0;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .approve-btn, .reject-btn {
+      padding: 10px 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .approve-btn {
+      background: #2ecc71;
+      color: white;
+    }
+    .reject-btn {
+      background: #e74c3c;
+      color: white;
+    }
+/* consultant-preview-intrnship END */
 /* Admin END */

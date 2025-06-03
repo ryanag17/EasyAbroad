@@ -79,6 +79,8 @@
       </tbody>
     </table>
   </div>
+  <!-- reset dummy data -->
+<!--   <button onclick="resetDummyData()">Reset to Default</button> -->
   
     <footer>
         <div>
@@ -130,37 +132,58 @@
       function confirmSignOut() {
         window.location.href = "../../index.html";
       }
-        const submissions = [
-      {
-        firstName: 'Serhat',
-        lastName: 'Günay',
-        email: 'serhat@xyz.com',
-        type: 'Study Abroad',
-        submittedOn: '29.05.25',
-        status: 'pending'
-      },
-      {
-        firstName: 'Elif',
-        lastName: 'Kaya',
-        email: 'elif@web.de',
-        type: 'Internship Abroad',
-        submittedOn: '30.05.25',
-        status: 'approved'
-      },
-      {
-        firstName: 'Mehmet',
-        lastName: 'Ali',
-        email: 'mehmet@example.com',
-        type: 'Exchange Program',
-        submittedOn: '28.05.25',
-        status: 'rejected'
-      }
-    ];
+let submissions = JSON.parse(localStorage.getItem('consultantSubmissions')) || [
+  {
+    firstName: 'Serhat',
+    lastName: 'Günay',
+    email: 'serhat@xyz.com',
+    type: 'Study Abroad',
+    submittedOn: '29.05.25',
+    status: 'pending'
+  },
+  {
+    firstName: 'asd',
+    lastName: 'dfg',
+    email: 'qwe@xyz.com',
+    type: 'Study Abroad',
+    submittedOn: '22.05.25',
+    status: 'pending'
+  },
+  {
+    firstName: 'asd1',
+    lastName: 'dfg1',
+    email: 'qwe1@xyz.com',
+    type: 'Internship Abroad',
+    submittedOn: '21.05.25',
+    status: 'pending'
+  },
+  {
+    firstName: 'Elif',
+    lastName: 'Kaya',
+    email: 'elif@web.de',
+    type: 'Internship Abroad',
+    submittedOn: '30.05.25',
+    status: 'approved'
+  },
+  {
+    firstName: 'Mehmet',
+    lastName: 'Ali',
+    email: 'mehmet@example.com',
+    type: 'Study Abroad',
+    submittedOn: '28.05.25',
+    status: 'rejected'
+  }
+];
+
+localStorage.setItem('consultantSubmissions', JSON.stringify(submissions));
+
 
     const tbody = document.getElementById('submissionBody');
     const tabButtons = document.querySelectorAll('.tab-button');
 
     function renderTable(statusFilter) {
+
+
       tbody.innerHTML = '';
       submissions.forEach(sub => {
         if (statusFilter === 'all' || sub.status === statusFilter) {
@@ -172,16 +195,118 @@
             <td>${sub.email}</td>
             <td>${sub.type}</td>
             <td>${sub.submittedOn}</td>
-            <td><span class="submission-action-link" onclick="previewSubmission('${sub.firstName}', '${sub.lastName}', '${sub.type}')">Preview</span></td>
+            <td>
+                <span class="submission-action-link"
+  onclick="previewSubmission('${sub.firstName}', '${sub.lastName}', '${sub.email}', '${sub.type}', '${sub.status}')">
+  Preview
+</span>
+
+
+
+            </td>
+
           `;
           tbody.appendChild(row);
         }
       });
     }
 
-    function previewSubmission(firstName, lastName, type) {
-      alert(`Previewing submission of ${firstName} ${lastName} for ${type}`);
+function previewSubmission(firstName, lastName, email, type, status) {
+  let consultant = {
+    firstName,
+    lastName,
+    email,
+    type
+  };
+
+  // dummy fields
+  if (type.toLowerCase().includes("study")) {
+    consultant = {
+      ...consultant,
+      university: 'Example University',
+      course: 'Example Course',
+      period: '09.2021 - 06.2024',
+      locationAbroad: 'Oxford, UK',
+      currentLocation: 'Berlin, Germany',
+      languages: 'English, German'
+    };
+  } else if (type.toLowerCase().includes("internship")) {
+    consultant = {
+      ...consultant,
+      company: 'Example Company',
+      department: 'Software Engineering Department',
+      period: '09.2023 - 02.2024',
+      locationCompany: 'Hamburg, Germany',
+      currentLocation: 'Berlin, Germany',
+      languages: 'English, German'
+    };
+  } else {
+    alert("No preview page for this consultant type.");
+    return;
+  }
+
+  localStorage.setItem("selectedConsultant", JSON.stringify(consultant));
+
+  // Only add ?mode=view for approved/rejected
+  const isViewOnly = status !== 'pending';
+  const suffix = isViewOnly ? '?mode=view' : '';
+
+  if (type.toLowerCase().includes("study")) {
+    window.location.href = "consultant-preview-study.html" + suffix;
+  } else if (type.toLowerCase().includes("internship")) {
+    window.location.href = "consultant-preview-internship.html" + suffix;
+  }
+}
+
+//reset dummy data
+function resetDummyData() {
+  const defaultSubmissions = [
+    {
+      firstName: 'Serhat',
+      lastName: 'Günay',
+      email: 'serhat@xyz.com',
+      type: 'Study Abroad',
+      submittedOn: '29.05.25',
+      status: 'pending'
+    },
+    {
+      firstName: 'asd',
+      lastName: 'dfg',
+      email: 'qwe@xyz.com',
+      type: 'Study Abroad',
+      submittedOn: '22.05.25',
+      status: 'pending'
+    },
+    {
+      firstName: 'asd1',
+      lastName: 'dfg1',
+      email: 'qwe1@xyz.com',
+      type: 'Internship Abroad',
+      submittedOn: '21.05.25',
+      status: 'pending'
+    },
+    {
+      firstName: 'Elif',
+      lastName: 'Kaya',
+      email: 'elif@web.de',
+      type: 'Internship Abroad',
+      submittedOn: '30.05.25',
+      status: 'approved'
+    },
+    {
+      firstName: 'Mehmet',
+      lastName: 'Ali',
+      email: 'mehmet@example.com',
+      type: 'Study Abroad',
+      submittedOn: '28.05.25',
+      status: 'rejected'
     }
+  ];
+
+  localStorage.setItem('consultantSubmissions', JSON.stringify(defaultSubmissions));
+  location.reload();
+}
+
 
     tabButtons.forEach(btn => {
       btn.addEventListener('click', function() {

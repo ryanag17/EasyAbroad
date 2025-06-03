@@ -57,7 +57,65 @@
     </div>
       
         
-    
+      <a href="consultant-verification.html" class="back-button">⬅ To the previous page</a>
+
+  <div class="preview-container">
+    <div class="preview-section">
+      <div class="section-title">Consultant Details</div>
+      <div class="info-grid">
+        <div class="info-label">First Name:</div><div id="firstName"></div>
+        <div class="info-label">Last Name:</div><div id="lastName"></div>
+        <div class="info-label">Role:</div><div id="type"></div>
+        <div class="info-label">Email:</div><div id="email"></div>
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="section-title">Internship Info</div>
+      <div class="info-grid">
+        <div class="info-label">Company Name:</div><div id="company"></div>
+        <div class="info-label">Department:</div><div id="department"></div>
+        <div class="info-label">Employment Period:</div><div id="period"></div>
+        <div class="info-label">Location of Company:</div><div id="locationCompany"></div>
+        <div class="info-label">Current Location:</div><div id="currentLocation"></div>
+        <div class="info-label">Languages:</div><div id="languages"></div>
+        <div class="info-label">Proof of Employment:</div><div><a href="#" download>Download proof.pdf</a></div>
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="section-title">Expertise & Contact</div>
+      <div class="checkbox-lists">
+        <div class="checkbox-column">
+          <strong>Areas the consultant can help with:</strong>
+          <label>✔ Finding accommodation</label>
+          <label>✔ Social life and making friends</label>
+          <label>✔ Company information</label>
+          <label>✔ Travel and weekend plans</label>
+        </div>
+        <div class="checkbox-column">
+          <strong>Can be contacted via:</strong>
+          <label>✔ Zoom</label>
+          <label>✔ Microsoft Teams</label>
+          <label>✔ Google Meet</label>
+          <label>✔ Apple FaceTime</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button class="approve-btn" onclick="confirmAction('approved')">✔ Approve</button>
+      <button class="reject-btn" onclick="confirmAction('rejected')">✖ Reject</button>
+    </div>
+  </div>
+
+  <div class="modal_preview" id="confirmModal">
+    <div class="modal-content_preview">
+      <p id="modalText">Are you sure?</p>
+      <button onclick="processDecision(true)">Yes</button>
+      <button onclick="processDecision(false)">No</button>
+    </div>
+  </div>
   
     <footer>
         <div>
@@ -109,6 +167,60 @@
       function confirmSignOut() {
         window.location.href = "../../index.html";
       }
+      
+      
+          const consultant = JSON.parse(localStorage.getItem("selectedConsultant"));
+
+    if (!consultant) {
+      alert("No consultant data found.");
+      window.location.href = "consultant-verification.html";
+    } else {
+      document.getElementById("firstName").textContent = consultant.firstName;
+      document.getElementById("lastName").textContent = consultant.lastName;
+      document.getElementById("email").textContent = consultant.email;
+      document.getElementById("type").textContent = consultant.type;
+      document.getElementById("company").textContent = consultant.company || '-';
+      document.getElementById("department").textContent = consultant.department || '-';
+      document.getElementById("period").textContent = consultant.period || '-';
+      document.getElementById("locationCompany").textContent = consultant.locationCompany || '-';
+      document.getElementById("currentLocation").textContent = consultant.currentLocation || '-';
+      document.getElementById("languages").textContent = consultant.languages || '-';
+    }
+
+    let selectedAction = '';
+    function confirmAction(action) {
+      selectedAction = action;
+      document.getElementById('modalText').textContent = `Are you sure you want to ${action}?`;
+      document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function processDecision(confirm) {
+  document.getElementById('confirmModal').style.display = 'none';
+  if (!confirm) return;
+
+  const submissions = JSON.parse(localStorage.getItem('consultantSubmissions')) || [];
+
+  const index = submissions.findIndex(
+    sub => sub.email === consultant.email && sub.status === 'pending'
+  );
+
+  if (index !== -1) {
+    submissions[index].status = selectedAction;
+    localStorage.setItem('consultantSubmissions', JSON.stringify(submissions));
+  }
+
+  alert(`Successfully ${selectedAction}!`);
+  window.location.href = 'consultant-verification.html';
+}
+
+    //no reject or accept
+    const urlParams = new URLSearchParams(window.location.search);
+    const isViewOnly = urlParams.get("mode") === "view";
+
+if (isViewOnly) {
+  document.querySelector('.button-group').style.display = 'none';
+}
+
     </script>
     
     <script src="../script.js"></script>
