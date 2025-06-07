@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 import bcrypt, secrets
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, text
+from sqlalchemy import select, text, delete
 
 from app.auth.models import (
     User,
@@ -14,9 +14,91 @@ from app.auth.models import (
     RefreshToken,
     ForgotPasswordRequest,
     ResetPasswordRequest,
+    UserUpdateProfile,
+    Country,
 )
 from app.auth.token_service import create_access_token, create_refresh_token
 from app.auth.email_service import send_reset_email
+from app.auth.token_verification import get_current_user
+from app.db import get_db
+
+# router required for the update funcitonality / IK 06.06
+router = APIRouter(
+    prefix="/profile",
+    tags=["profile"],
+)
+
+# new endpoint for fetching countries / IK 06.06
+@router.get(
+    "/student",
+    response_model=dict,
+    summary="Get the logged-in student’s profile"
+)
+
+async def get_student_profile(
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    user_id = current_user["user_id"]
+    if current_user.get("role") != "student":
+        raise HTTPException(status_code=403, detail="Not a student")
+    # Only return if role == student
+    stmt = select(
+        User.first_name, User.last_name, User.email,
+        User.city, User.country_name, User.birthday, User.gender,
+        User.profile_picture
+    ).where(User.id == user_id, User.role == "student")
+    result = await db.execute(stmt)
+    row = result.first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    # Fetch that user’s language names
+    lang_stmt = (
+        select(Language.language_name)
+        .join(UserLanguage, UserLanguage.language_id == Language.id)
+        .where(UserLanguage.user_id == user_id)
+    )
+    lang_result = await db.execute(lang_stmt)
+    languages = list(lang_result.scalars().all())
+
+    return {
+        "first_name"      : row.first_name,
+        "last_name"       : row.last_name,
+        "email"           : row.email,
+        "city"            : row.city,
+        "country"         : row.country_name,
+        # serializing the date as an ISO-formatted string / IK 07.06
+        "birthday"        : row.birthday.isoformat() if row.birthday else None,
+        "gender"          : row.gender,
+        "profile_picture" : row.profile_picture,
+        "languages"       : languages
+    }
+
+# GET /profile/languages (fetch languages)
+@router.get(
+    "/languages",
+    response_model=list[dict],
+    summary="Return all available languages (id + name) for the multi-select"
+)
+async def list_all_languages(db: AsyncSession = Depends(get_db)):
+    stmt = select(Language.id, Language.language_name)
+    result = await db.execute(stmt)
+    rows = result.all()  # each row is a tuple (id, language_name)
+    return [{"id": r[0], "language_name": r[1]} for r in rows]
+
+
+@router.get(
+    "/countries",
+    response_model=list[str],
+    summary="Get all countries"
+)
+async def list_countries(
+    db: AsyncSession = Depends(get_db)
+):
+    stmt   = select(Country.country_name).order_by(Country.country_name)
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 
 async def register(db: AsyncSession, user_in: UserCreate):
@@ -127,27 +209,171 @@ async def reset_password(db: AsyncSession, data: ResetPasswordRequest):
     return {"message": "Password reset successfully"}
 
 
-async def get_student_profile(db: AsyncSession, user_id: int):
-    # Only return if role == student
+# new update profile endpoint / IK 06.06
+@router.put("/student", response_model=dict)
+async def update_student_profile(
+    payload: UserUpdateProfile,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    user_id = current_user["user_id"]
+    if current_user.get("role") != "student":
+        raise HTTPException(status_code=403, detail="Not a student")
+    # 1) Fetch user row (must be a student)
+    result = await db.execute(
+        select(User).where(User.id == user_id, User.role == "student")
+    )
+    user_obj = result.scalars().first()
+    if not user_obj:
+        raise HTTPException(status_code=404, detail="Student profile not found")
+
+    # 2) Update allowed columns if provided
+    if payload.first_name is not None:
+        user_obj.first_name = payload.first_name
+    if payload.last_name is not None:
+        user_obj.last_name = payload.last_name
+    if payload.city is not None:
+        user_obj.city = payload.city
+    if payload.country_name is not None:
+        user_obj.country_name = payload.country_name
+    if payload.gender is not None:
+        user_obj.gender = payload.gender
+
+    # 3) Replace languages if list is provided
+    if payload.languages is not None:
+        # Delete existing links
+        await db.execute(delete(UserLanguage).where(UserLanguage.user_id == user_id))
+        # Re-insert new language links
+        for lang_id in payload.languages:
+            # (Optional) Check that the language exists
+            lang_check = await db.execute(select(Language.id).where(Language.id == lang_id))
+            if not lang_check.scalar_one_or_none():
+                raise HTTPException(status_code=400, detail=f"Language ID {lang_id} does not exist")
+            new_link = UserLanguage(user_id=user_id, language_id=lang_id)
+            db.add(new_link)
+
+    await db.commit()
+    await db.refresh(user_obj)
+
+    # 4) Return updated profile fields (including language names)
+    lang_q = await db.execute(
+        select(Language.language_name).join(UserLanguage).where(UserLanguage.user_id == user_id)
+    )
+    language_names = lang_q.scalars().all()
+
+    return {
+        "first_name": user_obj.first_name,
+        "last_name" : user_obj.last_name,
+        "city"      : user_obj.city,
+        "country"   : user_obj.country_name,
+        "gender"    : user_obj.gender,
+        "languages" : language_names
+    }
+
+# GET /profile/consultant to update the consultant profile / IK 07.06
+@router.get(
+    "/consultant",
+    response_model=dict,
+    summary="Get the logged-in consultant’s profile"
+)
+async def get_consultant_profile_endpoint(
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    user_id = current_user["user_id"]
+    if current_user.get("role") != "consultant":
+        raise HTTPException(status_code=403, detail="Not a consultant")
+
+    # Reuse your helper
+    data = await get_consultant_profile(db, user_id)
+    # Ensure birthday is ISO string
+    data["birthday"] = data["birthday"].isoformat() if data["birthday"] else None
+    return data
+
+# PUT /profile/consultant 
+@router.put("/consultant", response_model=dict)
+async def update_consultant_profile(
+    payload: UserUpdateProfile,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    user_id = current_user["user_id"]
+    if current_user.get("role") != "consultant":
+        raise HTTPException(status_code=403, detail="Not a consultant")
+
+    # Fetch the user row
+    result = await db.execute(
+        select(User).where(User.id == user_id, User.role == "consultant")
+    )
+    user_obj = result.scalars().first()
+    if not user_obj:
+        raise HTTPException(status_code=404, detail="Consultant profile not found")
+
+    # Update same fields as student
+    if payload.first_name   is not None: user_obj.first_name   = payload.first_name
+    if payload.last_name    is not None: user_obj.last_name    = payload.last_name
+    if payload.city         is not None: user_obj.city         = payload.city
+    if payload.country_name is not None: user_obj.country_name = payload.country_name
+    if payload.gender       is not None: user_obj.gender       = payload.gender
+
+    # Replace languages
+    if payload.languages is not None:
+        await db.execute(delete(UserLanguage).where(UserLanguage.user_id == user_id))
+        for lang_id in payload.languages:
+            # verify language exists
+            chk = await db.execute(select(Language.id).where(Language.id == lang_id))
+            if not chk.scalar_one_or_none():
+                raise HTTPException(status_code=400, detail=f"Language ID {lang_id} does not exist")
+            db.add(UserLanguage(user_id=user_id, language_id=lang_id))
+
+    await db.commit()
+    await db.refresh(user_obj)
+
+    # Return names
+    lang_q = await db.execute(
+        select(Language.language_name).join(UserLanguage).where(UserLanguage.user_id == user_id)
+    )
+    return {
+        "first_name": user_obj.first_name,
+        "last_name" : user_obj.last_name,
+        "city"      : user_obj.city,
+        "country"   : user_obj.country_name,
+        "gender"    : user_obj.gender,
+        "languages" : lang_q.scalars().all()
+    }
+
+# ────────── GET /profile/admin ──────────
+@router.get(
+    "/admin",
+    response_model=dict,
+    summary="Get the logged-in admin’s profile"
+)
+async def get_admin_profile_endpoint(
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    user_id = current_user["user_id"]
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Not an admin")
+
     stmt = select(
         User.first_name, User.last_name, User.email,
         User.city, User.country_name, User.birthday, User.gender,
         User.profile_picture
-    ).where(User.id == user_id, User.role == "student")
+    ).where(User.id == user_id, User.role == "admin")
     result = await db.execute(stmt)
     row = result.first()
     if not row:
         raise HTTPException(status_code=404, detail="Profile not found")
 
-    # Fetch that user’s language names
+    # fetch language names
     lang_stmt = (
         select(Language.language_name)
         .join(UserLanguage, UserLanguage.language_id == Language.id)
         .where(UserLanguage.user_id == user_id)
     )
     lang_result = await db.execute(lang_stmt)
-    languages = list(lang_result.scalars().all())
-
+    languages = lang_result.scalars().all()
 
     return {
         "first_name"      : row.first_name,
@@ -155,10 +381,62 @@ async def get_student_profile(db: AsyncSession, user_id: int):
         "email"           : row.email,
         "city"            : row.city,
         "country"         : row.country_name,
-        "birthday"        : row.birthday,
+        "birthday"        : row.birthday.isoformat() if row.birthday else None,
         "gender"          : row.gender,
         "profile_picture" : row.profile_picture,
         "languages"       : languages
+    }
+
+# PUT /profile/admin 
+@router.put("/admin", response_model=dict)
+async def update_admin_profile(
+    payload: UserUpdateProfile,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    user_id = current_user["user_id"]
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Not an admin")
+
+    # 1) fetch the admin row
+    result = await db.execute(
+        select(User).where(User.id == user_id, User.role == "admin")
+    )
+    user_obj = result.scalars().first()
+    if not user_obj:
+        raise HTTPException(status_code=404, detail="Admin profile not found")
+
+    # 2) update allowed fields
+    if payload.first_name   is not None: user_obj.first_name   = payload.first_name
+    if payload.last_name    is not None: user_obj.last_name    = payload.last_name
+    if payload.city         is not None: user_obj.city         = payload.city
+    if payload.country_name is not None: user_obj.country_name = payload.country_name
+    if payload.gender       is not None: user_obj.gender       = payload.gender
+
+    # 3) replace languages
+    if payload.languages is not None:
+        await db.execute(delete(UserLanguage).where(UserLanguage.user_id == user_id))
+        for lang_id in payload.languages:
+            # ensure language exists
+            check = await db.execute(select(Language.id).where(Language.id == lang_id))
+            if not check.scalar_one_or_none():
+                raise HTTPException(status_code=400, detail=f"Language ID {lang_id} does not exist")
+            db.add(UserLanguage(user_id=user_id, language_id=lang_id))
+
+    await db.commit()
+    await db.refresh(user_obj)
+
+    # 4) return updated names
+    lang_q = await db.execute(
+        select(Language.language_name).join(UserLanguage).where(UserLanguage.user_id == user_id)
+    )
+    return {
+        "first_name": user_obj.first_name,
+        "last_name" : user_obj.last_name,
+        "city"      : user_obj.city,
+        "country"   : user_obj.country_name,
+        "gender"    : user_obj.gender,
+        "languages" : lang_q.scalars().all()
     }
 
 

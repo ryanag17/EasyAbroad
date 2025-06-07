@@ -127,6 +127,13 @@ class Language(Base):
 
     users = relationship("UserLanguage", back_populates="language")
 
+class Country(Base):
+    __tablename__ = "countries"
+
+    id           = Column(Integer, primary_key=True, index=True)
+    country_name = Column(String(100), nullable=False, unique=True)
+    country_code = Column(String(2),   nullable=False, unique=True)
+
 
 class UserLanguage(Base):
     __tablename__ = "user_languages"
@@ -149,3 +156,29 @@ class RefreshToken(Base):
     issued_at  = Column(DateTime, default=datetime.utcnow, nullable=False)
     expires_at = Column(DateTime, nullable=False)
     revoked    = Column(Boolean, default=False, nullable=False)
+
+# ────────── New schema for updating the profile / IK 06.06 ──────────
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from typing import Literal
+
+class UserUpdateProfile(BaseModel):
+    first_name   : Optional[str] = None
+    last_name    : Optional[str] = None
+    city         : Optional[str] = None
+    country_name : Optional[str] = Field(None, alias="country_name")
+    gender       : Optional[Literal["male","female","other"]] = None
+    languages    : Optional[List[int]] = None
+
+    class Config:
+        allow_population_by_field_name = True
+        schema_extra = {
+            "example": {
+                "first_name": "Alice",
+                "last_name": "Smith",
+                "city": "Berlin",
+                "country_name": "Germany",
+                "gender": "female",
+                "languages": [1, 5, 8]
+            }
+        }

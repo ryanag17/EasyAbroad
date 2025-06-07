@@ -9,3 +9,4 @@ SQLAlchemy>=1.4
 pydantic-settings
 aiomysql>=0.1.0
 python-dotenv==1.0.0
+httpx

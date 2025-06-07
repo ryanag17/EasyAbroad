@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response 
 from fastapi.staticfiles import StaticFiles
 
 from app.auth.routes import router as auth_router
@@ -23,14 +24,23 @@ os.environ.setdefault("FRONTEND_BASE_URL",  "http://localhost:8080")
 
 app = FastAPI()
 
-# 2) CORS: allow requests from the frontend (assumed on http://localhost:8080)
+# 2) CORS: allow only your frontend origin and credentials
 app.add_middleware(
-  CORSMiddleware,
-    allow_origins=["*"],          # <-- “*” means: any origin is allowed
+    CORSMiddleware,
+    allow_origins=["http://localhost:8080"],  # ← your _exact_ frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.options("/{full_path:path}", include_in_schema=False)
+async def preflight_handler(full_path: str):
+    # Simply return 200 OK for any OPTIONS request.
+    return Response(status_code=200)
+
+# 1) Profile routing (must come after CORS so all /profile routes are covered)
+from app.auth.controller import router as profile_router
+app.include_router(profile_router)
 
 # 3) Register auth router under /auth
 app.include_router(auth_router, prefix="/auth")

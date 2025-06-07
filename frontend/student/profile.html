@@ -2,109 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Profile</title>
   <link rel="icon" type="image/png" href="../images/favicon.png">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/all.min.css">
   <!-- Choices.js CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-
-  <!-- Choices.js JS -->
-  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+  />
 </head>
-
 <body>
   <header class="user-header">
     <a href="home.html" class="to_the_main">
       <div class="logo">
-        <img src="../images/logo.png" alt="" class="pic_logo">
+        <img src="../images/logo.png" alt="Logo" class="pic_logo">
       </div>
     </a>
-
-    <div class="bell-menu">
-      <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-      <a href="notifications.html" class="bell-div">
-        <div class="bell-image">
-          <img src="../images/bell.png" alt="" class="pic_logo">
-        </div>
-      </a>
-
-      <!-- Menu function -->
-      <div id="menuHamToggle">
-        <!-- Create Hidden Checkbos, that will be used as Click Function-->
-        <input type="checkbox">
-
-        <!-- Lets create three line hamburger menu
-        Can animate to display as ham menu and closing menu tag.
-        -->
-        <span></span>
-        <span></span>
-        <span></span>
-
-        <!-- Here menu goes -->
-        <ul id="mainMenu">
-          <a href="profile.html"> <li> Profile </li></a>
-          <a href="appointments.html"> <li> Appointments </li></a>
-          <a href="messages.html"> <li> Messages </li></a>
-          <a href="settings-support.html"> <li> Settings & support </li></a>
-          <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-        </ul>
-      </div>
-      <!-- Menu function END -->
-    </div>
+    <!-- bell & hamburger menu … -->
   </header>
-
-  <!-- Sign Out Confirmation Modal -->
-  <div id="signOutModal" class="modal-overlay">
-    <div class="modal-content">
-      <p>Are you sure you want to sign out?</p>
-      <div class="modal-buttons">
-        <button onclick="confirmSignOut()">Yes</button>
-        <button onclick="closeModal()">No</button>
-      </div>
-    </div>
-  </div>
 
   <section class="profile-section">
     <div class="profile-container">
       <div class="profile-picture">
-        <!-- Profile Picture -->
         <div class="profile-pic-wrapper">
           <img id="profilePic" src="../images/avatar.png" alt="Profile Picture" class="avatar">
           <label for="fileInput" class="change-pic-link">Change profile picture</label>
-          <input type="file" id="fileInput" accept="image/*" style="display: none;">
+          <input type="file" id="fileInput" accept="image/*" style="display:none">
         </div>
       </div>
 
       <form class="profile-form">
         <div class="form-group">
           <label for="name">Name:</label>
-          <input type="text" class="name_input" id="name" placeholder="Enter your name" disabled />
+          <input
+            type="text"
+            id="name"
+            name="first_name"
+            placeholder="Enter your name"
+            disabled
+            class="name_input"
+          />
         </div>
 
         <div class="form-group">
           <label for="surname">Last Name:</label>
-          <input type="text" id="surname" class="name_input" placeholder="Enter your surname" disabled />
+          <input
+            type="text"
+            id="surname"
+            name="last_name"
+            placeholder="Enter your surname"
+            disabled
+            class="name_input"
+          />
         </div>
 
         <div class="form-group">
           <label for="birthday">Birthday:</label>
-          <input type="date" class="name_input" name="birthday" disabled>
+          <input
+            type="date"
+            id="birthday"
+            name="birthday"
+            disabled
+            class="name_input"
+          />
         </div>
 
         <div class="form-row-horizontal">
           <div class="form-group city-country-group">
             <label for="city">City:</label>
-            <input type="text" id="city" placeholder="Enter your city" disabled />
+            <input
+              type="text"
+              id="city"
+              name="city"
+              placeholder="Enter your city"
+              disabled
+            />
           </div>
-
           <div class="form-group city-country-group">
             <label for="country">Country:</label>
-            <select id="country" disabled>
+            <select id="country" name="country_name" disabled>
               <option value="">Select</option>
-              <option value="germany">Germany</option>
-              <option value="turkey">Turkey</option>
             </select>
           </div>
         </div>
@@ -112,7 +91,7 @@
         <div class="form-row-horizontal">
           <div class="form-group city-country-group">
             <label for="gender">Gender:</label>
-            <select name="gender" id="gender" disabled>
+            <select id="gender" name="gender" disabled>
               <option value="">Select</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -122,10 +101,19 @@
         </div>
 
         <div class="form-group">
+          <label for="languages">Languages:</label>
+          <select id="languages" name="languages" multiple disabled></select>
+        </div>
+
+        <div class="form-group">
           <label for="email-id">Email:</label>
-          <input type="email" name="email" id="email-id" placeholder="Enter email" oninput="checker()" disabled>
-          <div id="icon"></div>
-          <p id="error-msg">Please Enter A Valid Email</p>
+          <input
+            type="email"
+            id="email-id"
+            name="email"
+            placeholder="Enter email"
+            disabled
+          />
         </div>
 
         <div class="form-buttons">
@@ -136,103 +124,132 @@
   </section>
 
   <footer>
-    <div>
-      <div class="footer-logo">
-        <img src="../images/logo.png" alt="" class="pic_logo">
-      </div>
-      <div class="social-icons">
-        <a href="" class="twitter_link"><img src="../images/twitter.png" alt="X"></a>
-        <a href="" class="twitter_link"><img src="../images/instagram.png" alt="Instagram"></a>
-        <a href="" class="twitter_link1"><img src="../images/youtube.png" alt="YouTube"></a>
-        <a href="" class="twitter_link"><img src="../images/linkedin.png" alt="LinkedIn"></a>
-      </div>
-    </div>
-    <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-    </div>
+    <!-- footer -->
   </footer>
 
+  <!-- Choices.js JS -->
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
   <script>
-    // Image selector
-    const fileInput = document.getElementById('fileInput');
-    const profilePic = document.getElementById('profilePic');
+    document.addEventListener("DOMContentLoaded", async () => {
+      const API_BASE = "http://localhost:8000";
 
-    fileInput.addEventListener('change', function () {
-      const file = fileInput.files[0];
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          profilePic.src = e.target.result; // Set new image
+      // ← READ the token from sessionStorage (same key your login.html uses) IK 07.06
+      const token = sessionStorage.getItem("accessToken");
+      if (!token) {
+        alert("Please log in first.");
+        return window.location.href = "../log-in.html";
+      }
+
+      const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type" : "application/json"
+      };
+
+      // 1) Pre‐attach Edit/Save so the button is always clickable
+      const editBtn = document.querySelector(".edit-btn");
+      const fields  = Array.from(
+        document.querySelectorAll(
+          'input:not([name="birthday"]):not([name="email"]), select'
+        )
+      ).filter(el => el.id !== "email-id");
+      let editing = false, langChoices;
+
+      editBtn.addEventListener("click", async () => {
+        if (!editing) {
+          // 1) Enable all inputs & selects
+          fields.forEach(f => f.disabled = false);
+          // 2) Make the Choices multi-select clickable
+          langChoices.enable();
+          editBtn.textContent = "Save";
+          editing = true;
+          return;
+        }
+
+        // Build payload to match your Pydantic model
+        // Build payload to match your Pydantic model
+        const rawGender = document.getElementById("gender").value;
+        const rawCountry = document.getElementById("country").value;
+
+        const payload = {
+          first_name:   document.getElementById("name").value,
+          last_name:    document.getElementById("surname").value,
+          city:         document.getElementById("city").value,
+          // Only include country_name if non-empty
+          ...(rawCountry && { country_name: rawCountry }),
+          // Send gender=null when blank, else the literal
+          gender: rawGender || null,
+          languages: langChoices.getValue(true).map(id => Number(id))
         };
-        reader.readAsDataURL(file); // Convert image to base64
-      } else {
-        alert("Please select a valid image file.");
+
+        const res = await fetch(`${API_BASE}/profile/student`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          // print real error in console…
+          const err = await res.json();
+          console.error("Save error:", err);
+          // …and show it in the alert
+          return alert("Save failed: " + JSON.stringify(err.detail || err));
+        }
+
+        // 1) Disable all inputs & selects again
+        fields.forEach(f => f.disabled = true);
+        // 2) Make the multi-select read-only
+        langChoices.disable();
+        editBtn.textContent = "Edit";
+        editing = false;
+        alert("Your changes are saved");
+      });
+
+      // 2) Fetch profile
+      const profRes = await fetch(`${API_BASE}/profile/student`, { headers });
+      if (!profRes.ok) {
+        alert("Not authenticated – please log in again");
+        return window.location.href = "../log-in.html";
       }
+      const profile = await profRes.json();
+
+      // 3) Populate fields
+      document.getElementById("name").value     = profile.first_name || "";
+      document.getElementById("surname").value  = profile.last_name  || "";
+      document.getElementById("birthday").value = profile.birthday   || "";
+      document.getElementById("city").value     = profile.city       || "";
+      document.getElementById("gender").value   = profile.gender     || "";
+      document.getElementById("email-id").value = profile.email      || "";
+
+      // 4) Countries dropdown
+      const countrySel = document.getElementById("country");
+      countrySel.innerHTML = `<option value="">Select</option>`;
+      const countries = await (await fetch(
+        `${API_BASE}/profile/countries`, { headers }
+      )).json();
+      countries.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.text  = c;
+        if (c === profile.country) opt.selected = true;
+        countrySel.appendChild(opt);
+      });
+
+      // 5) Languages multi-select
+      const langSel  = document.getElementById("languages");
+      const allLangs = await (await fetch(
+        `${API_BASE}/profile/languages`, { headers }
+      )).json();
+      allLangs.forEach(l => {
+        const opt = document.createElement("option");
+        opt.value = l.id;
+        opt.text  = l.language_name;
+        if (profile.languages.includes(l.language_name)) {
+          opt.selected = true;
+        }
+        langSel.appendChild(opt);
+      });
+      langChoices = new Choices(langSel, { removeItemButton: true });
     });
-
-    let emailId = document.getElementById("email-id");
-    let errorMsg = document.getElementById("error-msg");
-    let icon = document.getElementById("icon");
-    let mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
-
-    function checker() {
-      icon.style.display = "none";
-      if (emailId.value.match(mailRegex)) {
-        icon.innerHTML = '<i class="fas fa-check-circle"></i>';
-        icon.style.color = '#2ecc71';
-        errorMsg.style.display = 'none';
-        emailId.style.border = '2px solid #2ecc71';
-      } else if (emailId.value == "") {
-        icon.style.display = 'none';
-        errorMsg.style.display = 'none';
-        emailId.style.border = '2px solid #d1d3d4';
-      } else {
-        icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
-        icon.style.color = '#ff2851';
-        errorMsg.style.display = 'block';
-        emailId.style.border = '2px solid #ff2851';
-      }
-    }
-
-    // Removed language-select script
-
-    const editButton = document.querySelector('.edit-btn');
-    let isEditing = false;
-
-    editButton.addEventListener('click', function () {
-      const fields = document.querySelectorAll(
-        '.profile-form input:not([name="email"]):not([name="birthday"]), .profile-form select, .profile-form textarea, .city_input'
-      );
-
-      if (!isEditing) {
-        fields.forEach(field => field.disabled = false);
-        editButton.textContent = 'Save';
-        isEditing = true;
-      } else {
-        fields.forEach(field => field.disabled = true);
-        editButton.textContent = 'Edit';
-        isEditing = false;
-
-        alert('Your changes are saved');
-      }
-    });
-
-    function showSignOutModal() {
-      document.getElementById('signOutModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-      document.getElementById('signOutModal').style.display = 'none';
-    }
-
-    function confirmSignOut() {
-      window.location.href = "../../index.html";
-    }
   </script>
 </body>
 </html>
