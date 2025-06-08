@@ -115,21 +115,25 @@
           </a>
         </div>
     </footer>
-    <script>
+
+  <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const API_BASE = "http://localhost:8000";
       const token = sessionStorage.getItem("accessToken");
-      if (!token) return alert("Please log in"), window.location.href = "../log-in.html";
+      if (!token) {
+        alert("Please log in first.");
+        return window.location.href = "../log-in.html";
+      }
 
       const headers = {
         "Authorization": `Bearer ${token}`,
-        "Content-Type" : "application/json"
+        "Content-Type": "application/json"
       };
 
       try {
         const res = await fetch(`${API_BASE}/profile/consultant`, { headers });
         if (!res.ok) {
-          throw new Error("Auth error");
+          throw new Error("Unauthorized");
         }
 
         const profile = await res.json();
@@ -137,24 +141,27 @@
         document.querySelector(".user-fullname").textContent = name || "Consultant";
 
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load profile:", err);
         alert("Failed to load user info. Please log in again.");
+        sessionStorage.clear(); // Clear broken token
         window.location.href = "../log-in.html";
       }
     });
 
-      function showSignOutModal() {
-        document.getElementById('signOutModal').style.display = 'flex';
-      }
+    function showSignOutModal() {
+      document.getElementById('signOutModal').style.display = 'flex';
+    }
 
-      function closeModal() {
-        document.getElementById('signOutModal').style.display = 'none';
-      }
+    function closeModal() {
+      document.getElementById('signOutModal').style.display = 'none';
+    }
 
-      function confirmSignOut() {
-        window.location.href = "../../";
-      }
-    </script>
+    function confirmSignOut() {
+      sessionStorage.clear(); // Optional: clear token on logout
+      window.location.href = "../../";
+    }
+  </script>
+
     <script src="../script.js"></script>
 </body>
 </html>

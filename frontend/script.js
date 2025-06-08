@@ -196,20 +196,18 @@ async function loginUser() {
 
     const data = await res.json();
     if (res.ok && data.access_token) {
-      // 1) store the JWT
+      // 1) store the JWT + role
       sessionStorage.setItem("accessToken", data.access_token);
+      sessionStorage.setItem("userType", data.role); // ✅ this is the missing piece
 
-      // 2) redirect based on the role
+      // 2) redirect
       if (data.role === "student") {
         window.location.href = "student/home.html";
-      }
-      else if (data.role === "consultant") {
+      } else if (data.role === "consultant") {
         window.location.href = "consultant/home.html";
-      }
-      else if (data.role === "admin") {
+      } else if (data.role === "admin") {
         window.location.href = "admin/home.html";
-      }
-      else {
+      } else {
         alert("Unknown role: " + data.role);
       }
     }
@@ -241,40 +239,75 @@ async function fetchProfile(role) {
 
 // 6) Validate Register Form
 function validateRegisterForm() {
-  const nameVal    = document.getElementById("name").value.trim();
-  const surnameVal = document.getElementById("surname").value.trim();
-  const emailVal   = document.getElementById("email-id").value.trim();
-  const pwVal      = document.getElementById("password-id").value;
-  const repeatVal  = document.getElementById("repeat").value;
+  // Clear previous messages
+  document.querySelectorAll('.error-message').forEach(p => {
+    p.style.display = 'none';
+    p.textContent = '';
+  });
+
+  const nameVal      = document.getElementById("name").value.trim();
+  const surnameVal   = document.getElementById("surname").value.trim();
+  const emailVal     = document.getElementById("email-id").value.trim();
+  const pwVal        = document.getElementById("password-id").value;
+  const repeatVal    = document.getElementById("repeat").value;
+  const birthdayVal  = document.getElementById("birthday").value;
+
+  let isValid = true;
 
   if (!nameVal) {
-    alert("Please enter your name.");
-    document.getElementById("name").focus();
-    return false;
+    showError("name-error", "Please enter your name.");
+    isValid = false;
   }
+
   if (!surnameVal) {
-    alert("Please enter your surname.");
-    document.getElementById("surname").focus();
-    return false;
+    showError("surname-error", "Please enter your surname.");
+    isValid = false;
   }
+
   const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
   if (!emailVal.match(mailRegex)) {
-    alert("Please enter a valid email address.");
-    document.getElementById("email-id").focus();
-    return false;
+    showError("email-error", "Please enter a valid email address.");
+    isValid = false;
   }
+
   if (pwVal.length < 6) {
-    alert("Password must be at least 6 characters.");
-    document.getElementById("password-id").focus();
-    return false;
+    showError("password-error", "Password must be at least 6 characters.");
+    isValid = false;
   }
+
   if (pwVal !== repeatVal) {
-    alert("Passwords do not match.");
-    document.getElementById("repeat").focus();
-    return false;
+    showError("repeat-error", "Passwords do not match.");
+    isValid = false;
   }
-  return true;
+
+  if (birthdayVal) {
+    const birthdayDate = new Date(birthdayVal);
+    const today = new Date();
+
+    if (birthdayDate > today) {
+      showError("birthday-error", "Birthday cannot be in the future.");
+      isValid = false;
+    } else {
+      const age = new Date(today - birthdayDate).getUTCFullYear() - 1970;
+      if (age < 18) {
+        showError("birthday-error", "You must be at least 18 years old.");
+        isValid = false;
+      }
+    }
+  }
+
+  return isValid;
 }
+
+function showError(id, message) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.textContent = message;
+    el.style.display = "block";
+  }
+}
+
+
 
 function validateLoginForm() {
   const email = document.getElementById("email-id").value.trim();

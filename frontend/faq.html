@@ -9,15 +9,7 @@
     <link rel="stylesheet" href="css/all.min.css">
 </head>
 <body>
-    <header>
-        <a href="/" class="to_the_main"><div class="logo"><img src="images/logo.png" alt="" class="pic_logo"></div></a>
-        <div class="nav-buttons">
-            <a href="log-in.html" class="login_link"><button class="login">Log in</button>
-            </a>
-            <a href="register.html" class="register_link"><button class="register">Register</button>
-            </a>
-        </div>
-    </header>
+    <header id="dynamic-header"></header>
     
     <div class="faq_3" unique-script-id="w-w-dm-id">
         <div class="responsive-container-block container">
@@ -176,7 +168,12 @@
         </a>
       </div>
     </footer>
-      
-      <script src="script.js"></script>
+
+    <script src="auth.js"></script>
+    <script>
+    injectHeader();
+    </script>
+
+    <script src="script.js"></script>   
 </body>
 </html>
