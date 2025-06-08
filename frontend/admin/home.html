@@ -117,6 +117,33 @@
     </footer>
 
     <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const API_BASE = "http://localhost:8000";
+      const token = sessionStorage.getItem("accessToken");
+      if (!token) return alert("Please log in"), window.location.href = "../log-in.html";
+
+      const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type" : "application/json"
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/profile/admin`, { headers });
+        if (!res.ok) {
+          throw new Error("Auth error");
+        }
+
+        const profile = await res.json();
+        const name = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
+        document.querySelector(".user-fullname").textContent = name || "Admin";
+
+      } catch (err) {
+        console.error(err);
+        alert("Failed to load user info. Please log in again.");
+        window.location.href = "../log-in.html";
+      }
+    });
+
       function showSignOutModal() {
         document.getElementById('signOutModal').style.display = 'flex';
       }
@@ -126,7 +153,7 @@
       }
 
       function confirmSignOut() {
-        window.location.href = "../../index.html";
+        window.location.href = "../../";
       }
     </script>
     

@@ -84,11 +84,12 @@
         loginUser();
       });
 
-      const token = sessionStorage.getItem("accessToken");
-      if (token) {
-        document.getElementById("loginBtn").style.display = "none";
-      }
-    });
+    // This part causes the log in button to disappear, therefore I commented out SG 08.06
+    //   const token = sessionStorage.getItem("accessToken");
+    //   if (token) {
+    //     document.getElementById("loginBtn").style.display = "none";
+    //   }
+     });
   </script>
 </body>
 </html>

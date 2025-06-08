@@ -7,11 +7,6 @@
   <link rel="icon" type="image/png" href="../images/favicon.png">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/all.min.css">
-  <!-- Choices.js CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-
-  <!-- Choices.js JS -->
-  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 </head>
 
 <body>
@@ -105,8 +100,6 @@
             <label for="country">Country:</label>
             <select id="country" disabled>
               <option value="">Select</option>
-              <option value="germany">Germany</option>
-              <option value="turkey">Turkey</option>
             </select>
           </div>
         </div>
@@ -121,11 +114,6 @@
               <option value="other">Other</option>
             </select>
           </div>
-        </div>
-
-        <div class="language-group">
-          <label for="languages">Languages:</label>
-          <select id="languages" name="languages" multiple disabled></select>
         </div>
 
         <div class="form-group">
@@ -164,7 +152,25 @@
     </div>
   </footer>
 
-  <script> // updated script to make the edit fucntionality dynamic / IK 07.06
+  <script>
+        // Image selector
+    const fileInput = document.getElementById('fileInput');
+    const profilePic = document.getElementById('profilePic');
+
+    fileInput.addEventListener('change', function () {
+      const file = fileInput.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          profilePic.src = e.target.result; // Set new image
+        };
+        reader.readAsDataURL(file); // Convert image to base64
+      } else {
+        alert("Please select a valid image file.");
+      }
+    });
+        // Image selector
+    
     document.addEventListener("DOMContentLoaded", async () => {
       const API_BASE = "http://localhost:8000";
       const token    = sessionStorage.getItem("accessToken");
@@ -211,27 +217,11 @@
         countrySel.append(o);
       });
 
-      // languages multi-select
-      const langSel  = document.getElementById("languages");
-      const allLangs = await (await fetch(`${API_BASE}/profile/languages`, { headers })).json();
-      langSel.innerHTML = "";
-      allLangs.forEach(l => {
-        const opt = document.createElement("option");
-        opt.value    = l.id;
-        opt.text     = l.language_name;
-        if (profile.languages.includes(l.language_name)) opt.selected = true;
-        langSel.appendChild(opt);
-      });
-
-      const langChoices = new Choices(langSel, { removeItemButton: true });
-      langChoices.disable();
-
       // 3) edit/save toggle
       let editing = false;
       editBtn.addEventListener("click", async () => {
         if (!editing) {
           fields.forEach(f => f.disabled = false);
-          langChoices.enable();
           editBtn.textContent = "Save";
           editing = true;
           return;
@@ -244,7 +234,6 @@
           ...(rawCountry && { country_name: rawCountry }),
           city:         document.getElementById("city").value,
           gender:       document.getElementById("gender").value || null,
-          languages:    langChoices.getValue(true).map(id => Number(id))
         };
 
         const res = await fetch(`${API_BASE}/profile/admin`, {
@@ -257,12 +246,23 @@
         }
 
         fields.forEach(f => f.disabled = true);
-        langChoices.disable();
         editBtn.textContent = "Edit";
         editing = false;
         alert("Your changes are saved");
       });
     });
+
+    function showSignOutModal() {
+      document.getElementById('signOutModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('signOutModal').style.display = 'none';
+    }
+
+    function confirmSignOut() {
+        window.location.href = "../../";
+    }
   </script>
 </body>
 </html>

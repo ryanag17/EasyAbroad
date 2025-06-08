@@ -108,10 +108,8 @@
 
           <div class="form-group city-country-group">
             <label for="country">Country:</label>
-            <select id="country" disabled>
+            <select id="country" name="country_name" disabled>
               <option value="">Select</option>
-              <option value="germany">Germany</option>
-              <option value="turkey">Turkey</option>
             </select>
           </div>
         </div>
@@ -165,121 +163,188 @@
     </div>
   </footer>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const API_BASE = "http://localhost:8000";
-      const token    = sessionStorage.getItem("accessToken");
-      if (!token) return alert("Please log in"), window.location.href = "../log-in.html";
+<script>
+  // Image selector
+  const fileInput = document.getElementById('fileInput');
+  const profilePic = document.getElementById('profilePic');
 
-      const headers = {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type" : "application/json"
+  fileInput.addEventListener('change', function () {
+    const file = fileInput.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        profilePic.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert("Please select a valid image file.");
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const API_BASE = "http://localhost:8000";
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) return alert("Please log in"), window.location.href = "../log-in.html";
+
+    const headers = {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    };
+
+    const editBtn = document.querySelector(".edit-btn");
+    const fields = Array.from(document.querySelectorAll('input:not([name="birthday"]):not([name="email"]), select'));
+
+    // 1) Fetch profile
+    const profRes = await fetch(`${API_BASE}/profile/consultant`, { headers });
+    if (!profRes.ok) {
+      alert("Not authenticated – please log in again");
+      return window.location.href = "../log-in.html";
+    }
+    const profile = await profRes.json();
+
+    document.getElementById("name").value     = profile.first_name || "";
+    document.getElementById("surname").value  = profile.last_name  || "";
+    document.querySelector('input[name="birthday"]').value = profile.birthday || "";
+    document.getElementById("city").value     = profile.city       || "";
+    document.getElementById("country").value  = profile.country    || "";
+    document.getElementById("gender").value   = profile.gender     || "";
+    document.getElementById("email-id").value = profile.email      || "";
+
+    // 2) Country dropdown
+    const countrySel = document.getElementById("country");
+    countrySel.innerHTML = `<option value="">Select</option>`;
+    const countries = await (await fetch(`${API_BASE}/profile/countries`, { headers })).json();
+    countries.forEach(c => {
+      const o = new Option(c, c);
+      if (c === profile.country) o.selected = true;
+      countrySel.append(o);
+    });
+
+    // 3) Language multi-select
+    const langSel = document.getElementById("languages");
+    const allLangs = await (await fetch(`${API_BASE}/profile/languages`, { headers })).json();
+
+    langSel.innerHTML = "";
+    allLangs.forEach(l => {
+      const opt = new Option(l.language_name, l.id);
+      if (profile.languages.includes(l.language_name)) opt.selected = true;
+      langSel.appendChild(opt);
+    });
+
+    // Turn on Choices.js
+    const langChoices = new Choices(langSel, { removeItemButton: true });
+    langChoices.disable();  // start read-only
+
+    // Wrap initially selected languages into a summary display
+    selectedLanguagesMemory = langChoices.getValue();
+    const count = selectedLanguagesMemory.length;
+    langChoices.clearStore();
+
+    if (count > 0) {
+      langChoices.setChoices(
+        [{ value: "languages", label: `${count} language${count > 1 ? 's' : ''}`, selected: true }],
+        'value',
+        'label',
+        false
+      );
+    } else {
+      langChoices.setChoices(
+        [{ value: '', label: 'None selected', selected: true }],
+        'value',
+        'label',
+        false
+      );
+    }
+
+
+    // 4) Edit / Save logic
+    let editing = false;
+    editBtn.addEventListener("click", async () => {
+      if (!editing) {
+        // Enter edit mode
+        fields.forEach(f => f.disabled = false);
+        langChoices.enable();
+
+        // Restore previous selection
+        if (selectedLanguagesMemory.length > 0) {
+          langChoices.clearStore();
+          langChoices.setChoices(allLangs.map(l => ({
+            value: l.id,
+            label: l.language_name,
+            selected: selectedLanguagesMemory.some(sel => sel.value == l.id)
+          })), 'value', 'label', true);
+        }
+
+        editBtn.textContent = "Save";
+        editing = true;
+        return;
+      }
+
+      // Build payload
+      const rawCountry = document.getElementById("country").value;
+      const payload = {
+        first_name:   document.getElementById("name").value,
+        last_name:    document.getElementById("surname").value,
+        ...(rawCountry && { country_name: rawCountry }),
+        city:         document.getElementById("city").value,
+        gender:       document.getElementById("gender").value || null,
+        languages:    langChoices.getValue(true).map(id => Number(id))
       };
 
-      // Grab form fields + button
-      const editBtn = document.querySelector(".edit-btn");
-      const fields  = Array.from(
-        document.querySelectorAll(
-          'input:not([name="birthday"]):not([name="email"]), select'
-        )
-      );
+      // Send update
+      const res = await fetch(`${API_BASE}/profile/consultant`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(payload)
+      });
 
-      // 1) Fetch profile
-      const profRes = await fetch(`${API_BASE}/profile/consultant`, { headers });
-      if (!profRes.ok) {
-        alert("Not authenticated – please log in again");
-        return window.location.href = "../log-in.html";
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Save error:", err);
+        return alert("Save failed: " + JSON.stringify(err.detail || err));
       }
-      const profile = await profRes.json();
 
-      // 2) Populate text fields & selects
-      document.getElementById("name").value     = profile.first_name || "";
-      document.getElementById("surname").value  = profile.last_name  || "";
-      document.querySelector('input[name="birthday"]').value = profile.birthday || "";
-      document.getElementById("city").value     = profile.city       || "";
-      document.getElementById("country").value  = profile.country    || "";
-      document.getElementById("gender").value   = profile.gender     || "";
-      document.getElementById("email-id").value = profile.email      || "";
+      // Back to read-only + language summary
+      fields.forEach(f => f.disabled = true);
+      langChoices.disable();
+      selectedLanguagesMemory = langChoices.getValue();
+      const count = selectedLanguagesMemory.length;
 
-      // 3) Countries dropdown
-      const countrySel = document.getElementById("country");
-      countrySel.innerHTML = `<option value="">Select</option>`;
-      const countries = await (await fetch(
-        `${API_BASE}/profile/countries`, { headers }
-      )).json();
-      countries.forEach(c => {
-        const o = new Option(c, c);
-        if (c === profile.country) o.selected = true;
-        countrySel.append(o);
-      });
+      langChoices.clearStore();
+      if (count > 0) {
+        langChoices.setChoices(
+          [{ value: "languages", label: `${count} language${count > 1 ? 's' : ''}`, selected: true }],
+          'value',
+          'label',
+          false
+        );
+      } else {
+        langChoices.setChoices(
+          [{ value: '', label: 'None selected', selected: true }],
+          'value',
+          'label',
+          false
+        );
+      }
 
-      // 4) Languages multi-select
-      const langSel  = document.getElementById("languages");
-      // Fetch all possible languages (id + name)
-      const allLangs = await (await fetch(
-        `${API_BASE}/profile/languages`, { headers }
-      )).json();
-
-      // Build <option>s and select the ones this user already has
-      langSel.innerHTML = "";  
-      allLangs.forEach(l => {
-        const opt = document.createElement("option");
-        opt.value    = l.id;
-        opt.text     = l.language_name;
-        if (profile.languages.includes(l.language_name)) {
-          opt.selected = true;
-        }
-        langSel.appendChild(opt);
-      });
-
-      // Turn on Choices.js
-      const langChoices = new Choices(langSel, { removeItemButton: true });
-      langChoices.disable();  // start read-only
-
-      // 5) Edit / Save toggle
-      let editing = false;
-      editBtn.addEventListener("click", async () => {
-        if (!editing) {
-          // Enter edit mode
-          fields.forEach(f => f.disabled = false);
-          langChoices.enable();
-          editBtn.textContent = "Save";
-          editing = true;
-          return;
-        }
-
-        // Build payload (send null or omit blanks)
-        const rawCountry = document.getElementById("country").value;
-        const payload = {
-          first_name:   document.getElementById("name").value,
-          last_name:    document.getElementById("surname").value,
-          ...(rawCountry && { country_name: rawCountry }),
-          city:         document.getElementById("city").value,
-          gender:       document.getElementById("gender").value || null,
-          languages:    langChoices.getValue(true).map(id => Number(id))
-        };
-
-        // Send update
-        const res = await fetch(`${API_BASE}/profile/consultant`, {
-          method: "PUT",
-          headers,
-          body: JSON.stringify(payload)
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          console.error("Save error:", err);
-          return alert("Save failed: " + JSON.stringify(err.detail || err));
-        }
-
-        // Back to read-only
-        fields.forEach(f => f.disabled = true);
-        langChoices.disable();
-        editBtn.textContent = "Edit";
-        editing = false;
-        alert("Your changes are saved");
-      });
+      editBtn.textContent = "Edit";
+      editing = false;
+      alert("Your changes are saved");
     });
-  </script>
+  });
+
+  function showSignOutModal() {
+    document.getElementById('signOutModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('signOutModal').style.display = 'none';
+  }
+
+  function confirmSignOut() {
+        window.location.href = "../../";
+  }
+</script>
+
 </body>
 </html>

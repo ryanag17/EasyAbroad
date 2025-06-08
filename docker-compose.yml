@@ -48,6 +48,9 @@ services:
     container_name: easyabroad-frontend
     ports:
       - "8080:80"
+    # Development phase live server function
+    volumes:
+    - ./frontend:/usr/share/nginx/html
 
   db:
     image: mysql:8.0
