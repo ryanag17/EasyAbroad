@@ -9,7 +9,7 @@ html, body {
 
 :root{
     --login_background: #d62d81;
-    --register_bcg: #2c2c2c;
+    --register_bcg: black;
 }
 * {
     margin: 0;
