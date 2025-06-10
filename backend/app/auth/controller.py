@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
-import bcrypt, secrets
-
-from fastapi import HTTPException, Depends, APIRouter
+import bcrypt, secrets, shutil
+from pathlib import Path
+from fastapi import HTTPException, Depends, APIRouter, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, text, delete
 
@@ -27,6 +27,40 @@ router = APIRouter(
     prefix="/profile",
     tags=["profile"],
 )
+
+UPLOAD_DIR = Path("static/uploads/profile_pictures")
+
+@router.post("/upload-picture", summary="Upload profile picture")
+async def upload_profile_picture(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    user_id = current_user["user_id"]
+
+    # File extension check
+    ext = file.filename.split(".")[-1].lower()
+    if ext not in {"jpg", "jpeg", "png", "gif"}:
+        raise HTTPException(status_code=400, detail="Unsupported file format")
+
+    # Save file
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    file_path = UPLOAD_DIR / f"user_{user_id}.{ext}"
+
+    with file_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Save relative path to DB (for HTML <img src>)
+    relative_path = f"/static/uploads/profile_pictures/{file_path.name}"
+
+    # Update DB
+    await db.execute(
+        text("UPDATE users SET profile_picture=:pic WHERE id=:uid"),
+        {"pic": relative_path, "uid": user_id}
+    )
+    await db.commit()
+
+    return {"message": "Profile picture updated", "url": relative_path}
 
 # new endpoint for fetching countries / IK 06.06
 @router.get(
