@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="../css/all.min.css">
   <!-- Choices.js CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-
   <!-- Choices.js JS -->
   <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 </head>
@@ -126,7 +125,6 @@
           </div>
         </div>
 
-
         <div class="form-group">
           <label for="email-id">Email:</label>
           <input type="email" name="email" id="email-id" placeholder="Enter email" oninput="checker()" disabled>
@@ -162,220 +160,182 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
     </div>
   </footer>
+
   <script src="../auth.js"></script>
-  <script src="../script.js"></script></body>    
-<script>
-  // Image selector
-  const fileInput = document.getElementById('fileInput');
-  const profilePic = document.getElementById('profilePic');
+  <script src="../script.js"></script>
 
-fileInput.addEventListener('change', async function () {
-  const file = fileInput.files[0];
-  if (!file || !file.type.startsWith('image/')) {
-    alert("Please select a valid image file.");
-    return;
-  }
+  <script>
+    // Image selector
+    const fileInput = document.getElementById('fileInput');
+    const profilePic = document.getElementById('profilePic');
 
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const token = sessionStorage.getItem("accessToken");
-
-  const res = await fetch("http://localhost:8000/profile/upload-picture", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    },
-    body: formData
-  });
-
-  if (res.ok) {
-  const data = await res.json();
-  const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
-  profilePic.src = timestampedUrl;
-
-  // Wait a moment before refreshing to let the image appear
-  setTimeout(() => {
-    window.location.reload();
-  }, 1000);
-} else {
-  const err = await res.json();
-  alert("❌ Upload failed: " + (err.detail || err.message));
-}
-});
-
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    const API_BASE = "http://localhost:8000";
-    const token = sessionStorage.getItem("accessToken");
-    if (!token) return alert("Please log in"), window.location.href = "../log-in.html";
-
-    const headers = {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
-    };
-
-    const editBtn = document.querySelector(".edit-btn");
-    const fields = Array.from(document.querySelectorAll('input:not([name="birthday"]):not([name="email"]), select'));
-
-    // 1) Fetch profile
-    const profRes = await fetch(`${API_BASE}/profile/consultant`, { headers });
-    if (!profRes.ok) {
-      alert("Not authenticated – please log in again");
-      return window.location.href = "../log-in.html";
-    }
-    const profile = await profRes.json();
-
-    document.getElementById("name").value     = profile.first_name || "";
-    document.getElementById("surname").value  = profile.last_name  || "";
-    document.querySelector('input[name="birthday"]').value = profile.birthday || "";
-    document.getElementById("city").value     = profile.city       || "";
-    document.getElementById("country").value  = profile.country    || "";
-    document.getElementById("gender").value   = profile.gender     || "";
-    document.getElementById("email-id").value = profile.email      || "";
-    document.getElementById("profilePic").src =
-    profile.profile_picture && profile.profile_picture.startsWith("/static/")
-    ? `http://localhost:8000${profile.profile_picture}`
-    : "../images/avatar.png";
-
-
-
-
-    // 2) Country dropdown
-    const countrySel = document.getElementById("country");
-    countrySel.innerHTML = `<option value="">Select</option>`;
-    const countries = await (await fetch(`${API_BASE}/profile/countries`, { headers })).json();
-    countries.forEach(c => {
-      const o = new Option(c, c);
-      if (c === profile.country) o.selected = true;
-      countrySel.append(o);
-    });
-
-    // 3) Language multi-select
-    const langSel = document.getElementById("languages");
-    const allLangs = await (await fetch(`${API_BASE}/profile/languages`, { headers })).json();
-
-    langSel.innerHTML = "";
-    allLangs.forEach(l => {
-      const opt = new Option(l.language_name, l.id);
-      if (profile.languages.includes(l.language_name)) opt.selected = true;
-      langSel.appendChild(opt);
-    });
-
-    // Turn on Choices.js
-    const langChoices = new Choices(langSel, { removeItemButton: true });
-    langChoices.disable();  // start read-only
-
-    // Wrap initially selected languages into a summary display
-    selectedLanguagesMemory = langChoices.getValue();
-    const count = selectedLanguagesMemory.length;
-    langChoices.clearStore();
-
-    if (count > 0) {
-      langChoices.setChoices(
-        [{ value: "languages", label: `${count} language${count > 1 ? 's' : ''}`, selected: true }],
-        'value',
-        'label',
-        false
-      );
-    } else {
-      langChoices.setChoices(
-        [{ value: '', label: 'None selected', selected: true }],
-        'value',
-        'label',
-        false
-      );
-    }
-
-
-    // 4) Edit / Save logic
-    let editing = false;
-    editBtn.addEventListener("click", async () => {
-      if (!editing) {
-        // Enter edit mode
-        fields.forEach(f => f.disabled = false);
-        langChoices.enable();
-
-        // Restore previous selection
-        if (selectedLanguagesMemory.length > 0) {
-          langChoices.clearStore();
-          langChoices.setChoices(allLangs.map(l => ({
-            value: l.id,
-            label: l.language_name,
-            selected: selectedLanguagesMemory.some(sel => sel.value == l.id)
-          })), 'value', 'label', true);
-        }
-
-        editBtn.textContent = "Save";
-        editing = true;
+    fileInput.addEventListener('change', async function () {
+      const file = fileInput.files[0];
+      if (!file || !file.type.startsWith('image/')) {
+        alert("Please select a valid image file.");
         return;
       }
 
-      // Build payload
-      const rawCountry = document.getElementById("country").value;
-      const payload = {
-        first_name:   document.getElementById("name").value,
-        last_name:    document.getElementById("surname").value,
-        ...(rawCountry && { country_name: rawCountry }),
-        city:         document.getElementById("city").value,
-        gender:       document.getElementById("gender").value || null,
-        languages:    langChoices.getValue(true).map(id => Number(id))
-      };
+      const formData = new FormData();
+      formData.append("file", file);
 
-      // Send update
-      const res = await fetch(`${API_BASE}/profile/consultant`, {
-        method: "PUT",
-        headers,
-        body: JSON.stringify(payload)
+      const token = sessionStorage.getItem("accessToken");
+
+      const res = await fetch("http://localhost:8000/profile/upload-picture", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        console.error("Save error:", err);
-        return alert("Save failed: " + JSON.stringify(err.detail || err));
-      }
+      if (res.ok) {
+        const data = await res.json();
+        const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
+        profilePic.src = timestampedUrl;
 
-      // Back to read-only + language summary
-      fields.forEach(f => f.disabled = true);
-      langChoices.disable();
-      selectedLanguagesMemory = langChoices.getValue();
-      const count = selectedLanguagesMemory.length;
-
-      langChoices.clearStore();
-      if (count > 0) {
-        langChoices.setChoices(
-          [{ value: "languages", label: `${count} language${count > 1 ? 's' : ''}`, selected: true }],
-          'value',
-          'label',
-          false
-        );
+        // Wait a moment before refreshing to let the image appear
+        setTimeout(() => {
+          window.location.reload();
+        }, 1);
       } else {
-        langChoices.setChoices(
-          [{ value: '', label: 'None selected', selected: true }],
-          'value',
-          'label',
-          false
-        );
+        const err = await res.json();
+        alert("❌ Upload failed: " + (err.detail || err.message));
       }
-
-      editBtn.textContent = "Edit";
-      editing = false;
-      alert("Your changes are saved");
     });
-  });
 
-  function showSignOutModal() {
-    document.getElementById('signOutModal').style.display = 'flex';
-  }
+    document.addEventListener("DOMContentLoaded", async () => {
+      const API_BASE = "http://localhost:8000";
+      const token = sessionStorage.getItem("accessToken");
+      if (!token) return alert("Please log in"), window.location.href = "../log-in.html";
 
-  function closeModal() {
-    document.getElementById('signOutModal').style.display = 'none';
-  }
+      const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      };
 
-  function confirmSignOut() {
-        window.location.href = "../../";
-  }
-</script>
+      // Grab form fields + button
+      const editBtn = document.querySelector(".edit-btn");
+      const fields = Array.from(
+        document.querySelectorAll(
+          'input:not([name="birthday"]):not([name="email"]), select'
+        )
+      );
 
+      // 1) Fetch profile
+      const profRes = await fetch(`${API_BASE}/profile/consultant`, { headers });
+      if (!profRes.ok) {
+        alert("Not authenticated – please log in again");
+        return window.location.href = "../log-in.html";
+      }
+      const profile = await profRes.json();
+
+      document.getElementById("name").value = profile.first_name || "";
+      document.getElementById("surname").value = profile.last_name || "";
+      document.querySelector('input[name="birthday"]').value = profile.birthday || "";
+      document.getElementById("city").value = profile.city || "";
+      document.getElementById("country").value = profile.country || "";
+      document.getElementById("gender").value = profile.gender || "";
+      document.getElementById("email-id").value = profile.email || "";
+      document.getElementById("profilePic").src =
+        profile.profile_picture && profile.profile_picture.startsWith("/static/")
+          ? `http://localhost:8000${profile.profile_picture}`
+          : "../images/avatar.png";
+
+      // 3) Countries dropdown
+      const countrySel = document.getElementById("country");
+      countrySel.innerHTML = `<option value="">Select</option>`;
+      const countries = await (await fetch(`${API_BASE}/profile/countries`, { headers })).json();
+      countries.forEach(c => {
+        const o = new Option(c, c);
+        if (c === profile.country) o.selected = true;
+        countrySel.append(o);
+      });
+
+      // 4) Languages multi-select
+      const langSel = document.getElementById("languages");
+      const allLangs = await (await fetch(`${API_BASE}/profile/languages`, { headers })).json();
+
+      langSel.innerHTML = "";
+      allLangs.forEach(l => {
+        const opt = document.createElement("option");
+        opt.value = l.id;
+        opt.text = l.language_name;
+        if (profile.languages.includes(l.language_name)) {
+          opt.selected = true;
+        }
+        langSel.appendChild(opt);
+      });
+
+      const langChoices = new Choices(langSel, {
+        removeItemButton: true,
+        shouldSort: false
+      });
+
+      // Manually enforce max 5 selections
+      langSel.addEventListener('addItem', function (event) {
+        const selected = langChoices.getValue(true);
+
+        if (selected.length > 5) {
+          // Remove only the just-added item
+          langChoices.removeActiveItemsByValue(event.detail.value);
+          alert("You can select a maximum of 5 languages.");
+        }
+      });
+      langChoices.disable(); // start read-only
+
+      // 5) Edit / Save toggle
+      let editing = false;
+      editBtn.addEventListener("click", async () => {
+        if (!editing) {
+          fields.forEach(f => f.disabled = false);
+          langChoices.enable();
+          editBtn.textContent = "Save";
+          editing = true;
+          return;
+        }
+
+        const rawCountry = document.getElementById("country").value;
+        const payload = {
+          first_name: document.getElementById("name").value,
+          last_name: document.getElementById("surname").value,
+          ...(rawCountry && { country_name: rawCountry }),
+          city: document.getElementById("city").value,
+          gender: document.getElementById("gender").value || null,
+          languages: langChoices.getValue(true).map(id => Number(id))
+        };
+
+        const res = await fetch(`${API_BASE}/profile/consultant`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          console.error("Save error:", err);
+          return alert("Save failed: " + JSON.stringify(err.detail || err));
+        }
+
+        fields.forEach(f => f.disabled = true);
+        langChoices.disable();
+        editBtn.textContent = "Edit";
+        editing = false;
+        alert("Your changes are saved");
+      });
+    });
+
+    function showSignOutModal() {
+      document.getElementById('signOutModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('signOutModal').style.display = 'none';
+    }
+
+    function confirmSignOut() {
+      window.location.href = "../../";
+    }
+  </script>
 </body>
 </html>
