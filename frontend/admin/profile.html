@@ -179,13 +179,18 @@ fileInput.addEventListener('change', async function () {
   });
 
   if (res.ok) {
-    const data = await res.json();
-    profilePic.src = data.url;
-    alert("✅ Profile picture updated!");
-  } else {
-    const err = await res.json();
-    alert("❌ Upload failed: " + (err.detail || err.message));
-  }
+  const data = await res.json();
+  const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
+  profilePic.src = timestampedUrl;
+
+  // Wait a moment before refreshing to let the image appear
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
+} else {
+  const err = await res.json();
+  alert("❌ Upload failed: " + (err.detail || err.message));
+}
 });
 
         // Image selector
