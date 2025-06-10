@@ -14,4 +14,5 @@ Thumbs.db
 .idea/
 
 # Ignore user profile images
-backend/static/uploads/profile_pictures/*.png
+backend/static/uploads/profile_pictures/*
+!backend/static/uploads/profile_pictures/.keep

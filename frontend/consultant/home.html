@@ -60,7 +60,7 @@
     
     
     <section class="user-section">
-        <img src="../images/avatar.png" alt="User Avatar" class="user-avatar">
+        <img id="userAvatar" src="../images/avatar.png" alt="User Avatar" class="user-avatar">
         <h2 class="welcome">Welcome</h2>
         <h2 class="user-fullname">Name!</h2>
         
@@ -138,8 +138,16 @@
         }
 
         const profile = await res.json();
+
+        // Full name
         const name = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
         document.querySelector(".user-fullname").textContent = name || "Consultant";
+
+        // Profile picture
+        const avatarEl = document.getElementById("userAvatar");
+        avatarEl.src = profile.profile_picture
+          ? `http://localhost:8000${profile.profile_picture}?t=${new Date().getTime()}`
+          : "../images/avatar.png";
 
       } catch (err) {
         console.error("Failed to load profile:", err);
@@ -148,19 +156,6 @@
         window.location.href = "../log-in.html";
       }
     });
-
-    function showSignOutModal() {
-      document.getElementById('signOutModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-      document.getElementById('signOutModal').style.display = 'none';
-    }
-
-    function confirmSignOut() {
-      sessionStorage.clear(); // Optional: clear token on logout
-      window.location.href = "../../";
-    }
   </script>
 
 </body>
