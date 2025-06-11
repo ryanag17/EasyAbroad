@@ -65,26 +65,17 @@
             </div>
           </div>
       
-          <div class="help-contact">
-            <div class="help-list">
-              <h3>[First name] can help you with:</h3>
-              <ul>
-                <li> Finding accommodation</li>
-                <li> Social life and making friends</li>
-                <li> University information</li>
-                <li> Best and worst city spots including travel and weekend plans</li>
-              </ul>
-            </div>
-            <div class="call-list">
-              <h3>[First name] can call you via:</h3>
-              <ul>
-                <li> Zoom</li>
-                <li> Microsoft Teams</li>
-                <li> Google Meet</li>
-                <li> Apple FaceTime</li>
-              </ul>
-            </div>
+        <div class="help-contact">
+          <div class="help-list">
+            <h3>[First name] can help you with:</h3>
+            <ul></ul> <!-- must be empty initially -->
           </div>
+          <div class="call-list">
+            <h3>[First name] can call you via:</h3>
+            <ul></ul> <!-- must be empty initially -->
+          </div>
+        </div>
+
         </section>
       
       </main>
@@ -129,5 +120,126 @@
       </footer>
     
   <script src="../auth.js"></script>
-  <script src="../script.js"></script></body>    </body>
+  <script src="../script.js"></script>
+<script>
+  async function loadPreview() {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) return window.location.href = "../log-in.html";
+
+    const headers = { Authorization: `Bearer ${token}` };
+
+    try {
+      // Fetch data
+      const [profileRes, studyRes] = await Promise.all([
+        fetch("http://localhost:8000/profile/consultant", { headers }),
+        fetch("http://localhost:8000/consultancy/study/me", { headers })
+      ]);
+      const profile = await profileRes.json();
+      const study = await studyRes.json();
+
+      const avatar = document.querySelector(".avatar");
+      avatar.src = profile.profile_picture?.startsWith("/static/")
+        ? `http://localhost:8000${profile.profile_picture}`
+        : "../images/avatar.png";
+
+      const firstName = profile.first_name || "Consultant";
+      const lastName = profile.last_name || "";
+
+      document.querySelector("h2").innerHTML = `
+        ${firstName} ${lastName}
+        <a href="reviews.html" class="review">(currently have no review)</a>`;
+
+      document.querySelector(".info-row:nth-of-type(1)").innerHTML =
+        `<strong>Focus of consultancy:</strong> Study abroad`;
+
+      document.querySelector(".info-row:nth-of-type(2)").innerHTML =
+        `<strong>University name:</strong> ${study.university_name}`;
+
+      document.querySelector(".info-row:nth-of-type(3)").innerHTML =
+        `<strong>Course name:</strong> ${study.course_name}`;
+
+      document.querySelector(".info-row:nth-of-type(4)").innerHTML =
+        `<strong>Education period:</strong> From ${formatDate(study.education_start)} to ${formatDate(study.education_finish)}`;
+
+      document.querySelector(".info-row:nth-of-type(5)").innerHTML =
+        `<strong>Location of study abroad:</strong> ${study.city_of_study}, ${study.country_of_study}`;
+
+      document.querySelector(".info-row:nth-of-type(6)").innerHTML =
+        `<strong>Current location:</strong> ${profile.city || "–"}, ${profile.country || "–"}`;
+
+      document.querySelector(".info-row:nth-of-type(7)").innerHTML =
+        `<strong>Languages:</strong> ${profile.languages.length ? profile.languages.join(", ") : "–"}`;
+
+      // Update help and call sections with personalized name
+      document.querySelector(".help-list h3").textContent = `${firstName} can help you with:`;
+      document.querySelector(".call-list h3").textContent = `${firstName} can call you via:`;
+
+      // Help topics
+      const helpMap = {
+        accommodation: "Finding accommodation",
+        social_life: "Social life and making friends",
+        uni_info: "University information",
+        travel_info: "Best and worst city spots including travel and weekend plans"
+      };
+      document.querySelector(".help-list ul").innerHTML = Object.entries(helpMap)
+        .filter(([key]) => study[key])
+        .map(([, label]) => `<li>✔ ${label}</li>`)
+        .join("");
+
+      // Call options
+      const callMap = {
+        zoom: "Zoom",
+        microsoft_teams: "Microsoft Teams",
+        google_meet: "Google Meet",
+        apple_facetime: "Apple FaceTime"
+      };
+      document.querySelector(".call-list ul").innerHTML = Object.entries(callMap)
+        .filter(([key]) => study[key])
+        .map(([, label]) => `<li>✔ ${label}</li>`)
+        .join("");
+
+    } catch (err) {
+      console.error("Error loading preview:", err);
+      alert("Something went wrong loading your consultancy profile.");
+    }
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return "–";
+    return `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+  }
+
+  function showSignOutModal() {
+    document.getElementById("signOutModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("signOutModal").style.display = "none";
+  }
+
+  function confirmSignOut() {
+    window.location.href = "../../";
+  }
+
+  document.addEventListener("DOMContentLoaded", loadPreview);
+
+  
+  
+const helpItems = Object.entries(helpMap).filter(([key]) => study[key]);
+document.querySelector(".help-list ul").innerHTML = helpItems.length
+  ? helpItems.map(([, label]) => `<li>✔ ${label}</li>`).join("")
+  : "<li>–</li>";
+
+const callItems = Object.entries(callMap).filter(([key]) => study[key]);
+document.querySelector(".call-list ul").innerHTML = callItems.length
+  ? callItems.map(([, label]) => `<li>✔ ${label}</li>`).join("")
+  : "<li>–</li>";
+
+</script>
+
+  
+</body>    
+
+</body>
 </html>

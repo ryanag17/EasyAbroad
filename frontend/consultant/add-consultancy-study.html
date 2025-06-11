@@ -240,12 +240,26 @@ async function submitForm() {
 
   const token = sessionStorage.getItem("accessToken");
 
+  // Manually map help[] to booleans
+  const helpValues = Array.from(document.querySelectorAll('input[name="help[]"]:checked')).map(cb => cb.value);
+  const callValues = Array.from(document.querySelectorAll('input[name="call[]"]:checked')).map(cb => cb.value);
+
+  formData.set("accommodation", helpValues.includes("Accommodation"));
+  formData.set("social_life", helpValues.includes("Social"));
+  formData.set("uni_info", helpValues.includes("University Info"));
+  formData.set("travel_info", helpValues.includes("City Tips"));
+
+  formData.set("zoom", callValues.includes("Zoom"));
+  formData.set("microsoft_teams", callValues.includes("Teams"));
+  formData.set("google_meet", callValues.includes("Google Meet"));
+  formData.set("apple_facetime", callValues.includes("FaceTime"));
+
   try {
     const res = await fetch("http://localhost:8000/consultancy/study", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
-        // Do NOT set 'Content-Type' manually for FormData
+        // NOTE: Don't manually set Content-Type for FormData
       },
       body: formData
     });
@@ -264,6 +278,7 @@ async function submitForm() {
     console.error(err);
   }
 }
+
 
 
   function closeSubmittedModal() {
