@@ -50,16 +50,16 @@
     </div>
   </header>
 
-  <!-- Sign Out Confirmation Modal -->
-  <div id="signOutModal" class="modal-overlay">
-    <div class="modal-content">
-      <p>Are you sure you want to sign out?</p>
-      <div class="modal-buttons">
-        <button onclick="confirmSignOut()">Yes</button>
-        <button onclick="closeModal()">No</button>
-      </div>
+<!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal-overlay">
+  <div class="modal-content">
+    <p>Are you sure you want to sign out?</p>
+    <div class="modal-buttons">
+      <button onclick="confirmSignOut()">Yes</button>
+      <button onclick="closeModal()">No</button>
     </div>
   </div>
+</div>
 
   <section class="profile-section">
     <div class="profile-container">
@@ -330,18 +330,6 @@ if (res.ok) {
         countrySel.appendChild(opt);
       });
     });
-
-    function showSignOutModal() {
-      document.getElementById('signOutModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-      document.getElementById('signOutModal').style.display = 'none';
-    }
-
-    function confirmSignOut() {
-        window.location.href = "../../";
-    }
   </script>
 </body>
 </html>
