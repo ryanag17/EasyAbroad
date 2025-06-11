@@ -16,3 +16,10 @@ Thumbs.db
 # Ignore user profile images
 backend/static/uploads/profile_pictures/*
 !backend/static/uploads/profile_pictures/.keep
+
+
+# Ignore consultant documents
+backend/static/uploads/proof_documents/internship/*
+!backend/static/uploads/proof_documents/internship/.keep
+backend/static/uploads/proof_documents/study/*
+!backend/static/uploads/proof_documents/study/.keep

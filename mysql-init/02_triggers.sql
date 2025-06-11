@@ -1,5 +1,5 @@
 -- ─────────────────────────────────────────────────────────────────────────────
--- 03_triggers.sql
+-- 02_triggers.sql
 -- Contains only the trigger definitions, with a custom DELIMITER to avoid syntax errors.
 -- ─────────────────────────────────────────────────────────────────────────────
 

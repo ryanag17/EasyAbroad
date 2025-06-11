@@ -4,9 +4,12 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 -- 1) Create (or switch to) the “easyabroad” schema
-CREATE SCHEMA IF NOT EXISTS easyabroad;
+-- CREATE SCHEMA IF NOT EXISTS easyabroad;
 USE easyabroad;
 
+ALTER USER 'user'@'%' IDENTIFIED WITH mysql_native_password BY 'userpassword';
+GRANT ALL PRIVILEGES ON easyabroad.* TO 'user'@'%';
+FLUSH PRIVILEGES;
 
 -- 2) COUNTRIES table
 --    Must come before any table that references countries(country_name).
@@ -259,9 +262,11 @@ CREATE TABLE IF NOT EXISTS Education (
   microsoft_teams   BOOLEAN,
   google_meet       BOOLEAN,
   apple_facetime    BOOLEAN,
-  is_verified       BOOLEAN,
   verified_by       INT,           -- references users(id)
   verified_at       DATETIME,
+  status            VARCHAR(20) NOT NULL DEFAULT 'pending'
+                     CHECK (status IN ('pending', 'accepted', 'rejected')),
+  short_note        TEXT,
 
   CONSTRAINT fk_education_user
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -299,10 +304,12 @@ CREATE TABLE IF NOT EXISTS Internship (
   microsoft_teams       BOOLEAN,
   google_meet           BOOLEAN,
   apple_facetime        BOOLEAN,
-  is_verified           BOOLEAN,
   verified_by           INT,           -- references users(id)
   verified_at           DATETIME,
-
+  status            VARCHAR(20) NOT NULL DEFAULT 'pending'
+                     CHECK (status IN ('pending', 'accepted', 'rejected')),
+  short_note        TEXT,
+  
   CONSTRAINT fk_internship_user
     FOREIGN KEY (user_id) REFERENCES users(id)
       ON UPDATE CASCADE

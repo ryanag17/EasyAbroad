@@ -40,10 +40,12 @@ async def preflight_handler(full_path: str):
 
 # 1) Profile routing (must come after CORS so all /profile routes are covered)
 from app.auth.controller import router as profile_router
+from app.consultancy.routes import consultancy_router  # ← ✅ NEW IMPORT
 app.include_router(profile_router)
 
 # 3) Register auth router under /auth
 app.include_router(auth_router, prefix="/auth")
+app.include_router(consultancy_router, prefix="/consultancy")   # ← ✅ NEW ROUTER
 
 
 @app.get("/", status_code=200)

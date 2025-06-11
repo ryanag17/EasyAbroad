@@ -15,9 +15,12 @@ CREATE TABLE IF NOT EXISTS Education (
   microsoft_teams BOOLEAN,
   google_meet BOOLEAN,
   apple_facetime BOOLEAN,
-  is_verified BOOLEAN,
   verified_by INT,
   verified_at DATETIME,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'accepted', 'rejected')),
+  short_note TEXT,
+
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (verified_by) REFERENCES users(id),
   FOREIGN KEY (country_of_study) REFERENCES countries(country_name)
