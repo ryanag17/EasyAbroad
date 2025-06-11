@@ -3307,18 +3307,17 @@ textarea#reviewText {
   align-items: center;
 }
 
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
+#addUserModal.add-user_modal {
+  width: 100%;
+  margin: 0 auto;
+  overflow: visible !important;
+  height: auto !important;
+  margin-top: -320px;
+  flex-wrap: wrap;
+}
+
+.add-user_body{
   height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-  justify-content: center;
-  align-items: center;
-  
 }
 
 .modal-content {
@@ -3370,6 +3369,7 @@ textarea#reviewText {
 .form-buttons {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   margin-top: 20px;
 }
 
