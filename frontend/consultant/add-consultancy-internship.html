@@ -257,7 +257,7 @@
       const token = sessionStorage.getItem("accessToken");
 
       try {
-        const res = await fetch("http://localhost:8000/consultancy/consultancy/internship", {
+        const res = await fetch("http://localhost:8000/consultancy/internship", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`

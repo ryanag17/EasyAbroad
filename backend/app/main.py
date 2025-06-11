@@ -45,7 +45,7 @@ app.include_router(profile_router)
 
 # 3) Register auth router under /auth
 app.include_router(auth_router, prefix="/auth")
-app.include_router(consultancy_router, prefix="/consultancy")   # ← ✅ NEW ROUTER
+app.include_router(consultancy_router)   # ← ✅ NEW ROUTER
 
 
 @app.get("/", status_code=200)

@@ -176,3 +176,114 @@ async def submit_internship_info(
 
     await db.commit()
     return {"message": "Internship consultancy profile submitted successfully"}
+
+
+
+
+
+# Consultant: View Their Own Submitted Application
+@consultancy_router.get("/study/me", summary="Get current user's study consultancy")
+async def get_my_study_consultancy(
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    result = await db.execute(text("SELECT * FROM Education WHERE user_id = :uid"), {"uid": current_user["user_id"]})
+    row = result.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="No study consultancy found.")
+    return dict(row._mapping)
+
+# Consultant: Delete Their Own Application
+@consultancy_router.delete("/study", summary="Delete current user's study consultancy")
+async def delete_my_study_consultancy(
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    await db.execute(text("DELETE FROM Education WHERE user_id = :uid"), {"uid": current_user["user_id"]})
+    await db.commit()
+    return {"message": "Study consultancy deleted."}
+
+# Consultant: View Their Own Submitted Application
+@consultancy_router.get("/internship/me", summary="Get current user's internship consultancy")
+async def get_my_internship_consultancy(
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    result = await db.execute(text("SELECT * FROM Internship WHERE user_id = :uid"), {"uid": current_user["user_id"]})
+    row = result.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="No internship consultancy found.")
+    return dict(row._mapping)
+
+# Consultant: Delete Their Own Application
+@consultancy_router.delete("/internship", summary="Delete current user's internship consultancy")
+async def delete_my_internship_consultancy(
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    await db.execute(text("DELETE FROM Internship WHERE user_id = :uid"), {"uid": current_user["user_id"]})
+    await db.commit()
+    return {"message": "Internship consultancy deleted."}
+
+
+# Student: View Accepted Consultant Profiles
+@consultancy_router.get("/study/approved", summary="List all approved study consultants")
+async def list_approved_study_profiles(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(text("SELECT * FROM Education WHERE status = 'accepted'"))
+    rows = result.fetchall()
+    return [dict(row._mapping) for row in rows]
+
+# Student: View Accepted Consultant Profiles
+@consultancy_router.get("/internship/approved", summary="List all approved internship consultants")
+async def list_approved_internship_profiles(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(text("SELECT * FROM Internship WHERE status = 'accepted'"))
+    rows = result.fetchall()
+    return [dict(row._mapping) for row in rows]
+
+# Admin: View all pending applications
+@consultancy_router.get("/study/pending", summary="Admin: View pending study applications")
+async def get_pending_study(db: AsyncSession = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized.")
+    result = await db.execute(text("SELECT * FROM Education WHERE status = 'pending'"))
+    return [dict(row._mapping) for row in result.fetchall()]
+
+# Admin: View all pending applications
+@consultancy_router.get("/internship/pending", summary="Admin: View pending internship applications")
+async def get_pending_internship(db: AsyncSession = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized.")
+    result = await db.execute(text("SELECT * FROM Internship WHERE status = 'pending'"))
+    return [dict(row._mapping) for row in result.fetchall()]
+
+# Admin: Approve or reject
+@consultancy_router.patch("/study/{user_id}/status", summary="Admin: Update study application status")
+async def update_study_status(
+    user_id: int,
+    status: str,  # should be 'approved' or 'rejected'
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized.")
+    if status not in {"accepted", "rejected"}:
+        raise HTTPException(status_code=400, detail="Invalid status.")
+    await db.execute(text("UPDATE Education SET status = :s WHERE user_id = :uid"), {"s": status, "uid": user_id})
+    await db.commit()
+    return {"message": f"Application {status}."}
+
+# Admin: Approve or reject
+@consultancy_router.patch("/internship/{user_id}/status", summary="Admin: Update internship application status")
+async def update_internship_status(
+    user_id: int,
+    status: str,  # should be 'approved' or 'rejected'
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized.")
+    if status not in {"accepted", "rejected"}:
+        raise HTTPException(status_code=400, detail="Invalid status.")
+    await db.execute(text("UPDATE Internship SET status = :s WHERE user_id = :uid"), {"s": status, "uid": user_id})
+    await db.commit()
+    return {"message": f"Application {status}."}
