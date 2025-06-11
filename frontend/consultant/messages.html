@@ -46,7 +46,7 @@
         <div class="chat-list-container"></div>
       </section>
       
-        <!-- Sign Out Confirmation Modal -->
+<!-- Sign Out Confirmation Modal -->
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
     <p>Are you sure you want to sign out?</p>
@@ -56,6 +56,7 @@
     </div>
   </div>
 </div>
+
     
     
     
@@ -195,17 +196,7 @@ function confirmDelete(id) {
 renderMessages();
 
 
-function showSignOutModal() {
-  document.getElementById('signOutModal').style.display = 'flex';
-}
 
-function closeModal() {
-  document.getElementById('signOutModal').style.display = 'none';
-}
-
-function confirmSignOut() {
-        window.location.href = "../../";
-}
 
 localStorage.removeItem('readMessages');
 

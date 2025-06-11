@@ -42,6 +42,16 @@
             </div>
  
     </header>
+<!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal-overlay">
+  <div class="modal-content">
+    <p>Are you sure you want to sign out?</p>
+    <div class="modal-buttons">
+      <button onclick="confirmSignOut()">Yes</button>
+      <button onclick="closeModal()">No</button>
+    </div>
+  </div>
+</div>
     
     
     <section class="chat-conversation-section">
@@ -68,17 +78,6 @@
         </div>
       
       </section>
-      
-      <!-- Sign Out Confirmation Modal -->
-  <div id="signOutModal" class="modal-overlay">
-      <div class="modal-content">
-        <p>Are you sure you want to sign out?</p>
-        <div class="modal-buttons">
-          <button onclick="confirmSignOut()">Yes</button>
-          <button onclick="closeModal()">No</button>
-        </div>
-      </div>
-    </div>
       
       <!-- Report Pop-up window -->
 <div id="reportModal" class="modal" style="display: none;">
@@ -135,17 +134,7 @@
       const urlParams = new URLSearchParams(window.location.search);
 const consultant = urlParams.get('consultant');
 
-function showSignOutModal() {
-        document.getElementById("signOutModal").style.display = "flex";
-      }
 
-      function closeModal() {
-        document.getElementById("signOutModal").style.display = "none";
-      }
-
-      function confirmSignOut() {
-        window.location.href = "../../";
-      }
 
 // Display name in header
 document.querySelector('.consultant-name').textContent = consultant || 'Consultant';

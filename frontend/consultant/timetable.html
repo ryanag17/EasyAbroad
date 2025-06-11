@@ -116,16 +116,17 @@
  
     </header>
     
-        <!-- Sign Out Confirmation Modal -->
-<div id="signOutModal" class="modal">
-    <div class="modal-content">
-      <p>Are you sure you want to sign out?</p>
-      <div class="modal-buttons">
-        <button onclick="confirmSignOut()">Yes</button>
-        <button onclick="closeSignOutModal()">No</button>
-      </div>
+<!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal-overlay">
+  <div class="modal-content">
+    <p>Are you sure you want to sign out?</p>
+    <div class="modal-buttons">
+      <button onclick="confirmSignOut()">Yes</button>
+      <button onclick="closeModal()">No</button>
     </div>
   </div>
+</div>
+
     
     <!-- Modal window -->
     <div class="modal" id="bookingModal">
@@ -247,22 +248,6 @@
 let currentDate = new Date();
 let pendingSlot = null;
 let events = []; // consultant availability
-
-
-function showSignOutModal() {
-  document.getElementById('signOutModal').style.display = 'flex';
-  document.querySelector('#menuHamToggle input[type="checkbox"]').checked = false;
-}
-
-
-function closeSignOutModal() {
-  document.getElementById("signOutModal").style.display = "none";
-}
-
-
-function confirmSignOut() {
-        window.location.href = "../../";
-}
 
 function renderCalendar(startDate) {
   const calendarEl = document.getElementById('calendar');
