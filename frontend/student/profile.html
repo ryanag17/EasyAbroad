@@ -214,7 +214,7 @@ if (res.ok) {
   // Wait a moment before refreshing to let the image appear
   setTimeout(() => {
     window.location.reload();
-  }, 1000);
+  }, 1);
 } else {
   const err = await res.json();
   alert("❌ Upload failed: " + (err.detail || err.message));

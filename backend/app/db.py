@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import text
 from app.config import settings
+from collections.abc import AsyncGenerator
 
 # Compose the MySQL URL for aiomysql
 DATABASE_URL = (
@@ -22,7 +23,12 @@ AsyncSessionLocal = sessionmaker(
 # 3) Base class for ORM models
 Base = declarative_base()
 
-# Dependency to get an AsyncSession
+# Dependency used in routes
 async def get_db():
+    async with AsyncSessionLocal() as session:
+        yield session
+
+# 🔧 Direct session getter for background tasks
+async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         yield session

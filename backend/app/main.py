@@ -4,9 +4,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response 
 from fastapi.staticfiles import StaticFiles
+from contextlib import asynccontextmanager
+import asyncio
 
 from app.auth.routes import router as auth_router
+from app.auth.controller import router as profile_router
+from app.consultancy.routes import consultancy_router
 from app.config import settings
+from app.db import get_db_session
+from app.consultancy.controller import delete_expired_consultancies
 
 # 1) Ensure any missing ENV vars fallback to defaults if needed
 os.environ.setdefault("DB_HOST",            "127.0.0.1")
@@ -22,9 +28,27 @@ os.environ.setdefault("EMAIL_PORT",         "1025")
 os.environ.setdefault("EMAIL_FROM",         "no-reply@easyabroad.com")
 os.environ.setdefault("FRONTEND_BASE_URL",  "http://localhost:8080")
 
-app = FastAPI()
+# 2) Background cleanup task for expired consultancy profiles
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async def periodic_cleanup():
+        while True:
+            db_generator = get_db_session()
+            db = await anext(db_generator)
+            try:
+                await delete_expired_consultancies(db)
+            finally:
+                await db.aclose()
+            await asyncio.sleep(86400)  # every 24 hours
 
-# 2) CORS: allow only your frontend origin and credentials
+    asyncio.create_task(periodic_cleanup())
+    yield
+
+
+# 3) FastAPI app with lifespan
+app = FastAPI(lifespan=lifespan)
+
+# 4) CORS: allow only your frontend origin and credentials
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:8080"],  # ← your _exact_ frontend origin
@@ -33,28 +57,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 5) Allow all OPTIONS requests
 @app.options("/{full_path:path}", include_in_schema=False)
 async def preflight_handler(full_path: str):
-    # Simply return 200 OK for any OPTIONS request.
     return Response(status_code=200)
 
-# 1) Profile routing (must come after CORS so all /profile routes are covered)
-from app.auth.controller import router as profile_router
-from app.consultancy.routes import consultancy_router  # ← ✅ NEW IMPORT
+# 6) Routers
 app.include_router(profile_router)
-
-# 3) Register auth router under /auth
 app.include_router(auth_router, prefix="/auth")
-app.include_router(consultancy_router)   # ← ✅ NEW ROUTER
+app.include_router(consultancy_router)
 
-
+# 7) Health check
 @app.get("/", status_code=200)
 def root():
     return {"message": "Backend is running"}
 
-
-# 4) Mount static directory (if you have any files under backend/static)
-BASE_DIR   = Path(__file__).parent.parent  # root/backend
+# 8) Static files (if any)
+BASE_DIR   = Path(__file__).parent.parent
 STATIC_DIR = BASE_DIR / "static"
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")

@@ -58,7 +58,7 @@
   
  <main class="consultancy-form-container">
     <h2 class="form-title">Consultancy for Internship Abroad</h2>
-    <form id="consultancyForm" class="form-block">
+    <form id="consultancyForm" class="form-block" onsubmit="return false;">
       <div class="form-group">
         <label for="focus">Focus of Consultancy:</label>
         <input type="text" id="focus" value="Internship abroad" disabled />
@@ -131,7 +131,7 @@
       </div>
 
       <div class="form-buttons">
-        <button type="button" class="consult-button" onclick="submitForm()">Save</button>
+        <button type="button" class="consult-button" onclick="validateThenSubmit()">Save</button>
       </div>
     </form>
     </main>
@@ -174,7 +174,6 @@
           </a>
         </div>
     </footer>
- <!-- Footer and modals (same as study.html) -->
 <!-- Sign Out Confirmation Modal -->
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
@@ -185,6 +184,17 @@
     </div>
   </div>
 </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <p>Are you sure all the information is correct?</p>
+      <div class="modal-buttons">
+        <button onclick="submitForm()">Yes</button>
+        <button onclick="closeConfirmModal()">No</button>
+      </div>
+    </div>
+  </div>
 
 
   <!-- Success Modal -->
@@ -207,8 +217,7 @@
       window.location.href = "consultancy-areas.html";
     }
 
-    document.getElementById("consultancyForm").addEventListener("submit", function (event) {
-      event.preventDefault();
+    function validateThenSubmit() {
       const toDate = new Date(document.getElementById("internship_finish").value);
       const limitDate = new Date();
       limitDate.setFullYear(limitDate.getFullYear() - 5);
@@ -239,10 +248,30 @@
         document.getElementById("call-warning").style.display = "none";
       }
 
+      // Basic required field check
+      const requiredFields = [
+        "company_name",
+        "department_name",
+        "internship_start",
+        "internship_finish",
+        "country_of_internship",
+        "city_of_internship",
+        "proof_of_internship"
+      ];
+      for (const id of requiredFields) {
+        const el = document.getElementsByName(id)[0];
+        if (!el || !el.value) {
+          valid = false;
+          el?.classList.add("input-error");
+        } else {
+          el?.classList.remove("input-error");
+        }
+      }
+
       if (valid) {
         document.getElementById("confirmModal").style.display = "flex";
       }
-    });
+    }
 
 async function submitForm() {
   const form = document.getElementById("consultancyForm");
