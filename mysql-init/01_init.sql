@@ -263,6 +263,8 @@ CREATE TABLE IF NOT EXISTS Education (
   microsoft_teams   BOOLEAN,
   google_meet       BOOLEAN,
   apple_facetime    BOOLEAN,
+  latitude REAL,
+  longitude REAL,
   verified_by       INT,           -- references users(id)
   verified_at       DATETIME,
   status            VARCHAR(20) NOT NULL DEFAULT 'pending'
@@ -306,6 +308,8 @@ CREATE TABLE IF NOT EXISTS Internship (
   microsoft_teams       BOOLEAN,
   google_meet           BOOLEAN,
   apple_facetime        BOOLEAN,
+  latitude REAL,
+  longitude REAL,
   verified_by           INT,           -- references users(id)
   verified_at           DATETIME,
   status            VARCHAR(20) NOT NULL DEFAULT 'pending'

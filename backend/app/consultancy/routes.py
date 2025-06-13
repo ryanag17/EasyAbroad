@@ -60,6 +60,22 @@ async def upload_internship_proof(
 
 from fastapi import Form, File, UploadFile
 
+# Location-aware utilities (new)
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderUnavailable
+
+# Shared geocoding function
+def geocode_city_country(city: str, country: str):
+    try:
+        geolocator = Nominatim(user_agent="easyabroad-geocoder")
+        location = geolocator.geocode(f"{city}, {country}")
+        if location:
+            return location.latitude, location.longitude
+    except GeocoderUnavailable:
+        pass
+    return None, None
+
+# Consultant: Submit study consultancy
 @consultancy_router.post("/study", summary="Consultant: Submit education consultancy")
 async def submit_study_info(
     university_name: str = Form(...),
@@ -80,29 +96,28 @@ async def submit_study_info(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-    # Save file
     user_id = current_user["user_id"]
     proof_path = save_proof_file(proof_of_education, user_id, "study")
 
-    # Optional: validate or convert dates
     from datetime import datetime
     start = datetime.strptime(education_start, "%Y-%m")
     finish = datetime.strptime(education_finish, "%Y-%m")
 
-    # Insert into DB
+    lat, lng = geocode_city_country(city_of_study, country_of_study)
+
     await db.execute(text("""
         INSERT INTO Education (
             user_id, city_of_study, country_of_study, university_name, course_name,
             education_start, education_finish,
             accommodation, social_life, uni_info, travel_info,
             zoom, microsoft_teams, google_meet, apple_facetime,
-            proof_of_education, status
+            latitude, longitude, proof_of_education, status
         ) VALUES (
             :user_id, :city, :country, :uni, :course,
             :start, :finish,
             :accom, :social, :uniinfo, :travel,
             :zoom, :teams, :gmeet, :facetime,
-            :proof, 'pending'
+            :lat, :lng, :proof, 'pending'
         )
     """), {
         "user_id": user_id,
@@ -120,6 +135,8 @@ async def submit_study_info(
         "teams": microsoft_teams,
         "gmeet": google_meet,
         "facetime": apple_facetime,
+        "lat": lat,
+        "lng": lng,
         "proof": proof_path
     })
 
@@ -154,19 +171,21 @@ async def submit_internship_info(
     start = datetime.strptime(internship_start, "%Y-%m")
     finish = datetime.strptime(internship_finish, "%Y-%m")
 
+    lat, lng = geocode_city_country(city_of_internship, country_of_internship)
+
     await db.execute(text("""
         INSERT INTO Internship (
             user_id, city_of_internship, country_of_internship, company_name, department_name,
             internship_start, internship_finish,
             accommodation, social_life, company_info, travel_info,
             zoom, microsoft_teams, google_meet, apple_facetime,
-            proof_of_internship, status
+            latitude, longitude, proof_of_internship, status
         ) VALUES (
             :user_id, :city, :country, :company, :department,
             :start, :finish,
             :accom, :social, :companyinfo, :travel,
             :zoom, :teams, :gmeet, :facetime,
-            :proof, 'pending'
+            :lat, :lng, :proof, 'pending'
         )
     """), {
         "user_id": user_id,
@@ -184,11 +203,14 @@ async def submit_internship_info(
         "teams": microsoft_teams,
         "gmeet": google_meet,
         "facetime": apple_facetime,
+        "lat": lat,
+        "lng": lng,
         "proof": proof_path
     })
 
     await db.commit()
     return {"message": "Internship consultancy profile submitted successfully"}
+
 
 
 
@@ -242,16 +264,28 @@ async def delete_my_internship_consultancy(
 # Student: View Accepted Consultant Profiles
 @consultancy_router.get("/study/approved", summary="Student: List all approved study consultants")
 async def list_approved_study_profiles(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(text("SELECT * FROM Education WHERE status = 'accepted'"))
+    result = await db.execute(text("""
+        SELECT e.*, u.first_name, u.last_name, u.profile_picture
+        FROM Education e
+        JOIN users u ON e.user_id = u.id
+        WHERE e.status = 'accepted'
+    """))
     rows = result.fetchall()
     return [dict(row._mapping) for row in rows]
+
 
 # Student: View Accepted Consultant Profiles
 @consultancy_router.get("/internship/approved", summary="Student: List all approved internship consultants")
 async def list_approved_internship_profiles(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(text("SELECT * FROM Internship WHERE status = 'accepted'"))
+    result = await db.execute(text("""
+        SELECT i.*, u.first_name, u.last_name, u.profile_picture
+        FROM Internship i
+        JOIN users u ON i.user_id = u.id
+        WHERE i.status = 'accepted'
+    """))
     rows = result.fetchall()
     return [dict(row._mapping) for row in rows]
+
 
 # Admin: View applications
 @consultancy_router.get("/study", summary="Admin: View study applications by status")
@@ -533,3 +567,51 @@ async def download_internship_proof(user_id: int):
         media_type="application/octet-stream",
         headers={"Content-Disposition": f"attachment; filename={file_path.name}"}
     )
+
+# Student: Public study consultant profile
+@consultancy_router.get("/study/public/{user_id}", summary="Student: Public study consultant profile")
+async def public_study_profile(user_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(text("""
+        SELECT e.*, u.first_name, u.last_name, u.profile_picture, u.city AS current_city, u.country_name AS current_country
+        FROM Education e
+        JOIN users u ON e.user_id = u.id
+        WHERE e.user_id = :uid AND e.status = 'accepted'
+    """), {"uid": user_id})
+    row = result.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Consultant not found or not accepted.")
+
+    # Fetch language names
+    langs = await db.execute(text("""
+        SELECT l.language_name
+        FROM user_languages ul
+        JOIN languages l ON ul.language_id = l.id
+        WHERE ul.user_id = :uid
+    """), {"uid": user_id})
+    languages = [r.language_name for r in langs.fetchall()]
+
+    return {**dict(row._mapping), "languages": languages}
+
+# Student: Public internship consultant profile
+@consultancy_router.get("/internship/public/{user_id}", summary="Student: Public internship consultant profile")
+async def public_internship_profile(user_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(text("""
+        SELECT i.*, u.first_name, u.last_name, u.profile_picture, u.city AS current_city, u.country_name AS current_country
+        FROM Internship i
+        JOIN users u ON i.user_id = u.id
+        WHERE i.user_id = :uid AND i.status = 'accepted'
+    """), {"uid": user_id})
+    row = result.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Consultant not found or not accepted.")
+
+    # Fetch language names
+    langs = await db.execute(text("""
+        SELECT l.language_name
+        FROM user_languages ul
+        JOIN languages l ON ul.language_id = l.id
+        WHERE ul.user_id = :uid
+    """), {"uid": user_id})
+    languages = [r.language_name for r in langs.fetchall()]
+
+    return {**dict(row._mapping), "languages": languages}

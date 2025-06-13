@@ -155,9 +155,8 @@
         <label for="country">Country:</label>
         <select id="country">
           <option value="">Select</option>
-          <option value="Germany">Germany</option>
-          <option value="France">France</option>
         </select>
+
     
         <label for="city">City:</label>
         <input type="text" class="map_city" id="city" placeholder="Enter city">
@@ -220,124 +219,188 @@
 <script src="../auth.js"></script>
 <script src="../script.js"></script></body>  
 <script>
-    window.onload = function () {
-      const map = L.map('map').setView([50, 10], 5);
-  
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
-  
-      // Fix missing marker icons
-      delete L.Icon.Default.prototype._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-      });
-  
-      const consultantInfoBox = document.getElementById('consultant-info');
-      const countryFilter = document.getElementById('country');
-      const cityFilter = document.getElementById('city');
-      const focusFilter = document.getElementById('focus');
-  
-      const consultants = [
-        {
-          name: "Emma Johnson",
-          country: "Germany",
-          city: "Berlin",
-          focus: "study",
-          institution: "Berlin University of Technology",
-          period: { from: "10.2020", to: "03.2024" },
-          location: [52.52, 13.405],
-          rating: 4.5
-        },
-        {
-          name: "Carlson Johnson",
-          country: "Germany",
-          city: "Berlin",
-          focus: "study",
-          institution: "Berlin University of Technology",
-          period: { from: "10.2020", to: "03.2024" },
-          location: [52.52, 13.300],
-          rating: 4.5
-        },
-        {
-          name: "Liam Dupont",
-          country: "France",
-          city: "Paris",
-          focus: "internship",
-          institution: "Capgemini",
-          period: { from: "01.2022", to: "06.2022" },
-          location: [48.8566, 2.3522],
-          rating: null
-        }
-      ];
-  
-      let markers = [];
-  
-      function addMarkers(filteredConsultants) {
-        markers.forEach(marker => map.removeLayer(marker));
-        markers = [];
-  
-        filteredConsultants.forEach((consultant) => {
-          const marker = L.marker(consultant.location).addTo(map);
-          marker.bindPopup(`<strong>${consultant.name}</strong><br>${consultant.city}, ${consultant.country}`);
-          marker.on('click', () => showConsultantDetails(consultant));
-          markers.push(marker);
-        });
+function goToConsultantProfile(userId, focus) {
+  const page = focus === 'internship'
+    ? 'consultant-profile-internship.html'
+    : 'consultant-profile-study.html';
+  window.location.href = `${page}?id=${userId}`;
+}
+
+window.onload = async function () {
+  const map = L.map('map').setView([50, 10], 4);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+  });
+
+  const consultantInfoBox = document.getElementById('consultant-info');
+  const countryFilter = document.getElementById('country');
+  const cityFilter = document.getElementById('city');
+  const focusFilter = document.getElementById('focus');
+  const token = sessionStorage.getItem("accessToken");
+
+  let allConsultants = [];
+
+  async function fetchConsultants() {
+  try {
+    const [studyRes, internshipRes] = await Promise.all([
+      fetch("http://localhost:8000/consultancy/study/approved", { headers: { Authorization: `Bearer ${token}` }}),
+      fetch("http://localhost:8000/consultancy/internship/approved", { headers: { Authorization: `Bearer ${token}` }})
+    ]);
+
+    const studyData = await studyRes.json();
+    const internshipData = await internshipRes.json();
+
+      const studyMapped = await Promise.all(studyData.map(async s => ({
+      user_id: s.user_id, name: s.first_name + " " + s.last_name,
+      profilePic: s.profile_picture ? `http://localhost:8000${s.profile_picture}` : "../images/avatar.png",
+      city: s.city_of_study,
+      country: s.country_of_study,
+      focus: "study",
+      institution: s.university_name,
+      period: {
+        from: formatDate(s.education_start),
+        to: formatDate(s.education_finish)
+      },
+      rating: null,
+      location: await geocode(s.city_of_study, s.country_of_study)
+    })));
+
+      const internshipMapped = await Promise.all(internshipData.map(async i => ({
+      user_id: i.user_id,  name: i.first_name + " " + i.last_name,
+      profilePic: i.profile_picture ? `http://localhost:8000${i.profile_picture}` : "../images/avatar.png",
+      city: i.city_of_internship,
+      country: i.country_of_internship,
+      focus: "internship",
+      institution: i.company_name,
+      period: {
+        from: formatDate(i.internship_start),
+        to: formatDate(i.internship_finish)
+      },
+      rating: null,
+      location: await geocode(i.city_of_internship, i.country_of_internship)
+    })));
+
+    allConsultants = [...studyMapped, ...internshipMapped].filter(c => c.location);
+
+    const countrySet = new Set(allConsultants.map(c => c.country).filter(Boolean));
+    countryFilter.innerHTML = `<option value="">Select</option>`;
+    countrySet.forEach(country => {
+      const opt = document.createElement("option");
+      opt.value = country;
+      opt.textContent = country;
+      countryFilter.appendChild(opt);
+    });
+
+    applyFilters();
+  } catch (err) {
+    console.error("Failed to fetch consultants:", err);
+  }
+}
+
+
+  const countrySet = new Set(allConsultants.map(c => c.country).filter(Boolean));
+  countryFilter.innerHTML = `<option value="">Select</option>`;
+  countrySet.forEach(country => {
+    const opt = document.createElement("option");
+    opt.value = country;
+    opt.textContent = country;
+    countryFilter.appendChild(opt);
+  });
+
+
+  async function geocode(city, country) {
+    try {
+      const query = `${city}, ${country}`;
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      if (data.length > 0) {
+        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
       }
-  
-      function showConsultantDetails(consultant) {
-        consultantInfoBox.innerHTML = `
-          <div class="consultant-header">
-            <img src="../images/avatar.png" alt="Avatar">
-            <div>
-              <strong>${consultant.name}</strong><br>
-              ${consultant.country}, ${consultant.city}
-            </div>
-          </div>
-          <div class="consultant-details">
-            Focus: ${consultant.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}<br>
-            Institution: ${consultant.institution}<br>
-            <span class="consultant-period">
-              Date of mobility: from ${consultant.period.from} to ${consultant.period.to}
-            </span><br>
-            <strong>
-              ${consultant.rating ? `Currently rated ${consultant.rating}/5` : 'Currently have no reviews'}
-            </strong>
-          </div>
-          <button class="profile-btn">Profile</button>
-        `;
-      }
-  
-      function applyFilters() {
-        const countryVal = countryFilter.value.toLowerCase();
-        const cityVal = cityFilter.value.toLowerCase();
-        const focusVal = focusFilter.value.toLowerCase();
-  
-        const filtered = consultants.filter(c => {
-          const countryMatch = !countryVal || c.country.toLowerCase() === countryVal;
-          const cityMatch = !cityVal || c.city.toLowerCase().includes(cityVal);
-          const focusMatch = !focusVal || c.focus === focusVal;
-          return countryMatch && cityMatch && focusMatch;
-        });
-  
-        addMarkers(filtered);
-        consultantInfoBox.innerHTML = '<div class="no-selection">Click a consultant on the map to see more info.</div>';
-      }
-  
-      countryFilter.addEventListener('change', applyFilters);
-      cityFilter.addEventListener('input', applyFilters);
-      focusFilter.addEventListener('change', applyFilters);
-  
-      // Initial marker load
-      addMarkers(consultants);
-  
-      // Ensure map refreshes correctly
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 300);
+    } catch (e) {
+      console.warn("Geocoding failed:", e);
     }
-  </script>
+    return null;
+  }
+
+  function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    if (isNaN(date)) return "-";
+    return `${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+  }
+
+  let markers = [];
+
+  function addMarkers(filteredConsultants) {
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+
+    filteredConsultants.forEach((consultant) => {
+      const marker = L.marker(consultant.location).addTo(map);
+      marker.bindPopup(`<strong>${consultant.name}</strong><br>${consultant.city}, ${consultant.country}`);
+      marker.on('click', () => showConsultantDetails(consultant));
+      markers.push(marker);
+    });
+  }
+
+  function showConsultantDetails(consultant) {
+    consultantInfoBox.innerHTML = `
+      <div class="consultant-header">
+        <img src="${consultant.profilePic}" alt="Avatar">
+        <div>
+          <strong>${consultant.name}</strong><br>
+          ${consultant.country}, ${consultant.city}
+        </div>
+      </div>
+      <div class="consultant-details">
+        Focus: ${consultant.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}<br>
+        Institution: ${consultant.institution}<br>
+        <span class="consultant-period">
+          Date of mobility: from ${consultant.period.from} to ${consultant.period.to}
+        </span><br>
+        <strong>
+          ${consultant.rating ? `Currently rated ${consultant.rating}/5` : 'Currently have no reviews'}
+        </strong>
+      </div>
+      <button class="profile-btn" onclick="goToConsultantProfile('${consultant.user_id}', '${consultant.focus}')">Profile</button>
+    `;
+  }
+
+  function applyFilters() {
+    const countryVal = countryFilter.value.toLowerCase();
+    const cityVal = cityFilter.value.toLowerCase();
+    const focusVal = focusFilter.value.toLowerCase();
+
+    const filtered = allConsultants.filter(c => {
+      const countryMatch = !countryVal || c.country.toLowerCase() === countryVal;
+      const cityMatch = !cityVal || c.city.toLowerCase().includes(cityVal);
+      const focusMatch = !focusVal || c.focus === focusVal;
+      return countryMatch && cityMatch && focusMatch;
+    });
+
+    addMarkers(filtered);
+    consultantInfoBox.innerHTML = '<div class="no-selection">Click a consultant on the map to see more info.</div>';
+  }
+
+  countryFilter.addEventListener('change', applyFilters);
+  cityFilter.addEventListener('input', applyFilters);
+  focusFilter.addEventListener('change', applyFilters);
+
+  await fetchConsultants();
+
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 300);
+};
+</script>
+
+
 </body>
 </html>
