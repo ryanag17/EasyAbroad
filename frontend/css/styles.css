@@ -3598,6 +3598,35 @@ textarea#reviewText {
   color: deeppink;
 }
 
+/* Filter Dropdown Container */
+.submission-filter {
+  margin: 1.5rem 2rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Dropdown itself */
+.submission-filter select {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.submission-filter select:focus {
+  outline: none;
+  border-color: #ec008c;
+  box-shadow: 0 0 0 2px rgba(236, 0, 140, 0.15);
+}
+
+
 .submission-table-container {
   background: white;
   padding: 20px;

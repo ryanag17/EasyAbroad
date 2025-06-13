@@ -58,9 +58,19 @@
       
   <div class="submission-tabs">
     <button class="tab-button active" data-status="pending">Pending</button>
-    <button class="tab-button" data-status="approved">Approved</button>
+    <button class="tab-button" data-status="accepted">Accepted</button>
     <button class="tab-button" data-status="rejected">Rejected</button>
   </div>
+
+  <div class="submission-filter">
+  <label for="typeFilter">Filter by Type:</label>
+  <select id="typeFilter">
+    <option value="all">All</option>
+    <option value="study">Study Abroad</option>
+    <option value="internship">Internship Abroad</option>
+  </select>
+</div>
+
 
     <div class="submission-table-container">
     <table id="submissionTable" class="submission-table">
@@ -68,7 +78,7 @@
         <tr>
           <th>First Name</th>
           <th>Last Name</th>
-          <th>Email</th>
+          <th>University / Company Name</th>
           <th>Type</th>
           <th>Submitted On</th>
           <th>Action</th>
@@ -120,194 +130,152 @@
         </div>
     </footer>
   <script src="../auth.js"></script>
-  <script src="../script.js"></script></body>    
-    <script>
-let submissions = JSON.parse(localStorage.getItem('consultantSubmissions')) || [
-  {
-    firstName: 'Serhat',
-    lastName: 'Günay',
-    email: 'serhat@xyz.com',
-    type: 'Study Abroad',
-    submittedOn: '29.05.25',
-    status: 'pending'
-  },
-  {
-    firstName: 'asd',
-    lastName: 'dfg',
-    email: 'qwe@xyz.com',
-    type: 'Study Abroad',
-    submittedOn: '22.05.25',
-    status: 'pending'
-  },
-  {
-    firstName: 'asd1',
-    lastName: 'dfg1',
-    email: 'qwe1@xyz.com',
-    type: 'Internship Abroad',
-    submittedOn: '21.05.25',
-    status: 'pending'
-  },
-  {
-    firstName: 'Elif',
-    lastName: 'Kaya',
-    email: 'elif@web.de',
-    type: 'Internship Abroad',
-    submittedOn: '30.05.25',
-    status: 'approved'
-  },
-  {
-    firstName: 'Mehmet',
-    lastName: 'Ali',
-    email: 'mehmet@example.com',
-    type: 'Study Abroad',
-    submittedOn: '28.05.25',
-    status: 'rejected'
+  <script src="../script.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const API_BASE = "http://localhost:8000";
+  const tbody = document.getElementById('submissionBody');
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const typeFilter = document.getElementById('typeFilter'); // ⬅️ new reference
+  const token = sessionStorage.getItem("accessToken");
+
+  let allSubmissions = [];  // ⬅️ global store for current status set
+
+  if (!token) {
+    alert("Please log in.");
+    return (window.location.href = "../log-in.html");
   }
-];
 
-localStorage.setItem('consultantSubmissions', JSON.stringify(submissions));
-
-
-    const tbody = document.getElementById('submissionBody');
-    const tabButtons = document.querySelectorAll('.tab-button');
-
-    function renderTable(statusFilter) {
-
-
-      tbody.innerHTML = '';
-      submissions.forEach(sub => {
-        if (statusFilter === 'all' || sub.status === statusFilter) {
-          const row = document.createElement('tr');
-          row.setAttribute('data-status', sub.status);
-          row.innerHTML = `
-            <td>${sub.firstName}</td>
-            <td>${sub.lastName}</td>
-            <td>${sub.email}</td>
-            <td>${sub.type}</td>
-            <td>${sub.submittedOn}</td>
-            <td>
-                <span class="submission-action-link"
-  onclick="previewSubmission('${sub.firstName}', '${sub.lastName}', '${sub.email}', '${sub.type}', '${sub.status}')">
-  Preview
-</span>
-
-
-
-            </td>
-
-          `;
-          tbody.appendChild(row);
-        }
-      });
-    }
-
-function previewSubmission(firstName, lastName, email, type, status) {
-  let consultant = {
-    firstName,
-    lastName,
-    email,
-    type
+  const headers = {
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json"
   };
 
-  // dummy fields
-  if (type.toLowerCase().includes("study")) {
-    consultant = {
-      ...consultant,
-      university: 'Example University',
-      course: 'Example Course',
-      period: '09.2021 - 06.2024',
-      locationAbroad: 'Oxford, UK',
-      currentLocation: 'Berlin, Germany',
-      languages: 'English, German'
-    };
-  } else if (type.toLowerCase().includes("internship")) {
-    consultant = {
-      ...consultant,
-      company: 'Example Company',
-      department: 'Software Engineering Department',
-      period: '09.2023 - 02.2024',
-      locationCompany: 'Hamburg, Germany',
-      currentLocation: 'Berlin, Germany',
-      languages: 'English, German'
-    };
-  } else {
-    alert("No preview page for this consultant type.");
-    return;
-  }
-
-  localStorage.setItem("selectedConsultant", JSON.stringify(consultant));
-
-  // Only add ?mode=view for approved/rejected
-  const isViewOnly = status !== 'pending';
-  const suffix = isViewOnly ? '?mode=view' : '';
-
-  if (type.toLowerCase().includes("study")) {
-    window.location.href = "consultant-preview-study.html" + suffix;
-  } else if (type.toLowerCase().includes("internship")) {
-    window.location.href = "consultant-preview-internship.html" + suffix;
-  }
-}
-
-//reset dummy data
-function resetDummyData() {
-  const defaultSubmissions = [
-    {
-      firstName: 'Serhat',
-      lastName: 'Günay',
-      email: 'serhat@xyz.com',
-      type: 'Study Abroad',
-      submittedOn: '29.05.25',
-      status: 'pending'
-    },
-    {
-      firstName: 'asd',
-      lastName: 'dfg',
-      email: 'qwe@xyz.com',
-      type: 'Study Abroad',
-      submittedOn: '22.05.25',
-      status: 'pending'
-    },
-    {
-      firstName: 'asd1',
-      lastName: 'dfg1',
-      email: 'qwe1@xyz.com',
-      type: 'Internship Abroad',
-      submittedOn: '21.05.25',
-      status: 'pending'
-    },
-    {
-      firstName: 'Elif',
-      lastName: 'Kaya',
-      email: 'elif@web.de',
-      type: 'Internship Abroad',
-      submittedOn: '30.05.25',
-      status: 'approved'
-    },
-    {
-      firstName: 'Mehmet',
-      lastName: 'Ali',
-      email: 'mehmet@example.com',
-      type: 'Study Abroad',
-      submittedOn: '28.05.25',
-      status: 'rejected'
+  async function checkAdminAccess() {
+    const res = await fetch(`${API_BASE}/profile/admin`, { headers });
+    if (!res.ok) {
+      alert("Admin access only. Please log in.");
+      sessionStorage.clear();
+      window.location.href = "../log-in.html";
     }
-  ];
+  }
 
-  localStorage.setItem('consultantSubmissions', JSON.stringify(defaultSubmissions));
-  location.reload();
-}
+  async function fetchSubmissions(status) {
+    try {
+      const [studyRes, internshipRes] = await Promise.all([
+        fetch(`${API_BASE}/consultancy/study?status=${status}`, { headers }),
+        fetch(`${API_BASE}/consultancy/internship?status=${status}`, { headers })
+      ]);
 
+      const [studyData, internshipData] = await Promise.all([
+        studyRes.json(), internshipRes.json()
+      ]);
 
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-        tabButtons.forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        renderTable(this.dataset.status);
+      allSubmissions = [
+        ...studyData.map(d => ({ ...d, type: "study" })),
+        ...internshipData.map(d => ({ ...d, type: "internship" }))
+      ];
+
+      filterAndRender(); // ⬅️ always apply current filter
+    } catch (error) {
+      console.error("Fetch error:", error);
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red">Error loading data</td></tr>`;
+    }
+  }
+
+  function filterAndRender() {
+    const selectedType = typeFilter?.value || "all"; // all | study | internship
+    const filtered = selectedType === "all"
+      ? allSubmissions
+      : allSubmissions.filter(sub => sub.type === selectedType);
+    renderTable(filtered);
+  }
+
+  function renderTable(data) {
+    tbody.innerHTML = "";
+
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">No submissions found</td></tr>`;
+      return;
+    }
+
+    for (const sub of data) {
+      const institution = sub.type === "study" ? sub.university_name : sub.company_name;
+      const fullType = sub.type === "study" ? "Study Abroad" : "Internship Abroad";
+      const date = new Date(sub.created_at).toLocaleDateString("en-GB");
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${sub.first_name}</td>
+        <td>${sub.last_name}</td>
+        <td>${institution}</td>
+        <td>${fullType}</td>
+        <td>${date}</td>
+        <td>
+          <span class="submission-action-link"
+                data-user-id="${sub.user_id}"
+                data-type="${sub.type}"
+                data-status="${sub.status}">
+            Preview
+          </span>
+        </td>
+      `;
+      tbody.appendChild(row);
+    }
+
+    // Attach preview click listeners
+    document.querySelectorAll(".submission-action-link").forEach(link => {
+      link.addEventListener("click", () => {
+        const userId = link.dataset.userId;
+        const type = link.dataset.type;
+        const status = link.dataset.status;
+        const viewOnly = status !== "pending" ? "?mode=view" : "";
+        const url = type === "study"
+          ? `consultant-preview-study.html?user_id=${userId}${viewOnly}`
+          : `consultant-preview-internship.html?user_id=${userId}${viewOnly}`;
+        window.location.href = url;
       });
     });
+  }
 
-    renderTable('pending');
-    </script>
+  function setActiveTab(status) {
+    tabButtons.forEach(btn =>
+      btn.classList.toggle("active", btn.dataset.status === status)
+    );
+  }
+
+  function setupTabListeners() {
+    tabButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        const status = button.dataset.status;
+        window.history.replaceState({}, "", `?status=${status}`);
+        setActiveTab(status);
+        fetchSubmissions(status);
+      });
+    });
+  }
+
+  function setupFilterListener() {
+    typeFilter?.addEventListener("change", filterAndRender);
+  }
+
+  async function init() {
+    await checkAdminAccess();
+
+    const initialStatus = new URLSearchParams(window.location.search).get("status") || "pending";
+    setActiveTab(initialStatus);
+    setupTabListeners();
+    setupFilterListener(); // ⬅️ activate dropdown
+    fetchSubmissions(initialStatus);
+  }
+
+  init();
+});
+</script>
+
+
+
     
 </body>
 </html>

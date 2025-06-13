@@ -2,6 +2,8 @@ from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from pathlib import Path
+from pydantic import BaseModel
+from fastapi.responses import FileResponse
 import shutil
 
 from app.auth.token_verification import get_current_user
@@ -35,7 +37,7 @@ def save_proof_file(file: UploadFile, user_id: int, category: str):
 
     return f"/static/uploads/proof_documents/{category}/user_{user_id}/{renamed_filename}"
 
-
+# Consultant: Upload proof of study
 @consultancy_router.post("/upload-proof/study", summary="Consultant: Upload proof of study")
 async def upload_study_proof(
     file: UploadFile = File(...),
@@ -124,7 +126,7 @@ async def submit_study_info(
     await db.commit()
     return {"message": "Study consultancy profile submitted successfully"}
 
-
+# Consultant: Submit internship consultancy
 @consultancy_router.post("/internship", summary="Consultant: Submit internship consultancy")
 async def submit_internship_info(
     company_name: str = Form(...),
@@ -263,7 +265,13 @@ async def get_study_applications(
     if status not in {"pending", "accepted", "rejected"}:
         raise HTTPException(status_code=400, detail="Invalid status.")
 
-    result = await db.execute(text("SELECT * FROM Education WHERE status = :s"), {"s": status})
+    # UPDATED: JOIN users
+    result = await db.execute(text("""
+        SELECT e.*, u.first_name, u.last_name, e.submitted_at AS created_at
+        FROM Education e
+        JOIN users u ON e.user_id = u.id
+        WHERE e.status = :s
+    """), {"s": status})
     return [dict(row._mapping) for row in result.fetchall()]
 
 
@@ -280,37 +288,46 @@ async def get_internship_applications(
     if status not in {"pending", "accepted", "rejected"}:
         raise HTTPException(status_code=400, detail="Invalid status.")
 
-    result = await db.execute(text("SELECT * FROM Internship WHERE status = :s"), {"s": status})
+    # UPDATED: JOIN users
+    result = await db.execute(text("""
+    SELECT i.*, u.first_name, u.last_name, i.submitted_at AS created_at
+        FROM Internship i
+        JOIN users u ON i.user_id = u.id
+        WHERE i.status = :s
+    """), {"s": status})
     return [dict(row._mapping) for row in result.fetchall()]
 
 
+class StudyStatusUpdateRequest(BaseModel):
+    status: str
+    short_note: str = ""
 
 # Admin: Approve or reject
 @consultancy_router.patch("/study/{user_id}/status", summary="Admin: Update study application status")
 async def update_study_status(
     user_id: int,
-    status: str,
-    short_note: str = "",
+    payload: StudyStatusUpdateRequest,
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
     if current_user["role"] != "admin":
         raise HTTPException(status_code=403, detail="Not authorized.")
-    if status not in {"accepted", "rejected"}:
+
+    if payload.status not in {"accepted", "rejected"}:
         raise HTTPException(status_code=400, detail="Invalid status.")
 
     # 1. Get proof file path
     result = await db.execute(text("SELECT proof_of_education FROM Education WHERE user_id = :uid"), {"uid": user_id})
     row = result.fetchone()
     if row and row.proof_of_education:
-        filepath = Path("." + row.proof_of_education)  # prepend dot to match relative path like ./static/...
+        filepath = Path("." + row.proof_of_education)
         if filepath.exists():
             try:
                 filepath.unlink()
             except Exception as e:
                 print(f"Failed to delete file {filepath}: {e}")
 
-    # 2. Update status and remove file path
+    # 2. Update DB
     await db.execute(text("""
         UPDATE Education
         SET status = :s,
@@ -320,13 +337,14 @@ async def update_study_status(
             proof_of_education = NULL
         WHERE user_id = :uid
     """), {
-        "s": status,
-        "note": short_note,
+        "s": payload.status,
+        "note": payload.short_note,
         "vid": current_user["user_id"],
         "uid": user_id
     })
     await db.commit()
-    return {"message": f"Study application {status} and document deleted."}
+    return {"message": f"Study application {payload.status} and document deleted."}
+
 
 
 # Admin: Approve or reject
@@ -386,3 +404,132 @@ async def manual_cleanup_expired(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Admin: Get full study consultant preview data
+@consultancy_router.get("/study/full/{user_id}", summary="Get full study consultant preview data")
+async def get_full_study_consultant_data(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Unauthorized.")
+
+    # Fetch profile
+    profile_res = await db.execute(text("""
+        SELECT first_name, last_name, email, role, city, country_name AS country
+        FROM users
+        WHERE id = :uid
+    """), {"uid": user_id})
+    profile = profile_res.fetchone()
+    if not profile:
+        raise HTTPException(status_code=404, detail="User not found.")
+
+    # Fetch languages (joined from user_languages)
+    lang_res = await db.execute(text("""
+        SELECT language_name FROM languages
+        WHERE id IN (
+            SELECT language_id FROM user_languages WHERE user_id = :uid
+        )
+    """), {"uid": user_id})
+    languages = [row.language_name for row in lang_res.fetchall()]
+
+    # Fetch consultancy data
+    study_res = await db.execute(text("SELECT * FROM Education WHERE user_id = :uid"), {"uid": user_id})
+    study = study_res.fetchone()
+    if not study:
+        raise HTTPException(status_code=404, detail="No study consultancy found.")
+
+    # Combine all data into response
+    profile_dict = dict(profile._mapping)
+    profile_dict["languages"] = languages
+
+    return {
+        "profile": profile_dict,
+        "study": dict(study._mapping)
+    }
+
+# Admin: Get full internship consultant preview data
+@consultancy_router.get("/internship/full/{user_id}", summary="Get full internship consultant preview data")
+async def get_full_internship_consultant_data(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Unauthorized.")
+
+    # Fetch profile
+    profile_res = await db.execute(text("""
+        SELECT first_name, last_name, email, role, city, country_name AS country
+        FROM users
+        WHERE id = :uid
+    """), {"uid": user_id})
+    profile = profile_res.fetchone()
+    if not profile:
+        raise HTTPException(status_code=404, detail="User not found.")
+
+    # Fetch languages (joined from user_languages)
+    lang_res = await db.execute(text("""
+        SELECT language_name FROM languages
+        WHERE id IN (
+            SELECT language_id FROM user_languages WHERE user_id = :uid
+        )
+    """), {"uid": user_id})
+    languages = [row.language_name for row in lang_res.fetchall()]
+
+    # Fetch consultancy data
+    internship_res = await db.execute(text("SELECT * FROM Internship WHERE user_id = :uid"), {"uid": user_id})
+    internship = internship_res.fetchone()
+    if not internship:
+        raise HTTPException(status_code=404, detail="No internship consultancy found.")
+
+    profile_dict = dict(profile._mapping)
+    profile_dict["languages"] = languages
+
+    return {
+        "profile": profile_dict,
+        "internship": dict(internship._mapping)
+    }
+
+
+
+# Admin: Force download of study proof document
+@consultancy_router.get("/download-proof/study/{user_id}", summary="Force download of study proof document")
+async def download_study_proof(user_id: int):
+    base_path = Path(f"./static/uploads/proof_documents/study/user_{user_id}")
+    
+    if not base_path.exists() or not base_path.is_dir():
+        raise HTTPException(status_code=404, detail="No document folder found for this user.")
+
+    # Look for any file in that folder
+    files = list(base_path.glob(f"{user_id}_proofdocument_study.*"))
+    if not files:
+        raise HTTPException(status_code=404, detail="Proof document not found.")
+
+    file_path = files[0]  # Take the first match
+    return FileResponse(
+        file_path,
+        filename=file_path.name,
+        media_type="application/octet-stream",  # generic binary
+        headers={"Content-Disposition": f"attachment; filename={file_path.name}"}
+    )
+
+# Admin: Force download of internship proof document
+@consultancy_router.get("/download-proof/internship/{user_id}", summary="Force download of internship proof document")
+async def download_internship_proof(user_id: int):
+    base_path = Path(f"./static/uploads/proof_documents/internship/user_{user_id}")
+    
+    if not base_path.exists() or not base_path.is_dir():
+        raise HTTPException(status_code=404, detail="No document folder found for this user.")
+
+    files = list(base_path.glob(f"{user_id}_proofdocument_internship.*"))
+    if not files:
+        raise HTTPException(status_code=404, detail="Proof document not found.")
+
+    file_path = files[0]
+    return FileResponse(
+        file_path,
+        filename=file_path.name,
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f"attachment; filename={file_path.name}"}
+    )

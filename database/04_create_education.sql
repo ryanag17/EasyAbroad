@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS Education (
   education_start DATETIME,
   education_finish DATETIME,
   proof_of_education VARCHAR(255),
+  submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   accommodation BOOLEAN,
   social_life BOOLEAN,
   uni_info BOOLEAN,

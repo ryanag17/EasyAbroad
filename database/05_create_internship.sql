@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS Internship (
   internship_start DATETIME,
   internship_finish DATETIME,
   proof_of_internship VARCHAR(255),
+  submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   accommodation BOOLEAN,
   social_life BOOLEAN,
   company_info BOOLEAN,

@@ -33,17 +33,16 @@ os.environ.setdefault("FRONTEND_BASE_URL",  "http://localhost:8080")
 async def lifespan(app: FastAPI):
     async def periodic_cleanup():
         while True:
-            db_generator = get_db_session()
-            db = await anext(db_generator)
-            try:
-                await delete_expired_consultancies(db)
-            finally:
-                await db.aclose()
+            async for db in get_db_session():
+                try:
+                    await delete_expired_consultancies(db)
+                finally:
+                    await db.aclose()
+                break  # exit the async generator loop after one session
             await asyncio.sleep(86400)  # every 24 hours
 
     asyncio.create_task(periodic_cleanup())
     yield
-
 
 # 3) FastAPI app with lifespan
 app = FastAPI(lifespan=lifespan)
