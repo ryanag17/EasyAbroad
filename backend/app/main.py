@@ -13,6 +13,8 @@ from app.consultancy.routes import consultancy_router
 from app.config import settings
 from app.db import get_db_session
 from app.consultancy.controller import delete_expired_consultancies
+from app.support.routes import support_router
+
 
 # 1) Ensure any missing ENV vars fallback to defaults if needed
 os.environ.setdefault("DB_HOST",            "127.0.0.1")
@@ -65,6 +67,8 @@ async def preflight_handler(full_path: str):
 app.include_router(profile_router)
 app.include_router(auth_router, prefix="/auth")
 app.include_router(consultancy_router)
+app.include_router(support_router)
+
 
 # 7) Health check
 @app.get("/", status_code=200)
