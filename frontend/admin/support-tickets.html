@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Tickets</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/all.min.css">
+</head>
+<body>
+  <header class="user-header">
+    <a href="home.html" class="to_the_main">
+      <div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+    </a>
+    <div class="bell-menu">
+      <a href="notifications.html" class="bell-div">
+        <div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div>
+      </a>
+      <div id="menuHamToggle">
+        <input type="checkbox">
+        <span></span><span></span><span></span>
+        <ul id="mainMenu">
+          <a href="profile.html"> <li> Profile </li></a>
+          <a href="user-management.html"> <li> User Management </li></a>
+          <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
+          <a href="support-tickets.html"> <li> Support Tickets </li></a>
+          <a href="email-announcement.html"> <li> Email Announcement </li></a>
+          <a href="settings.html"> <li> Settings</li></a>
+          <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sign Out Modal -->
+  <div id="signOutModal" class="modal-overlay">
+    <div class="modal-content">
+      <p>Are you sure you want to sign out?</p>
+      <div class="modal-buttons">
+        <button onclick="confirmSignOut()">Yes</button>
+        <button onclick="closeModal()">No</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="support-tickets">
+    <section class="support-ticket-container">
+      <h1>Support Ticket Inbox</h1>
+      <div id="ticketList" class="ticket-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+      <div class="social-icons">
+        <a href=""><img src="../images/twitter.png" alt="X"></a>
+        <a href=""><img src="../images/instagram.png" alt="Instagram"></a>
+        <a href=""><img src="../images/youtube.png" alt="YouTube"></a>
+        <a href=""><img src="../images/linkedin.png" alt="LinkedIn"></a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4 class="h4_service">Service & Contacts</h4>
+      <a href="../faq.html"><p>FAQ</p></a>
+      <a href="../contact-us.html"><p>Contact Us</p></a>
+      <a href="../privacy-policy.html"><p>Privacy Policy</p></a>
+      <a href="../about-us.html"><p>About Us</p></a>
+      <a href="../terms-conditions.html"><p>Terms and Conditions</p></a>
+    </div>
+  </footer>
+
+  <script src="../auth.js"></script>
+  <script src="../script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const token = sessionStorage.getItem("accessToken");
+      if (!token) return window.location.href = "../log-in.html";
+
+      try {
+        const res = await fetch("http://localhost:8000/support/tickets", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const tickets = await res.json();
+        const list = document.getElementById("ticketList");
+
+        if (!tickets.length) {
+          list.innerHTML = "<p>No support tickets found.</p>";
+          return;
+        }
+
+        tickets.forEach(ticket => {
+          const div = document.createElement("div");
+          div.className = "ticket-entry";
+          div.innerHTML = `
+            <h3>${ticket.subject}</h3>
+            <p><strong>Status:</strong> ${ticket.status}</p>
+            <p><strong>Created by:</strong> User #${ticket.user_id}</p>
+            <p><strong>Created at:</strong> ${new Date(ticket.created_at).toLocaleString()}</p>
+            <button onclick="viewTicket(${ticket.id})">View Details</button>
+          `;
+          list.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Error fetching support tickets:", err);
+        document.getElementById("ticketList").innerHTML = "<p>Failed to load support tickets.</p>";
+      }
+    });
+
+    function viewTicket(id) {
+      window.location.href = `support-ticket-detail.html?id=${id}`;
+    }
+  </script>
+</body>
+</html>
