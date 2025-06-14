@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a support Ticket</title>
+    <title>Settings & Support</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
@@ -32,7 +32,8 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
-                    <a href="settings-support.html"> <li> Settings & Support </li></a>
+                    <a href="settings.html"> <li> Settings </li></a>
+                    <a href="support-tickets.html"><li>Support Tickets</li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -52,28 +53,17 @@
   </div>
 </div>
 
-
-    <main>
-    <section class="support-ticket-container">
-        <h1>Create a Support Ticket</h1>
-        <form id="supportTicketForm">
-        <div class="form-group">
-            <label for="topic">Topic:</label>
-            <input type="text" id="topic" name="topic" required>
-        </div>
-
-        <div class="form-group">
-            <label for="message">Your message:</label>
-            <textarea id="message" name="message" rows="6" required></textarea>
-        </div>
-
-        <p id="supportError" class="warning-text" style="display: none;">Both fields are required.</p>
-
-        <button type="submit" class="send-button">Send</button>
-        </form>
+      <!-- Main Content Section -->
+  <main>
+    <section class="settings-support-section">
+      <h1>Settings and support</h1>
+      <ul>
+        <li><a href="change-password.html">Change password</a></li>
+        <li><a href="delete-account.html">Delete account</a></li>
+      </ul>
     </section>
-    </main>
-
+  </main>
+    
     <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
@@ -113,53 +103,6 @@
     </footer>
 
   <script src="../auth.js"></script>
-  <script src="../script.js"></script>    
-    <script>
- const supportForm = document.getElementById("supportTicketForm");
-  const topicInput = document.getElementById("topic");
-  const messageInput = document.getElementById("message");
-  const supportError = document.getElementById("supportError");
-  let isSupportDirty = false;
-
-  supportForm.addEventListener("input", () => {
-    isSupportDirty = true;
-    supportError.style.display = "none";
-  });
-
-    supportForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const topic = topicInput.value.trim();
-    const message = messageInput.value.trim();
-
-    // Spam prevention
-    if (topic.length < 20) {
-        supportError.textContent = "Topic must be at least 20 characters.";
-        supportError.style.display = "block";
-        return;
-    }
-
-    if (message.length < 50) {
-        supportError.textContent = "Message must be at least 50 characters.";
-        supportError.style.display = "block";
-        return;
-    }
-
-    if (confirm("Are you sure you want to send this support ticket?")) {
-        isSupportDirty = false;
-        alert("Your support ticket has been submitted.");
-        window.location.href = "messages.html";
-    }
-    });
-
-
-  window.addEventListener("beforeunload", (e) => {
-    if (isSupportDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-    }
-  });
-
-    </script>
+  <script src="../script.js"></script> 
 </body>
 </html>

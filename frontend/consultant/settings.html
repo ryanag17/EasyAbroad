@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change password</title>
+    <title>Settings & Support</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -34,8 +33,10 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="support-tickets.html"><li>Support Tickets</li></a>
+                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
+                    <a href="timetable.html"> <li> Timetable </li></a>
+                    <a href="settings.html"> <li> settings </li></a>
+                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -55,43 +56,19 @@
   </div>
 </div>
 
-    <main>
-    <section class="change-password-container">
-        <h1>Change password</h1>
-        <form id="changePasswordForm">
 
-        <div class="form-group">
-        <label for="oldPassword">Enter your old password:</label>
-        <div class="password-wrapper">
-            <input type="password" id="oldPassword" name="oldPassword" required>
-            <i class="fas fa-eye toggle-password" toggle="#oldPassword"></i>
-        </div>
-        </div>
-
-        <div class="form-group">
-        <label for="newPassword">Enter your new password:</label>
-        <div class="password-wrapper">
-            <input type="password" id="newPassword" name="newPassword" required>
-            <i class="fas fa-eye toggle-password" toggle="#newPassword"></i>
-        </div>
-        </div>
-        
-        <div class="form-group">
-        <label for="repeatPassword">Repeat your new password:</label>
-        <div class="password-wrapper">
-            <input type="password" id="repeatPassword" name="repeatPassword" required>
-            <i class="fas fa-eye toggle-password" toggle="#repeatPassword"></i>
-        </div>
-        <p id="passwordMismatchWarning" class="warning-text" style="display: none;">
-            Passwords do not match.
-        </p>
-        </div>
-
-        <button type="submit" class="save-button">Save</button>
-        </form>
+      <!-- Main Content Section -->
+  <main>
+    <section class="settings-support-section">
+      <h1>Settings and support</h1>
+      <ul>
+        <li><a href="change-password.html">Change password</a></li>
+        <li><a href="support-ticket.html">Create a support ticket</a></li>
+        <li><a href="delete-account.html">Delete account</a></li>
+      </ul>
     </section>
-    </main>
-
+  </main>
+    
     <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
@@ -129,61 +106,10 @@
           </a>
         </div>
     </footer>
+
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
     <script>
-  const dummyOldPassword = "123456";
-  const form = document.getElementById("changePasswordForm");
-  const oldPassword = document.getElementById("oldPassword");
-  const newPassword = document.getElementById("newPassword");
-  const repeatPassword = document.getElementById("repeatPassword");
-  const warningText = document.getElementById("passwordMismatchWarning");
-  let isFormDirty = false;
-
-  form.addEventListener("input", () => {
-    isFormDirty = true;
-
-  if (newPassword.value !== repeatPassword.value) {
-    repeatPassword.style.borderColor = "red";
-    warningText.style.display = "block";
-  } else {
-    repeatPassword.style.borderColor = "";
-    warningText.style.display = "none";
-  }
-
-  if (oldPassword.value === dummyOldPassword) {
-    oldPassword.style.borderColor = "";
-  }
-});
-
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    if (newPassword.value !== repeatPassword.value) {
-      alert("New passwords do not match.");
-      return;
-    }
-
-    if (oldPassword.value !== dummyOldPassword) {
-      alert("Your old password is not correct.");
-      oldPassword.style.borderColor = "red";
-      return;
-    }
-
-    if (confirm("Are you sure you want to change your password?")) {
-      isFormDirty = false;
-      alert("Password successfully updated.");
-      form.reset();
-    }
-  });
-
-  window.addEventListener("beforeunload", (e) => {
-    if (isFormDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-    }
-  });
 
     </script>
 </body>

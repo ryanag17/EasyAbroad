@@ -1,13 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings & Support</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Support Tickets</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+  <style>
+    .support-ticket-list {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .ticket-item {
+      border-left: 4px solid #cc2f8b;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      background: #f9f9f9;
+      border-radius: 6px;
+    }
+    .ticket-item h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+    }
+    .ticket-item .status {
+      font-weight: bold;
+      color: #333;
+    }
+    .ticket-item .description {
+    overflow-wrap: break-word;
+    }
+
+  </style>
 </head>
+
 <body>
     <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
@@ -32,7 +62,8 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
-                    <a href="settings-support.html"> <li> Settings & Support </li></a>
+                    <a href="settings.html"> <li> Settings </li></a>
+                    <a href="support-tickets.html"><li>Support Tickets</li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -52,19 +83,29 @@
   </div>
 </div>
 
-      <!-- Main Content Section -->
   <main>
-    <section class="settings-support-section">
-      <h1>Settings and support</h1>
-      <ul>
-        <li><a href="change-password.html">Change password</a></li>
-        <li><a href="support-ticket.html">Create a support ticket</a></li>
-        <li><a href="delete-account.html">Delete account</a></li>
-      </ul>
-    </section>
+<section class="support-ticket-list">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="margin: 0;">My Support Tickets</h1>
+    <button onclick="window.location.href='ticket-create.html'" style="
+      padding: 8px 16px;
+      background-color: #cc2f8b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    ">
+      + Create New Ticket
+    </button>
+  </div>
+  <div id="ticketList"></div>
+</section>
+
+
   </main>
-    
-    <footer>
+
+      <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
             <div class="social-icons">
@@ -103,6 +144,62 @@
     </footer>
 
   <script src="../auth.js"></script>
-  <script src="../script.js"></script> 
+  <script src="../script.js"></script>    
+
+    <script>
+    async function loadTickets() {
+      const token = sessionStorage.getItem("accessToken");
+      const list = document.getElementById("ticketList");
+
+      try {
+        const res = await fetch("http://localhost:8000/support/me", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch tickets.");
+
+        const data = await res.json();
+        if (!data.length) {
+          list.innerHTML = "<p>You haven't submitted any support tickets yet.</p>";
+          return;
+        }
+
+        list.innerHTML = data.map(t => {
+          const formattedDate = new Date(t.created_at + 'Z').toLocaleString(undefined, {
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            dateStyle: "short",
+            timeStyle: "short",
+            hour12: false
+          });
+
+          return `
+            <div class="ticket-item">
+                <h3>${t.subject}</h3>
+                <p class="description">${t.description.length > 150 ? t.description.substring(0, 150) + "..." : t.description}</p>
+                <p><span class="status">Status:</span> ${t.status}</p>
+                <p><small>Submitted: ${formattedDate}</small></p>
+                <div style="margin-top: 8px;">
+                <a href="ticket-detail.html?id=${t.id}" class="view-ticket-link" style="
+                    background-color: #cc2f8b;
+                    color: white;
+                    padding: 6px 12px;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    font-size: 13px;
+                    display: inline-block;
+                ">View</a>
+                </div>
+            </div>
+          `;
+        }).join("");
+
+
+      } catch (err) {
+        list.innerHTML = `<p style="color:red;">${err.message}</p>`;
+      }
+    }
+
+    window.onload = loadTickets;
+  </script>
 </body>
 </html>

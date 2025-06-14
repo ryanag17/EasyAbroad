@@ -1,14 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a support ticket</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Support Ticket</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
-</head>
 
+  <style>
+    .ticket-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .ticket-header h2 { margin: 0 0 10px; }
+    .reply-list { margin-top: 20px; }
+    .reply { border-top: 1px solid #ddd; padding: 10px 0; }
+    .reply.admin { background: #f1f1f1; }
+    .reply-form textarea {
+      width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;
+      resize: vertical;
+    }
+    .reply-form button {
+      margin-top: 10px;
+      background: #cc2f8b; color: white; padding: 8px 16px; border: none;
+      border-radius: 5px; cursor: pointer;
+    }
+  </style>
+
+</head>
 <body>
     <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
@@ -35,7 +59,8 @@
                     <a href="messages.html"> <li> Messages </li></a>
                     <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
                     <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="settings-support.html"> <li> Settings & Support </li></a>
+                    <a href="settings.html"> <li> settings </li></a>
+                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -56,26 +81,20 @@
 </div>
 
 
-    <main>
-    <section class="support-ticket-container">
-        <h1>Create a Support Ticket</h1>
-        <form id="supportTicketForm">
-        <div class="form-group">
-            <label for="topic">Topic:</label>
-            <input type="text" id="topic" name="topic" required>
-        </div>
+  <main class="ticket-container">
+    <div class="ticket-header">
+      <h2 id="ticketSubject">Loading...</h2>
+      <p id="ticketMeta"></p>
+      <p><strong>Status:</strong> <span id="ticketStatus"></span></p>
+    </div>
 
-        <div class="form-group">
-            <label for="message">Your message:</label>
-            <textarea id="message" name="message" rows="6" required></textarea>
-        </div>
+    <div class="reply-list" id="replyList">Loading replies...</div>
 
-        <p id="supportError" class="warning-text" style="display: none;">Both fields are required.</p>
-
-        <button type="submit" class="send-button">Send</button>
-        </form>
-    </section>
-    </main>
+    <div class="reply-form" id="replyFormContainer" style="display:none;">
+      <textarea id="replyInput" rows="4" placeholder="Write your message..."></textarea>
+      <button onclick="submitReply()">Send Reply</button>
+    </div>
+  </main>
 
     <footer>
         <div>
@@ -116,54 +135,76 @@
     </footer>
 
   <script src="../auth.js"></script>
-  <script src="../script.js"></script>     
-    <script>
+  <script src="../script.js"></script>    
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const ticketId = params.get("id");
+  const token = sessionStorage.getItem("accessToken");
+  const localFormat = {
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  dateStyle: "short",
+  timeStyle: "short",
+  hour12: false
+};
 
- const supportForm = document.getElementById("supportTicketForm");
-  const topicInput = document.getElementById("topic");
-  const messageInput = document.getElementById("message");
-  const supportError = document.getElementById("supportError");
-  let isSupportDirty = false;
+  async function loadTicket() {
+    try {
+      const res = await fetch(`http://localhost:8000/support/${ticketId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-  supportForm.addEventListener("input", () => {
-    isSupportDirty = true;
-    supportError.style.display = "none";
-  });
+      const data = await res.json();
 
-    supportForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+      document.getElementById("ticketSubject").textContent = data.subject;
+      document.getElementById("ticketStatus").textContent = data.status;
+      document.getElementById("ticketMeta").innerHTML =
+        `Submitted: <span id="submittedDate">${new Date(data.created_at + 'Z').toLocaleString(undefined, localFormat)}</span>`;
 
-    const topic = topicInput.value.trim();
-    const message = messageInput.value.trim();
+      const replies = data.replies || [];
+      const list = replies.map(r => `
+        <div class="reply ${r.sender_role === 'admin' ? 'admin' : ''}">
+          <p><strong>${r.sender_name}:</strong></p>
+          <p>${r.message}</p>
+          <small>${new Date(r.created_at + 'Z').toLocaleString(undefined, localFormat)}</small>
+        </div>
+      `).join("");
 
-    // Spam prevention
-    if (topic.length < 20) {
-        supportError.textContent = "Topic must be at least 20 characters.";
-        supportError.style.display = "block";
-        return;
+      document.getElementById("replyList").innerHTML = list || "<p>No replies yet.</p>";
+
+      if (data.status === "open") {
+        document.getElementById("replyFormContainer").style.display = "block";
+      }
+
+    } catch (err) {
+      alert("Failed to load ticket.");
     }
+  }
 
-    if (message.length < 50) {
-        supportError.textContent = "Message must be at least 50 characters.";
-        supportError.style.display = "block";
-        return;
-    }
+  async function submitReply() {
+    const message = document.getElementById("replyInput").value.trim();
+    if (!message) return alert("Message cannot be empty.");
 
-    if (confirm("Are you sure you want to send this support ticket?")) {
-        isSupportDirty = false;
-        alert("Your support ticket has been submitted.");
-        window.location.href = "messages.html";
-    }
+    const res = await fetch(`http://localhost:8000/support/${ticketId}/reply`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ message })
     });
 
-
-  window.addEventListener("beforeunload", (e) => {
-    if (isSupportDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
+    if (!res.ok) {
+      alert("Failed to send reply.");
+      return;
     }
-  });
 
-    </script>
+    document.getElementById("replyInput").value = "";
+    loadTicket();
+  }
+
+  window.onload = loadTicket;
+</script>
+
+
 </body>
 </html>

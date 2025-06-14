@@ -1,15 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change password</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Support Ticket</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
 
+  <style>
+    .ticket-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .ticket-header h2 { margin: 0 0 10px; }
+    .reply-list { margin-top: 20px; }
+    .reply { border-top: 1px solid #ddd; padding: 10px 0; }
+    .reply.admin { background: #f1f1f1; }
+    .reply-form textarea {
+      width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;
+      resize: vertical;
+    }
+    .reply-form button {
+      margin-top: 10px;
+      background: #cc2f8b; color: white; padding: 8px 16px; border: none;
+      border-radius: 5px; cursor: pointer;
+    }
+  </style>
+
+</head>
 <body>
     <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
@@ -55,42 +78,21 @@
   </div>
 </div>
 
-    <main>
-    <section class="change-password-container">
-        <h1>Change password</h1>
-        <form id="changePasswordForm">
 
-        <div class="form-group">
-        <label for="oldPassword">Enter your old password:</label>
-        <div class="password-wrapper">
-            <input type="password" id="oldPassword" name="oldPassword" required>
-            <i class="fas fa-eye toggle-password" toggle="#oldPassword"></i>
-        </div>
-        </div>
+  <main class="ticket-container">
+    <div class="ticket-header">
+      <h2 id="ticketSubject">Loading...</h2>
+      <p id="ticketMeta"></p>
+      <p><strong>Status:</strong> <span id="ticketStatus"></span></p>
+    </div>
 
-        <div class="form-group">
-        <label for="newPassword">Enter your new password:</label>
-        <div class="password-wrapper">
-            <input type="password" id="newPassword" name="newPassword" required>
-            <i class="fas fa-eye toggle-password" toggle="#newPassword"></i>
-        </div>
-        </div>
-        
-        <div class="form-group">
-        <label for="repeatPassword">Repeat your new password:</label>
-        <div class="password-wrapper">
-            <input type="password" id="repeatPassword" name="repeatPassword" required>
-            <i class="fas fa-eye toggle-password" toggle="#repeatPassword"></i>
-        </div>
-        <p id="passwordMismatchWarning" class="warning-text" style="display: none;">
-            Passwords do not match.
-        </p>
-        </div>
+    <div class="reply-list" id="replyList">Loading replies...</div>
 
-        <button type="submit" class="save-button">Save</button>
-        </form>
-    </section>
-    </main>
+    <div class="reply-form" id="replyFormContainer" style="display:none;">
+      <textarea id="replyInput" rows="4" placeholder="Write your message..."></textarea>
+      <button onclick="submitReply()">Send Reply</button>
+    </div>
+  </main>
 
     <footer>
         <div>
@@ -129,62 +131,78 @@
           </a>
         </div>
     </footer>
+
   <script src="../auth.js"></script>
-  <script src="../script.js"></script>
-    <script>
-  const dummyOldPassword = "123456";
-  const form = document.getElementById("changePasswordForm");
-  const oldPassword = document.getElementById("oldPassword");
-  const newPassword = document.getElementById("newPassword");
-  const repeatPassword = document.getElementById("repeatPassword");
-  const warningText = document.getElementById("passwordMismatchWarning");
-  let isFormDirty = false;
+  <script src="../script.js"></script>    
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const ticketId = params.get("id");
+  const token = sessionStorage.getItem("accessToken");
+  const localFormat = {
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  dateStyle: "short",
+  timeStyle: "short",
+  hour12: false
+};
 
-  form.addEventListener("input", () => {
-    isFormDirty = true;
+  async function loadTicket() {
+    try {
+      const res = await fetch(`http://localhost:8000/support/${ticketId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-  if (newPassword.value !== repeatPassword.value) {
-    repeatPassword.style.borderColor = "red";
-    warningText.style.display = "block";
-  } else {
-    repeatPassword.style.borderColor = "";
-    warningText.style.display = "none";
+      const data = await res.json();
+
+      document.getElementById("ticketSubject").textContent = data.subject;
+      document.getElementById("ticketStatus").textContent = data.status;
+      document.getElementById("ticketMeta").innerHTML =
+        `Submitted: <span id="submittedDate">${new Date(data.created_at + 'Z').toLocaleString(undefined, localFormat)}</span>`;
+
+      const replies = data.replies || [];
+      const list = replies.map(r => `
+        <div class="reply ${r.sender_role === 'admin' ? 'admin' : ''}">
+          <p><strong>${r.sender_name}:</strong></p>
+          <p>${r.message}</p>
+          <small>${new Date(r.created_at + 'Z').toLocaleString(undefined, localFormat)}</small>
+        </div>
+      `).join("");
+
+      document.getElementById("replyList").innerHTML = list || "<p>No replies yet.</p>";
+
+      if (data.status === "open") {
+        document.getElementById("replyFormContainer").style.display = "block";
+      }
+
+    } catch (err) {
+      alert("Failed to load ticket.");
+    }
   }
 
-  if (oldPassword.value === dummyOldPassword) {
-    oldPassword.style.borderColor = "";
-  }
-});
+  async function submitReply() {
+    const message = document.getElementById("replyInput").value.trim();
+    if (!message) return alert("Message cannot be empty.");
 
+    const res = await fetch(`http://localhost:8000/support/${ticketId}/reply`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ message })
+    });
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    if (newPassword.value !== repeatPassword.value) {
-      alert("New passwords do not match.");
+    if (!res.ok) {
+      alert("Failed to send reply.");
       return;
     }
 
-    if (oldPassword.value !== dummyOldPassword) {
-      alert("Your old password is not correct.");
-      oldPassword.style.borderColor = "red";
-      return;
-    }
+    document.getElementById("replyInput").value = "";
+    loadTicket();
+  }
 
-    if (confirm("Are you sure you want to change your password?")) {
-      isFormDirty = false;
-      alert("Password successfully updated.");
-      form.reset();
-    }
-  });
+  window.onload = loadTicket;
+</script>
 
-  window.addEventListener("beforeunload", (e) => {
-    if (isFormDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-    }
-  });
 
-    </script>
 </body>
 </html>

@@ -18,3 +18,23 @@ class SupportTicketResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+
+class SupportTicketReplyResponse(BaseModel):
+    id: int
+    ticket_id: int
+    sender_id: int
+    sender_name: str
+    sender_role: str
+    message: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+class SupportTicketDetailResponse(SupportTicketResponse):
+    replies: list[SupportTicketReplyResponse] = []
+
+class TicketReplyCreate(BaseModel):
+    message: str
