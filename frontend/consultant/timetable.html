@@ -245,8 +245,7 @@
         </div>
     </footer>
   <script src="../auth.js"></script>
-<<<<<<< HEAD
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script>
     // Enforcing auth and dynamic header
     requireAuth();
@@ -256,88 +255,9 @@
     let currentDate = new Date();
     let pendingSlot = null;
     let events = [];
-=======
-  <script src="../script.js"></script>     
-    <script>
-/*         (async () => {
-    await autoEnforceRoleFromPath();
-  })();  */ 
-    let calendar;
-let currentDate = new Date();
-let pendingSlot = null;
-let events = []; // consultant availability
-
-function renderCalendar(startDate) {
-  const calendarEl = document.getElementById('calendar');
-  if (calendar) calendar.destroy();
-
-calendar = new FullCalendar.Calendar(calendarEl, {
-  locale: 'en-gb',
-  initialView: 'timeGridWeek',
-  initialDate: startDate,
-  slotMinTime: '00:00:00',
-  slotMaxTime: '24:00:00',
-  slotDuration: '00:30:00',
-  expandRows: true,
-  eventClick: handleEventClick,
-  allDaySlot: false,
-  firstDay: 1,
-  nowIndicator: true,
-  selectable: true,
-  selectMirror: true,
-  headerToolbar: false,
-  select: isEditable ? handleSlotClick : null,
-  events: events,
-  eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
-  slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
-  dayHeaderFormat: { weekday: 'long' },
-  dayCellDidMount: function(info) {
-  info.el.style.borderRight = '1px solid #ccc';
-},
-
-});
-
-  if (!isEditable) {
-  calendarEl.classList.add('calendar-disabled');
-} else {
-  calendarEl.classList.remove('calendar-disabled');
-}
-
-calendar.render();
-
-}
-
-    // Modal window
-    function openBookingPopup(time) {
-  const modal = document.getElementById("bookingModal");
-  const text = document.getElementById("selectedTimeText");
-  text.textContent = "Selected time: " + time.toLocaleString();
-  modal.style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("bookingModal").style.display = "none";
-}
-
-function confirmBooking() {
-  closeModal();
-  alert("Your appointment has been confirmed!");
-}
-    // Modal window END
-
-    function changeWeek(offset) {
-      currentDate.setDate(currentDate.getDate() + (offset * 7));
-      renderCalendar(currentDate);
-    }
-
-    window.onload = () => {
-      renderCalendar(currentDate);
-    };
-    
->>>>>>> 8a85726c6954564f082dfde330004fafc372feb2
     let isEditable = false;
 
-    // Fetching and show consultant’s name
+    // Fetchin and showin consultant’s name
     async function loadConsultantName() {
       const token = sessionStorage.getItem('accessToken');
       const res = await fetch('http://localhost:8000/profile/consultant', {
@@ -426,7 +346,7 @@ function confirmBooking() {
 
     // When you drag-select a range
     function handleSlotClick(info) {
-      // using the exact start & ending from the drag-select
+      // use the exact start & end from the drag-select
       pendingSlot = {
         start: info.start,
         end:   info.end
