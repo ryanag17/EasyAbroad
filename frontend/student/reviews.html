@@ -104,6 +104,9 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
     <script>
+        (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
   // === Dummy Data for Demo ===
   const dummyReviews = [
     {

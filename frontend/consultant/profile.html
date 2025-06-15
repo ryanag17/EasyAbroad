@@ -167,6 +167,9 @@
   <script src="../script.js"></script>
 
   <script>
+      (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
     // Image selector
     const fileInput = document.getElementById('fileInput');
     const profilePic = document.getElementById('profilePic');

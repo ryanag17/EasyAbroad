@@ -24,6 +24,49 @@ function requireAuth(redirectIfMissing = "log-in.html") {
   }
 }
 
+async function requireRole(requiredRole) {
+  const token = sessionStorage.getItem("accessToken");
+  const currentRole = sessionStorage.getItem("userType");
+
+  if (!token || !currentRole || currentRole !== requiredRole) {
+    window.location.href = "../log-in.html";
+    return;
+  }
+
+  const endpointMap = {
+    student: "http://localhost:8000/profile/student",
+    consultant: "http://localhost:8000/profile/consultant",
+    admin: "http://localhost:8000/profile/admin"
+  };
+
+  try {
+    const res = await fetch(endpointMap[currentRole], {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) throw new Error("Unauthorized");
+
+  } catch (err) {
+    sessionStorage.clear();
+    window.location.href = "../log-in.html";
+  }
+}
+
+async function autoEnforceRoleFromPath() {
+  const path = window.location.pathname;
+  if (path.includes("/student/")) {
+    await requireRole("student");
+  } else if (path.includes("/consultant/")) {
+    await requireRole("consultant");
+  } else if (path.includes("/admin/")) {
+    await requireRole("admin");
+  }
+}
+
+
 async function redirectIfAuthenticated() {
   const token = sessionStorage.getItem("accessToken");
   const role = sessionStorage.getItem("userType");

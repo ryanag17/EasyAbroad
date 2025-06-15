@@ -99,6 +99,9 @@
     <script src="../auth.js"></script>
     <script src="../script.js"></script>
     <script>
+        (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
       async function loadPreview() {
         const token = sessionStorage.getItem("accessToken");
         if (!token) return window.location.href = "../log-in.html";

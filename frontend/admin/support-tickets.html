@@ -8,59 +8,94 @@
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/all.min.css">
   <style>
-    .ticket-entry {
-      border-left: 4px solid #cc2f8b;
-      padding: 15px 20px;
-      margin-bottom: 20px;
-      background: #f9f9f9;
-      border-radius: 6px;
+    .submission-filter {
+      margin: 1.5rem 2rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-weight: 500;
+      font-size: 1rem;
+      color: #333;
     }
-    select.ticket-filter {
-      padding: 6px 10px;
-      border-radius: 4px;
-      margin-bottom: 20px;
+
+    .submission-filter select {
+      padding: 8px 12px;
+      font-size: 0.95rem;
+      border-radius: 8px;
       border: 1px solid #ccc;
+      background-color: #fff;
+      transition: border-color 0.3s ease;
+      cursor: pointer;
     }
 
-  .ticket-entry button {
-    background-color: #cc2f8b;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    cursor: pointer;
-    margin-top: 8px;
-  }
+    .submission-filter select:focus {
+      outline: none;
+      border-color: #ec008c;
+      box-shadow: 0 0 0 2px rgba(236, 0, 140, 0.15);
+    }
 
-  .ticket-entry button:hover {
-    background-color: #a91f6e;
-  }
+    .submission-table-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+      overflow-x: auto;
+    }
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 20px;
-  }
+    .submission-table {
+      min-width: 800px;
+      width: 100%;
+      border-collapse: collapse;
+    }
 
+    .submission-table th,
+    .submission-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
 
-.pagination button {
-  background-color: #cc2f8b;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  margin: 0 4px;
-  border-radius: 4px;
-  cursor: pointer;
-}
+    .submission-table th {
+      background-color: #f4f4f4;
+      font-weight: 600;
+    }
 
-.pagination button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
+    .submission-action-link {
+      color: deeppink;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
 
+    .submission-action-link:hover {
+      color: #a30056;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      background-color: #cc2f8b;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .pagination button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
   </style>
+
+
 </head>
 <body>
   <header class="user-header">
@@ -98,20 +133,34 @@
     </div>
   </div>
 
-  <main class="support-tickets">
-    <section class="support-ticket-container">
-      <h1>Support Ticket Inbox</h1>
-      <label for="statusFilter">Filter by Status:</label>
-      <select id="statusFilter" class="ticket-filter">
-        <option value="">All</option>
-        <option value="open">Open</option>
-        <option value="in_progress">In Progress</option>
-        <option value="resolved">Resolved</option>
-        <option value="closed">Closed</option>
-      </select>
-      <div id="ticketList" class="ticket-list"></div>
-    </section>
-  </main>
+<div class="submission-filter">
+  <label for="statusFilter">Filter by Status:</label>
+  <select id="statusFilter">
+    <option value="">All</option>
+    <option value="open">Open</option>
+    <option value="in_progress">In Progress</option>
+    <option value="resolved">Resolved</option>
+    <option value="closed">Closed</option>
+  </select>
+</div>
+
+<div class="submission-table-container">
+  <table class="submission-table">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Status</th>
+        <th>Created By</th>
+        <th>Created At</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="ticketBody">
+      <tr><td colspan="5">Loading...</td></tr>
+    </tbody>
+  </table>
+  <div class="pagination" id="pagination"></div>
+</div>
 
   <footer>
     <div>
@@ -136,13 +185,16 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
 <script>
-  let currentFiltered = [];
-  let allTickets = [];
-  let currentPage = 1;
-  const itemsPerPage = 5;
+    (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
+  const token = sessionStorage.getItem("accessToken");
+  const tbody = document.getElementById("ticketBody");
+  const paginationContainer = document.getElementById("pagination");
+  let allTickets = [], currentFiltered = [], currentPage = 1;
+  const itemsPerPage = 10;
 
   document.addEventListener("DOMContentLoaded", async () => {
-    const token = sessionStorage.getItem("accessToken");
     if (!token) return (window.location.href = "../log-in.html");
 
     try {
@@ -151,19 +203,16 @@
       });
       allTickets = await res.json();
       currentFiltered = allTickets;
-      renderTickets(currentFiltered);
+      renderTable(currentFiltered);
     } catch (err) {
-      console.error("Error fetching support tickets:", err);
-      document.getElementById("ticketList").innerHTML = "<p>Failed to load support tickets.</p>";
+      tbody.innerHTML = `<tr><td colspan="5" style="color:red">Failed to load support tickets.</td></tr>`;
     }
 
     document.getElementById("statusFilter").addEventListener("change", () => {
       const selected = document.getElementById("statusFilter").value;
       currentFiltered = selected ? allTickets.filter(t => t.status === selected) : allTickets;
       currentPage = 1;
-      renderTickets(currentFiltered);
-
-      currentPage = 1; // 🔁 Reset pagination index when filter changes
+      renderTable(currentFiltered);
     });
   });
 
@@ -172,108 +221,86 @@
     return tickets.slice(start, start + itemsPerPage);
   }
 
-  function renderTickets(tickets) {
-    const list = document.getElementById("ticketList");
-    list.innerHTML = "";
+  function renderTable(data) {
+    tbody.innerHTML = "";
+    const paginated = paginate(data);
 
-    const selected = document.getElementById("statusFilter").value;
-    const filtered = selected ? tickets.filter(t => t.status === selected) : tickets;
-    const paginated = paginate(filtered);
-
-    if (!filtered.length) {
-      list.innerHTML = "<p>No support tickets found.</p>";
-
-      // 👇 Hide pagination completely when no data
-      const pagination = document.getElementById("pagination");
-      if (pagination) {
-        pagination.style.display = "none";
-      }
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="5">No support tickets found.</td></tr>`;
+      paginationContainer.style.display = "none";
       return;
     }
 
-
-    paginated.forEach(ticket => {
-      const fullName = `${ticket.user_first_name || ""} ${ticket.user_last_name || ""}`.trim();
-      const created = new Date(ticket.created_at);
+    for (const t of paginated) {
+      const created = new Date(t.created_at);
       const formattedDate = `${String(created.getDate()).padStart(2, '0')}.${String(created.getMonth() + 1).padStart(2, '0')}.${String(created.getFullYear()).slice(2)}`;
+      const fullName = `${t.user_first_name || ""} ${t.user_last_name || ""}`.trim();
 
-      const div = document.createElement("div");
-      div.className = "ticket-entry";
-      div.innerHTML = `
-        <h3>${ticket.subject}</h3>
-        <p><strong>Status:</strong> ${ticket.status}</p>
-        <p><strong>Created by:</strong> ${fullName || "Unknown User"}</p>
-        <p><strong>Created at:</strong> ${formattedDate}</p>
-        <button onclick="viewTicket(${ticket.id})">View Details</button>
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${t.subject}</td>
+        <td>${t.status}</td>
+        <td>${fullName || "Unknown User"}</td>
+        <td>${formattedDate}</td>
+        <td><span class="submission-action-link" onclick="viewTicket(${t.id})">View</span></td>
       `;
-      list.appendChild(div);
-    });
-
-    renderPagination(filtered.length);
-  }
-
-function renderPagination(totalItems) {
-  let pagination = document.getElementById("pagination");
-  if (!pagination) {
-    pagination = document.createElement("div");
-    pagination.id = "pagination";
-    pagination.className = "pagination";
-    document.querySelector(".support-ticket-container").appendChild(pagination);
-  }
-
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  pagination.innerHTML = "";
-
-  if (totalPages <= 1) {
-    pagination.style.display = "none";
-    return;
-  } else {
-    pagination.style.display = "flex"; // or "block", depending on your layout
-  }
-
-  // Previous button
-  if (currentPage > 1) {
-    const prevBtn = document.createElement("button");
-    prevBtn.textContent = "Previous";
-    prevBtn.onclick = () => {
-      currentPage--;
-      renderTickets(currentFiltered);
-    };
-    pagination.appendChild(prevBtn);
-  }
-
-  // Numbered pages
-  for (let i = 1; i <= totalPages; i++) {
-    const pageBtn = document.createElement("button");
-    pageBtn.textContent = i;
-    if (i === currentPage) {
-      pageBtn.disabled = true;
-      pageBtn.style.backgroundColor = "#a91f6e";
+      tbody.appendChild(tr);
     }
-    pageBtn.onclick = () => {
-      currentPage = i;
-      renderTickets(currentFiltered);
-    };
-    pagination.appendChild(pageBtn);
+
+    renderPagination(data.length);
   }
 
-  // Next button
-  if (currentPage < totalPages) {
-    const nextBtn = document.createElement("button");
-    nextBtn.textContent = "Next";
-    nextBtn.onclick = () => {
-      currentPage++;
-      renderTickets(currentFiltered);
-    };
-    pagination.appendChild(nextBtn);
-  }
-}
+  function renderPagination(totalItems) {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    paginationContainer.innerHTML = "";
 
+    if (totalPages <= 1) {
+      paginationContainer.style.display = "none";
+      return;
+    }
+
+    paginationContainer.style.display = "flex";
+
+    if (currentPage > 1) {
+      const prev = document.createElement("button");
+      prev.textContent = "Previous";
+      prev.onclick = () => {
+        currentPage--;
+        renderTable(currentFiltered);
+      };
+      paginationContainer.appendChild(prev);
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      if (i === currentPage) {
+        btn.disabled = true;
+        btn.style.backgroundColor = "#a91f6e";
+      }
+      btn.onclick = () => {
+        currentPage = i;
+        renderTable(currentFiltered);
+      };
+      paginationContainer.appendChild(btn);
+    }
+
+    if (currentPage < totalPages) {
+      const next = document.createElement("button");
+      next.textContent = "Next";
+      next.onclick = () => {
+        currentPage++;
+        renderTable(currentFiltered);
+      };
+      paginationContainer.appendChild(next);
+    }
+  }
 
   function viewTicket(id) {
     window.location.href = `ticket-detail.html?id=${id}`;
   }
 </script>
+
 
 </body>
 </html>

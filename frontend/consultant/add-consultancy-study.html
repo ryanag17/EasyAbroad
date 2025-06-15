@@ -182,6 +182,9 @@
     </footer>
 
 <script>
+    (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
 
 function validateThenSubmit() {
   const toDate = new Date(document.getElementById("education_finish").value);

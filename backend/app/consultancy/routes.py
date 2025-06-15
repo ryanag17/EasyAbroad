@@ -60,7 +60,7 @@ async def upload_internship_proof(
 
 from fastapi import Form, File, UploadFile
 
-# Location-aware utilities (new)
+# Location-aware utilities
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderUnavailable
 
@@ -299,7 +299,7 @@ async def get_study_applications(
     if status not in {"pending", "accepted", "rejected"}:
         raise HTTPException(status_code=400, detail="Invalid status.")
 
-    # UPDATED: JOIN users
+    # JOIN users
     result = await db.execute(text("""
         SELECT e.*, u.first_name, u.last_name, e.submitted_at AS created_at
         FROM Education e
@@ -322,7 +322,7 @@ async def get_internship_applications(
     if status not in {"pending", "accepted", "rejected"}:
         raise HTTPException(status_code=400, detail="Invalid status.")
 
-    # UPDATED: JOIN users
+    # JOIN users
     result = await db.execute(text("""
     SELECT i.*, u.first_name, u.last_name, i.submitted_at AS created_at
         FROM Internship i
@@ -439,7 +439,7 @@ async def manual_cleanup_expired(
         raise HTTPException(status_code=500, detail=str(e))
 
 # Admin: Get full study consultant preview data
-@consultancy_router.get("/study/full/{user_id}", summary="Get full study consultant preview data")
+@consultancy_router.get("/study/full/{user_id}", summary="Admin: Get full study consultant preview data")
 async def get_full_study_consultant_data(
     user_id: int,
     db: AsyncSession = Depends(get_db),
@@ -483,7 +483,7 @@ async def get_full_study_consultant_data(
     }
 
 # Admin: Get full internship consultant preview data
-@consultancy_router.get("/internship/full/{user_id}", summary="Get full internship consultant preview data")
+@consultancy_router.get("/internship/full/{user_id}", summary="Admin: Get full internship consultant preview data")
 async def get_full_internship_consultant_data(
     user_id: int,
     db: AsyncSession = Depends(get_db),
@@ -528,7 +528,7 @@ async def get_full_internship_consultant_data(
 
 
 # Admin: Force download of study proof document
-@consultancy_router.get("/download-proof/study/{user_id}", summary="Force download of study proof document")
+@consultancy_router.get("/download-proof/study/{user_id}", summary="Admin: Force download of study proof document")
 async def download_study_proof(user_id: int):
     base_path = Path(f"./static/uploads/proof_documents/study/user_{user_id}")
     
@@ -549,7 +549,7 @@ async def download_study_proof(user_id: int):
     )
 
 # Admin: Force download of internship proof document
-@consultancy_router.get("/download-proof/internship/{user_id}", summary="Force download of internship proof document")
+@consultancy_router.get("/download-proof/internship/{user_id}", summary="Admin: Force download of internship proof document")
 async def download_internship_proof(user_id: int):
     base_path = Path(f"./static/uploads/proof_documents/internship/user_{user_id}")
     

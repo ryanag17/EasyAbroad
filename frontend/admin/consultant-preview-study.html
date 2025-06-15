@@ -168,6 +168,9 @@
 
 
 <script>
+    (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
   const API = "http://localhost:8000";
   const token = sessionStorage.getItem("accessToken");
   const userId = new URLSearchParams(window.location.search).get("user_id");

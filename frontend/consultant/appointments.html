@@ -142,6 +142,9 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>   
     <script>
+        (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
         // Sample appointment data
         const appointments = [
           {
