@@ -254,6 +254,7 @@ CREATE TABLE IF NOT EXISTS Education (
   education_start   DATETIME,
   education_finish  DATETIME,
   proof_of_education VARCHAR(255),
+  submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   accommodation     BOOLEAN,
   social_life       BOOLEAN,
   uni_info          BOOLEAN,
@@ -262,6 +263,8 @@ CREATE TABLE IF NOT EXISTS Education (
   microsoft_teams   BOOLEAN,
   google_meet       BOOLEAN,
   apple_facetime    BOOLEAN,
+  latitude REAL,
+  longitude REAL,
   verified_by       INT,           -- references users(id)
   verified_at       DATETIME,
   status            VARCHAR(20) NOT NULL DEFAULT 'pending'
@@ -296,6 +299,7 @@ CREATE TABLE IF NOT EXISTS Internship (
   internship_start      DATETIME,
   internship_finish     DATETIME,
   proof_of_internship   VARCHAR(255),
+  submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   accommodation         BOOLEAN,
   social_life           BOOLEAN,
   company_info          BOOLEAN,
@@ -304,6 +308,8 @@ CREATE TABLE IF NOT EXISTS Internship (
   microsoft_teams       BOOLEAN,
   google_meet           BOOLEAN,
   apple_facetime        BOOLEAN,
+  latitude REAL,
+  longitude REAL,
   verified_by           INT,           -- references users(id)
   verified_at           DATETIME,
   status            VARCHAR(20) NOT NULL DEFAULT 'pending'
@@ -540,7 +546,7 @@ DELETE FROM messages
 WHERE expires_at < NOW();
 
 
--- 12) SUPPORT_TICKETS table
+-- 12a) SUPPORT_TICKETS table
 CREATE TABLE IF NOT EXISTS support_tickets (
   id          INT PRIMARY KEY AUTO_INCREMENT,
   user_id     INT NOT NULL,
@@ -559,6 +565,18 @@ CREATE TABLE IF NOT EXISTS support_tickets (
   INDEX (status)
 );
 
+-- 12b) SUPPORT_TICKET_MESSAGES table
+CREATE TABLE IF NOT EXISTS support_ticket_messages (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  ticket_id INT NOT NULL,
+  sender_id INT NOT NULL,
+  message TEXT NOT NULL,
+  sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ticket_id) REFERENCES support_tickets(id) ON DELETE CASCADE,
+  FOREIGN KEY (sender_id) REFERENCES users(id),
+  INDEX (ticket_id),
+  INDEX (sender_id)
+);
 
 -- 13) UPLOADED_DOCUMENTS table
 CREATE TABLE IF NOT EXISTS uploaded_documents (

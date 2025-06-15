@@ -33,7 +33,7 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="user-management.html"> <li> User Management </li></a>
                     <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
-                    <a href="admin-inbox.html"> <li> Admin Inbox </li></a>
+                    <a href="support-tickets.html"> <li> Support Tickets </li></a>
                     <a href="email-announcement.html"> <li> Email Announcement </li></a>
                     <a href="settings.html"> <li> Settings</li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
@@ -78,7 +78,12 @@
         <div class="info-label">Location of Company:</div><div id="locationCompany"></div>
         <div class="info-label">Current Location:</div><div id="currentLocation"></div>
         <div class="info-label">Languages:</div><div id="languages"></div>
-        <div class="info-label">Proof of Employment:</div><div><a href="#" download>Download proof.pdf</a></div>
+        <div class="info-label">Short Note:</div>
+        <div><textarea id="shortNoteInput" placeholder="Write a short note..." rows="4" style="width: 100%; resize: vertical;"></textarea></div>
+        <div id="proofContainer">
+          <div class="info-label">Proof Document:</div>
+          <div><a id="proofLink" href="#" download>Download experience.pdf</a></div>
+        </div>
       </div>
     </div>
 
@@ -87,23 +92,23 @@
       <div class="checkbox-lists">
         <div class="checkbox-column">
           <strong>Areas the consultant can help with:</strong>
-          <label>✔ Finding accommodation</label>
-          <label>✔ Social life and making friends</label>
-          <label>✔ Company information</label>
-          <label>✔ Travel and weekend plans</label>
+          <label id="accommodationLabel"></label>
+          <label id="socialLifeLabel"></label>
+          <label id="companyInfoLabel"></label>
+          <label id="travelInfoLabel"></label>
         </div>
         <div class="checkbox-column">
           <strong>Can be contacted via:</strong>
-          <label>✔ Zoom</label>
-          <label>✔ Microsoft Teams</label>
-          <label>✔ Google Meet</label>
-          <label>✔ Apple FaceTime</label>
+          <label id="zoomLabel"></label>
+          <label id="teamsLabel"></label>
+          <label id="meetLabel"></label>
+          <label id="facetimeLabel"></label>
         </div>
       </div>
     </div>
 
     <div class="button-group">
-      <button class="approve-btn" onclick="confirmAction('approved')">✔ Approve</button>
+      <button class="approve-btn" onclick="confirmAction('accepted')">✔ Accept</button>
       <button class="reject-btn" onclick="confirmAction('rejected')">✖ Reject</button>
     </div>
   </div>
@@ -154,61 +159,175 @@
         </div>
     </footer>
   <script src="../auth.js"></script>
-  <script src="../script.js"></script></body>    
-    <script>      
-          const consultant = JSON.parse(localStorage.getItem("selectedConsultant"));
+  <script src="../script.js"></script>  
 
-    if (!consultant) {
-      alert("No consultant data found.");
-      window.location.href = "consultant-verification.html";
-    } else {
-      document.getElementById("firstName").textContent = consultant.firstName;
-      document.getElementById("lastName").textContent = consultant.lastName;
-      document.getElementById("email").textContent = consultant.email;
-      document.getElementById("type").textContent = consultant.type;
-      document.getElementById("company").textContent = consultant.company || '-';
-      document.getElementById("department").textContent = consultant.department || '-';
-      document.getElementById("period").textContent = consultant.period || '-';
-      document.getElementById("locationCompany").textContent = consultant.locationCompany || '-';
-      document.getElementById("currentLocation").textContent = consultant.currentLocation || '-';
-      document.getElementById("languages").textContent = consultant.languages || '-';
-    }
+<script>
+const API = "http://localhost:8000";
+const token = sessionStorage.getItem("accessToken");
+const userId = new URLSearchParams(window.location.search).get("user_id");
+const isViewOnly = new URLSearchParams(window.location.search).get("mode") === "view";
 
-    let selectedAction = '';
-    function confirmAction(action) {
-      selectedAction = action;
-      document.getElementById('modalText').textContent = `Are you sure you want to ${action}?`;
-      document.getElementById('confirmModal').style.display = 'flex';
-    }
+if (!token || !userId) {
+  alert("Unauthorized or invalid link.");
+  window.location.href = "consultant-verification.html";
+}
 
-    function processDecision(confirm) {
-  document.getElementById('confirmModal').style.display = 'none';
-  if (!confirm) return;
+fetch(`${API}/consultancy/internship/full/${userId}`, {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+})
+.then(res => {
+  if (!res.ok) throw new Error("Not found");
+  return res.json();
+})
+.then(async data => {
+  let { profile, internship } = data;
+  const status = internship.status;
 
-  const submissions = JSON.parse(localStorage.getItem('consultantSubmissions')) || [];
+  // Show or hide proof document link
+  const proofContainer = document.getElementById("proofContainer");
 
-  const index = submissions.findIndex(
-    sub => sub.email === consultant.email && sub.status === 'pending'
-  );
-
-  if (index !== -1) {
-    submissions[index].status = selectedAction;
-    localStorage.setItem('consultantSubmissions', JSON.stringify(submissions));
+  if (status === "pending") {
+    proofContainer.style.display = "block";
+    const proofLink = document.getElementById("proofLink");
+    proofLink.href = `${API}/consultancy/download-proof/internship/${userId}`;
+    proofLink.setAttribute("download", "");
+  } else {
+    proofContainer.style.display = "none";
   }
 
-  alert(`Successfully ${selectedAction}!`);
-  window.location.href = 'consultant-verification.html';
-}
 
-    //no reject or accept
-    const urlParams = new URLSearchParams(window.location.search);
-    const isViewOnly = urlParams.get("mode") === "view";
+  // Handle short note field
+  const noteInput = document.getElementById("shortNoteInput");
+  noteInput.readOnly = (status === "rejected");
+  noteInput.value = internship.short_note || "";
 
+  // Handle action buttons
+  const buttonGroup = document.querySelector(".button-group");
+  if (status === "pending") {
+    buttonGroup.innerHTML = `
+      <button class="approve-btn" onclick="confirmAction('accepted')">✔ Accept</button>
+      <button class="reject-btn" onclick="confirmAction('rejected')">✖ Reject</button>
+    `;
+  } else if (status === "accepted") {
+    buttonGroup.innerHTML = `
+      <button class="reject-btn" onclick="confirmAction('rejected')">↩ Revoke</button>
+    `;
+  } else {
+    buttonGroup.style.display = "none";
+  }
+
+  // Fallback for missing profile data
+  if (!profile.city || !profile.languages) {
+    try {
+      const extra = await fetch(`${API}/profile/admin/view/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(r => r.ok ? r.json() : {});
+      profile = {
+        ...profile,
+        ...extra,
+        languages: profile.languages && profile.languages.length > 0 ? profile.languages : extra.languages
+      };
+    } catch (e) {
+      console.warn("Fallback profile fetch failed", e);
+    }
+  }
+
+  // Populate DOM
+  document.getElementById("firstName").textContent = profile.first_name;
+  document.getElementById("lastName").textContent = profile.last_name;
+  document.getElementById("email").textContent = profile.email;
+  document.getElementById("type").textContent = profile.role;
+
+  document.getElementById("company").textContent = internship.company_name;
+  document.getElementById("department").textContent = internship.department_name;
+  document.getElementById("period").textContent = `${formatDate(internship.internship_start)} - ${formatDate(internship.internship_finish)}`;
+  document.getElementById("locationCompany").textContent = `${internship.city_of_internship}, ${internship.country_of_internship}`;
+
+  const currentLoc = [profile.city, profile.country].filter(Boolean).join(", ");
+  document.getElementById("currentLocation").textContent = currentLoc || "-";
+
+  const languagesText = Array.isArray(profile.languages) && profile.languages.length > 0
+    ? profile.languages.join(", ")
+    : "-";
+  document.getElementById("languages").textContent = languagesText;
+
+  updateCheckbox("accommodationLabel", internship.accommodation, "✔ Finding accommodation");
+  updateCheckbox("socialLifeLabel", internship.social_life, "✔ Social life and making friends");
+  updateCheckbox("companyInfoLabel", internship.company_info, "✔ Company information");
+  updateCheckbox("travelInfoLabel", internship.travel_info, "✔ Travel and weekend plans");
+  updateCheckbox("zoomLabel", internship.zoom, "✔ Zoom");
+  updateCheckbox("teamsLabel", internship.microsoft_teams, "✔ Microsoft Teams");
+  updateCheckbox("meetLabel", internship.google_meet, "✔ Google Meet");
+  updateCheckbox("facetimeLabel", internship.apple_facetime, "✔ Apple FaceTime");
+})
+.catch(err => {
+  console.error(err);
+  alert("Failed to load consultant details.");
+  window.location.href = "consultant-verification.html";
+});
+
+// Read-only mode for preview links
 if (isViewOnly) {
-  document.querySelector('.button-group').style.display = 'none';
+  document.querySelector(".button-group").style.display = "none";
+  document.getElementById("shortNoteInput").setAttribute("readonly", true);
 }
 
-    </script>
+function updateCheckbox(id, condition, labelText) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = condition ? labelText : "";
+}
+
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+  if (isNaN(date)) return "-";
+  return `${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+}
+
+let selectedAction = "";
+
+function confirmAction(action) {
+  selectedAction = action;
+  document.getElementById("modalText").textContent = `Are you sure you want to ${action}?`;
+  document.getElementById("confirmModal").style.display = "flex";
+}
+
+async function processDecision(confirm) {
+  document.getElementById("confirmModal").style.display = "none";
+  if (!confirm) return;
+
+  const shortNote = document.getElementById("shortNoteInput").value.trim();
+
+  try {
+    const cleanUserId = userId.split("?")[0];
+    const url = `${API}/consultancy/internship/${cleanUserId}/status?status=${selectedAction}&short_note=${encodeURIComponent(shortNote)}`;
+
+    const res = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Failed to update");
+    }
+
+    alert(`Successfully ${selectedAction}.`);
+    window.location.href = "consultant-verification.html";
+  } catch (err) {
+    alert("Error submitting decision: " + err.message);
+  }
+}
+
+// Expose functions to global for onclicks
+window.confirmAction = confirmAction;
+window.processDecision = processDecision;
+</script>
+
     
 </body>
 </html>

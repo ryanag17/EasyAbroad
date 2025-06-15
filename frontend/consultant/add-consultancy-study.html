@@ -33,9 +33,10 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy areas </li></a>
+                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
                     <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="settings-support.html"> <li> Settings & support </li></a>
+                    <a href="settings.html"> <li> settings </li></a>
+                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -60,7 +61,7 @@
     <main class="consultancy-form-container">
       <h2 class="form-title">Consultancy for Study Abroad</h2>
 
-      <form id="consultancyForm" class="form-block">
+    <form id="consultancyForm" class="form-block" onsubmit="return false;">
 
         <div class="form-group">
           <label for="focus">Focus of Consultancy:</label>
@@ -135,7 +136,7 @@
         </div>
 
         <div class="form-buttons">
-          <button type="button" class="consult-button" onclick="submitForm()">Save</button>
+          <button type="button" class="consult-button" onclick="validateThenSubmit()">Save</button>
         </div>
 
       </form>
@@ -182,47 +183,54 @@
 
 <script>
 
-  document.getElementById("consultancyForm").addEventListener("submit", function(event) {
-    event.preventDefault(); // Prevent actual form submission
+function validateThenSubmit() {
+  const toDate = new Date(document.getElementById("education_finish").value);
+  const limitDate = new Date();
+  limitDate.setFullYear(limitDate.getFullYear() - 5);
 
-    const toDate = new Date(document.getElementById("education_finish").value);
-    const limitDate = new Date();
-    limitDate.setFullYear(limitDate.getFullYear() - 5);
+  const helpOptions = document.querySelectorAll('input[name="help[]"]:checked').length;
+  const callOptions = document.querySelectorAll('input[name="call[]"]:checked').length;
 
-    const helpOptions = document.querySelectorAll('input[name="help[]"]:checked').length;
-    const callOptions = document.querySelectorAll('input[name="call[]"]:checked').length;
+  let valid = true;
 
-    let valid = true;
-
-    if (toDate < limitDate) {
-      document.getElementById("date-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("date-warning").style.display = "none";
-    }
-
-    if (helpOptions < 2) {
-      document.getElementById("help-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("help-warning").style.display = "none";
-    }
-
-    if (callOptions < 2) {
-      document.getElementById("call-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("call-warning").style.display = "none";
-    }
-
-    if (valid) {
-      document.getElementById("confirmModal").style.display = "flex";
-    }
-  });
-
-  function closeConfirmModal() {
-    document.getElementById("confirmModal").style.display = "none";
+  if (toDate < limitDate) {
+    document.getElementById("date-warning").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("date-warning").style.display = "none";
   }
+
+  if (helpOptions < 2) {
+    document.getElementById("help-warning").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("help-warning").style.display = "none";
+  }
+
+  if (callOptions < 2) {
+    document.getElementById("call-warning").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("call-warning").style.display = "none";
+  }
+
+  // Also check required fields manually
+  const requiredFields = ["university_name", "course_name", "education_start", "education_finish", "country_of_study", "city_of_study", "proof_of_education"];
+  for (const id of requiredFields) {
+    const el = document.getElementsByName(id)[0];
+    if (!el || !el.value) {
+      valid = false;
+      el?.classList.add("input-error");  // optional styling
+    } else {
+      el?.classList.remove("input-error");
+    }
+  }
+
+  if (valid) {
+    document.getElementById("confirmModal").style.display = "flex";
+  }
+}
+
 
 async function submitForm() {
   const form = document.getElementById("consultancyForm");

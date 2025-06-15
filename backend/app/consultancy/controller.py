@@ -5,10 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 
 from app.consultancy.models import Education, Internship
-from app.consultancy.schemas import StudyConsultancyRequest, InternshipConsultancyRequest
+# from app.consultancy.schemas import StudyConsultancyRequest, InternshipConsultancyRequest
+from app.consultancy.schemas import EducationCreate, InternshipCreate
 
 
-async def save_study_entry(db: AsyncSession, user_id: int, data: StudyConsultancyRequest):
+async def save_study_entry(db: AsyncSession, user_id: int, data: EducationCreate):
     try:
         from_dt = datetime.strptime(data.fromDate + "-01", "%Y-%m-%d")
         to_dt = datetime.strptime(data.toDate + "-01", "%Y-%m-%d")
@@ -52,7 +53,7 @@ async def save_study_entry(db: AsyncSession, user_id: int, data: StudyConsultanc
 
     return {"message": "Study consultancy profile submitted successfully"}
 
-async def save_internship_entry(db: AsyncSession, user_id: int, data: InternshipConsultancyRequest):
+async def save_internship_entry(db: AsyncSession, user_id: int, data: InternshipCreate):
     try:
         from_dt = datetime.strptime(data.fromDate + "-01", "%Y-%m-%d")
         to_dt = datetime.strptime(data.toDate + "-01", "%Y-%m-%d")
@@ -95,3 +96,43 @@ async def save_internship_entry(db: AsyncSession, user_id: int, data: Internship
     await db.commit()
 
     return {"message": "Internship consultancy profile submitted successfully"}
+
+
+from sqlalchemy import delete, select
+from app.db import get_db
+from app.consultancy.models import Education, Internship
+import os
+from datetime import datetime, timedelta
+
+async def delete_expired_consultancies(db: AsyncSession):
+    five_years_ago = datetime.utcnow() - timedelta(days=5*365)
+
+    # Fetch and delete outdated education profiles
+    expired_educations = await db.execute(
+        select(Education).where(Education.education_finish < five_years_ago)
+    )
+    for edu in expired_educations.scalars():
+        if edu.proof_of_education:
+            try:
+                file_path = f"./backend{edu.proof_of_education}"
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            except Exception as e:
+                print(f"[Education] File delete error: {e}")
+        await db.execute(delete(Education).where(Education.user_id == edu.user_id))
+
+    # Fetch and delete outdated internship profiles
+    expired_internships = await db.execute(
+        select(Internship).where(Internship.internship_finish < five_years_ago)
+    )
+    for intern in expired_internships.scalars():
+        if intern.proof_of_internship:
+            try:
+                file_path = f"./backend{intern.proof_of_internship}"
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            except Exception as e:
+                print(f"[Internship] File delete error: {e}")
+        await db.execute(delete(Internship).where(Internship.user_id == intern.user_id))
+
+    await db.commit()

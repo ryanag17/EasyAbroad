@@ -10,3 +10,5 @@ pydantic-settings
 aiomysql>=0.1.0
 python-dotenv==1.0.0
 httpx
+greenlet>=2.0.0
+geopy

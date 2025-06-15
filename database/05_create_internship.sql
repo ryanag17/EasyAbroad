@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS Internship (
   internship_start DATETIME,
   internship_finish DATETIME,
   proof_of_internship VARCHAR(255),
+  submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   accommodation BOOLEAN,
   social_life BOOLEAN,
   company_info BOOLEAN,
@@ -15,6 +16,8 @@ CREATE TABLE IF NOT EXISTS Internship (
   microsoft_teams BOOLEAN,
   google_meet BOOLEAN,
   apple_facetime BOOLEAN,
+  latitude REAL,
+  longitude REAL,
   verified_by INT,
   verified_at DATETIME,
   status VARCHAR(20) NOT NULL DEFAULT 'pending'

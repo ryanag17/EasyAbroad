@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultation Profile Work</title>
+    <title>Settings & Support</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
@@ -32,7 +32,8 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
-                    <a href="settings-support.html"> <li> Settings & support </li></a>
+                    <a href="settings.html"> <li> Settings </li></a>
+                    <a href="support-tickets.html"><li>Support Tickets</li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -51,55 +52,19 @@
     </div>
   </div>
 </div>
+
+      <!-- Main Content Section -->
+  <main>
+    <section class="settings-support-section">
+      <h1>Settings and support</h1>
+      <ul>
+        <li><a href="change-password.html">Change password</a></li>
+        <li><a href="delete-account.html">Delete account</a></li>
+      </ul>
+    </section>
+  </main>
     
-    <main class="consultant-profile">
-        <a href="find-consultants.html" class="back-link">← Back to Consultant Search</a>
-      
-        <section class="profile-box">
-          <div class="profile-header">
-            <img src="../images/avatar.png" alt="Consultant Avatar" class="avatar">
-            <div>
-              <h2>First name, Last name <a href="reviews.html" class="review">(currently have no review or 4.5/5)</a></h2>
-              <div class="info-row"><strong>Focus of consultancy:</strong> Internship abroad</div>
-              <div class="info-row"><strong>Company name:</strong> [Company Name]</div>
-              <div class="info-row"><strong>Department name:</strong> [Department Name]</div>
-              <div class="info-row"><strong>Work period:</strong> From [mm.yyyy] to [mm.yyyy]</div>
-              <div class="info-row"><strong>Location of internship abroad:</strong> [City], [Country]</div>
-              <div class="info-row"><strong>Current location:</strong> [City], [Country]</div>
-              <div class="info-row"><strong>Languages:</strong> [English], [German], [Russian]</div>
-            </div>
-          </div>
-      
-          <div class="help-contact">
-            <div class="help-list">
-              <h3>[First name] can help you with:</h3>
-              <ul>
-                <li> Finding internship</li>
-                <li> Social life and making friends</li>
-                <li> Company information</li>
-                <li> Best and worst city spots including travel and weekend plans</li>
-              </ul>
-            </div>
-            <div class="call-list">
-              <h3>[First name] can call you via:</h3>
-              <ul>
-                <li> Zoom</li>
-                <li> Microsoft Teams</li>
-                <li> Google Meet</li>
-                <li> Apple FaceTime</li>
-              </ul>
-            </div>
-          </div>
-      
-          <div class="button-container">
-            <a href=""><button class="consult-button">Book a consultation meeting!</button></a>
-          </div>
-        </section>
-      
-      </main>
-      
-      
-      <footer>
+    <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
             <div class="social-icons">
@@ -135,7 +100,9 @@
               <p>Terms and Conditions</p>
           </a>
         </div>
-      </footer>
+    </footer>
+
   <script src="../auth.js"></script>
-  <script src="../script.js"></script></body>    
+  <script src="../script.js"></script> 
+</body>
 </html>

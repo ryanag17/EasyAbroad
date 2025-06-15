@@ -38,13 +38,14 @@
         <span></span>
 
         <!-- Here menu goes -->
-        <ul id="mainMenu">
-          <a href="profile.html"> <li> Profile </li></a>
-          <a href="appointments.html"> <li> Appointments </li></a>
-          <a href="messages.html"> <li> Messages </li></a>
-          <a href="settings-support.html"> <li> Settings & support </li></a>
-          <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-        </ul>
+                <ul id="mainMenu">
+                    <a href="profile.html"> <li> Profile </li></a>
+                    <a href="appointments.html"> <li> Appointments </li></a>
+                    <a href="messages.html"> <li> Messages </li></a>
+                    <a href="settings.html"> <li> Settings </li></a>
+                    <a href="support-tickets.html"><li>Support Tickets</li></a>
+                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+                </ul>
       </div>
       <!-- Menu function END -->
     </div>
@@ -180,7 +181,7 @@
   </footer>
 
   <script src="../auth.js"></script>
-  <script src="../script.js"></script></body>  
+  <script src="../script.js"></script> 
   <script>
         // Image selector
     const fileInput = document.getElementById('fileInput');
@@ -214,7 +215,7 @@ if (res.ok) {
   // Wait a moment before refreshing to let the image appear
   setTimeout(() => {
     window.location.reload();
-  }, 1000);
+  }, 1);
 } else {
   const err = await res.json();
   alert("❌ Upload failed: " + (err.detail || err.message));

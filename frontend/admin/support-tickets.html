@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Tickets</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/all.min.css">
+  <style>
+    .ticket-entry {
+      border-left: 4px solid #cc2f8b;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      background: #f9f9f9;
+      border-radius: 6px;
+    }
+    select.ticket-filter {
+      padding: 6px 10px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+    }
+
+  .ticket-entry button {
+    background-color: #cc2f8b;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  .ticket-entry button:hover {
+    background-color: #a91f6e;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 20px;
+  }
+
+
+.pagination button {
+  background-color: #cc2f8b;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin: 0 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+  </style>
+</head>
+<body>
+  <header class="user-header">
+    <a href="home.html" class="to_the_main">
+      <div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+    </a>
+    <div class="bell-menu">
+      <a href="notifications.html" class="bell-div">
+        <div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div>
+      </a>
+      <div id="menuHamToggle">
+        <input type="checkbox">
+        <span></span><span></span><span></span>
+        <ul id="mainMenu">
+          <a href="profile.html"> <li> Profile </li></a>
+          <a href="user-management.html"> <li> User Management </li></a>
+          <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
+          <a href="support-tickets.html"> <li> Support Tickets </li></a>
+          <a href="email-announcement.html"> <li> Email Announcement </li></a>
+          <a href="settings.html"> <li> Settings</li></a>
+          <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sign Out Modal -->
+  <div id="signOutModal" class="modal-overlay">
+    <div class="modal-content">
+      <p>Are you sure you want to sign out?</p>
+      <div class="modal-buttons">
+        <button onclick="confirmSignOut()">Yes</button>
+        <button onclick="closeModal()">No</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="support-tickets">
+    <section class="support-ticket-container">
+      <h1>Support Ticket Inbox</h1>
+      <label for="statusFilter">Filter by Status:</label>
+      <select id="statusFilter" class="ticket-filter">
+        <option value="">All</option>
+        <option value="open">Open</option>
+        <option value="in_progress">In Progress</option>
+        <option value="resolved">Resolved</option>
+        <option value="closed">Closed</option>
+      </select>
+      <div id="ticketList" class="ticket-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+      <div class="social-icons">
+        <a href=""><img src="../images/twitter.png" alt="X"></a>
+        <a href=""><img src="../images/instagram.png" alt="Instagram"></a>
+        <a href=""><img src="../images/youtube.png" alt="YouTube"></a>
+        <a href=""><img src="../images/linkedin.png" alt="LinkedIn"></a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4 class="h4_service">Service & Contacts</h4>
+      <a href="../faq.html"><p>FAQ</p></a>
+      <a href="../contact-us.html"><p>Contact Us</p></a>
+      <a href="../privacy-policy.html"><p>Privacy Policy</p></a>
+      <a href="../about-us.html"><p>About Us</p></a>
+      <a href="../terms-conditions.html"><p>Terms and Conditions</p></a>
+    </div>
+  </footer>
+
+  <script src="../auth.js"></script>
+  <script src="../script.js"></script>
+<script>
+  let currentFiltered = [];
+  let allTickets = [];
+  let currentPage = 1;
+  const itemsPerPage = 5;
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) return (window.location.href = "../log-in.html");
+
+    try {
+      const res = await fetch("http://localhost:8000/support/tickets", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      allTickets = await res.json();
+      currentFiltered = allTickets;
+      renderTickets(currentFiltered);
+    } catch (err) {
+      console.error("Error fetching support tickets:", err);
+      document.getElementById("ticketList").innerHTML = "<p>Failed to load support tickets.</p>";
+    }
+
+    document.getElementById("statusFilter").addEventListener("change", () => {
+      const selected = document.getElementById("statusFilter").value;
+      currentFiltered = selected ? allTickets.filter(t => t.status === selected) : allTickets;
+      currentPage = 1;
+      renderTickets(currentFiltered);
+
+      currentPage = 1; // 🔁 Reset pagination index when filter changes
+    });
+  });
+
+  function paginate(tickets) {
+    const start = (currentPage - 1) * itemsPerPage;
+    return tickets.slice(start, start + itemsPerPage);
+  }
+
+  function renderTickets(tickets) {
+    const list = document.getElementById("ticketList");
+    list.innerHTML = "";
+
+    const selected = document.getElementById("statusFilter").value;
+    const filtered = selected ? tickets.filter(t => t.status === selected) : tickets;
+    const paginated = paginate(filtered);
+
+    if (!filtered.length) {
+      list.innerHTML = "<p>No support tickets found.</p>";
+
+      // 👇 Hide pagination completely when no data
+      const pagination = document.getElementById("pagination");
+      if (pagination) {
+        pagination.style.display = "none";
+      }
+      return;
+    }
+
+
+    paginated.forEach(ticket => {
+      const fullName = `${ticket.user_first_name || ""} ${ticket.user_last_name || ""}`.trim();
+      const created = new Date(ticket.created_at);
+      const formattedDate = `${String(created.getDate()).padStart(2, '0')}.${String(created.getMonth() + 1).padStart(2, '0')}.${String(created.getFullYear()).slice(2)}`;
+
+      const div = document.createElement("div");
+      div.className = "ticket-entry";
+      div.innerHTML = `
+        <h3>${ticket.subject}</h3>
+        <p><strong>Status:</strong> ${ticket.status}</p>
+        <p><strong>Created by:</strong> ${fullName || "Unknown User"}</p>
+        <p><strong>Created at:</strong> ${formattedDate}</p>
+        <button onclick="viewTicket(${ticket.id})">View Details</button>
+      `;
+      list.appendChild(div);
+    });
+
+    renderPagination(filtered.length);
+  }
+
+function renderPagination(totalItems) {
+  let pagination = document.getElementById("pagination");
+  if (!pagination) {
+    pagination = document.createElement("div");
+    pagination.id = "pagination";
+    pagination.className = "pagination";
+    document.querySelector(".support-ticket-container").appendChild(pagination);
+  }
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  pagination.innerHTML = "";
+
+  if (totalPages <= 1) {
+    pagination.style.display = "none";
+    return;
+  } else {
+    pagination.style.display = "flex"; // or "block", depending on your layout
+  }
+
+  // Previous button
+  if (currentPage > 1) {
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "Previous";
+    prevBtn.onclick = () => {
+      currentPage--;
+      renderTickets(currentFiltered);
+    };
+    pagination.appendChild(prevBtn);
+  }
+
+  // Numbered pages
+  for (let i = 1; i <= totalPages; i++) {
+    const pageBtn = document.createElement("button");
+    pageBtn.textContent = i;
+    if (i === currentPage) {
+      pageBtn.disabled = true;
+      pageBtn.style.backgroundColor = "#a91f6e";
+    }
+    pageBtn.onclick = () => {
+      currentPage = i;
+      renderTickets(currentFiltered);
+    };
+    pagination.appendChild(pageBtn);
+  }
+
+  // Next button
+  if (currentPage < totalPages) {
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Next";
+    nextBtn.onclick = () => {
+      currentPage++;
+      renderTickets(currentFiltered);
+    };
+    pagination.appendChild(nextBtn);
+  }
+}
+
+
+  function viewTicket(id) {
+    window.location.href = `ticket-detail.html?id=${id}`;
+  }
+</script>
+
+</body>
+</html>

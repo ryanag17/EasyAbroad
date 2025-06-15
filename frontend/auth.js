@@ -95,7 +95,8 @@ function injectHeader() {
             <a href="${base}profile.html"><li>Profile</li></a>
             <a href="${base}appointments.html"><li>Appointments</li></a>
             <a href="${base}messages.html"><li>Messages</li></a>
-            <a href="${base}settings-support.html"><li>Settings & support</li></a>
+            <a href="${base}settings.html"><li>Settings</li></a>
+            <a href="${base}support-tickets.html"><li>Support Tickets</li></a>
             <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
           </ul>
         </div>
@@ -112,9 +113,10 @@ function injectHeader() {
             <a href="${base}profile.html"><li>Profile</li></a>
             <a href="${base}appointments.html"><li>Appointments</li></a>
             <a href="${base}messages.html"><li>Messages</li></a>
-            <a href="${base}consultancy-areas.html"><li>Consultancy areas</li></a>
+            <a href="${base}consultancy-areas.html"><li>Consultancy Areas</li></a>
             <a href="${base}timetable.html"><li>Timetable</li></a>
-            <a href="${base}settings-support.html"><li>Settings & support</li></a>
+            <a href="${base}settings.html"><li>Settings</li></a>
+            <a href="${base}support-tickets.html"><li>Support Tickets</li></a>
             <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
           </ul>
         </div>
@@ -131,7 +133,7 @@ function injectHeader() {
             <a href="${base}profile.html"><li>Profile</li></a>
             <a href="${base}user-management.html"><li>User Management</li></a>
             <a href="${base}consultant-verification.html"><li>Consultant Verification</li></a>
-            <a href="${base}admin-inbox.html"><li>Admin Inbox</li></a>
+            <a href="${base}support-tickets.html"><li>Support Tickets</li></a>
             <a href="${base}email-announcement.html"><li>Email Announcement</li></a>
             <a href="${base}settings.html"><li>Settings</li></a>
             <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>

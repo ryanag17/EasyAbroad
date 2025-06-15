@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a support ticket</title>
+    <title>Create a support Ticket</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
 </head>
-
 <body>
     <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
@@ -33,9 +32,8 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="settings-support.html"> <li> Settings & support </li></a>
+                    <a href="settings.html"> <li> Settings </li></a>
+                    <a href="support-tickets.html"><li>Support Tickets</li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -116,54 +114,86 @@
     </footer>
 
   <script src="../auth.js"></script>
-  <script src="../script.js"></script></body>        
-    <script>
+  <script src="../script.js"></script>    
+<script>
+const supportForm = document.getElementById("supportTicketForm");
+const topicInput = document.getElementById("topic");
+const messageInput = document.getElementById("message");
+const supportError = document.getElementById("supportError");
+let isSupportDirty = false;
 
- const supportForm = document.getElementById("supportTicketForm");
-  const topicInput = document.getElementById("topic");
-  const messageInput = document.getElementById("message");
-  const supportError = document.getElementById("supportError");
-  let isSupportDirty = false;
+supportForm.addEventListener("input", () => {
+  isSupportDirty = true;
+  supportError.style.display = "none";
+});
 
-  supportForm.addEventListener("input", () => {
-    isSupportDirty = true;
-    supportError.style.display = "none";
-  });
+supportForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    supportForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+  const topic = topicInput.value.trim();
+  const message = messageInput.value.trim();
+  const token = sessionStorage.getItem("accessToken");
 
-    const topic = topicInput.value.trim();
-    const message = messageInput.value.trim();
+  // NEW: Lower character limits
+  if (topic.length < 5) {
+    supportError.textContent = "Topic must be at least 5 characters.";
+    supportError.style.display = "block";
+    return;
+  }
 
-    // Spam prevention
-    if (topic.length < 20) {
-        supportError.textContent = "Topic must be at least 20 characters.";
-        supportError.style.display = "block";
-        return;
-    }
+  if (message.length < 10) {
+    supportError.textContent = "Message must be at least 10 characters.";
+    supportError.style.display = "block";
+    return;
+  }
 
-    if (message.length < 50) {
-        supportError.textContent = "Message must be at least 50 characters.";
-        supportError.style.display = "block";
-        return;
-    }
+  if (!token) {
+    supportError.textContent = "You are not logged in. Please log in first.";
+    supportError.style.display = "block";
+    return;
+  }
 
-    if (confirm("Are you sure you want to send this support ticket?")) {
-        isSupportDirty = false;
-        alert("Your support ticket has been submitted.");
-        window.location.href = "messages.html";
-    }
+  const confirmed = confirm("Are you sure you want to submit this ticket?");
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch("http://localhost:8000/support/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ subject: topic, description: message })
     });
 
-
-  window.addEventListener("beforeunload", (e) => {
-    if (isSupportDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
+    if (res.ok) {
+      const data = await res.json();
+      const ticketId = data.ticket_id;
+      isSupportDirty = false;
+      window.location.replace(`ticket-detail.html?id=${ticketId}`);
+    } else {
+      alert("Failed to create ticket");
     }
-  });
 
-    </script>
+
+
+    alert("Support ticket submitted successfully!");
+    isSupportDirty = false;
+
+  } catch (error) {
+    supportError.textContent = error.message;
+    supportError.style.display = "block";
+  }
+});
+
+window.addEventListener("beforeunload", (e) => {
+  if (isSupportDirty) {
+    e.preventDefault();
+    e.returnValue = "You have unsaved changes.";
+  }
+});
+</script>
+
+
 </body>
 </html>

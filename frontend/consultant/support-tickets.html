@@ -1,13 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a support ticket</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Support Tickets</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+  <style>
+    .support-ticket-list {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .ticket-item {
+      border-left: 4px solid #cc2f8b;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      background: #f9f9f9;
+      border-radius: 6px;
+    }
+    .ticket-item h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+    }
+    .ticket-item .status {
+      font-weight: bold;
+      color: #333;
+    }
+    .ticket-item .description {
+    overflow-wrap: break-word;
+    }
+
+  </style>
 </head>
+
 <body>
     <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
@@ -32,7 +62,10 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
-                    <a href="settings-support.html"> <li> Settings & support </li></a>
+                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
+                    <a href="timetable.html"> <li> Timetable </li></a>
+                    <a href="settings.html"> <li> settings </li></a>
+                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -52,29 +85,29 @@
   </div>
 </div>
 
+  <main>
+<section class="support-ticket-list">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="margin: 0;">My Support Tickets</h1>
+    <button onclick="window.location.href='ticket-create.html'" style="
+      padding: 8px 16px;
+      background-color: #cc2f8b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    ">
+      + Create New Ticket
+    </button>
+  </div>
+  <div id="ticketList"></div>
+</section>
 
-    <main>
-    <section class="support-ticket-container">
-        <h1>Create a Support Ticket</h1>
-        <form id="supportTicketForm">
-        <div class="form-group">
-            <label for="topic">Topic:</label>
-            <input type="text" id="topic" name="topic" required>
-        </div>
 
-        <div class="form-group">
-            <label for="message">Your message:</label>
-            <textarea id="message" name="message" rows="6" required></textarea>
-        </div>
+  </main>
 
-        <p id="supportError" class="warning-text" style="display: none;">Both fields are required.</p>
-
-        <button type="submit" class="send-button">Send</button>
-        </form>
-    </section>
-    </main>
-
-    <footer>
+      <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
             <div class="social-icons">
@@ -113,53 +146,62 @@
     </footer>
 
   <script src="../auth.js"></script>
-  <script src="../script.js"></script></body>      
+  <script src="../script.js"></script>    
+
     <script>
- const supportForm = document.getElementById("supportTicketForm");
-  const topicInput = document.getElementById("topic");
-  const messageInput = document.getElementById("message");
-  const supportError = document.getElementById("supportError");
-  let isSupportDirty = false;
+    async function loadTickets() {
+      const token = sessionStorage.getItem("accessToken");
+      const list = document.getElementById("ticketList");
 
-  supportForm.addEventListener("input", () => {
-    isSupportDirty = true;
-    supportError.style.display = "none";
-  });
+      try {
+        const res = await fetch("http://localhost:8000/support/me", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
-    supportForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+        if (!res.ok) throw new Error("Failed to fetch tickets.");
 
-    const topic = topicInput.value.trim();
-    const message = messageInput.value.trim();
+        const data = await res.json();
+        if (!data.length) {
+          list.innerHTML = "<p>You haven't submitted any support tickets yet.</p>";
+          return;
+        }
 
-    // Spam prevention
-    if (topic.length < 20) {
-        supportError.textContent = "Topic must be at least 20 characters.";
-        supportError.style.display = "block";
-        return;
+        list.innerHTML = data.map(t => {
+          const formattedDate = new Date(t.created_at + 'Z').toLocaleString(undefined, {
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            dateStyle: "short",
+            timeStyle: "short",
+            hour12: false
+          });
+
+          return `
+            <div class="ticket-item">
+                <h3>${t.subject}</h3>
+                <p class="description">${t.description.length > 150 ? t.description.substring(0, 150) + "..." : t.description}</p>
+                <p><span class="status">Status:</span> ${t.status}</p>
+                <p><small>Submitted: ${formattedDate}</small></p>
+                <div style="margin-top: 8px;">
+                <a href="ticket-detail.html?id=${t.id}" class="view-ticket-link" style="
+                    background-color: #cc2f8b;
+                    color: white;
+                    padding: 6px 12px;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    font-size: 13px;
+                    display: inline-block;
+                ">View</a>
+                </div>
+            </div>
+          `;
+        }).join("");
+
+
+      } catch (err) {
+        list.innerHTML = `<p style="color:red;">${err.message}</p>`;
+      }
     }
 
-    if (message.length < 50) {
-        supportError.textContent = "Message must be at least 50 characters.";
-        supportError.style.display = "block";
-        return;
-    }
-
-    if (confirm("Are you sure you want to send this support ticket?")) {
-        isSupportDirty = false;
-        alert("Your support ticket has been submitted.");
-        window.location.href = "messages.html";
-    }
-    });
-
-
-  window.addEventListener("beforeunload", (e) => {
-    if (isSupportDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-    }
-  });
-
-    </script>
+    window.onload = loadTickets;
+  </script>
 </body>
 </html>
