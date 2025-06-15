@@ -757,7 +757,6 @@ input[type="email"]{
 
 /* Contact-us */
 .body_contact {
-  background: #f7f7f7;
   margin: 0;
   font-family: "Roboto", serif;
 }
@@ -1402,18 +1401,18 @@ span {
   }
   
   
-  .modal-overlay {
+/*   .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.4);
-    display: none; /* hidden by default */
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-  }
+  } */
   
   .modal-content {
     background: #fff;
@@ -2017,7 +2016,6 @@ span {
 
   .modal-content {
     background-color: #fff;
-    margin: 10% auto;
     padding: 20px;
     border-radius: 10px;
     width: 90%;
@@ -2130,21 +2128,17 @@ input[type="email"],
   width: 100%;
 }
 
-.toggle-password {
+.toggle-password,
+.return_btn {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  width: 60px;
   height: 40px;
-
   background-color: black;
   color: white;
   font-size: 16px;
-
   border: 1px solid #ccc;
   border-radius: 6px;
-
   cursor: pointer;
   transition: background-color 0.2s ease;
   padding: 10px 16px;
@@ -2152,6 +2146,10 @@ input[type="email"],
 
 
 .toggle-password:hover {
+  background-color: #d62d81;
+}
+
+.return_btn:hover{
   background-color: #d62d81;
 }
 
@@ -2228,76 +2226,6 @@ input[type="email"],
 } 
 
 /* Student/delete-account END */
-
-/* Student/support-ticket START */
-.support-ticket-container {
-  max-width: 600px;
-  margin: 60px auto;
-  padding: 30px;
-  background-color: #f9f9f9;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.support-ticket-container h1 {
-  font-size: 24px;
-  color: #000;
-  margin-bottom: 25px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #333;
-}
-
-input[type="text"],
-textarea {
-  width: 100%;
-  padding: 10px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
-  resize: vertical;
-}
-
-.warning-text {
-  color: red;
-  font-size: 13px;
-  margin-top: -10px;
-  margin-bottom: 15px;
-}
-
-.send-button,
-.modal-content button {
-  display: block;
-  margin: 30px auto 0;
-  padding: 10px 24px;
-  font-size: 15px;
-  background-color: #000;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.send-button:hover {
-  background-color: #d62d81;
-}
-
-.modal-content button:hover{
-  background-color: #d62d81;
-}
-
-
-/* Student/support-ticket END */
 
 /* Student/review-consultant START */
 .review-container {
@@ -2755,6 +2683,7 @@ textarea#reviewText {
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   margin-top: 40px;
+  margin-bottom: 40px;
 }
 
 #calendar {
@@ -3283,62 +3212,33 @@ textarea#reviewText {
 
 /* Admin */
 /* add-user */
-.centered-add-user {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 40px;
-  margin-top: 40px;
-}
 
-.add-user-btn {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #d62d81;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#addUserModal.add-user_modal {
+.add-user_modal {
   width: 100%;
   margin: 0 auto;
   overflow: visible !important;
-  height: auto !important;
-  margin-top: -320px;
+  margin-top: 0 !important;
   flex-wrap: wrap;
+  position: relative;
+  
 }
 
-.add-user_body{
-  height: 100%;
-}
-
-.modal-content {
+.modal-content_add {
   background-color: #fefefe;
-  margin: auto;
+  margin: 0 auto;
   max-width: 70%;
   padding: 30px;
   border: 1px solid #888;
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
   border-radius: 8px;
   position: relative;
-  margin-top: 350px;
   margin-bottom: 30px;
+  margin-top: 30px;
 }
 
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 16px;
-  font-size: 24px;
-  cursor: pointer;
+.return_btn{
+  border-radius: 25px;
+  padding: 10px 20px;
 }
 
 .form-title {
@@ -3402,9 +3302,10 @@ textarea#reviewText {
 }
 
 #birthdayWarning{
-  color: red; 
-  font-size: 0.9em; 
-  display: none; 
+  color: red;
+  font-size: 14px;
+  display: none;
+  margin-bottom: 5px;
   margin-top: -10px;
 }
 

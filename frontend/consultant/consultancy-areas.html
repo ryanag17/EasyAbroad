@@ -39,7 +39,8 @@
                     <a href="messages.html"> <li> Messages </li></a>
                     <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
                     <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="settings-support.html"> <li> Settings & Support </li></a>
+                    <a href="settings.html"> <li> settings </li></a>
+                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -115,6 +116,9 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>   
 <script>
+    (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
   function previewProfile(type) {
     const target = type === "study" ? "preview-study.html" : "preview-internship.html";
     window.location.href = target;

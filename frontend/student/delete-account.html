@@ -34,7 +34,8 @@
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
-                    <a href="settings-support.html"> <li> Settings & Support </li></a>
+                    <a href="settings.html"> <li> Settings </li></a>
+                    <a href="support-tickets.html"><li>Support Tickets</li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
@@ -120,11 +121,23 @@
 
   <script src="../auth.js"></script>
   <script src="../script.js"></script>        
+<<<<<<< HEAD
   <script>
     const form       = document.getElementById("deleteAccountForm");
     const inpEmail   = document.getElementById("email");
     const inpPass    = document.getElementById("deletePassword");
     const errDisplay = document.getElementById("deleteError");
+=======
+    <script>
+        (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
+  const deleteForm = document.getElementById("deleteAccountForm");
+  const deleteEmail = document.getElementById("email");
+  const deletePassword = document.getElementById("deletePassword");
+  const deleteError = document.getElementById("deleteError");
+  let deleteFormDirty = false;
+>>>>>>> 8a85726c6954564f082dfde330004fafc372feb2
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();

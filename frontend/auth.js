@@ -24,6 +24,49 @@ function requireAuth(redirectIfMissing = "log-in.html") {
   }
 }
 
+async function requireRole(requiredRole) {
+  const token = sessionStorage.getItem("accessToken");
+  const currentRole = sessionStorage.getItem("userType");
+
+  if (!token || !currentRole || currentRole !== requiredRole) {
+    window.location.href = "../log-in.html";
+    return;
+  }
+
+  const endpointMap = {
+    student: "http://localhost:8000/profile/student",
+    consultant: "http://localhost:8000/profile/consultant",
+    admin: "http://localhost:8000/profile/admin"
+  };
+
+  try {
+    const res = await fetch(endpointMap[currentRole], {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) throw new Error("Unauthorized");
+
+  } catch (err) {
+    sessionStorage.clear();
+    window.location.href = "../log-in.html";
+  }
+}
+
+async function autoEnforceRoleFromPath() {
+  const path = window.location.pathname;
+  if (path.includes("/student/")) {
+    await requireRole("student");
+  } else if (path.includes("/consultant/")) {
+    await requireRole("consultant");
+  } else if (path.includes("/admin/")) {
+    await requireRole("admin");
+  }
+}
+
+
 async function redirectIfAuthenticated() {
   const token = sessionStorage.getItem("accessToken");
   const role = sessionStorage.getItem("userType");
@@ -95,7 +138,8 @@ function injectHeader() {
             <a href="${base}profile.html"><li>Profile</li></a>
             <a href="${base}appointments.html"><li>Appointments</li></a>
             <a href="${base}messages.html"><li>Messages</li></a>
-            <a href="${base}settings-support.html"><li>Settings & Support</li></a>
+            <a href="${base}settings.html"><li>Settings</li></a>
+            <a href="${base}support-tickets.html"><li>Support Tickets</li></a>
             <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
           </ul>
         </div>
@@ -114,7 +158,8 @@ function injectHeader() {
             <a href="${base}messages.html"><li>Messages</li></a>
             <a href="${base}consultancy-areas.html"><li>Consultancy Areas</li></a>
             <a href="${base}timetable.html"><li>Timetable</li></a>
-            <a href="${base}settings-support.html"><li>Settings & Support</li></a>
+            <a href="${base}settings.html"><li>Settings</li></a>
+            <a href="${base}support-tickets.html"><li>Support Tickets</li></a>
             <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
           </ul>
         </div>

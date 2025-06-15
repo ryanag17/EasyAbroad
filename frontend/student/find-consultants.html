@@ -104,6 +104,110 @@
     box-shadow: 0 0 0 2px #cc2f8b;
   }
 
+  #loadingOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #cc2f8b;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+
+.consultant-list-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 20px;
+}
+
+.consultant-card {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 15px;
+  width: 260px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.consultant-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+#consultant-list-wrapper {
+  max-height: 320px; /* or any height you prefer */
+  overflow-y: auto;
+  padding: 0 10px;
+  margin-bottom: 30px;
+}
+
+#consultant-list-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+#consultant-list-wrapper::-webkit-scrollbar-thumb {
+  background: #cc2f8b;
+  border-radius: 4px;
+}
+
+#consultant-list-wrapper::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+.map-wrapper {
+  position: relative;
+  height: 500px; /* adjust as needed */
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+
+.profile-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #cc2f8b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Properly style and position the Leaflet close button */
+.leaflet-popup-content-wrapper {
+  padding-right: 1.8em !important;  /* give room for the × */
+}
+
+.leaflet-popup-close-button {
+  top: 10px !important;
+  right: 10px !important;
+  font-size: 20px !important;
+  font-weight: bold;
+  color: #333;
+}
 
 </style>
 <body class="body_map">
@@ -126,13 +230,14 @@
             <span></span>
 
             <!-- Here menu goes -->
-            <ul id="mainMenu">
-              <a href="profile.html"> <li> Profile </li></a>
-              <a href="appointments.html"> <li> Appointments </li></a>
-              <a href="messages.html"> <li> Messages </li></a>
-              <a href="settings-support.html"> <li> Settings & Support </li></a>
-              <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-          </ul>
+                <ul id="mainMenu">
+                    <a href="profile.html"> <li> Profile </li></a>
+                    <a href="appointments.html"> <li> Appointments </li></a>
+                    <a href="messages.html"> <li> Messages </li></a>
+                    <a href="settings.html"> <li> Settings </li></a>
+                    <a href="support-tickets.html"><li>Support Tickets</li></a>
+                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+                </ul>
         </div>
         <!-- Menu function END -->
         </div>
@@ -149,7 +254,11 @@
     </div>
   </div>
 </div>
-    
+
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+</div>
+
 <div class="page-wrapper">
     <div class="filter-container">
         <label for="country">Country:</label>
@@ -169,12 +278,14 @@
         </select>
       </div>
     
-        <div class="map-wrapper">
-            <div id="map"></div>
-        </div>
-      <div id="consultant-info" class="consultant-info-box">
-        <div class="no-selection">Click a consultant on the map to see more info.</div>
+<div class="map-wrapper">
+  <div id="map"></div>
+</div>
+
+      <div id="consultant-list-wrapper">
+        <div id="consultant-list" class="consultant-list-section"></div>
       </div>
+
 </div>
   
     <footer>
@@ -219,6 +330,9 @@
 <script src="../auth.js"></script>
 <script src="../script.js"></script>  
 <script>
+    (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
 function goToConsultantProfile(userId, focus) {
   const page = focus === 'internship'
     ? 'consultant-profile-internship.html'
@@ -227,8 +341,9 @@ function goToConsultantProfile(userId, focus) {
 }
 
 window.onload = async function () {
+  document.getElementById("loadingOverlay").style.display = "flex";
+  
   const map = L.map('map').setView([50, 10], 4);
-
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
@@ -350,50 +465,80 @@ window.onload = async function () {
     });
   }
 
-  function showConsultantDetails(consultant) {
-    consultantInfoBox.innerHTML = `
-      <div class="consultant-header">
-        <img src="${consultant.profilePic}" alt="Avatar">
+function showConsultantDetails(consultant) {
+  const popupContent = `
+      <div style="min-width: 260px; max-width: 300px; font-family: sans-serif; font-size: 14px;">
+      <div style="display: flex; align-items: center; margin-bottom: 10px;">
+        <img src="${consultant.profilePic}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;" />
         <div>
           <strong>${consultant.name}</strong><br>
           ${consultant.country}, ${consultant.city}
         </div>
       </div>
-      <div class="consultant-details">
-        Focus: ${consultant.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}<br>
-        Institution: ${consultant.institution}<br>
-        <span class="consultant-period">
-          Date of mobility: from ${consultant.period.from} to ${consultant.period.to}
-        </span><br>
-        <strong>
-          ${consultant.rating ? `Currently rated ${consultant.rating}/5` : 'Currently have no reviews'}
-        </strong>
+      <div style="margin-bottom: 8px;">
+        <div><strong>Focus:</strong> ${consultant.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</div>
+        <div><strong>Institution:</strong> ${consultant.institution}</div>
+        <div><strong>Date of mobility:</strong> ${consultant.period.from} – ${consultant.period.to}</div>
+        <div style="margin-top: 4px;"><strong>${consultant.rating ? `Currently rated ${consultant.rating}/5` : 'Currently have no reviews'}</strong></div>
       </div>
-      <button class="profile-btn" onclick="goToConsultantProfile('${consultant.user_id}', '${consultant.focus}')">Profile</button>
-    `;
-  }
+      <button class="profile-btn" onclick="goToConsultantProfile('${consultant.user_id}', '${consultant.focus}')">View Profile</button>
+    </div>
+  `;
 
-  function applyFilters() {
-    const countryVal = countryFilter.value.toLowerCase();
-    const cityVal = cityFilter.value.toLowerCase();
-    const focusVal = focusFilter.value.toLowerCase();
+  const popup = L.popup({ maxWidth: 300, closeButton: true, offset: [0, -10] })
+    .setLatLng(consultant.location)
+    .setContent(popupContent)
+    .openOn(map);
+}
 
-    const filtered = allConsultants.filter(c => {
-      const countryMatch = !countryVal || c.country.toLowerCase() === countryVal;
-      const cityMatch = !cityVal || c.city.toLowerCase().includes(cityVal);
-      const focusMatch = !focusVal || c.focus === focusVal;
-      return countryMatch && cityMatch && focusMatch;
+function applyFilters() {
+  const countryVal = countryFilter.value.toLowerCase();
+  const cityVal = cityFilter.value.toLowerCase();
+  const focusVal = focusFilter.value.toLowerCase();
+
+  const filtered = allConsultants.filter(c => {
+    const countryMatch = !countryVal || c.country.toLowerCase() === countryVal;
+    const cityMatch = !cityVal || c.city.toLowerCase().includes(cityVal);
+    const focusMatch = !focusVal || c.focus === focusVal;
+    return countryMatch && cityMatch && focusMatch;
+  });
+
+  addMarkers(filtered);
+
+  // ✅ Render consultant cards below the map
+  const listContainer = document.getElementById("consultant-list");
+  listContainer.innerHTML = "";  // Clear old
+
+  if (filtered.length === 0) {
+    listContainer.innerHTML = "<p>No consultants found for the selected filters.</p>";
+  } else {
+    filtered.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "consultant-card";
+      div.innerHTML = `
+        <img src="${c.profilePic}" alt="Avatar">
+        <h4>${c.name}</h4>
+        <p><strong>${c.city}, ${c.country}</strong></p>
+        <p>${c.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</p>
+        <p>${c.institution}</p>
+        <p><small>${c.period.from} – ${c.period.to}</small></p>
+        <button class="profile-btn" onclick="goToConsultantProfile('${c.user_id}', '${c.focus}')">View Profile</button>
+      `;
+      listContainer.appendChild(div);
     });
-
-    addMarkers(filtered);
-    consultantInfoBox.innerHTML = '<div class="no-selection">Click a consultant on the map to see more info.</div>';
   }
+}
+
 
   countryFilter.addEventListener('change', applyFilters);
   cityFilter.addEventListener('input', applyFilters);
   focusFilter.addEventListener('change', applyFilters);
 
-  await fetchConsultants();
+  try {
+    await fetchConsultants();
+  } finally {
+    document.getElementById("loadingOverlay").style.display = "none";
+  }
 
   setTimeout(() => {
     map.invalidateSize();

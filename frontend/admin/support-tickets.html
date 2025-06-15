@@ -7,6 +7,95 @@
   <link rel="icon" type="image/png" href="../images/favicon.png">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/all.min.css">
+  <style>
+    .submission-filter {
+      margin: 1.5rem 2rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-weight: 500;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .submission-filter select {
+      padding: 8px 12px;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      transition: border-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .submission-filter select:focus {
+      outline: none;
+      border-color: #ec008c;
+      box-shadow: 0 0 0 2px rgba(236, 0, 140, 0.15);
+    }
+
+    .submission-table-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+      overflow-x: auto;
+    }
+
+    .submission-table {
+      min-width: 800px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .submission-table th,
+    .submission-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .submission-table th {
+      background-color: #f4f4f4;
+      font-weight: 600;
+    }
+
+    .submission-action-link {
+      color: deeppink;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .submission-action-link:hover {
+      color: #a30056;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      background-color: #cc2f8b;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .pagination button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+
+
 </head>
 <body>
   <header class="user-header">
@@ -44,12 +133,34 @@
     </div>
   </div>
 
-  <main class="support-tickets">
-    <section class="support-ticket-container">
-      <h1>Support Ticket Inbox</h1>
-      <div id="ticketList" class="ticket-list"></div>
-    </section>
-  </main>
+<div class="submission-filter">
+  <label for="statusFilter">Filter by Status:</label>
+  <select id="statusFilter">
+    <option value="">All</option>
+    <option value="open">Open</option>
+    <option value="in_progress">In Progress</option>
+    <option value="resolved">Resolved</option>
+    <option value="closed">Closed</option>
+  </select>
+</div>
+
+<div class="submission-table-container">
+  <table class="submission-table">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Status</th>
+        <th>Created By</th>
+        <th>Created At</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="ticketBody">
+      <tr><td colspan="5">Loading...</td></tr>
+    </tbody>
+  </table>
+  <div class="pagination" id="pagination"></div>
+</div>
 
   <footer>
     <div>
@@ -73,44 +184,123 @@
 
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const token = sessionStorage.getItem("accessToken");
-      if (!token) return window.location.href = "../log-in.html";
+<script>
+    (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
+  const token = sessionStorage.getItem("accessToken");
+  const tbody = document.getElementById("ticketBody");
+  const paginationContainer = document.getElementById("pagination");
+  let allTickets = [], currentFiltered = [], currentPage = 1;
+  const itemsPerPage = 10;
 
-      try {
-        const res = await fetch("http://localhost:8000/support/tickets", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const tickets = await res.json();
-        const list = document.getElementById("ticketList");
+  document.addEventListener("DOMContentLoaded", async () => {
+    if (!token) return (window.location.href = "../log-in.html");
 
-        if (!tickets.length) {
-          list.innerHTML = "<p>No support tickets found.</p>";
-          return;
-        }
-
-        tickets.forEach(ticket => {
-          const div = document.createElement("div");
-          div.className = "ticket-entry";
-          div.innerHTML = `
-            <h3>${ticket.subject}</h3>
-            <p><strong>Status:</strong> ${ticket.status}</p>
-            <p><strong>Created by:</strong> User #${ticket.user_id}</p>
-            <p><strong>Created at:</strong> ${new Date(ticket.created_at).toLocaleString()}</p>
-            <button onclick="viewTicket(${ticket.id})">View Details</button>
-          `;
-          list.appendChild(div);
-        });
-      } catch (err) {
-        console.error("Error fetching support tickets:", err);
-        document.getElementById("ticketList").innerHTML = "<p>Failed to load support tickets.</p>";
-      }
-    });
-
-    function viewTicket(id) {
-      window.location.href = `support-ticket-detail.html?id=${id}`;
+    try {
+      const res = await fetch("http://localhost:8000/support/tickets", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      allTickets = await res.json();
+      currentFiltered = allTickets;
+      renderTable(currentFiltered);
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="5" style="color:red">Failed to load support tickets.</td></tr>`;
     }
-  </script>
+
+    document.getElementById("statusFilter").addEventListener("change", () => {
+      const selected = document.getElementById("statusFilter").value;
+      currentFiltered = selected ? allTickets.filter(t => t.status === selected) : allTickets;
+      currentPage = 1;
+      renderTable(currentFiltered);
+    });
+  });
+
+  function paginate(tickets) {
+    const start = (currentPage - 1) * itemsPerPage;
+    return tickets.slice(start, start + itemsPerPage);
+  }
+
+  function renderTable(data) {
+    tbody.innerHTML = "";
+    const paginated = paginate(data);
+
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="5">No support tickets found.</td></tr>`;
+      paginationContainer.style.display = "none";
+      return;
+    }
+
+    for (const t of paginated) {
+      const created = new Date(t.created_at);
+      const formattedDate = `${String(created.getDate()).padStart(2, '0')}.${String(created.getMonth() + 1).padStart(2, '0')}.${String(created.getFullYear()).slice(2)}`;
+      const fullName = `${t.user_first_name || ""} ${t.user_last_name || ""}`.trim();
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${t.subject}</td>
+        <td>${t.status}</td>
+        <td>${fullName || "Unknown User"}</td>
+        <td>${formattedDate}</td>
+        <td><span class="submission-action-link" onclick="viewTicket(${t.id})">View</span></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    renderPagination(data.length);
+  }
+
+  function renderPagination(totalItems) {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    paginationContainer.innerHTML = "";
+
+    if (totalPages <= 1) {
+      paginationContainer.style.display = "none";
+      return;
+    }
+
+    paginationContainer.style.display = "flex";
+
+    if (currentPage > 1) {
+      const prev = document.createElement("button");
+      prev.textContent = "Previous";
+      prev.onclick = () => {
+        currentPage--;
+        renderTable(currentFiltered);
+      };
+      paginationContainer.appendChild(prev);
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      if (i === currentPage) {
+        btn.disabled = true;
+        btn.style.backgroundColor = "#a91f6e";
+      }
+      btn.onclick = () => {
+        currentPage = i;
+        renderTable(currentFiltered);
+      };
+      paginationContainer.appendChild(btn);
+    }
+
+    if (currentPage < totalPages) {
+      const next = document.createElement("button");
+      next.textContent = "Next";
+      next.onclick = () => {
+        currentPage++;
+        renderTable(currentFiltered);
+      };
+      paginationContainer.appendChild(next);
+    }
+  }
+
+  function viewTicket(id) {
+    window.location.href = `ticket-detail.html?id=${id}`;
+  }
+</script>
+
+
 </body>
 </html>

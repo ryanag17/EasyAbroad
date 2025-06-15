@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create a support Ticket</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/all.min.css">
+  <style>
+    .support-ticket-list {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .send-button {
+      background-color: #cc2f8b;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .send-button:hover {
+      background-color: #b02678;
+    }
+
+    .warning-text {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header class="user-header">
+    <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+    <div class="bell-menu">
+      <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+      <div id="menuHamToggle">
+        <input type="checkbox">
+        <span></span><span></span><span></span>
+        <ul id="mainMenu">
+          <a href="profile.html"><li>Profile</li></a>
+          <a href="appointments.html"><li>Appointments</li></a>
+          <a href="messages.html"><li>Messages</li></a>
+          <a href="settings.html"><li>Settings</li></a>
+          <a href="support-tickets.html"><li>Support Tickets</li></a>
+          <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sign Out Modal -->
+  <div id="signOutModal" class="modal-overlay">
+    <div class="modal-content">
+      <p>Are you sure you want to sign out?</p>
+      <div class="modal-buttons">
+        <button onclick="confirmSignOut()">Yes</button>
+        <button onclick="closeModal()">No</button>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="support-ticket-list">
+      <div style="margin-bottom: 20px;">
+        <a href="#" onclick="confirmLeaveToTickets(event)" style="color:#cc2f8b; text-decoration:none; font-weight:bold;">← Back to Support Tickets</a>
+      </div>
+      <h1>Create a Support Ticket</h1>
+      <form id="supportTicketForm">
+        <div class="form-group">
+          <label for="topic">Topic:</label>
+          <input type="text" id="topic" name="topic" required>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Your message:</label>
+          <textarea id="message" name="message" rows="6" required></textarea>
+        </div>
+
+        <p id="supportError" class="warning-text" style="display: none;">Both fields are required.</p>
+
+        <button type="submit" class="send-button">Send</button>
+      </form>
+    </section>
+  </main>
+
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="../faq.html" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="../contact-us.html" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="../privacy-policy.html" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="../about-us.html" class="class_footer">
+                <p>About Us</p>
+            </a>
+            <a href="../terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
+        </div>
+    </footer>
+
+  <script src="../auth.js"></script>
+  <script src="../script.js"></script>    
+<script>
+    (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
+const supportForm = document.getElementById("supportTicketForm");
+const topicInput = document.getElementById("topic");
+const messageInput = document.getElementById("message");
+const supportError = document.getElementById("supportError");
+let isSupportDirty = false;
+
+supportForm.addEventListener("input", () => {
+  isSupportDirty = true;
+  supportError.style.display = "none";
+});
+
+supportForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const topic = topicInput.value.trim();
+  const message = messageInput.value.trim();
+  const token = sessionStorage.getItem("accessToken");
+
+  // NEW: Lower character limits
+  if (topic.length < 5) {
+    supportError.textContent = "Topic must be at least 5 characters.";
+    supportError.style.display = "block";
+    return;
+  }
+
+  if (message.length < 10) {
+    supportError.textContent = "Message must be at least 10 characters.";
+    supportError.style.display = "block";
+    return;
+  }
+
+  if (!token) {
+    supportError.textContent = "You are not logged in. Please log in first.";
+    supportError.style.display = "block";
+    return;
+  }
+
+  const confirmed = confirm("Are you sure you want to submit this ticket?");
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch("http://localhost:8000/support/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ subject: topic, description: message })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const ticketId = data.ticket_id;
+      isSupportDirty = false;
+      window.location.replace(`ticket-detail.html?id=${ticketId}`);
+    } else {
+      alert("Failed to create ticket");
+    }
+
+
+
+    alert("Support ticket submitted successfully!");
+    isSupportDirty = false;
+
+  } catch (error) {
+    supportError.textContent = error.message;
+    supportError.style.display = "block";
+  }
+});
+
+window.addEventListener("beforeunload", (e) => {
+  if (isSupportDirty) {
+    e.preventDefault();
+    e.returnValue = "You have unsaved changes.";
+  }
+});
+
+function confirmLeaveToTickets(e) {
+  e.preventDefault();
+  if (isSupportDirty) {
+    const confirmed = confirm("You have unsaved changes. Are you sure you want to leave this page?");
+    if (!confirmed) return;
+  }
+  window.location.href = "support-tickets.html";
+}
+
+</script>
+
+
+</body>
+</html>

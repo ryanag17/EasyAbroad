@@ -82,8 +82,10 @@
         <div class="info-label">Languages:</div><div id="languages"></div>
         <div class="info-label">Short Note:</div>
         <div><textarea id="shortNoteInput" placeholder="Write a short note..." rows="4" style="width: 100%; resize: vertical;"></textarea></div>
-        <div class="info-label">Proof Document:</div>
-        <div><a id="proofLink" href="#" download>Download experience.pdf</a></div>
+        <div id="proofContainer">
+          <div class="info-label">Proof Document:</div>
+          <div><a id="proofLink" href="#" download>Download experience.pdf</a></div>
+        </div>
       </div>
     </div>
 
@@ -166,6 +168,9 @@
 
 
 <script>
+    (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
   const API = "http://localhost:8000";
   const token = sessionStorage.getItem("accessToken");
   const userId = new URLSearchParams(window.location.search).get("user_id");
@@ -190,8 +195,18 @@
 
     const status = study.status;
 
-    // Show proof document only if status is not "rejected"
-    document.getElementById("proofLink").style.display = status === "rejected" ? "none" : "inline";
+    // Show or hide proof document link
+    const proofContainer = document.getElementById("proofContainer");
+
+    if (status === "pending") {
+      proofContainer.style.display = "block";
+      const proofLink = document.getElementById("proofLink");
+      proofLink.href = `${API}/consultancy/download-proof/study/${userId}`;
+      proofLink.setAttribute("download", "");
+    } else {
+      proofContainer.style.display = "none";
+    }
+
 
     // Handle short note editability
     const noteInput = document.getElementById("shortNoteInput");
