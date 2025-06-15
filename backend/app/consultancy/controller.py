@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 
 from app.consultancy.models import Education, Internship
-# from app.consultancy.schemas import StudyConsultancyRequest, InternshipConsultancyRequest
 from app.consultancy.schemas import EducationCreate, InternshipCreate
 
 

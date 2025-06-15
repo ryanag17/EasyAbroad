@@ -6,7 +6,7 @@ class EducationCreate(BaseModel):
     country_of_study: str
     university_name: str
     course_name: str
-    education_start: datetime  # You will parse from 'YYYY-MM'
+    education_start: datetime  # parsed from 'YYYY-MM'
     education_finish: datetime
     proof_of_education: str
     accommodation: bool

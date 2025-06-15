@@ -218,6 +218,9 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>     
     <script>
+        (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
     let calendar;
     let currentDate = new Date();
     let selectedEvent = null;

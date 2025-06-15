@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from app.db import Base
 from enum import Enum as PyEnum
 
-class TicketStatus(str, PyEnum):  # ADD THIS
+class TicketStatus(str, PyEnum):
     open = "open"
     in_progress = "in_progress"
     resolved = "resolved"

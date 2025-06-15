@@ -63,7 +63,6 @@
       <h1>Settings and support</h1>
       <ul>
         <li><a href="change-password.html">Change password</a></li>
-        <li><a href="support-ticket.html">Create a support ticket</a></li>
         <li><a href="delete-account.html">Delete account</a></li>
       </ul>
     </section>
@@ -110,7 +109,9 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
     <script>
-
+  (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
     </script>
 </body>
 </html>

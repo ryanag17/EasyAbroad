@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="../css/all.min.css">
 
   <style>
-    .ticket-container {
+    .support-ticket-list {
       max-width: 800px;
       margin: 40px auto;
-      background: #fff;
       padding: 20px;
+      background-color: #fff;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }    
     .ticket-header h2 { margin: 0 0 10px; }
     .reply-list { margin-top: 20px; }
     .reply { border-top: 1px solid #ddd; padding: 10px 0; }
@@ -30,8 +30,21 @@
       background: #cc2f8b; color: white; padding: 8px 16px; border: none;
       border-radius: 5px; cursor: pointer;
     }
-  </style>
+    .reply p {
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: pre-line;
+      max-width: 100%;
+    }
 
+    .reply .text-truncate {
+      display: inline-block;
+      max-height: 6em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+  </style>
 </head>
 <body>
     <header class="user-header">
@@ -79,20 +92,28 @@
 </div>
 
 
-  <main class="ticket-container">
+<main class="ticket-container">
+  <div class="support-ticket-list">
+    <div style="margin-bottom: 20px;">
+      <a href="support-tickets.html" style="color:#cc2f8b; text-decoration:none; font-weight:bold;">← Back to Support Tickets</a>
+    </div>
+
     <div class="ticket-header">
       <h2 id="ticketSubject">Loading...</h2>
       <p id="ticketMeta"></p>
       <p><strong>Status:</strong> <span id="ticketStatus"></span></p>
     </div>
 
-    <div class="reply-list" id="replyList">Loading replies...</div>
+    <div class="reply-list" id="replyList" style="margin-top: 20px;">Loading replies...</div>
 
-    <div class="reply-form" id="replyFormContainer" style="display:none;">
-      <textarea id="replyInput" rows="4" placeholder="Write your message..."></textarea>
-      <button onclick="submitReply()">Send Reply</button>
+    <div class="reply-form" id="replyFormContainer" style="display:none; margin-top: 20px;">
+      <textarea id="replyInput" rows="4" placeholder="Write your message..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
+      <button onclick="submitReply()" style="margin-top: 10px; background: #cc2f8b; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">Send Reply</button>
     </div>
-  </main>
+
+  </div>
+</main>
+
 
     <footer>
         <div>
@@ -135,15 +156,22 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>    
 <script>
+    (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
   const params = new URLSearchParams(window.location.search);
   const ticketId = params.get("id");
   const token = sessionStorage.getItem("accessToken");
   const localFormat = {
-  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  dateStyle: "short",
-  timeStyle: "short",
-  hour12: false
-};
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  };
+
+
 
   async function loadTicket() {
     try {
@@ -156,14 +184,14 @@
       document.getElementById("ticketSubject").textContent = data.subject;
       document.getElementById("ticketStatus").textContent = data.status;
       document.getElementById("ticketMeta").innerHTML =
-        `Submitted: <span id="submittedDate">${new Date(data.created_at + 'Z').toLocaleString(undefined, localFormat)}</span>`;
+        `Submitted: <span id="submittedDate">${new Date(data.created_at + 'Z').toLocaleString('en-GB', localFormat)}</span>`;
 
       const replies = data.replies || [];
       const list = replies.map(r => `
         <div class="reply ${r.sender_role === 'admin' ? 'admin' : ''}">
           <p><strong>${r.sender_name}:</strong></p>
           <p>${r.message}</p>
-          <small>${new Date(r.created_at + 'Z').toLocaleString(undefined, localFormat)}</small>
+          <small>${new Date(r.created_at + 'Z').toLocaleString('en-GB', localFormat)}</small>
         </div>
       `).join("");
 
@@ -202,7 +230,5 @@
 
   window.onload = loadTicket;
 </script>
-
-
 </body>
 </html>

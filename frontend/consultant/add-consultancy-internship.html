@@ -209,6 +209,9 @@
   </div>
 
   <script>
+      (async () => {
+    await autoEnforceRoleFromPath();
+  })();  
 
     function closeConfirmModal() {
       document.getElementById("confirmModal").style.display = "none";
