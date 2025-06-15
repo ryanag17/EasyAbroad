@@ -3,7 +3,7 @@ import bcrypt, secrets, shutil
 from pathlib import Path
 from fastapi import HTTPException, Depends, APIRouter, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, text, delete
+from sqlalchemy import select, text, delete, update
 
 from app.auth.models import (
     User,
@@ -16,11 +16,20 @@ from app.auth.models import (
     ResetPasswordRequest,
     UserUpdateProfile,
     Country,
+    ChangePasswordRequest,
+    DeleteAccountRequest,
+    ConsultantAvailability,
+    Base
 )
 from app.auth.token_service import create_access_token, create_refresh_token
 from app.auth.email_service import send_reset_email
 from app.auth.token_verification import get_current_user
 from app.db import get_db
+from pydantic import BaseModel
+from typing import List
+import bcrypt
+
+
 
 # router required for the update funcitonality / IK 06.06
 router = APIRouter(
@@ -61,6 +70,37 @@ async def upload_profile_picture(
     await db.commit()
 
     return {"message": "Profile picture updated", "url": relative_path}
+
+# new endpoint for changing the password / IK 13.06
+@router.put("/password", summary="Change your password")
+async def change_password(
+    payload: ChangePasswordRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    user_id = current_user["user_id"]
+
+    # Fetching current hash
+    stmt = select(User.password_hash).where(User.id == user_id)
+    result = await db.execute(stmt)
+    row = result.first()
+    if not row:
+        raise HTTPException(404, "User not found")
+
+    # Verifying the old password
+    if not bcrypt.checkpw(payload.old_password.encode(), row.password_hash.encode()):
+        raise HTTPException(400, "Old password is incorrect")
+
+    # Hashing & updating
+    new_hash = bcrypt.hashpw(payload.new_password.encode(), bcrypt.gensalt()).decode()
+    await db.execute(
+        update(User).
+        where(User.id == user_id).
+        values(password_hash=new_hash)
+    )
+    await db.commit()
+
+    return {"message": "Password changed successfully"}
 
 # new endpoint for fetching countries / IK 06.06
 @router.get(
@@ -243,6 +283,7 @@ async def reset_password(db: AsyncSession, data: ResetPasswordRequest):
     return {"message": "Password reset successfully"}
 
 
+
 # new update profile endpoint / IK 06.06
 @router.put("/student", response_model=dict)
 async def update_student_profile(
@@ -376,6 +417,67 @@ async def update_consultant_profile(
         "languages" : lang_q.scalars().all()
     }
 
+
+# Two new endpoints for updating the consultant timetable / IK 14.06
+class Slot(BaseModel):
+    daysOfWeek: List[int]
+    startTime:  str
+    endTime:    str
+
+@router.get(
+    "/consultant/timetable",
+    response_model=List[Slot],
+    summary="Fetch my current availability"
+)
+async def get_timetable(
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    if current_user["role"] != "consultant":
+        raise HTTPException(403, "Not a consultant")
+    rows = (await db.execute(
+        select(ConsultantAvailability)
+        .where(ConsultantAvailability.consultant_id == current_user["user_id"])
+    )).scalars().all()
+    return [
+        {"daysOfWeek": r.days_of_week, "startTime": r.start_time, "endTime": r.end_time}
+        for r in rows
+    ]
+
+@router.put(
+    "/consultant/timetable",
+    response_model=List[Slot],
+    summary="Overwrite my availability"
+)
+async def update_timetable(
+    slots: List[Slot],
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    if current_user["role"] != "consultant":
+        raise HTTPException(403, "Not a consultant")
+    uid = current_user["user_id"]
+
+    # deleting the old one
+    await db.execute(
+        delete(ConsultantAvailability)
+        .where(ConsultantAvailability.consultant_id == uid)
+    )
+    # inserting new
+    for s in slots:
+        db.add(ConsultantAvailability(
+            consultant_id=uid,
+            days_of_week=s.daysOfWeek,
+            start_time=s.startTime,
+            end_time=s.endTime
+        ))
+    await db.commit()
+
+    # returning what we saved
+    return slots
+
+
+
 # ────────── GET /profile/admin ──────────
 @router.get(
     "/admin",
@@ -505,3 +607,30 @@ async def get_consultant_profile(db: AsyncSession, user_id: int):
         "profile_picture" : row.profile_picture,
         "languages"       : languages
     }
+
+# New endpoint for account deletion / IK 13.06
+@router.delete("/", summary="Delete your account")
+async def delete_account(
+    payload: DeleteAccountRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    user_id = current_user["user_id"]
+
+    # Fetching the user row
+    stmt = select(User.email, User.password_hash).where(User.id == user_id)
+    result = await db.execute(stmt)
+    row = result.first()
+    if not row:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Verifying email  password
+    if payload.email.lower() != row.email.lower() \
+       or not bcrypt.checkpw(payload.password.encode(), row.password_hash.encode()):
+        raise HTTPException(status_code=400, detail="Email or password is incorrect")
+
+    # Deleting the user
+    await db.execute(delete(User).where(User.id == user_id))
+    await db.commit()
+
+    return {"message": "Account deleted successfully"}

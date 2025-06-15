@@ -49,19 +49,24 @@ async def lifespan(app: FastAPI):
 # 3) FastAPI app with lifespan
 app = FastAPI(lifespan=lifespan)
 
+origins = [
+    "http://localhost:8080",
+    # add other allowed origins if needed, e.g. prod domain
+]
+
 # 4) CORS: allow only your frontend origin and credentials
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # ← your _exact_ frontend origin
-    allow_credentials=True,
+    allow_origins=origins,         # ← wildcard for now
+    allow_credentials=True, 
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 5) Allow all OPTIONS requests
+# # 5) Allow all OPTIONS requests
 @app.options("/{full_path:path}", include_in_schema=False)
 async def preflight_handler(full_path: str):
-    return Response(status_code=200)
+      return Response(status_code=200)
 
 # 6) Routers
 app.include_router(profile_router)

@@ -1,7 +1,7 @@
 from datetime import datetime, date
 from typing import Literal, List, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, constr
 from sqlalchemy import (
     Column,
     Integer,
@@ -15,6 +15,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from pydantic_settings import SettingsConfigDict
+from sqlalchemy.dialects.mysql import JSON
 
 from app.db import Base
 
@@ -182,3 +183,35 @@ class UserUpdateProfile(BaseModel):
                 "languages": [1, 5, 8]
             }
         }
+
+
+#New schema for changing the password / IK 13.06 
+class ChangePasswordRequest(BaseModel):
+    old_password: constr(min_length=8)
+    new_password: constr(min_length=8)
+
+# New schema for deleting the account / IK 13.06
+class DeleteAccountRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+
+# A new availability table / IK 14.06
+class ConsultantAvailability(Base):
+    __tablename__ = "consultant_availability"
+
+    id             = Column(Integer, primary_key=True)
+    consultant_id  = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    days_of_week   = Column(JSON, nullable=False)  # e.g. [1,3,5]
+    start_time     = Column(String(5), nullable=False)  # "09:30"
+    end_time       = Column(String(5), nullable=False)  # "10:30"
+
+    consultant     = relationship("User", back_populates="availability")
+
+# in User model:
+User.availability = relationship(
+    "ConsultantAvailability",
+    back_populates="consultant",
+    cascade="all, delete-orphan"
+)
