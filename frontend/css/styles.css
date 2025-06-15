@@ -2016,7 +2016,6 @@ span {
 
   .modal-content {
     background-color: #fff;
-    margin: 10% auto;
     padding: 20px;
     border-radius: 10px;
     width: 90%;
@@ -2129,21 +2128,17 @@ input[type="email"],
   width: 100%;
 }
 
-.toggle-password {
+.toggle-password,
+.return_btn {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  width: 60px;
   height: 40px;
-
   background-color: black;
   color: white;
   font-size: 16px;
-
   border: 1px solid #ccc;
   border-radius: 6px;
-
   cursor: pointer;
   transition: background-color 0.2s ease;
   padding: 10px 16px;
@@ -2151,6 +2146,10 @@ input[type="email"],
 
 
 .toggle-password:hover {
+  background-color: #d62d81;
+}
+
+.return_btn:hover{
   background-color: #d62d81;
 }
 
@@ -3282,62 +3281,33 @@ textarea#reviewText {
 
 /* Admin */
 /* add-user */
-.centered-add-user {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 40px;
-  margin-top: 40px;
-}
 
-.add-user-btn {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #d62d81;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#addUserModal.add-user_modal {
+.add-user_modal {
   width: 100%;
   margin: 0 auto;
   overflow: visible !important;
-  height: auto !important;
-  
+  margin-top: 0 !important;
   flex-wrap: wrap;
+  position: relative;
+  
 }
 
-.add-user_body{
-  height: 100%;
-}
-
-.modal-content {
+.modal-content_add {
   background-color: #fefefe;
-  margin: auto;
+  margin: 0 auto;
   max-width: 70%;
   padding: 30px;
   border: 1px solid #888;
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
   border-radius: 8px;
   position: relative;
-  margin-top: 350px;
   margin-bottom: 30px;
+  margin-top: 30px;
 }
 
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 16px;
-  font-size: 24px;
-  cursor: pointer;
+.return_btn{
+  border-radius: 25px;
+  padding: 10px 20px;
 }
 
 .form-title {
@@ -3401,9 +3371,10 @@ textarea#reviewText {
 }
 
 #birthdayWarning{
-  color: red; 
-  font-size: 0.9em; 
-  display: none; 
+  color: red;
+  font-size: 14px;
+  display: none;
+  margin-bottom: 5px;
   margin-top: -10px;
 }
 
