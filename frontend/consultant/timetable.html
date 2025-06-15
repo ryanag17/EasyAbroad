@@ -167,9 +167,13 @@
     <div class="calendar-wrapper">
         <div class="header">
           <h2>Timetable of <span id="consultant-name">[consultant name]</span></h2>
+                      <div class="form-buttons-timetable">
+              <button type="button" class="edit-btn">Edit</button>
+            </div>
           
         </div>
         <div id="calendar"></div>
+
       </div>
       
       <!-- Modal timeslot confirmation window -->
@@ -201,9 +205,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     
-    <div class="form-buttons-timetable">
-              <button type="button" class="edit-btn">Edit</button>
-            </div>
+
   
     <footer>
         <div>
@@ -245,9 +247,9 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>     
     <script>
-        (async () => {
+/*         (async () => {
     await autoEnforceRoleFromPath();
-  })();  
+  })();  */ 
     let calendar;
 let currentDate = new Date();
 let pendingSlot = null;
@@ -277,6 +279,10 @@ calendar = new FullCalendar.Calendar(calendarEl, {
   eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
   slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
   dayHeaderFormat: { weekday: 'long' },
+  dayCellDidMount: function(info) {
+  info.el.style.borderRight = '1px solid #ccc';
+},
+
 });
 
   if (!isEditable) {
