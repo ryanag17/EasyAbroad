@@ -243,29 +243,88 @@
     }
   });
 
-  // Handle user creation
-  document.getElementById('addUserForm').addEventListener('submit', function (e) {
+  // Handle user creation via backend API
+  document.getElementById('addUserForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const newUser = {
-      id: Date.now().toString(),
-      firstName: document.getElementById('name').value,
-      lastName: document.getElementById('surname').value,
-      email: document.getElementById('email-id').value,
-      role: document.getElementById('role').value,
-      status: document.getElementById('status').value,
-      registered: new Date().toLocaleDateString('de-DE'),
-      birthday: document.getElementById('birthday').value,
-      gender: document.getElementById('gender').value,
-      country: document.getElementById('country').value,
-      city: document.getElementById('city').value
+    const name = document.getElementById('name').value.trim();
+    const surname = document.getElementById('surname').value.trim();
+    const email = document.getElementById('email-id').value.trim();
+    const password = document.getElementById('password-id').value;
+    const repeat = document.getElementById('repeat').value;
+    const birthday = document.getElementById('birthday').value;
+    const gender = document.getElementById('gender').value.toLowerCase();
+    const country = document.getElementById('country').value;
+    const city = document.getElementById('city').value.trim();
+    const role = document.getElementById('role').value.toLowerCase();
+    const access_level = role === "admin" ? "super" : "standard";
+
+    if (!name || !surname || !email || !password) {
+      alert("Please complete all required fields.");
+      return;
+    }
+    if (password !== repeat) {
+      alert("Passwords do not match.");
+      return;
+    }
+    if (gender === "select") {
+      alert("Please select a gender.");
+      return;
+    }
+    if (country === "Select") {
+      alert("Please select a country.");
+      return;
+    }
+    if (role === "select") {
+      alert("Please select a role.");
+      return;
+    }
+
+    const userPayload = {
+      name,
+      surname,
+      email,
+      password,
+      birthday,
+      gender,
+      country_name: country,
+      city,
+      role,
+      access_level,
+      languages: [],
+      profile_picture: ""
     };
 
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
+    try {
+      const token = sessionStorage.getItem("accessToken");
 
-    window.location.href = 'user-management.html';
+const response = await fetch("http://localhost:8000/admin/users", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + token
+  },
+  body: JSON.stringify(userPayload)
+});
+
+
+
+      if (response.ok) {
+  const data = await response.json();
+
+  // Optional: store token for testing purposes
+  localStorage.setItem("access_token", data.access_token);
+
+  alert("User created successfully!");
+  window.location.href = 'user-management.html';
+} else {
+  const error = await response.json();
+  alert("Error: " + (error.detail || "Something went wrong."));
+}
+
+    } catch (err) {
+      alert("Network error: " + err.message);
+    }
   });
 
   // Go Back button handler
@@ -273,6 +332,7 @@
     window.history.back();
   }
 </script>
+
 
 
     </body>

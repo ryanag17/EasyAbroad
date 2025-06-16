@@ -190,7 +190,6 @@ async def consultant_profile(
 async def debug_headers(request: Request):
     return {k: v for k, v in request.headers.items()}
 
-<<<<<<< HEAD
 async def require_admin_user(user=Depends(get_current_user)):
     if user["role"] != "admin":
         raise HTTPException(
@@ -198,7 +197,6 @@ async def require_admin_user(user=Depends(get_current_user)):
             detail="You must be an admin to access this resource"
         )
     return user
-=======
 
 # ─── Remove or comment out all legacy /messages handlers below ────────────
 # from .models import Message, User
@@ -222,4 +220,3 @@ async def require_admin_user(user=Depends(get_current_user)):
 # async def get_full_thread(...):
 #     ...
 # ────────────────────────────────────────────────────────────────────────────
->>>>>>> e1620af27e317f99bd710cf096af792cdf1b4eb9

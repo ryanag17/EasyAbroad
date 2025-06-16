@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from app.auth.models import UserCreate
 
 class UserOut(BaseModel):
     id: int
@@ -12,3 +13,7 @@ class UserOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class AdminCreateUser(UserCreate):
+    pass

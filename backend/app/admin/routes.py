@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Query
+from fastapi import APIRouter, Depends, status, HTTPException, Query, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db import get_db
 from app.auth.token_verification import get_current_user
-from app.admin.controller import fetch_all_users
-from app.admin.schemas import UserOut
+from app.admin.controller import fetch_all_users, create_user_by_admin
+from app.admin.schemas import UserOut, AdminCreateUser
 
 router = APIRouter(
     prefix="/admin",
@@ -29,3 +29,11 @@ async def get_all_users(
     current_user=Depends(require_admin),  # 👈 this enforces admin role
 ):
     return await fetch_all_users(db, search=search, role=role, status=status)
+
+@router.post("/users", status_code=201)
+async def admin_create_user(
+    user_data: AdminCreateUser = Body(...),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin),
+):
+    return await create_user_by_admin(user_data, db)
