@@ -96,6 +96,8 @@ class User(Base):
     gender          = Column(Enum("male","female","other", name="gender"), nullable=True)
     access_level    = Column(Enum("standard","super", name="access_level"), default="standard")
     profile_picture = Column(String(255), nullable=True)
+    is_active       = Column(Boolean, default=True, nullable=False)
+
 
     # Fields for “forgot password” flows
     reset_token     = Column(String(255), nullable=True)

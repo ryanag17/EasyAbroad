@@ -233,6 +233,7 @@ CREATE TABLE IF NOT EXISTS users (
   profile_picture VARCHAR(255),
   reset_token     VARCHAR(255),
   token_expiry    DATETIME,
+  is_active       BOOLEAN DEFAULT TRUE,
   created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 

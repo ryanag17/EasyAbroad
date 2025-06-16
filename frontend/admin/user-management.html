@@ -133,74 +133,121 @@
         </div>
     </footer>
   <script src="../auth.js"></script>
-  <script src="../script.js"></script>    
-    <script>
-      (async () => {
+<script src="../script.js"></script>
+<script>
+  (async () => {
     await autoEnforceRoleFromPath();
-  })();        
-          const users = JSON.parse(localStorage.getItem('users')) || [];
+  })();
 
-    const tbody = document.getElementById('userTableBody');
-    const searchInput = document.getElementById('searchInput');
-    const roleFilter = document.getElementById('roleFilter');
-    const statusFilter = document.getElementById('statusFilter');
+  let users = [];
 
-    function renderTable(data) {
-      tbody.innerHTML = '';
-      data.forEach(user => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${user.id}</td>
-          <td>${user.firstName}</td>
-          <td>${user.lastName}</td>
-          <td>${user.email}</td>
-          <td>${user.role}</td>
-          <td>${user.status}</td>
-          <td>${user.registered}</td>
-          <td><button class="view-btn" onclick="viewUser('${user.id}')">View</button></td>
-        `;
-        tbody.appendChild(row);
-      });
+  const tbody = document.getElementById('userTableBody');
+  const searchInput = document.getElementById('searchInput');
+  const roleFilter = document.getElementById('roleFilter');
+  const statusFilter = document.getElementById('statusFilter');
+
+  async function fetchUsers() {
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      const searchQuery = searchInput.value.trim();
+      const role = roleFilter.value !== 'all' ? roleFilter.value : '';
+      const status = statusFilter.value !== 'all' ? statusFilter.value : '';
+
+      const queryParams = new URLSearchParams();
+      if (searchQuery) queryParams.append('search', searchQuery);
+      if (role) queryParams.append('role', role);
+      if (status) queryParams.append('status', status);
+
+      const response = await fetch(`http://localhost:8000/admin/users?${queryParams.toString()}`, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
+
+
+      if (!response.ok) throw new Error('Failed to fetch users');
+
+      const data = await response.json();
+      users = data.map(user => ({
+        ...user,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        registered: user.created_at,
+        status: user.is_active ? 'Active' : 'Inactive',
+      }));
+
+      renderTable(users);
+    } catch (err) {
+      console.error(err);
+      alert('Error fetching users. Make sure you are logged in and have access.');
     }
+  }
 
-    function viewUser(id) {
-      window.location.href = 'view-user.html?user=' + id;
-    }
+  function renderTable(data) {
+    tbody.innerHTML = '';
+    data.forEach(user => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${user.id}</td>
+        <td>${user.firstName}</td>
+        <td>${user.lastName}</td>
+        <td>${user.email}</td>
+        <td>${user.role}</td>
+        <td>${user.status}</td>
+        <td>${new Date(user.registered).toLocaleDateString()}</td>
+        <td><button class="view-btn" onclick="viewUser('${user.id}')">View</button></td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
 
-    function applyFilters() {
+  function viewUser(id) {
+    window.location.href = 'view-user.html?user=' + id;
+  }
+
+  function applyFilters() {
+    renderTable(users.filter(user => {
       const search = searchInput.value.toLowerCase();
       const role = roleFilter.value;
       const status = statusFilter.value;
 
-      const filtered = users.filter(user => {
-        const matchesName = user.firstName.toLowerCase().includes(search);
-        const matchesRole = role === 'all' || user.role === role;
-        const matchesStatus = status === 'all' || user.status === status;
-        return matchesName && matchesRole && matchesStatus;
-      });
+      const matchesName = user.firstName.toLowerCase().includes(search);
+      const matchesRole = role === 'all' || user.role === role;
+      const matchesStatus = status === 'all' || user.status.toLowerCase() === status;
 
-      renderTable(filtered);
-    }
+      return matchesName && matchesRole && matchesStatus;
+    }));
+  }
 
-    function sortTable(colIndex) {
-      const rows = [...tbody.rows];
-      const asc = tbody.getAttribute('data-sort') !== 'asc';
-      rows.sort((a, b) => {
-        const A = a.cells[colIndex].innerText.toLowerCase();
-        const B = b.cells[colIndex].innerText.toLowerCase();
-        return asc ? A.localeCompare(B) : B.localeCompare(A);
-      });
-      tbody.innerHTML = '';
-      rows.forEach(row => tbody.appendChild(row));
-      tbody.setAttribute('data-sort', asc ? 'asc' : 'desc');
-    }
+  function sortTable(colIndex) {
+    const rows = [...tbody.rows];
+    const asc = tbody.getAttribute('data-sort') !== 'asc';
+    rows.sort((a, b) => {
+      const A = a.cells[colIndex].innerText.toLowerCase();
+      const B = b.cells[colIndex].innerText.toLowerCase();
+      return asc ? A.localeCompare(B) : B.localeCompare(A);
+    });
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+    tbody.setAttribute('data-sort', asc ? 'asc' : 'desc');
+  }
 
-    searchInput.addEventListener('input', applyFilters);
-    roleFilter.addEventListener('change', applyFilters);
-    statusFilter.addEventListener('change', applyFilters);
+  searchInput.addEventListener('input', () => {
+    applyFilters();
+  });
 
-    renderTable(users);
-    </script>
+  roleFilter.addEventListener('change', () => {
+    applyFilters();
+  });
+
+  statusFilter.addEventListener('change', () => {
+    applyFilters();
+  });
+
+  // Initial load
+  fetchUsers();
+</script>
+
     
 </body>
 </html>

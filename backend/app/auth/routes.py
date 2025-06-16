@@ -231,3 +231,11 @@ async def debug_headers(request: Request):
     Returns a dict of all request headers—useful for debugging CORS or cookie issues.
     """
     return {k: v for k, v in request.headers.items()}
+
+async def require_admin_user(user=Depends(get_current_user)):
+    if user["role"] != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You must be an admin to access this resource"
+        )
+    return user

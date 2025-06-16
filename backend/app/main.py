@@ -14,6 +14,7 @@ from app.config import settings
 from app.db import get_db_session
 from app.consultancy.controller import delete_expired_consultancies
 from app.support.routes import support_router
+from app.admin.routes import router as admin_user_management_router
 
 
 # 1) Ensure any missing ENV vars fallback to defaults if needed
@@ -73,6 +74,7 @@ app.include_router(profile_router)
 app.include_router(auth_router, prefix="/auth")
 app.include_router(consultancy_router)
 app.include_router(support_router)
+app.include_router(admin_user_management_router)
 
 
 # 7) Health check
