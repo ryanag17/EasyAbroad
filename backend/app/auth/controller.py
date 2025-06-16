@@ -228,6 +228,9 @@ async def login(db: AsyncSession, creds: UserLogin):
     user = result.scalars().first()
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="Account deactivated")
 
     # 2) Check bcrypt-hash
     if not bcrypt.checkpw(creds.password.encode(), user.password_hash.encode()):

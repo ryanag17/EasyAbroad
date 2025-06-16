@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Query, Body
+from fastapi import APIRouter, Depends, status, HTTPException, Query, Body, Path
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import update, select
 from app.db import get_db
 from app.auth.token_verification import get_current_user
 from app.admin.controller import fetch_all_users, create_user_by_admin
 from app.admin.schemas import UserOut, AdminCreateUser
+from app.auth.models import User
 
 router = APIRouter(
     prefix="/admin",
@@ -37,3 +39,51 @@ async def admin_create_user(
     current_user=Depends(require_admin),
 ):
     return await create_user_by_admin(user_data, db)
+
+
+
+@router.get("/users/{user_id}")
+async def get_user_by_id(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin)
+):
+    user = await db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "role": user.role,
+        "birthday": str(user.birthday),
+        "gender": user.gender,
+        "country": user.country_name,
+        "city": user.city,
+        "status": "active" if user.is_active else "inactive",
+        "registered": user.created_at.strftime("%Y-%m-%d") if user.created_at else "-",
+        "profile_picture": user.profile_picture or ""
+    }
+
+@router.patch("/users/{user_id}/status", status_code=200)
+async def update_user_status(
+    user_id: int = Path(..., gt=0),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin)
+):
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.is_active = not user.is_active  # Flip the current value
+    await db.commit()
+    await db.refresh(user)
+
+    return {
+        "status": "success",
+        "user_id": user.id,
+        "new_status": "active" if user.is_active else "inactive"
+    }
