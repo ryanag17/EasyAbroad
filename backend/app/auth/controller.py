@@ -80,6 +80,7 @@ async def change_password(
 ):
     user_id = current_user["user_id"]
 
+
     # Fetching current hash
     stmt = select(User.password_hash).where(User.id == user_id)
     result = await db.execute(stmt)
@@ -489,6 +490,7 @@ async def get_admin_profile_endpoint(
     current_user: dict = Depends(get_current_user),
 ):
     user_id = current_user["user_id"]
+
     if current_user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Not an admin")
 

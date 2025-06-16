@@ -75,7 +75,7 @@
         <!-- Message input area -->
         <div class="chat-input">
           <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500">
-          <button onclick="sendMessage()">Send</button>
+          <button  id="sendBtn">Send</button>
         </div>
       
       </section>
@@ -131,120 +131,93 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>      
     <script>
-  (async () => {
-    await autoEnforceRoleFromPath();
-  })();        
-      const urlParams = new URLSearchParams(window.location.search);
-const consultant = urlParams.get('consultant');
+(async () => {
+  await autoEnforceRoleFromPath();
 
-
-
-// Display name in header
-document.querySelector('.consultant-name').textContent = consultant || 'Consultant';
-
-// Mark this conversation as read
-if (consultant) {
-  const readStatus = JSON.parse(localStorage.getItem('readMessages')) || {};
-  readStatus[consultant] = true;
-  localStorage.setItem('readMessages', JSON.stringify(readStatus));
-}
-
-
-  function goBackToInbox() {
-    window.location.href = 'messages.html';
-  }
-
-
-
-      
-      
-        const chat = [
-  {
-    from: "consultant",
-    text: "Hi, did you receive the checklist?",
-    date: "29.04.2025 14:15"
-  },
-  {
-    from: "me",
-    text: "Yes, I uploaded everything.",
-    date: "29.04.2025 14:16"
-  },
-  {
-    from: "consultant",
-    text: "Perfect! I’ll review it soon.",
-    date: "29.04.2025 14:17"
-  }
-];
-
-function renderChat() {
-  const container = document.getElementById('chatMessages');
-  container.innerHTML = '';
-
-  chat.forEach(msg => {
-    const bubble = document.createElement('div');
-    bubble.className = 'message-bubble ' + (msg.from === 'me' ? 'me' : 'consultant');
-
-    bubble.innerHTML = `
-      <div class="bubble-content">
-        <p>${msg.text}</p>
-        <span class="timestamp">${msg.date}</span>
-      </div>
-    `;
-
-    container.appendChild(bubble);
-  });
-
-  container.scrollTop = container.scrollHeight;
-}
-
-function sendMessage() {
-  const input = document.getElementById('messageInput');
-  const text = input.value.trim();
-
-  if (text === "") return;
-
-  const now = new Date();
-  const date = now.toLocaleDateString("en-GB") + " " + now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-
-  chat.push({
-    from: "me",
-    text,
-    date
-  });
-
-  input.value = '';
-  renderChat();
-}
-
-renderChat();
-
-document.getElementById("messageInput").addEventListener("keydown", function (event) {
-  if (event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault(); 
-    sendMessage(); 
-  }
-});
-
-
-// Report btn
-document.querySelector(".report-btn").addEventListener("click", () => {
-  document.getElementById("reportModal").style.display = "block";
-});
-function closeReportModal() {
-  document.getElementById("reportModal").style.display = "none";
-}
-// Example submit function
-function submitReport() {
-  const reason = document.getElementById("reportReason").value.trim();
-  if (reason === "") {
-    alert("Please provide a reason before submitting.");
+  const token     = sessionStorage.getItem("accessToken");
+  const params    = new URLSearchParams(window.location.search);
+  const partnerId = params.get("partnerId");
+  if (!partnerId) {
+    alert("No conversation selected.");
     return;
   }
-  // Send to backend
-  alert("Thank you for your report. We’ll review it shortly.");
-  closeReportModal();
-}
 
+  document.querySelector(".consultant-name").textContent = "User #" + partnerId;
+
+  // 2) Load existing thread
+  async function loadThread() {
+    const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) return console.error("Failed to load thread", res.status);
+    const msgs = await res.json();
+    renderChat(msgs);
+  }
+
+  // 3) Render chat bubbles & auto-scroll
+  function renderChat(messages) {
+    const container = document.getElementById("chatMessages");
+    container.innerHTML = "";
+    messages.forEach(m => {
+      const bubble = document.createElement("div");
+      bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
+      bubble.innerHTML = `
+        <div class="bubble-content">
+          <p>${m.message}</p>
+          <span class="timestamp">
+            ${new Date(m.sent_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+          </span>
+        </div>`;
+      container.appendChild(bubble);
+    });
+    container.scrollTop = container.scrollHeight;
+  }
+
+  // 4) Send new message
+  async function sendMessage() {
+    const input = document.getElementById("messageInput");
+    const text  = input.value.trim();
+    if (!text) return;
+
+    const payload = {
+      receiver_id: +partnerId,
+      message:     text,
+      booking_id:  null
+    };
+
+    const res = await fetch("http://localhost:8000/messages/send", {
+      method:  "POST",
+      headers: {
+        "Content-Type":  "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      return alert("Failed to send message: " + res.status);
+    }
+
+    input.value = "";
+    await loadThread();
+  }
+
+  // 5) Wire up send button + Enter key
+  document.getElementById("sendBtn")
+          .addEventListener("click", sendMessage);
+  document.getElementById("messageInput")
+          .addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // 6) Back button
+  window.goBackToInbox = () => window.location.href = "messages.html";
+
+  // 7) Initial load
+  await loadThread();
+})();
 
     </script>
     

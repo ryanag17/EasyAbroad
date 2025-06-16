@@ -341,6 +341,25 @@ window.fetchProfile   = fetchProfile;
 window.validateRegisterForm = validateRegisterForm;
 window.validateLoginForm = validateLoginForm;
 
+async function fetchMessages() {
+  const res = await fetch("http://localhost:8000/messages", {
+    headers: {
+      "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+    }
+  });
+  const threads = await res.json();
+
+  renderMessages(threads.map(t => ({
+    id: t.id,
+    consultant: `${t.first_name} ${t.last_name}`,
+    preview: "New message...",  // Optional: Fetch most recent one separately
+    date: new Date(t.sent_at).toLocaleDateString(),
+    unread: true,
+    avatar: "../images/avatar.png"
+  })));
+}
+
+
 // ─────────────────────────────────────────────────────────────
 // Backend JS Functions END
 // ─────────────────────────────────────────────────────────────
