@@ -74,6 +74,9 @@ app.include_router(auth_router, prefix="/auth")
 app.include_router(consultancy_router)
 app.include_router(support_router)
 
+# 7) Messaging endpoints (student⇄consultant only)
+from app.auth.messages import router as messages_router
+app.include_router(messages_router)
 
 # 7) Health check
 @app.get("/", status_code=200)
@@ -85,3 +88,4 @@ BASE_DIR   = Path(__file__).parent.parent
 STATIC_DIR = BASE_DIR / "static"
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
