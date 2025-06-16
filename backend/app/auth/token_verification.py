@@ -36,7 +36,14 @@ async def get_current_user(
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 
-    return user  # ← now downstream handlers get a User, not a dict
+    return {
+    "user_id": user.id,
+    "role": user.role,
+    "email": user.email,
+    "first_name": user.first_name,
+    "last_name": user.last_name,
+}
+
 
 
 async def get_current_user_from_refresh(
