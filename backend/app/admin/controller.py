@@ -64,7 +64,7 @@ async def create_user_by_admin(user_data: AdminCreateUser, db: AsyncSession):
     await db.refresh(db_user)
 
     # 🔐 Generate an access token for the newly created user
-    access_token = create_access_token(data={"sub": str(db_user.id)})
+    access_token = create_access_token(data={"sub": str(db_user.id), "role": db_user.role})
 
     # ✅ Return the user details along with the token
     return {

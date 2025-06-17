@@ -302,10 +302,11 @@ const response = await fetch("http://localhost:8000/admin/users", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "Authorization": "Bearer " + token
+    "Authorization": "Bearer " + sessionStorage.getItem("accessToken")
   },
   body: JSON.stringify(userPayload)
 });
+
 
 
 
