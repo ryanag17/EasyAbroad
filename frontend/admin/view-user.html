@@ -191,21 +191,26 @@ loadUserData();
     const response = await fetch(`http://localhost:8000/admin/users/${userId}/status`, {
       method: "PATCH",
       headers: {
-        Authorization: "Bearer " + token
-      }
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ is_active: changingToStatus === "active" })
     });
 
-    if (response.ok) {
-      alert("User status updated successfully.");
-      window.location.href = "user-management.html";
-    } else {
+    if (!response.ok) {
       const err = await response.json();
       alert("Failed to update user: " + (err.detail || response.status));
+      return;
     }
+
+    alert(`User ${changingToStatus === "active" ? "reactivated" : "deactivated"} successfully!`);
+    window.location.href = 'user-management.html';
+
   } catch (err) {
-    alert("Error: " + err.message);
+    alert("Network error: " + err.message);
   }
 }
+
 
 
 
