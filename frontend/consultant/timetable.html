@@ -190,62 +190,51 @@
 </div>
 </div>
 </div>
-
-
-    
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-    
-
-  
-    <footer>
-        <div>
-            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
-            <div class="social-icons">
-                <a href="" class="twitter_link">
-                    <img src="../images/twitter.png" alt="X">
-                </a>
-                <a href="" class="twitter_link">
-                    <img src="../images/instagram.png" alt="Instagram">
-                </a>
-                <a href="" class="twitter_link1">
-                    <img src="../images/youtube.png" alt="YouTube">
-                </a>
-                <a href="" class="twitter_link">
-                    <img src="../images/linkedin.png" alt="LinkedIn">
-                </a>
-            </div>
-        </div>
-        <div class="footer-links">
-            <h4 class="h4_service">Service & Contacts</h4>
-            <a href="../faq.html" class="class_footer">
-                <p>FAQ</p> 
-            </a>
-            <a href="../contact-us.html" class="class_footer">
-                <p>Contact Us</p> 
-            </a>
-            <a href="../privacy-policy.html" class="class_footer">
-                <p>Privacy Policy</p> 
-            </a>
-            <a href="../about-us.html" class="class_footer">
-                <p>About Us</p>
-            </a>
-            <a href="../terms-conditions.html" class="class_footer">
-              <p>Terms and Conditions</p>
-          </a>
-        </div>
-    </footer>
-  <script src="../auth.js"></script>
-  <script src="../script.js"></script>     
-    <script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<footer>
+<div>
+<div class="footer-logo"><img alt="" class="pic_logo" src="../images/logo.png"/></div>
+<div class="social-icons">
+<a class="twitter_link" href="">
+<img alt="X" src="../images/twitter.png"/>
+</a>
+<a class="twitter_link" href="">
+<img alt="Instagram" src="../images/instagram.png"/>
+</a>
+<a class="twitter_link1" href="">
+<img alt="YouTube" src="../images/youtube.png"/>
+</a>
+<a class="twitter_link" href="">
+<img alt="LinkedIn" src="../images/linkedin.png"/>
+</a>
+</div>
+</div>
+<div class="footer-links">
+<h4 class="h4_service">Service &amp; Contacts</h4>
+<a class="class_footer" href="../faq.html">
+<p>FAQ</p>
+</a>
+<a class="class_footer" href="../contact-us.html">
+<p>Contact Us</p>
+</a>
+<a class="class_footer" href="../privacy-policy.html">
+<p>Privacy Policy</p>
+</a>
+<a class="class_footer" href="../about-us.html">
+<p>About Us</p>
+</a>
+<a class="class_footer" href="../terms-conditions.html">
+<p>Terms and Conditions</p>
+</a>
+</div>
+</footer>
+<script src="../auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script src="../script.js"></script>
+<script>
  (async () => {
     await autoEnforceRoleFromPath();
   })();
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script>
-    // Enforcing auth and dynamic header
-    requireAuth();
-    injectHeader();
-
     let calendar;
     let currentDate = new Date();
     let pendingSlot = null;
@@ -333,7 +322,11 @@
         events: events,
         eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
         slotLabelFormat:  { hour: '2-digit', minute: '2-digit', hour12: false },
-        dayHeaderFormat:  { weekday: 'long' }
+        dayHeaderFormat:  { weekday: 'long' },
+        dayCellDidMount: function(info) {
+          info.el.style.borderRight = '1px solid #ccc';
+        },
+        slotLaneClassNames: 'fc-slot-lane-border'
       });
       calendarEl.classList.toggle('calendar-disabled', !isEditable);
       calendar.render();
