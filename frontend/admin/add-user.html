@@ -114,11 +114,8 @@
     <div class="form-row">
       <label>Country:</label>
       <select class="select_add-user" id="country">
-        <option>Select</option>
-        <option>Germany</option>
-        <option>USA</option>
-        <option>Turkey</option>
-      </select>
+      <option value="">Select</option>
+    </select>
     </div>
     <div class="form-row">
       <label for="city">City:</label>
@@ -332,6 +329,28 @@ const response = await fetch("http://localhost:8000/admin/users", {
   function goBack() {
     window.history.back();
   }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+  const token = sessionStorage.getItem("accessToken");
+  if (!token) return;
+
+  try {
+    const res = await fetch("http://localhost:8000/profile/countries", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    const countries = await res.json();
+    const select = document.getElementById("country");
+    countries.forEach(country => {
+      const option = new Option(country, country);
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Failed to load countries:", err);
+  }
+});
+
 </script>
 
 

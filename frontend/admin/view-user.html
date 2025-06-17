@@ -150,8 +150,12 @@ async function loadUserData() {
 
     const user = await response.json();
 
+    const imageUrl = user.profile_picture && user.profile_picture.startsWith("/static/")
+      ? `http://localhost:8000${user.profile_picture}`
+      : "../images/avatar.png";
+
     userData.innerHTML = `
-      <div>Profile Picture:</div><div>${user.profile_picture || '[Image Placeholder]'}</div>
+      <div>Profile Picture:</div><div><img src="${imageUrl}" alt="Profile Picture" class="avatar" style="width: 100px; height: 100px; border-radius: 50%;" /></div>
       <div>User ID:</div><div>${user.id}</div>
       <div>Role:</div><div>${capitalize(user.role)}</div>
       <div>First Name:</div><div>${user.first_name}</div>
@@ -164,6 +168,7 @@ async function loadUserData() {
       <div>City:</div><div>${user.city || '-'}</div>
       <div>Registered:</div><div>${user.registered}</div>
     `;
+
 
     actionBtn.textContent = user.status === "active" ? "🔴 Deactivate Account" : "🟢 Activate Account";
     actionBtn.className = user.status === "active" ? "btn deactivate" : "btn activate";
