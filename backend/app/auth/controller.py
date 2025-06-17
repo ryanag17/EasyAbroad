@@ -613,8 +613,13 @@ async def get_consultant_profile(db: AsyncSession, user_id: int):
         "languages"       : languages
     }
 
+
+from app.auth.models import RefreshToken
+from pathlib import Path
+from sqlalchemy import delete
+
 # New endpoint for account deletion / IK 13.06
-@router.delete("/", summary="Delete your account")
+@router.delete("", summary="Delete your account")
 async def delete_account(
     payload: DeleteAccountRequest,
     db: AsyncSession = Depends(get_db),
@@ -622,20 +627,29 @@ async def delete_account(
 ):
     user_id = current_user["user_id"]
 
-    # Fetching the user row
-    stmt = select(User.email, User.password_hash).where(User.id == user_id)
-    result = await db.execute(stmt)
-    row = result.first()
-    if not row:
-        raise HTTPException(status_code=404, detail="User not found")
+    # 1) Load the user
+    user = await db.get(User, user_id)
+    if not user:
+        raise HTTPException(404, "User not found")
 
-    # Verifying email  password
-    if payload.email.lower() != row.email.lower() \
-       or not bcrypt.checkpw(payload.password.encode(), row.password_hash.encode()):
-        raise HTTPException(status_code=400, detail="Email or password is incorrect")
+    # 2) Verify email & password
+    if payload.email.lower() != user.email.lower() \
+       or not bcrypt.checkpw(payload.password.encode(), user.password_hash.encode()):
+        raise HTTPException(400, "Email or password is incorrect")
 
-    # Deleting the user
-    await db.execute(delete(User).where(User.id == user_id))
+    # 3) **Delete all refresh tokens** for this user
+    await db.execute(
+        delete(RefreshToken).where(RefreshToken.user_id == user_id)
+    )
+
+    # 4) Delete profile picture file
+    if user.profile_picture:
+        pic = Path(".") / user.profile_picture.lstrip("/")
+        if pic.exists():
+            pic.unlink()
+
+    # 5) Now delete the user (this will cascade your SQLAlchemy relationships)
+    await db.delete(user)
     await db.commit()
 
-    return {"message": "Account deleted successfully"}
+    return {"message": "Account deleted successfully"} 
