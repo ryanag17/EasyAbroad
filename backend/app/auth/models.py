@@ -1,7 +1,8 @@
 from datetime import datetime, date
 from typing import Literal, List, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+
+from pydantic import BaseModel, EmailStr, Field, constr
 from sqlalchemy import (
     Column,
     Integer,
@@ -11,9 +12,12 @@ from sqlalchemy import (
     Date,
     Enum,
     ForeignKey,
-    text
+    text,
+    LargeBinary,
+    Index
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.mysql import JSON
 from pydantic_settings import SettingsConfigDict
 
 from app.db import Base
@@ -38,18 +42,17 @@ class UserCreate(BaseModel):
 
     city            : Optional[str] = None
 
-    # Make country_name REQUIRED (no longer Optional)
-    # Must match the NOT NULL constraint in the SQL schema
+    # Must match NOT NULL constraint
     country_name    : Optional[str] = Field(None, alias="country_name")
 
     birthday        : Optional[date] = None
     gender          : Optional[Literal["male","female","other"]] = None
     profile_picture : Optional[str] = None
 
-    # If role == "admin", they may include an access_level
+    # If role == "admin", may include an access_level
     access_level    : Optional[Literal["standard","super"]] = None
 
-    # Instead of a comma-separated string, accept a list of language-IDs
+    # Instead of comma-separated, accept list of language IDs
     languages       : Optional[List[int]] = None
 
     model_config = SettingsConfigDict(populate_by_name=True)
@@ -70,6 +73,38 @@ class TokenOut(BaseModel):
     role:         str
 
 
+# ────────── New schema for updating the profile ──────────
+class UserUpdateProfile(BaseModel):
+    first_name   : Optional[str] = None
+    last_name    : Optional[str] = None
+    city         : Optional[str] = None
+    country_name : Optional[str] = Field(None, alias="country_name")
+    gender       : Optional[Literal["male","female","other"]] = None
+    languages    : Optional[List[int]] = None
+
+    class Config:
+        validate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "first_name": "Alice",
+                "last_name": "Smith",
+                "city": "Berlin",
+                "country_name": "Germany",
+                "gender": "female",
+                "languages": [1, 5, 8]
+            }
+        }
+
+
+class ChangePasswordRequest(BaseModel):
+    old_password: constr(min_length=8)
+    new_password: constr(min_length=8)
+
+
+class DeleteAccountRequest(BaseModel):
+    email: EmailStr
+    password: str
+
 
 # =========================
 # SQLAlchemy ORM Models
@@ -83,39 +118,24 @@ class User(Base):
     last_name       = Column(String(255), nullable=False)
     email           = Column(String(255), unique=True, index=True, nullable=False)
     password_hash   = Column(String(255), nullable=False)
-    role            = Column(
-        Enum("student","consultant","admin", name="user_role"),
-        nullable=False
-    )
+    role            = Column(Enum("student","consultant","admin", name="user_role"), nullable=False)
     city            = Column(String(255), nullable=True)
-
-    country_name = Column(String)
-
+    country_name    = Column(String, nullable=False)
     birthday        = Column(Date, nullable=True)
     gender          = Column(Enum("male","female","other", name="gender"), nullable=True)
     access_level    = Column(Enum("standard","super", name="access_level"), default="standard")
     profile_picture = Column(String(255), nullable=True)
+    is_active       = Column(Boolean, default=True, nullable=False)
 
-    # Fields for “forgot password” flows
+
     reset_token     = Column(String(255), nullable=True)
     token_expiry    = Column(DateTime, nullable=True)
 
-    created_at = Column(
-        DateTime,
-        server_default=text("CURRENT_TIMESTAMP"),
-        nullable=False
-    )
-    updated_at = Column(
-        DateTime,
-        server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
-        nullable=False
-    )
+    created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
+    updated_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"), nullable=False)
 
-    # Relationship to refresh tokens
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
-
-    # Many-to-many relationship: users ↔ languages
-    languages = relationship("UserLanguage", back_populates="user")
+    languages      = relationship("UserLanguage", back_populates="user")
 
 
 class Language(Base):
@@ -127,12 +147,13 @@ class Language(Base):
 
     users = relationship("UserLanguage", back_populates="language")
 
+
 class Country(Base):
     __tablename__ = "countries"
 
     id           = Column(Integer, primary_key=True, index=True)
     country_name = Column(String(100), nullable=False, unique=True)
-    country_code = Column(String(2),   nullable=False, unique=True)
+    country_code = Column(String(2), nullable=False, unique=True)
 
 
 class UserLanguage(Base):
@@ -148,7 +169,6 @@ class UserLanguage(Base):
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 
-    # Use INTEGER to match your MySQL DDL (id INT AUTO_INCREMENT)
     id         = Column(Integer, primary_key=True, index=True)
     token      = Column(String(64), unique=True, nullable=False, index=True)
     user_id    = Column(Integer, ForeignKey("users.id"), nullable=False)
@@ -157,28 +177,39 @@ class RefreshToken(Base):
     expires_at = Column(DateTime, nullable=False)
     revoked    = Column(Boolean, default=False, nullable=False)
 
-# ────────── New schema for updating the profile / IK 06.06 ──────────
-from typing import List, Optional
-from pydantic import BaseModel, Field
-from typing import Literal
 
-class UserUpdateProfile(BaseModel):
-    first_name   : Optional[str] = None
-    last_name    : Optional[str] = None
-    city         : Optional[str] = None
-    country_name : Optional[str] = Field(None, alias="country_name")
-    gender       : Optional[Literal["male","female","other"]] = None
-    languages    : Optional[List[int]] = None
+class ConsultantAvailability(Base):
+    __tablename__ = "consultant_availability"
 
-    class Config:
-        allow_population_by_field_name = True
-        schema_extra = {
-            "example": {
-                "first_name": "Alice",
-                "last_name": "Smith",
-                "city": "Berlin",
-                "country_name": "Germany",
-                "gender": "female",
-                "languages": [1, 5, 8]
-            }
-        }
+    id             = Column(Integer, primary_key=True)
+    consultant_id  = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    days_of_week   = Column(JSON, nullable=False)  # e.g. [1,3,5]
+    start_time     = Column(String(5), nullable=False)  # "09:30"
+    end_time       = Column(String(5), nullable=False)  # "10:30"
+
+    consultant = relationship("User", back_populates="availability")
+
+
+User.availability = relationship(
+    "ConsultantAvailability",
+    back_populates="consultant",
+    cascade="all, delete-orphan"
+)
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id                = Column(Integer, primary_key=True, index=True)
+    sender_id         = Column(Integer, ForeignKey("users.id"), nullable=False)
+    receiver_id       = Column(Integer, ForeignKey("users.id"), nullable=False)
+    booking_id        = Column(Integer, nullable=True)
+    encrypted_message = Column(LargeBinary(512), nullable=False)
+    encryption_iv     = Column(LargeBinary(16),  nullable=False)
+    sent_at           = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    __table_args__ = (
+        Index("ix_messages_booking", "booking_id"),
+        Index("ix_messages_sender_receiver", "sender_id", "receiver_id"),
+        Index("ix_messages_sent_at", "sent_at"),
+    )
+

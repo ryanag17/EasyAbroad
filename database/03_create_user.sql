@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   gender ENUM('male','female','other'),
   access_level ENUM('standard','super') DEFAULT 'standard',
   profile_picture VARCHAR(255),
+  is_active       BOOLEAN DEFAULT TRUE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (country_name) REFERENCES countries(country_name)

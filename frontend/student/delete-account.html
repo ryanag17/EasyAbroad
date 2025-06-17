@@ -121,6 +121,13 @@
 
   <script src="../auth.js"></script>
   <script src="../script.js"></script>        
+<<<<<<< HEAD
+  <script>
+    const form       = document.getElementById("deleteAccountForm");
+    const inpEmail   = document.getElementById("email");
+    const inpPass    = document.getElementById("deletePassword");
+    const errDisplay = document.getElementById("deleteError");
+=======
     <script>
         (async () => {
     await autoEnforceRoleFromPath();
@@ -130,53 +137,49 @@
   const deletePassword = document.getElementById("deletePassword");
   const deleteError = document.getElementById("deleteError");
   let deleteFormDirty = false;
+>>>>>>> 8a85726c6954564f082dfde330004fafc372feb2
 
-  // dummy data
-  const dummyEmail = "user@example.com";
-  const dummyPassword = "123456";
-
-  deleteForm.addEventListener("input", () => {
-    deleteFormDirty = true;
-    deleteError.style.display = "none";
-  });
-
-  deleteForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const email = deleteEmail.value.trim();
-    const password = deletePassword.value;
-
-    if (email !== dummyEmail || password !== dummyPassword) {
-      deleteError.style.display = "block";
-      return;
-    }
-
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      deleteFormDirty = false;
-      alert("Your account has been deleted.");
-      window.location.href = "../../";
-    }
-  });
-
-  window.addEventListener("beforeunload", (e) => {
-    if (deleteFormDirty) {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-    }
-  });
+      errDisplay.style.display = "none";
 
-  // Toggle show/hide password
-  document.querySelectorAll(".toggle-password").forEach(button => {
-    button.addEventListener("click", () => {
-      const targetId = button.getAttribute("data-target");
-      const input = document.getElementById(targetId);
-      const isPassword = input.type === "password";
+      const email    = inpEmail.value.trim();
+      const password = inpPass.value;
 
-      input.type = isPassword ? "text" : "password";
-      button.textContent = isPassword ? "Hide" : "Show";
+      // Asking for final confirmation
+      if (!confirm("Are you sure you want to delete your account? This cannot be undone.")) {
+        return;
+      }
+
+      try {
+        const token = sessionStorage.getItem("accessToken");
+        if (!token) throw new Error("Not authenticated");
+
+        // 2) call the real DELETE endpoint
+        const resp = await fetch("http://localhost:8000/profile/", {
+          method: "DELETE",
+          headers: {
+            "Content-Type":  "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const body = await resp.json();
+        if (!resp.ok) {
+          // show server‐side error
+          throw new Error(body.detail || body.message || resp.statusText);
+        }
+
+        alert(body.message);  // “Account deleted successfully”
+        sessionStorage.clear();
+        window.location.href = "/";  // back to landing
+
+      } catch (err) {
+        errDisplay.textContent = err.message;
+        errDisplay.style.display = "block";
+      }
     });
-  });
-
-    </script>
+  </script>
 </body>
 </html>

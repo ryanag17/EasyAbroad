@@ -233,6 +233,7 @@ CREATE TABLE IF NOT EXISTS users (
   profile_picture VARCHAR(255),
   reset_token     VARCHAR(255),
   token_expiry    DATETIME,
+  is_active       BOOLEAN DEFAULT TRUE,
   created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -464,15 +465,17 @@ CREATE TABLE IF NOT EXISTS user_languages (
 );
 
 
--- 8) CALENDAR table
+-- 8) CONSULTANT_AVAILABILITY table
 --    Consultants’ availability slots; references users(id).
-CREATE TABLE IF NOT EXISTS Calendar (
-  user_id              INT NOT NULL,
-  available_day        ENUM('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
-  available_time_start TIME,
-  available_time_end   TIME,
-  PRIMARY KEY (user_id, available_day, available_time_start),
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS consultant_availability (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  consultant_id  INT NOT NULL,
+  days_of_week   JSON     NOT NULL,    -- e.g. [1,3,5]
+  start_time     VARCHAR(5) NOT NULL,  -- "09:30"
+  end_time       VARCHAR(5) NOT NULL,  -- "10:30"
+  FOREIGN KEY (consultant_id) REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 

@@ -14,6 +14,8 @@ from app.config import settings
 from app.db import get_db_session
 from app.consultancy.controller import delete_expired_consultancies
 from app.support.routes import support_router
+from app.admin.routes import router as admin_user_management_router
+from app.admin import routes as admin_routes
 
 
 # 1) Ensure any missing ENV vars fallback to defaults if needed
@@ -49,26 +51,36 @@ async def lifespan(app: FastAPI):
 # 3) FastAPI app with lifespan
 app = FastAPI(lifespan=lifespan)
 
+origins = [
+    "http://localhost:8080",
+    # add other allowed origins if needed, e.g. prod domain
+]
+
 # 4) CORS: allow only your frontend origin and credentials
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # ← your _exact_ frontend origin
-    allow_credentials=True,
+    allow_origins=origins,         # ← wildcard for now
+    allow_credentials=True, 
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 5) Allow all OPTIONS requests
+# # 5) Allow all OPTIONS requests
 @app.options("/{full_path:path}", include_in_schema=False)
 async def preflight_handler(full_path: str):
-    return Response(status_code=200)
+      return Response(status_code=200)
 
 # 6) Routers
 app.include_router(profile_router)
 app.include_router(auth_router, prefix="/auth")
 app.include_router(consultancy_router)
 app.include_router(support_router)
+app.include_router(admin_user_management_router)
+app.include_router(admin_routes.router, prefix="/admin")
 
+# 7) Messaging endpoints (student⇄consultant only)
+from app.auth.messages import router as messages_router
+app.include_router(messages_router)
 
 # 7) Health check
 @app.get("/", status_code=200)
@@ -80,3 +92,4 @@ BASE_DIR   = Path(__file__).parent.parent
 STATIC_DIR = BASE_DIR / "static"
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+

@@ -102,107 +102,79 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>     
     <script>
-        (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
-        const messages = [
-  {
-    id: 1,
-    consultant: "AMIDOVICH",
-    preview: "Hey, please upload your document...",
-    date: "28.04.2025",
-    unread: true,
-    avatar: "../images/avatar.png"
-  },
-  {
-    id: 2,
-    consultant: "Julia Weber",
-    preview: "Got your papers, I’ll review them tonight.",
-    date: "26.04.2025",
-    unread: false,
-    avatar: "../images/avatar.png"
-  },
-  {
-    id: 1,
-    consultant: "AMIDOVICH777",
-    preview: "Hey, please upload your document...",
-    date: "28.04.2025",
-    unread: true,
-    avatar: "../images/avatar.png"
-  }
-];
+   (async () => {
+      await autoEnforceRoleFromPath();
+    })();
+
+  const API_BASE = "http://localhost:8000/messages";
+const token    = sessionStorage.getItem("accessToken");
 
 
-function renderMessages() {
-  const container = document.querySelector('.chat-list-container');
-  container.innerHTML = '';
-
-  if (messages.length === 0) {
-    container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
-    return;
-  }
-
-  messages.forEach(msg => {
-    const card = document.createElement('div');
-    card.className = 'message-card';
-    const readStatus = JSON.parse(localStorage.getItem('readMessages')) || {};
-const isRead = readStatus[msg.consultant];
-
-
-
-
-if (!isRead && msg.unread) {
-  card.classList.add('unread'); // Still unread visually
-}
-
-
-    card.innerHTML = `
-      <div class="chat-avatar">
-        <img src="${msg.avatar}" alt="Avatar">
-      </div>
-      <div class="chat-content">
-        <h3>${msg.consultant}</h3>
-        <p class="message-preview">${msg.preview}</p>
-        <span class="message-date">${msg.date}</span>
-      </div>
-      <div class="chat-actions">
-        <button onclick="confirmDelete(${msg.id})">🗑️</button>
-      </div>
-    `;
-
-    card.addEventListener('click', () => {
-  const encodedName = encodeURIComponent(msg.consultant);
-  window.location.href = `chat.html?consultant=${encodedName}`; 
-});
-
-
-
-    container.appendChild(card);
-  });
-}
-
-
-function confirmDelete(id) {
-  event.stopPropagation(); // Prevent opening conversation on delete
-
-  const confirm = window.confirm("Are you sure you want to delete this conversation? This cannot be undone.");
-
-  if (confirm) {
-    const index = messages.findIndex(msg => msg.id === id);
-    if (index !== -1) {
-      messages.splice(index, 1);
-      renderMessages();
+    // 1) Fetch conversation summaries on page load
+    async function fetchThreads() {
+      const res = await fetch(API_BASE, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!res.ok) {
+        console.error("Failed to load threads", res.status);
+        return;
+      }
+      const threads = await res.json();
+      renderThreads(threads);
     }
-  }
-}
 
+    window.addEventListener("DOMContentLoaded", fetchThreads);
 
-renderMessages();
+    // 2) Render the list of conversation "threads"
+    function renderThreads(threads) {
+      const container = document.querySelector('.chat-list-container');
+      container.innerHTML = '';
 
+      if (threads.length === 0) {
+        container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
+        return;
+      }
 
+      threads.forEach(t => {
+        // Determine partner ID & name
+        const partnerId   = t.from_me ? t.receiver_id : t.sender_id;
+        const partnerName = `${t.first_name} ${t.last_name}`;
 
+        // Build card
+        const card = document.createElement('div');
+        card.className = 'message-card';
+        card.innerHTML = `
+          <div class="chat-avatar">
+            <img src="../images/avatar.png" alt="Avatar">
+          </div>
+          <div class="chat-content">
+            <h3>${partnerName}</h3>
+            <p class="message-preview">${t.message}</p>
+            <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
+          </div>
+          <div class="chat-actions">
+            <button onclick="confirmDelete(${partnerId})">🗑️</button>
+          </div>
+        `;
 
-localStorage.removeItem('readMessages');
+        // Clicking opens the chat thread
+        card.addEventListener('click', () => {
+          window.location.href = `chat.html?partnerId=${partnerId}`;
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    // 3) Confirm delete (you can wire up real API delete later)
+    function confirmDelete(partnerId) {
+      event.stopPropagation();
+      if (confirm("Delete this conversation?")) {
+        // TODO: call DELETE /messages/with/{partnerId} if supported
+        alert("Conversation deleted locally.");
+        fetchThreads();
+      }
+    }
 
     </script>
 </body>

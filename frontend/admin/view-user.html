@@ -119,60 +119,96 @@
       (async () => {
     await autoEnforceRoleFromPath();
   })();  
-          const userId = new URLSearchParams(window.location.search).get('user');
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find(u => u.id === userId);
 
-    const userData = document.getElementById('userData');
-    const actionBtn = document.getElementById('actionBtn');
-    const confirmModal = document.getElementById('confirmModal');
-    const confirmText = document.getElementById('confirmText');
+const userId = new URLSearchParams(window.location.search).get('user');
+const userData = document.getElementById('userData');
+const actionBtn = document.getElementById('actionBtn');
+const confirmModal = document.getElementById('confirmModal');
+const confirmText = document.getElementById('confirmText');
 
-    let changingToStatus = '';
+let changingToStatus = '';
+const token = sessionStorage.getItem("accessToken");
 
-    if (user) {
-      userData.innerHTML = `
-        <div>Profile Picture:</div><div>[Image Placeholder]</div>
-        <div>User ID:</div><div>${user.id}</div>
-        <div>Role:</div><div>${capitalize(user.role)}</div>
-        <div>First Name:</div><div>${user.firstName}</div>
-        <div>Last Name:</div><div>${user.lastName}</div>
-        <div>Email:</div><div>${user.email}</div>
-        <div>Status:</div><div>${capitalize(user.status)} ${user.status === 'active' ? '🔒' : '⚠️'}</div>
-        <div>Birthday:</div><div>${user.birthday || '-'}</div>
-        <div>Gender:</div><div>${user.gender || '-'}</div>
-        <div>Country:</div><div>${user.country || '-'}</div>
-        <div>City:</div><div>${user.city || '-'}</div>
-        <div>Registered:</div><div>${user.registered}</div>
-      `;
+async function loadUserData() {
+  if (!userId) {
+    userData.innerHTML = '<div>User ID not found in URL.</div>';
+    return;
+  }
 
-      if (user.status === 'active') {
-        actionBtn.textContent = '🔴 Deactivate Account';
-        actionBtn.className = 'btn deactivate';
-        changingToStatus = 'inactive';
-      } else {
-        actionBtn.textContent = '🟢 Activate Account';
-        actionBtn.className = 'btn activate';
-        changingToStatus = 'active';
+  try {
+    const response = await fetch(`http://localhost:8000/admin/users/${userId}`, {
+      headers: {
+        "Authorization": "Bearer " + token
       }
-    } else {
-      userData.innerHTML = '<div>User not found.</div>';
-      actionBtn.style.display = 'none';
+    });
+
+    if (!response.ok) {
+      userData.innerHTML = `<div>Failed to load user data (${response.status})</div>`;
+      actionBtn.style.display = "none";
+      return;
     }
+
+    const user = await response.json();
+
+    userData.innerHTML = `
+      <div>Profile Picture:</div><div>${user.profile_picture || '[Image Placeholder]'}</div>
+      <div>User ID:</div><div>${user.id}</div>
+      <div>Role:</div><div>${capitalize(user.role)}</div>
+      <div>First Name:</div><div>${user.first_name}</div>
+      <div>Last Name:</div><div>${user.last_name}</div>
+      <div>Email:</div><div>${user.email}</div>
+      <div>Status:</div><div>${capitalize(user.status)} ${user.status === 'active' ? '🔒' : '⚠️'}</div>
+      <div>Birthday:</div><div>${user.birthday || '-'}</div>
+      <div>Gender:</div><div>${user.gender || '-'}</div>
+      <div>Country:</div><div>${user.country || '-'}</div>
+      <div>City:</div><div>${user.city || '-'}</div>
+      <div>Registered:</div><div>${user.registered}</div>
+    `;
+
+    actionBtn.textContent = user.status === "active" ? "🔴 Deactivate Account" : "🟢 Activate Account";
+    actionBtn.className = user.status === "active" ? "btn deactivate" : "btn activate";
+    changingToStatus = user.status === "active" ? "inactive" : "active";
 
     actionBtn.onclick = () => {
       confirmText.textContent = `Are you sure about ${changingToStatus === 'inactive' ? 'deactivating' : 'activating'} this account?`;
       confirmModal.style.display = 'flex';
     };
+  } catch (err) {
+    userData.innerHTML = `<div>Error loading user: ${err.message}</div>`;
+    actionBtn.style.display = "none";
+  }
+}
 
-    function confirmChange(yes) {
-      confirmModal.style.display = 'none';
-      if (!yes) return;
+loadUserData();
 
-      user.status = changingToStatus;
-      localStorage.setItem('users', JSON.stringify(users));
-      window.location.href = 'user-management.html';
+
+    async function confirmChange(yes) {
+  confirmModal.style.display = 'none';
+  if (!yes) return;
+
+  try {
+    const token = sessionStorage.getItem("accessToken");
+    const response = await fetch(`http://localhost:8000/admin/users/${userId}/status`, {
+      method: "PATCH",
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (response.ok) {
+      alert("User status updated successfully.");
+      window.location.href = "user-management.html";
+    } else {
+      const err = await response.json();
+      alert("Failed to update user: " + (err.detail || response.status));
     }
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+}
+
+
+
 
     function capitalize(word) {
       return word.charAt(0).toUpperCase() + word.slice(1);

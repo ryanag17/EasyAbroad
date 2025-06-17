@@ -41,6 +41,9 @@ services:
       # Frontend URL
       FRONTEND_BASE_URL: http://localhost:8080
 
+      MESSAGE_ENCRYPTION_KEY:        KG6ye-MBVb_mkSHfT5ip__NoXwR__G09-F8UdXZrqhE=
+
+
   frontend:
     build:
       context: .
