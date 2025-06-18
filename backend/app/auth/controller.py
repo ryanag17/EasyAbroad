@@ -1,33 +1,22 @@
 from datetime import datetime, timedelta
 import bcrypt, secrets, shutil
 from pathlib import Path
+
 from fastapi import HTTPException, Depends, APIRouter, UploadFile, File
+from sqlalchemy import select, delete, update, text
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, text, delete, update
 
 from app.auth.models import (
-    User,
-    UserCreate,
-    UserLogin,
-    Language,
-    UserLanguage,
-    RefreshToken,
-    ForgotPasswordRequest,
-    ResetPasswordRequest,
-    UserUpdateProfile,
-    Country,
-    ChangePasswordRequest,
-    DeleteAccountRequest,
-    ConsultantAvailability,
-    Base
+    User, UserLanguage, Language, Country, RefreshToken
+)
+from app.auth.schemas import (
+    UserCreate, UserLogin, ForgotPasswordRequest, ResetPasswordRequest,
+    UserUpdateProfile, ChangePasswordRequest, DeleteAccountRequest
 )
 from app.auth.token_service import create_access_token, create_refresh_token
 from app.auth.email_service import send_reset_email
 from app.auth.token_verification import get_current_user
 from app.db import get_db
-from pydantic import BaseModel
-from typing import List
-import bcrypt
 
 
 
@@ -422,63 +411,6 @@ async def update_consultant_profile(
     }
 
 
-# Two new endpoints for updating the consultant timetable / IK 14.06
-class Slot(BaseModel):
-    daysOfWeek: List[int]
-    startTime:  str
-    endTime:    str
-
-@router.get(
-    "/consultant/timetable",
-    response_model=List[Slot],
-    summary="Fetch my current availability"
-)
-async def get_timetable(
-    db: AsyncSession = Depends(get_db),
-    current_user=Depends(get_current_user)
-):
-    if current_user["role"] != "consultant":
-        raise HTTPException(403, "Not a consultant")
-    rows = (await db.execute(
-        select(ConsultantAvailability)
-        .where(ConsultantAvailability.consultant_id == current_user["user_id"])
-    )).scalars().all()
-    return [
-        {"daysOfWeek": r.days_of_week, "startTime": r.start_time, "endTime": r.end_time}
-        for r in rows
-    ]
-
-@router.put(
-    "/consultant/timetable",
-    response_model=List[Slot],
-    summary="Overwrite my availability"
-)
-async def update_timetable(
-    slots: List[Slot],
-    db: AsyncSession = Depends(get_db),
-    current_user=Depends(get_current_user)
-):
-    if current_user["role"] != "consultant":
-        raise HTTPException(403, "Not a consultant")
-    uid = current_user["user_id"]
-
-    # deleting the old one
-    await db.execute(
-        delete(ConsultantAvailability)
-        .where(ConsultantAvailability.consultant_id == uid)
-    )
-    # inserting new
-    for s in slots:
-        db.add(ConsultantAvailability(
-            consultant_id=uid,
-            days_of_week=s.daysOfWeek,
-            start_time=s.startTime,
-            end_time=s.endTime
-        ))
-    await db.commit()
-
-    # returning what we saved
-    return slots
 
 
 

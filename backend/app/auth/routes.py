@@ -3,37 +3,29 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_db
 from app.config import settings
-from app.auth.models import (
-    UserCreate,
-    UserLogin,
-    TokenOut,
-    ForgotPasswordRequest,
-    ResetPasswordRequest,
+
+from app.auth.models import User
+from app.auth.schemas import (
+    UserCreate, UserLogin, TokenOut, ForgotPasswordRequest, ResetPasswordRequest
 )
 from app.auth.controller import (
-    register,
-    login,
-    get_student_profile,
-    get_consultant_profile,
-    forgot_password,
-    reset_password
+    register, login, get_student_profile, get_consultant_profile,
+    forgot_password, reset_password
 )
 from app.auth.token_service import (
-    create_access_token,
-    revoke_refresh_token,
-    rotate_refresh_token,
+    create_access_token, revoke_refresh_token, rotate_refresh_token
 )
 from app.auth.token_verification import (
-    get_current_user,
-    get_current_user_from_refresh,
+    get_current_user, get_current_user_from_refresh
 )
+
 
 router = APIRouter(tags=["auth"])
 
 from app.auth.models import User
 
 
-@router.get("/me")
+@router.get("/me", summary="Returns current logged users profile" )
 async def get_profile(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -61,9 +53,10 @@ def require_role(role_name: str):
 
 
 @router.post(
-    "/register",
+    "/register", 
     response_model=TokenOut,
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED, 
+    summary="Register function"
 )
 async def register_endpoint(
     user: UserCreate,
@@ -89,7 +82,7 @@ async def register_endpoint(
     }
 
 
-@router.post("/login", response_model=TokenOut)
+@router.post("/login", response_model=TokenOut, summary="Log in")
 async def login_endpoint(
     creds: UserLogin,
     response: Response,
@@ -114,7 +107,7 @@ async def login_endpoint(
     }
 
 
-@router.post("/refresh", response_model=TokenOut)
+@router.post("/refresh", response_model=TokenOut, summary="Refresh token")
 async def refresh_token_endpoint(
     response: Response,
     user_data=Depends(get_current_user_from_refresh),
@@ -144,7 +137,7 @@ async def refresh_token_endpoint(
     }
 
 
-@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT, summary="Log out")
 async def logout_endpoint(
     response: Response,
     user_data=Depends(get_current_user_from_refresh),
@@ -154,7 +147,7 @@ async def logout_endpoint(
     response.delete_cookie(key="refresh_token", path="/")
 
 
-@router.post("/forgot-password", status_code=status.HTTP_200_OK)
+@router.post("/forgot-password", status_code=status.HTTP_200_OK, summary="Forgot password - email sent with link")
 async def forgot_password_endpoint(
     data: ForgotPasswordRequest,
     db: AsyncSession = Depends(get_db),
@@ -162,7 +155,7 @@ async def forgot_password_endpoint(
     return await forgot_password(db, data)
 
 
-@router.post("/reset-password", status_code=status.HTTP_200_OK)
+@router.post("/reset-password", status_code=status.HTTP_200_OK, summary="Forgot password")
 async def reset_password_endpoint(
     data: ResetPasswordRequest,
     db: AsyncSession = Depends(get_db),
@@ -170,7 +163,7 @@ async def reset_password_endpoint(
     return await reset_password(db, data)
 
 
-@router.get("/students/profile", status_code=status.HTTP_200_OK)
+@router.get("/students/profile", status_code=status.HTTP_200_OK, summary="Student full profile")
 async def student_profile(
     user=Depends(require_role("student")),
     db: AsyncSession = Depends(get_db),
@@ -178,7 +171,7 @@ async def student_profile(
     return await get_student_profile(db, user["user_id"])
 
 
-@router.get("/consultants/profile", status_code=status.HTTP_200_OK)
+@router.get("/consultants/profile", status_code=status.HTTP_200_OK, summary="Consultant full profile")
 async def consultant_profile(
     user=Depends(require_role("consultant")),
     db: AsyncSession = Depends(get_db),
@@ -186,7 +179,7 @@ async def consultant_profile(
     return await get_consultant_profile(db, user["user_id"])
 
 
-@router.get("/debug-headers", status_code=status.HTTP_200_OK)
+@router.get("/debug-headers", status_code=status.HTTP_200_OK, summary="Required admin user")
 async def debug_headers(request: Request):
     return {k: v for k, v in request.headers.items()}
 

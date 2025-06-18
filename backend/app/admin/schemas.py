@@ -1,6 +1,7 @@
+
 from pydantic import BaseModel
 from datetime import datetime
-from app.auth.models import UserCreate
+from app.auth.schemas import UserCreate
 
 class UserOut(BaseModel):
     id: int

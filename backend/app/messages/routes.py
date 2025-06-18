@@ -1,40 +1,27 @@
-import os
-import base64
+import os, base64
 from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import or_, select
+from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from cryptography.fernet import Fernet
 from pydantic import BaseModel
 
 from app.db import get_db
-from app.auth.models import User, Message
+from app.auth.models import User
+from app.messages.models import Message
 from app.auth.token_verification import get_current_user
+from app.messages.schemas import MessageOut
+from app.messages.schemas import SendMessageSchema, MessageOut
 
-
-class SendMessageSchema(BaseModel):
-    receiver_id: int
-    message: str
-    booking_id: Optional[int] = None
-
-class MessageOut(BaseModel):
-    id: int
-    sender_id: int
-    receiver_id: int
-    message: str
-    from_me: bool
-    sent_at: datetime
-    first_name: str
-    last_name: str
 
 
 fernet = Fernet(os.environ["MESSAGE_ENCRYPTION_KEY"].encode())
 router = APIRouter(prefix="/messages", tags=["messages"])
 
 
-@router.post("/send", response_model=dict)
+@router.post("/send", response_model=dict, summary="Send message")
 async def send_message(
     data: SendMessageSchema,
     db: AsyncSession = Depends(get_db),
@@ -67,7 +54,7 @@ async def send_message(
     return {"status": "sent"}
 
 
-@router.get("", response_model=List[MessageOut])
+@router.get("", response_model=List[MessageOut], summary="Fetches a list of last messages")
 async def get_conversation_summaries(
     db: AsyncSession = Depends(get_db),
     user: dict = Depends(get_current_user)  # changed
@@ -111,7 +98,7 @@ async def get_conversation_summaries(
     return out
 
 
-@router.get("/with/{partner_id}", response_model=List[MessageOut])
+@router.get("/with/{partner_id}", response_model=List[MessageOut], summary="Chat summary")
 async def get_full_thread(
     partner_id: int,
     db: AsyncSession = Depends(get_db),

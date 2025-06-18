@@ -16,7 +16,7 @@ from app.consultancy.controller import delete_expired_consultancies
 from app.support.routes import support_router
 from app.admin.routes import router as admin_user_management_router
 from app.admin import routes as admin_routes
-
+from app.appointment.routes import router as appointment_router
 
 # 1) Ensure any missing ENV vars fallback to defaults if needed
 os.environ.setdefault("DB_HOST",            "127.0.0.1")
@@ -77,9 +77,10 @@ app.include_router(consultancy_router)
 app.include_router(support_router)
 app.include_router(admin_user_management_router)
 app.include_router(admin_routes.router, prefix="/admin")
-
+app.include_router(appointment_router)
 # 7) Messaging endpoints (student⇄consultant only)
-from app.auth.messages import router as messages_router
+from app.messages.routes import router as messages_router  # ✅
+
 app.include_router(messages_router)
 
 # 7) Health check
@@ -92,4 +93,3 @@ BASE_DIR   = Path(__file__).parent.parent
 STATIC_DIR = BASE_DIR / "static"
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-
