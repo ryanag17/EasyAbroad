@@ -1,8 +1,9 @@
-
 from pydantic import BaseModel
 from datetime import datetime
 from app.auth.schemas import UserCreate
 
+
+# Defines shape of user data returned to the frontend
 class UserOut(BaseModel):
     id: int
     first_name: str
@@ -16,5 +17,6 @@ class UserOut(BaseModel):
         orm_mode = True
 
 
+# Inherits everthing from UserCreate -> reuses it in admin-specific context with admin_create_user route.
 class AdminCreateUser(UserCreate):
     pass

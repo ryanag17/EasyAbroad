@@ -7,22 +7,26 @@ from app.admin.controller import fetch_all_users, create_user_by_admin
 from app.admin.schemas import UserOut, AdminCreateUser
 from app.auth.models import User
 
+
+# FastAPI router for all admin endpoints.
 router = APIRouter(
     prefix="/admin",
-    tags=["admin-user-management"]
+    tags=["Admin"]
 )
 
-# ✅ Admin check
+
+# Dependency ensuring that current user is an admin:
 def require_admin(user=Depends(get_current_user)):
     if not user or user.get("role") != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access only"
         )
-    return user  # return the user dict if needed in the route
+    return user 
 
-# ✅ Secure route
-@router.get("/users", response_model=list[UserOut])
+
+# Retrieve users with optional filters.
+@router.get("/users", response_model=list[UserOut], summary="Admin: Get all users with optional filters")
 async def get_all_users(
     search: str = Query(None),
     column: str = Query("first_name"),
@@ -34,7 +38,8 @@ async def get_all_users(
     return await fetch_all_users(db, search=search, role=role, status=status, column=column)
 
 
-@router.post("/users", status_code=201)
+# Allows admin to create new user account - sends JSON data in request & passes data to create_user_by_admin
+@router.post("/users", status_code=201, summary="Admin: Create new user account")
 async def admin_create_user(
     user_data: AdminCreateUser = Body(...),
     db: AsyncSession = Depends(get_db),
@@ -43,7 +48,8 @@ async def admin_create_user(
     return await create_user_by_admin(user_data, db)
 
 
-@router.get("/users/{user_id}")
+# Fetch a specific user by user_id -> returns detailed user info.
+@router.get("/users/{user_id}", summary="Admin: Get full user info by ID")
 async def get_user_by_id(
     user_id: int,
     db: AsyncSession = Depends(get_db),
@@ -68,7 +74,9 @@ async def get_user_by_id(
         "profile_picture": user.profile_picture or ""
     }
 
-@router.patch("/users/{user_id}/status", status_code=200)
+
+# Toggles is_active status of user -> deactivate/activate function under view-user.html.
+@router.patch("/users/{user_id}/status", status_code=200, summary="Admin: Toggle user is_active status (deactivate/activate account)")
 async def update_user_status(
     user_id: int = Path(..., gt=0),
     db: AsyncSession = Depends(get_db),
@@ -89,7 +97,9 @@ async def update_user_status(
         "new_status": "active" if user.is_active else "inactive"
     }
 
-@router.delete("/users/{user_id}", status_code=204)
+
+# Deletes user from database -> delete account function under view-user.html.
+@router.delete("/users/{user_id}", status_code=204, summary="Admin: Delete user account by ID")
 async def delete_user_by_admin(
     user_id: int = Path(..., gt=0),
     db: AsyncSession = Depends(get_db),
