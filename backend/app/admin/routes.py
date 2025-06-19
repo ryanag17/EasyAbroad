@@ -25,12 +25,14 @@ def require_admin(user=Depends(get_current_user)):
 @router.get("/users", response_model=list[UserOut])
 async def get_all_users(
     search: str = Query(None),
+    column: str = Query("first_name"),
     role: str = Query(None),
     status: str = Query(None),
     db: AsyncSession = Depends(get_db),
-    current_user=Depends(require_admin),  # 👈 this enforces admin role
+    current_user=Depends(require_admin), 
 ):
-    return await fetch_all_users(db, search=search, role=role, status=status)
+    return await fetch_all_users(db, search=search, role=role, status=status, column=column)
+
 
 @router.post("/users", status_code=201)
 async def admin_create_user(
@@ -39,7 +41,6 @@ async def admin_create_user(
     current_user=Depends(require_admin),
 ):
     return await create_user_by_admin(user_data, db)
-
 
 
 @router.get("/users/{user_id}")
@@ -87,3 +88,16 @@ async def update_user_status(
         "user_id": user.id,
         "new_status": "active" if user.is_active else "inactive"
     }
+
+@router.delete("/users/{user_id}", status_code=204)
+async def delete_user_by_admin(
+    user_id: int = Path(..., gt=0),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin)
+):
+    user = await db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    await db.delete(user)
+    await db.commit()

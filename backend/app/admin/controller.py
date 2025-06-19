@@ -1,12 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, or_
+from sqlalchemy import String, select, or_
 from app.auth.models import User
 from sqlalchemy.sql import text
 from app.auth.hashing import Hasher
 from app.admin.schemas import AdminCreateUser
 from app.auth.token_service import create_access_token
 
-async def fetch_all_users(db: AsyncSession, search=None, role=None, status=None):
+
+async def fetch_all_users(db: AsyncSession, search=None, role=None, status=None, column="first_name"):
     stmt = select(
         User.id,
         User.first_name,
@@ -25,7 +26,18 @@ async def fetch_all_users(db: AsyncSession, search=None, role=None, status=None)
 
     if search:
         search = f"%{search.lower()}%"
-        stmt = stmt.where(User.first_name.ilike(search))  # add last_name/email if needed
+        column_map = {
+            "first_name": User.first_name,
+            "last_name": User.last_name,
+            "email": User.email,
+            "id": User.id.cast(String),  # allow LIKE on integer ID
+        }
+
+        # Use column from frontend if valid, else fallback to first_name
+        if column in column_map:
+            stmt = stmt.where(column_map[column].ilike(search))
+        else:
+            stmt = stmt.where(User.first_name.ilike(search))  # fallback
 
     result = await db.execute(stmt)
     rows = result.all()
@@ -42,6 +54,8 @@ async def fetch_all_users(db: AsyncSession, search=None, role=None, status=None)
         }
         for row in rows
     ]
+
+
 
 
 async def create_user_by_admin(user_data: AdminCreateUser, db: AsyncSession):

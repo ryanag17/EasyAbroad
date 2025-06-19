@@ -3180,6 +3180,7 @@ textarea#reviewText {
       cursor: pointer;
     }
     
+    #searchColumn,
     #roleFilter,
     #statusFilter{
     display: inline-block;

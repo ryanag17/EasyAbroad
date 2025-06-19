@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+  <style>
+    .error-message {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
@@ -61,85 +70,102 @@
 
 
 <!-- Modal Window -->
-  <div  class="add-user_modal">
+<div class="add-user_modal">
   <div class="modal-content_add">
-  <h2 class="form-title">Add User Form</h2>
-  <form class="user-form" id="addUserForm">
-    <div class="form-row">
-      <label for="name">Name:</label>
+    <h2 class="form-title">Add User Form</h2>
+    <form class="user-form" id="addUserForm">
+
+      <div class="form-row">
+        <label for="name">Name:</label>
         <input type="text" class="name_input" id="name" placeholder="Enter your name" />
-    </div>
-    <div class="form-row">
-      <label for="surname">Surname:</label>
+        <p class="error-message" id="name-error"></p>
+      </div>
+
+      <div class="form-row">
+        <label for="surname">Surname:</label>
         <input type="text" id="surname" class="name_input" placeholder="Enter your surname" />
-    </div>
-    <div class="form-row">
-      <label for="email-id">Email:</label>
-        <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" >
-        <div id="icon">
-        </div>
+        <p class="error-message" id="surname-error"></p>
+      </div>
+
+      <div class="form-row">
+        <label for="email-id">Email:</label>
+        <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" />
+        <div id="icon"></div>
         <p id="error-msg">Please Enter A Valid Email</p>
-    </div>
-    <div class="form-row">
-      <label class="label_repeat_add-user" for="password-id">Password:</label>
+        <p class="error-message" id="email-error"></p>
+      </div>
+
+      <div class="form-row">
+        <label class="label_repeat_add-user" for="password-id">Password:</label>
         <div class="password-wrapper_add-user">
-         <input type="password" class="password_class" id="password-id" placeholder="Enter Password">
+          <input type="password" class="password_class" id="password-id" placeholder="Enter Password" />
           <i class="fas fa-eye toggle-password" toggle="#password-id"></i>
         </div>
-    </div>
-    <div class="form-row">
-      <label class="label_repeat_add-user" for="repeat">Repeat:</label>
+        <p class="error-message" id="password-error"></p>
+      </div>
+
+      <div class="form-row">
+        <label class="label_repeat_add-user" for="repeat">Repeat:</label>
         <div class="password-wrapper_add-user">
-          <input type="password" id="repeat" class="password_class" placeholder="Repeat your password">
+          <input type="password" id="repeat" class="password_class" placeholder="Repeat your password" />
           <i class="fas fa-eye toggle-password" toggle="#repeat"></i>
         </div>
-    </div>
-    <div class="form-row">
-      <label for="birthday">Date of Birth:</label>
-      <input type="date" class="name_input" name="birthday" id="birthday">
-    </div>
-    <div id="birthdayWarning">
-     You must be at least 18 years old to create an account.
-    </div>
+        <p class="error-message" id="repeat-error"></p>
+      </div>
 
-    <div class="form-row">
-      <label>Gender:</label>
-      <select class="select_add-user" id="gender">
-        <option>Select</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label>Country:</label>
-      <select class="select_add-user" id="country">
-      <option value="">Select</option>
-    </select>
-    </div>
-    <div class="form-row">
-      <label for="city">City:</label>
+
+      <div class="form-row">
+        <label for="birthday">Date of Birth:</label>
+        <input type="date" class="name_input" name="birthday" id="birthday" />
+        <p class="error-message" id="birthday-error"></p>
+      </div>
+
+      <div class="form-row">
+        <label>Gender:</label>
+        <select class="select_add-user" id="gender">
+          <option>Select</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+        <p class="error-message" id="gender-error"></p>
+      </div>
+
+      <div class="form-row">
+        <label>Country:</label>
+        <select class="select_add-user" id="country">
+          <option value="">Select</option>
+        </select>
+        <p class="error-message" id="country-error"></p>
+      </div>
+
+      <div class="form-row">
+        <label for="city">City:</label>
         <input type="text" id="city" class="name_input" placeholder="Enter city" />
-    </div>
-    <div class="form-row">
-      <label>Role:</label>
-      <select class="select_add-user" id="role">
-        <option>Select</option>
-        <option>Student</option>
-        <option>Consultant</option>
-        <option>Admin</option>
-      </select>
-    </div>
-    <input type="hidden" id="status" value="active" />
+        <p class="error-message" id="city-error"></p>
+      </div>
 
-    <div class="form-buttons">
-      <button type="submit" class="edit-btn" id="submitBtn" disabled>+ Create User</button>
-      <button type="button" class="return_btn" onclick="goBack()">✖ Go Back</button>
-    </div>
-  </form>
+      <div class="form-row">
+        <label>Role:</label>
+        <select class="select_add-user" id="role">
+          <option>Select</option>
+          <option>Student</option>
+          <option>Consultant</option>
+          <option>Admin</option>
+        </select>
+        <p class="error-message" id="role-error"></p>
+      </div>
+
+      <input type="hidden" id="status" value="active" />
+
+      <div class="form-buttons">
+        <button type="submit" class="edit-btn" id="submitBtn">+ Create User</button>
+        <button type="button" class="return_btn" onclick="goBack()">✖ Go Back</button>
+      </div>
+    </form>
+  </div>
 </div>
 
-  </div>
 
       
         
@@ -193,7 +219,7 @@
     }
   })();
 
-  // Email validation function
+  // Email live checker (still used visually)
   function checker() {
     const emailId = document.getElementById("email-id");
     const errorMsg = document.getElementById("error-msg");
@@ -218,31 +244,14 @@
     }
   }
 
-  // Birthday / age validation
-  document.getElementById('birthday').addEventListener('input', function () {
-    const birthday = new Date(this.value);
-    const today = new Date();
-    const age = today.getFullYear() - birthday.getFullYear();
-    const isOldEnough = age > 18 || (age === 18 && (
-      today.getMonth() > birthday.getMonth() ||
-      (today.getMonth() === birthday.getMonth() && today.getDate() >= birthday.getDate())
-    ));
+  function validateAddUserForm() {
+    let isValid = true;
 
-    const warning = document.getElementById('birthdayWarning');
-    const submitBtn = document.getElementById('submitBtn');
-
-    if (!isOldEnough) {
-      warning.style.display = 'block';
-      submitBtn.disabled = true;
-    } else {
-      warning.style.display = 'none';
-      submitBtn.disabled = false;
-    }
-  });
-
-  // Handle user creation via backend API
-  document.getElementById('addUserForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
+    // Clear all previous error messages
+    document.querySelectorAll('.error-message').forEach(p => {
+      p.style.display = 'none';
+      p.textContent = '';
+    });
 
     const name = document.getElementById('name').value.trim();
     const surname = document.getElementById('surname').value.trim();
@@ -250,32 +259,105 @@
     const password = document.getElementById('password-id').value;
     const repeat = document.getElementById('repeat').value;
     const birthday = document.getElementById('birthday').value;
+    const gender = document.getElementById('gender').value;
+    const country = document.getElementById('country').value;
+    const city = document.getElementById('city').value.trim();
+    const role = document.getElementById('role').value;
+
+    const emailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
+
+    if (!name) {
+      showError('name-error', 'Please enter a name.');
+      isValid = false;
+    }
+
+    if (!surname) {
+      showError('surname-error', 'Please enter a surname.');
+      isValid = false;
+    }
+
+    if (!emailRegex.test(email)) {
+      showError('email-error', 'Please enter a valid email.');
+      isValid = false;
+    }
+
+    if (password.length < 6) {
+      showError('password-error', 'Password must be at least 6 characters.');
+      isValid = false;
+    }
+
+    if (password !== repeat) {
+      showError('repeat-error', 'Passwords do not match.');
+      isValid = false;
+    }
+
+    if (!birthday) {
+      showError('birthday-error', 'Please enter your date of birth.');
+      isValid = false;
+    } else {
+      const bday = new Date(birthday);
+      const today = new Date();
+      if (bday > today) {
+        showError('birthday-error', 'Birthday cannot be in the future.');
+        isValid = false;
+      } else {
+        const age = new Date(today - bday).getUTCFullYear() - 1970;
+        if (age < 18) {
+          showError('birthday-error', 'User must be at least 18 years old.');
+          isValid = false;
+        } else if (age > 100) {
+          showError('birthday-error', 'User must be younger than 100 years old.');
+          isValid = false;
+        }
+      }
+    }
+
+    if (gender === 'Select') {
+      showError('gender-error', 'Please select a gender.');
+      isValid = false;
+    }
+
+    if (!country || country === 'Select') {
+      showError('country-error', 'Please select a country.');
+      isValid = false;
+    }
+
+    if (!city) {
+      showError('city-error', 'Please enter a city.');
+      isValid = false;
+    }
+
+    if (role === 'Select') {
+      showError('role-error', 'Please select a role.');
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  function showError(id, message) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.textContent = message;
+      el.style.display = 'block';
+    }
+  }
+
+  document.getElementById('addUserForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    if (!validateAddUserForm()) return;
+
+    const name = document.getElementById('name').value.trim();
+    const surname = document.getElementById('surname').value.trim();
+    const email = document.getElementById('email-id').value.trim();
+    const password = document.getElementById('password-id').value;
+    const birthday = document.getElementById('birthday').value;
     const gender = document.getElementById('gender').value.toLowerCase();
     const country = document.getElementById('country').value;
     const city = document.getElementById('city').value.trim();
     const role = document.getElementById('role').value.toLowerCase();
     const access_level = role === "admin" ? "super" : "standard";
-
-    if (!name || !surname || !email || !password) {
-      alert("Please complete all required fields.");
-      return;
-    }
-    if (password !== repeat) {
-      alert("Passwords do not match.");
-      return;
-    }
-    if (gender === "select") {
-      alert("Please select a gender.");
-      return;
-    }
-    if (country === "Select") {
-      alert("Please select a country.");
-      return;
-    }
-    if (role === "select") {
-      alert("Please select a role.");
-      return;
-    }
 
     const userPayload = {
       name,
@@ -294,62 +376,60 @@
 
     try {
       const token = sessionStorage.getItem("accessToken");
-
-const response = await fetch("http://localhost:8000/admin/users", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + sessionStorage.getItem("accessToken")
-  },
-  body: JSON.stringify(userPayload)
-});
-
-
-
+      const response = await fetch("http://localhost:8000/admin/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(userPayload)
+      });
 
       if (response.ok) {
-  const data = await response.json();
-
-  // Optional: store token for testing purposes
-  localStorage.setItem("access_token", data.access_token);
-
-  alert("User created successfully!");
-  window.location.href = 'user-management.html';
-} else {
-  const error = await response.json();
-  alert("Error: " + (error.detail || "Something went wrong."));
-}
-
+        const data = await response.json();
+        localStorage.setItem("access_token", data.access_token);
+        alert("User created successfully!");
+        window.location.href = 'user-management.html';
+      } else {
+        const error = await response.json();
+        alert("Error: " + (error.detail || "Something went wrong."));
+      }
     } catch (err) {
       alert("Network error: " + err.message);
     }
   });
 
-  // Go Back button handler
   function goBack() {
     window.history.back();
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-  const token = sessionStorage.getItem("accessToken");
-  if (!token) return;
+    const bdayInput = document.getElementById("birthday");
+    const today = new Date();
+    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    const minDate = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate());
+    bdayInput.max = maxDate.toISOString().split("T")[0];
+    bdayInput.min = minDate.toISOString().split("T")[0];
 
-  try {
-    const res = await fetch("http://localhost:8000/profile/countries", {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
-    const countries = await res.json();
-    const select = document.getElementById("country");
-    countries.forEach(country => {
-      const option = new Option(country, country);
-      select.appendChild(option);
-    });
-  } catch (err) {
-    console.error("Failed to load countries:", err);
-  }
-});
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) return;
+
+    try {
+      const res = await fetch("http://localhost:8000/profile/countries", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const countries = await res.json();
+      const select = document.getElementById("country");
+      countries.forEach(country => {
+        const option = new Option(country, country);
+        select.appendChild(option);
+      });
+    } catch (err) {
+      console.error("Failed to load countries:", err);
+    }
+  });
 
 </script>
 
