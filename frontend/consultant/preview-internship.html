@@ -26,7 +26,7 @@
                     <a href="messages.html"> <li> Messages </li></a>
                     <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
                     <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="settings.html"> <li> settings </li></a>
+                    <a href="settings.html"> <li> Settings </li></a>
                     <a href="support-tickets.html"> <li> Support Tickets </li></a>  
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
@@ -47,13 +47,13 @@
 
 
     <main class="consultant-profile">
-        <a href="consultancy-areas.html" class="back-link">← Back to Consultancy Areas page</a>
+        <a href="consultancy-areas.html" class="back-link">← Back to Consultancy Areas Page</a>
         <section class="profile-box">
             <div class="profile-header">
                 <img src="../images/avatar.png" alt="Consultant Avatar" class="avatar">
                 <div>
                     <h2></h2>
-                    <div class="info-row"><strong>Focus of consultancy:</strong> Internship abroad</div>
+                    <div class="info-row"><strong>Focus of Consultancy:</strong> Internship Abroad</div>
                     <div class="info-row"></div>
                     <div class="info-row"></div>
                     <div class="info-row"></div>
@@ -129,11 +129,11 @@
             <a href="reviews.html" class="review">(currently have no review)</a>`;
 
           const infoRows = document.querySelectorAll(".info-row");
-          infoRows[1].innerHTML = `<strong>Company name:</strong> ${internship.company_name}`;
-          infoRows[2].innerHTML = `<strong>Department name:</strong> ${internship.department_name}`;
-          infoRows[3].innerHTML = `<strong>Work period:</strong> From ${formatDate(internship.internship_start)} to ${formatDate(internship.internship_finish)}`;
-          infoRows[4].innerHTML = `<strong>Location of internship abroad:</strong> ${internship.city_of_internship}, ${internship.country_of_internship}`;
-          infoRows[5].innerHTML = `<strong>Current location:</strong> ${profile.city || "–"}, ${profile.country || "–"}`;
+          infoRows[1].innerHTML = `<strong>Company Name:</strong> ${internship.company_name}`;
+          infoRows[2].innerHTML = `<strong>Department Name:</strong> ${internship.department_name}`;
+          infoRows[3].innerHTML = `<strong>Work Period:</strong> From ${formatDate(internship.internship_start)} To ${formatDate(internship.internship_finish)}`;
+          infoRows[4].innerHTML = `<strong>Location of Internship Abroad:</strong> ${internship.city_of_internship}, ${internship.country_of_internship}`;
+          infoRows[5].innerHTML = `<strong>Current Location:</strong> ${profile.city || "–"}, ${profile.country || "–"}`;
           infoRows[6].innerHTML = `<strong>Languages:</strong> ${profile.languages.length ? profile.languages.join(", ") : "–"}`;
 
           document.querySelector(".help-list h3").textContent = `${firstName} can help you with:`;

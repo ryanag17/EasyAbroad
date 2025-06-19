@@ -416,7 +416,7 @@ window.onload = async function () {
 
     applyFilters();
   } catch (err) {
-    console.error("Failed to fetch consultants:", err);
+    console.error("Failed to Fetch Consultants:", err);
   }
 }
 
@@ -440,7 +440,7 @@ window.onload = async function () {
         return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
       }
     } catch (e) {
-      console.warn("Geocoding failed:", e);
+      console.warn("Geocoding Failed:", e);
     }
     return null;
   }
@@ -478,8 +478,8 @@ function showConsultantDetails(consultant) {
       <div style="margin-bottom: 8px;">
         <div><strong>Focus:</strong> ${consultant.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</div>
         <div><strong>Institution:</strong> ${consultant.institution}</div>
-        <div><strong>Date of mobility:</strong> ${consultant.period.from} – ${consultant.period.to}</div>
-        <div style="margin-top: 4px;"><strong>${consultant.rating ? `Currently rated ${consultant.rating}/5` : 'Currently have no reviews'}</strong></div>
+        <div><strong>Date of Mobility:</strong> ${consultant.period.from} – ${consultant.period.to}</div>
+        <div style="margin-top: 4px;"><strong>${consultant.rating ? `Currently Rated ${consultant.rating}/5` : 'Currently Have No Reviews'}</strong></div>
       </div>
       <button class="profile-btn" onclick="goToConsultantProfile('${consultant.user_id}', '${consultant.focus}')">View Profile</button>
     </div>

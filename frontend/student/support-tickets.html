@@ -107,15 +107,7 @@
 <section class="support-ticket-list">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <h1 style="margin: 0;">My Support Tickets</h1>
-    <button onclick="window.location.href='ticket-create.html'" style="
-      padding: 8px 16px;
-      background-color: #cc2f8b;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-    ">
+    <button onclick="window.location.href='ticket-create.html'" class="save-button_ticket">
       + Create New Ticket
     </button>
   </div>
@@ -227,16 +219,9 @@
             <p class="description">${t.description.length > 150 ? t.description.substring(0, 150) + "..." : t.description}</p>
             <p><span class="status">Status:</span> ${t.status}</p>
             <p><small>Submitted: ${formattedDate}</small></p>
-            <div style="margin-top: 8px;">
-              <a href="ticket-detail.html?id=${t.id}" class="view-ticket-link" style="
-                  background-color: #cc2f8b;
-                  color: white;
-                  padding: 6px 12px;
-                  text-decoration: none;
-                  border-radius: 4px;
-                  font-size: 13px;
-                  display: inline-block;
-              ">View</a>
+            <div style="margin-top: 20px; margin-bottom: 10px;">
+              <a href="ticket-detail.html?id=${t.id}" class="save-button_ticket"
+              >View</a>
             </div>
         </div>
       `;

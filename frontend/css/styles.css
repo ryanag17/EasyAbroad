@@ -75,9 +75,19 @@ header {
     color: white;
 }
 
+.login:hover{
+  background-color: black;
+  transition: 0.5s;
+}
+
 .register {
     background-color: var(--register_bcg);
     color: white;
+}
+
+.register:hover{
+  background-color: var(--login_background);
+  transition: 0.5s;
 }
 
 footer {
@@ -382,6 +392,12 @@ input[type="email"]{
     text-decoration: underline;
 }
 
+.forgot:hover{
+  color: #000;
+  font-weight: bold;
+  transition: 0.5s;
+}
+
 .login_link_page {
     max-width: 400px;
     width: 100%;
@@ -392,6 +408,11 @@ input[type="email"]{
     margin-bottom: 5px;
 }
 
+.login_link_page:hover{
+  background-color: var(--login_background);
+  transition: 0.5s;
+  color: white;
+}
 /* Log-in END */
 
 /* Register */
@@ -1119,14 +1140,25 @@ span {
 
 .user-section {
     text-align: center;
-    padding: 40px 20px;
+    background-image: url('../images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding-bottom: 70px;
+    padding-top: 50px;
   }
   
-  .user-avatar {
+  .user-avatar,
+  .user-avatar_student {
     width: 100px;
     height: 100px;
     border-radius: 50%;
+    margin: 0 auto;
     margin-bottom: 10px;
+    margin-top: 10px;
   }
   
   .user-fullname {
@@ -1164,22 +1196,23 @@ span {
   
   .consultant-section {
     /* BCG Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Fnews.instant-gaming.com%2Fen%2Farticles%2F11483-a-mod-to-introduce-the-gta-vi-map-into-gta-v-has-been-taken-down-following-a-complaint-from-take-two&psig=AOvVaw2IdzN1LPsz8YauwvokwY_R&ust=1746003166664000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCPDtiebu_IwDFQAAAAAdAAAAABAP) */
-    background-image: url('../images/background.jpg');
+/*     background-image: url('../images/background.jpg');
     background-size: cover;
     background-position: center;
-    height: 400px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #333;
+    background-repeat: no-repeat; */
     text-align: center;
+    align-items: center;
   }
   
   .consultant-overlay {
     background-color: rgba(255, 255, 255, 0.6);
-    padding: 30px;
+    padding-bottom: 55px;
+    padding-top: 30px;
     border-radius: 12px;
+    max-width: 450px;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 100px;
   }
   
   .consultant-overlay h2 {
@@ -1364,7 +1397,8 @@ span {
   }
   
   .edit-btn,
-  .contact_btn {
+  .contact_btn,
+  .login_link_page {
     background: white;
     color: #d62d81;
     padding: 10px 20px;
@@ -1503,22 +1537,25 @@ span {
 .appointment-tabs {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 50px;
     margin-bottom: 30px;
   }
   
   .tab {
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     border: none;
     font-size: 18px;
     cursor: pointer;
     padding: 10px 20px;
     border-bottom: 2px solid transparent;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   }
   
   .tab.active {
-    border-bottom: 2px solid #d62d81;
+    border-bottom: 2px solid #d62d81; /*#d62d81*/
     font-weight: bold;
+    border-radius: 50px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   }
   
   .appointment-card {
@@ -1529,8 +1566,8 @@ span {
     gap: 40px;
     justify-content: space-between;
     background-color: #fafafa;
-    max-width: 800px;
-    width: 100%;
+    width: 1000px;
+    margin: 0 auto;
     margin-bottom: 30px;
     align-items: center;
   }
@@ -1807,7 +1844,8 @@ span {
   }
   
   .chat-input button:hover {
-    background-color: #d62d81;
+    background-color: black;
+    transition: 0.5s;
   }
   
 
@@ -1891,9 +1929,9 @@ span {
   max-width: 500px;
   margin: 60px auto;
   padding: 30px;
-  background-color: #f9f9f9;
+  background-color: #f5f5f5; /*#f9f9f9*/
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .change-password-container h1 {
@@ -1951,9 +1989,12 @@ input[type="email"],
   padding: 10px 16px;
 }
 
+.toggle-password{
+  background-color: #d62d81;
+}
 
 .toggle-password:hover {
-  background-color: #d62d81;
+  background-color: black; /*#d62d81*/
 }
 
 .return_btn:hover{
@@ -1965,7 +2006,7 @@ input[type="email"],
   display: block;
   padding: 10px 24px;
   font-size: 15px;
-  background-color: black;
+  background-color: #d62d81;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -1974,7 +2015,7 @@ input[type="email"],
 }
 
 .save-button:hover {
-  background-color: #d62d81;
+  background-color: black; /*#d62d81*/
 }
 
 /* Student/change-password END */
@@ -1999,6 +2040,7 @@ input[type="email"],
   font-size: 14px;
   color: #444;
   margin-bottom: 25px;
+  font-weight: 600;
 }
 
 .form-group {
@@ -2020,7 +2062,7 @@ input[type="email"],
   display: block;
   padding: 10px 24px;
   font-size: 15px;
-  background-color: black;
+  background-color: #d62d81;
   color: white;
   border: none;
   border-radius: 8px;
@@ -2029,7 +2071,7 @@ input[type="email"],
 }
 
 .delete-button:hover {
-  background-color: #d62d81;
+  background-color: black; /*#d62d81*/
 } 
 
 /* Student/delete-account END */
@@ -2248,7 +2290,7 @@ textarea#reviewText {
 
 .bulk-btn {
   padding: 6px 12px;
-  background-color: black;
+  background-color: #d62d81;
   color: white;
   border: none;
   border-radius: 6px;
@@ -2258,7 +2300,7 @@ textarea#reviewText {
 }
 
 .bulk-btn:hover {
-  background-color: #d62d81;
+  background-color: black;
 }
 
 
@@ -2278,17 +2320,11 @@ textarea#reviewText {
     line-height: 1.2;
   }
   
-  .back-link {
-    display: inline-block;
-    margin-bottom: 10px;
-    color: #333;
-    text-decoration: none;
-  }
-  
   .profile-box {
     border: 1px solid #aaa;
     padding: 20px;
     background: #fdfdfd;
+    margin-top: 20px;
   }
   
   .profile-header {
@@ -2373,7 +2409,7 @@ textarea#reviewText {
     font-size: 16px;
     border-radius: 30px;
     border: none;
-    background-color: #d62d81;
+    background-color: #d62d81; /*#d62d81*/
     color: #fff;
     font-weight: bold;
     cursor: pointer;
@@ -3193,7 +3229,8 @@ textarea#reviewText {
 
 /* view-user */
     .back-button,
-    .deactivate{
+    .deactivate,
+    .back-link{
       background-color: #d62d81;
       padding: 10px;
       max-width: 200px;
@@ -3541,5 +3578,27 @@ textarea#reviewText {
       background: #e74c3c;
       color: white;
     }
-/* consultant-preview-intrnship END */
+    
+    .back-link:hover{
+      background-color: #000;
+      transition: 0.5s;
+    }
+/* consultant-preview-internship END */
+
+/* ticket-ceate */
+.save-button_ticket{
+  padding: 10px 24px;
+  font-size: 15px;
+  background-color: #d62d81;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-button_ticket:hover{
+  background-color: #000;
+}
+/* ticket-create END */
 /* Admin END */
