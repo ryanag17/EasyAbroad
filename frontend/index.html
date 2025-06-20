@@ -11,52 +11,16 @@
 <body>
     <header id="dynamic-header"></header>
 
-    <main class="image_cube">
+
+<!--     <main class="image_cube">
       <div class="slider-text-container">
         <div class="slider">
   
-            <!-- <a href="#slide-1">1</a>
-            <a href="#slide-2">2</a>
-            <a href="#slide-3">3</a>
-            <a href="#slide-4">4</a>
-            <a href="#slide-5">5</a>
-            <a href="#slide-6">6</a>
-            <a href="#slide-7">7</a>
-            <a href="#slide-8">8</a>
-            <a href="#slide-9">9</a> -->
+
             
             <button class="nav-btn left" onclick="moveSlide(-1)">&#8592;</button>
             <button class="nav-btn right" onclick="moveSlide(1)">&#8594;</button>
           
-            <!-- <div class="slides">
-              <div id="slide-1">
-                <img src="images/bcg_1.jpeg" alt="" class="slider_img">
-              </div>
-              <div id="slide-2">
-                <img src="images/bcg_2.jpeg" alt="" class="slider_img">
-              </div>
-              <div id="slide-3">
-                <img src="images/bcg_3.jpeg" alt="" class="slider_img">
-              </div>
-              <div id="slide-4">
-                <img src="images/bcg_4.jpeg" alt="" class="slider_img">
-              </div>
-              <div id="slide-5">
-                <img src="images/bcg_5.jpeg" alt="" class="slider_img">
-              </div>
-              <div id="slide-6">
-                <img src="images/bcg_6.jpeg" alt="" class="slider_img">
-              </div>
-              <div id="slide-7">
-                <img src="images/bcg_7.jpeg" alt="" class="slider_img">
-              </div>
-              <div id="slide-8">
-                <img src="images/bcg_8.jpeg" alt="" class="slider_img">
-              </div>
-              <div id="slide-9">
-                <img src="images/bcg_9.jpeg" alt="" class="slider_img">
-              </div>
-            </div> -->
             
             <div class="slides" id="slider-track">
                 <div id="slide-1"><img src="images/bcg_1.jpeg" class="slider_img"></div>
@@ -72,7 +36,8 @@
             
           </div>
           
-
+        
+          
           <p class="image_cube-text">
             <span class="welcome_index-txt">Welcome to EasyAbroad: Peer-to-Peer Consultancy for Your University Study/Work Abroad Experience!</span>
             <br><br>
@@ -94,8 +59,51 @@
 
           </p>
       </div>
-    </main>
+    </main> -->
 
+    <!-- Testing -->
+    <main class="image_cube_testing">
+  <div class="bg-slider" id="bg-slider-container">
+    <div class="bg-slides">
+      <img src="images/bcg_1.jpeg" class="bg-slide active">
+      <img src="images/bcg_2.jpeg" class="bg-slide">
+      <img src="images/bcg_3.jpeg" class="bg-slide">
+      <img src="images/bcg_4.jpeg" class="bg-slide">
+      <img src="images/bcg_5.jpeg" class="bg-slide">
+      <img src="images/bcg_6.jpeg" class="bg-slide">
+      <img src="images/bcg_7.jpeg" class="bg-slide">
+      <img src="images/bcg_8.jpeg" class="bg-slide">
+      <img src="images/bcg_9.jpeg" class="bg-slide">
+    </div>
+  </div>
+
+  <div class="bg-slider-text-container">
+    <p class="image_cube-text_testing">
+      
+            <span class="welcome_index-txt">Welcome to EasyAbroad: Peer-to-Peer Consultancy for Your University Study/Work Abroad Experience!</span>
+            <br><br>
+            Planning a semester abroad?
+            <br><br>
+            <span class="alone_index-text">Don’t do it alone.</span>
+            <br><br>
+            At EasyAbroad, we connect students preparing for a semester abroad with verified consultants who’ve already lived in their destination. This way, students can receive honest, first-hand advice tailored to their upcoming journey.
+            Whether it's finding accommodation, making friends, understanding the local culture, or discovering the best food spots, our one-on-one consultancy sessions offer real insights from those who’ve been there.
+            <br><br>
+            Built by students, for students — we’ve been in your shoes, and we’re here to make the process smoother, less stressful, and more exciting.
+            <br><br>
+            Ready to make the most of your time abroad?
+            <br><br>
+            Browse peer profiles, book a session, and get the support that makes a real difference. <br>
+            <span class="or_index-txt">Or...</span>
+            <br>
+            Become a consultant and share your experience with students heading to your city.
+
+          </p>
+  </div>
+</main>
+
+    
+    
     <footer>
         <div>
             <div class="footer-logo"><img src="images/logo.png" alt="" class="pic_logo"></div>
@@ -137,6 +145,46 @@
     <script src="auth.js"></script>
     <script>
     injectHeader();
+    // Testing
+const slides = document.querySelectorAll('.bg-slide');
+const textContainer = document.querySelector('.bg-slider-text-container');
+const sliderArea = document.getElementById('bg-slider-container');
+
+let index = 0;
+let interval;
+
+function showSlide(i) {
+  slides.forEach((slide, idx) => {
+    slide.classList.remove('active');
+  });
+  slides[i].classList.add('active');
+}
+
+
+function startSlideshow() {
+  interval = setInterval(() => {
+    index = (index + 1) % slides.length;
+    showSlide(index);
+  }, 3000);
+}
+
+function stopSlideshow() {
+  clearInterval(interval);
+}
+
+sliderArea.addEventListener('mouseenter', () => {
+  textContainer.classList.add('hidden');
+  stopSlideshow();
+});
+
+sliderArea.addEventListener('mouseleave', () => {
+  textContainer.classList.remove('hidden');
+  startSlideshow();
+});
+
+showSlide(index);
+startSlideshow();
+
     </script>
 
   <script src="script.js"></script>
