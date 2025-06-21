@@ -67,7 +67,7 @@
         </div>
       </div>
       <div class="button-container">
-        <a href="appointments.html"><button class="save-button_ticket">Book a consultation meeting!</button></a>
+        <a id="bookBtn" href="#"><button class="save-button_ticket">Book a consultation meeting!</button></a>
       </div>
     </section>
   </main>
@@ -184,13 +184,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error loading consultant profile:", err);
     alert("Failed to load consultant profile.");
   }
-
+  
+  document.getElementById("bookBtn").href = `make-appointment.html?id=${userId}&type=study`;
+  
   function formatDate(dateStr) {
     const d = new Date(dateStr);
     if (isNaN(d)) return "–";
     return `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
   }
+
 });
+
+
+
 </script>
 
 </body>

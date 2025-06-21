@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Enum 
 from sqlalchemy.dialects.mysql import JSON
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+import enum
 
 from app.db import Base
 from app.auth.models import User
@@ -21,3 +23,26 @@ User.availability = relationship(
     back_populates="consultant",
     cascade="all, delete-orphan"
 )
+
+class AppointmentStatus(str, enum.Enum):
+    pending = "pending"
+    upcoming = "upcoming"
+    previous = "previous"
+    rejected = "rejected"
+
+class Appointment(Base):
+    __tablename__ = "appointments"
+    id = Column(Integer, primary_key=True, index=True)
+    consultant_id = Column(Integer, ForeignKey("users.id"))
+    student_id = Column(Integer, ForeignKey("users.id"))
+    date = Column(Date)
+    start_time = Column(String)
+    end_time = Column(String)
+    reason = Column(String)
+    info = Column(String, nullable=True)
+    platform = Column(String)
+    status = Column(Enum(AppointmentStatus), default=AppointmentStatus.pending)
+    meeting_link = Column(String, nullable=True)
+    rejection_reason = Column(String, nullable=True)
+    student = relationship("User", foreign_keys=[student_id])
+    consultant = relationship("User", foreign_keys=[consultant_id])

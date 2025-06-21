@@ -118,126 +118,120 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
     <script>
-  (async () => {
-    await autoEnforceRoleFromPath();
-  })();            
-        // Sample appointment data
-        const appointments = [
-          {
-            status: 'upcoming',
-            date: '12.05.2025',
-            time: '14:30',
-            consultant: 'AMIDOVICH',
-            topic: 'Visa Application',
-            info: 'Please check my documents.',
-            meetingLink: 'https://zoom.us/meeting-1'
-          },
-          {
-            status: 'pending',
-            date: '20.06.2025',
-            time: '09:00',
-            consultant: 'Mike Brown',
-            topic: 'Finding Apartment',
-            info: 'Still searching for a room.',
-            meetingLink: 'https://zoom.us/meeting-3'
-          },
-          {
-            status: 'previous',
-            date: '10.03.2025',
-            time: '10:00',
-            consultant: 'Julia Weber',
-            topic: 'Blocked Account',
-            info: 'Documents reviewed.',
-            meetingLink: 'https://zoom.us/meeting-2'
-          },
-          {
-            status: 'pending',
-            date: '20.06.2025',
-            time: '09:00',
-            consultant: 'Mike Brown',
-            topic: 'Finding Apartment',
-            info: 'Still searching for a room.',
-            meetingLink: 'https://zoom.us/meeting-3'
-          }
-          
-          
-        ];
-        
-        
-        function renderAppointments(status) {
+ (async () => {
+  await autoEnforceRoleFromPath();
+})();
+
+let appointments = [];
+
+// Fetch appointments for the logged-in student
+async function fetchAppointments() {
+  const token = sessionStorage.getItem("accessToken");
+  if (!token) {
+    window.location.href = "../log-in.html";
+    return [];
+  }
+  const res = await fetch("http://localhost:8000/appointment/my-appointments", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) {
+    document.querySelector('.appointments-container').innerHTML = '<p>Failed to load appointments.</p>';
+    return [];
+  }
+  return await res.json();
+}
+
+// Format date as DD.MM.YYYY
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr;
+  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+}
+
+// Render appointments by status
+function renderAppointments(status) {
   const container = document.querySelector('.appointments-container');
-  container.innerHTML = ''; // Clear old content
+  container.innerHTML = '';
 
-  const filteredAppointments = appointments.filter(app => app.status === status);
+  const filtered = appointments.filter(app => app.status === status);
 
-  if (filteredAppointments.length === 0) {
+  if (filtered.length === 0) {
     container.innerHTML = '<p>No appointments found.</p>';
     return;
   }
 
-  filteredAppointments.forEach(app => {
+  filtered.forEach(app => {
     const card = document.createElement('div');
     card.className = 'appointment-card';
 
-  card.innerHTML = `
-    <div class="appointment-info">
-      <p class="appointment-date">${app.date}, ${app.time}</p>
-      <p class="consultant-name">${app.consultant}</p>
-
-      <label class="meeting_label">Meeting Topic:</label>
-      <select disabled>
-        <option selected>${app.topic}</option>
-      </select>
-
-      <label class="add_label">Additional Info:</label>
-      <textarea disabled>${app.info}</textarea>
-    </div>
-
-    <div class="appointment-actions">
-      ${ (status !== 'pending' && status !== 'rejected') ? `
+    // Meeting link for upcoming
+    let meetingLinkBlock = '';
+    if (status === 'upcoming' && app.meeting_link) {
+      meetingLinkBlock = `
         <label>Meeting Link:</label>
-        <input type="text" value="${app.meetingLink}" readonly onclick="window.open('${app.meetingLink}')">
-      ` : '' }
+        <input type="text" value="${app.meeting_link}" readonly onclick="window.open('${app.meeting_link}')">
+      `;
+    }
 
-      <a class="message-btn" href="#">Send a message</a>
-      ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?name=${encodeURIComponent(app.consultant)}">Review</a>` : ''}
-    </div>
-  `;
+    // Rejection reason for rejected
+    let rejectionBlock = '';
+    if (status === 'rejected' && app.rejection_reason) {
+      rejectionBlock = `
+        <label class="add_label" style="margin-top:10px;">Reason of rejection:</label>
+        <textarea disabled>${app.rejection_reason}</textarea>
+      `;
+    }
 
-
+    card.innerHTML = `
+      <div class="appointment-info">
+        <p class="consultant-name"><b>${app.consultant_name || app.consultant || ""}</b></p>
+        <p class="appointment-date">${formatDate(app.date)}, ${app.start_time || app.time} - ${app.end_time || ""}</p>
+        <label class="meeting_label">Meeting Topic:</label>
+        <select disabled>
+          <option selected>${app.reason || ""}</option>
+        </select>
+        <label class="add_label">Additional Info:</label>
+        <textarea disabled>${app.info || ""}</textarea>
+        ${rejectionBlock}
+      </div>
+      <div class="appointment-actions">
+        ${meetingLinkBlock}
+        <a class="message-btn" href="#">Send a message</a>
+        ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?id=${app.consultant_id || ""}">Review</a>` : ''}
+      </div>
+    `;
 
     container.appendChild(card);
   });
 }
-
-        
+// Tab logic
 const tabs = document.querySelectorAll('.tab');
-
 tabs.forEach(tab => {
   tab.addEventListener('click', function() {
     tabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-
-    const status = tab.getAttribute('data-status');
-    renderAppointments(status);
+    renderAppointments(tab.getAttribute('data-status'));
   });
 });
 
-// Render default "upcoming" appointments on page load
-renderAppointments('upcoming');
+function getCurrentTab() {
+  const active = document.querySelector('.tab.active');
+  return active ? active.getAttribute('data-status') : 'upcoming';
+}
 
-// Render default tab based on hash
-const defaultTab = window.location.hash.replace("#", "") || "upcoming";
-renderAppointments(defaultTab);
+// On page load
+window.onload = async () => {
+  // Set default tab
+  const defaultTab = window.location.hash.replace("#", "") || "upcoming";
+  tabs.forEach(t => {
+    if (t.dataset.status === defaultTab) t.classList.add('active');
+    else t.classList.remove('active');
+  });
 
-tabs.forEach(t => {
-  if (t.dataset.status === defaultTab) {
-    t.classList.add('active');
-  } else {
-    t.classList.remove('active');
-  }
-});
-
+  appointments = await fetchAppointments();
+  renderAppointments(getCurrentTab());
+};
         </script>
 </body>
 </html>

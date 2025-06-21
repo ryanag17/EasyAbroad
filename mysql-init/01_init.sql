@@ -619,6 +619,23 @@ CREATE TABLE IF NOT EXISTS consultant_reviews (
   FOREIGN KEY (consultant_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- 16) Appointments table
+CREATE TABLE IF NOT EXISTS appointments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  consultant_id INT NOT NULL,
+  student_id INT NOT NULL,
+  date DATE NOT NULL,
+  start_time VARCHAR(5) NOT NULL,
+  end_time VARCHAR(5) NOT NULL,
+  reason VARCHAR(255),
+  platform VARCHAR(50),
+  status ENUM('pending','upcoming','previous','rejected') DEFAULT 'pending',
+  meeting_link VARCHAR(255),
+  rejection_reason VARCHAR(255),
+  FOREIGN KEY (consultant_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- ─────────────────────────────────────────────────────────────────────────────
 -- END OF 01_init.sql
 -- ─────────────────────────────────────────────────────────────────────────────

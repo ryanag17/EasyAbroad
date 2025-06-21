@@ -256,7 +256,7 @@
     // Loading availability from backend
     async function loadAvailability() {
       const token = sessionStorage.getItem('accessToken');
-      const res = await fetch('http://localhost:8000/profile/consultant/timetable', {
+      const res = await fetch('http://localhost:8000/appointment/consultant/timetable', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -265,12 +265,16 @@
       if (!res.ok) throw new Error('Failed to load timetable');
       const slots = await res.json();
       events = slots.map(s => ({
-        title: 'Available',
-        daysOfWeek: s.daysOfWeek,
-        startTime:  s.startTime,
-        endTime:    s.endTime,
-        color:      '#28a745',
-        extendedProps: { ...s }
+      title: 'Available',
+      daysOfWeek: s.days_of_week,
+      startTime:  s.start_time,
+      endTime:    s.end_time,
+      color:      '#28a745',
+      extendedProps: {
+        daysOfWeek: s.days_of_week,
+        startTime: s.start_time,
+        endTime: s.end_time
+        }
       }));
       renderCalendar(currentDate);
     }
@@ -279,12 +283,12 @@
     async function saveAvailability() {
       const token = sessionStorage.getItem('accessToken');
       const slots = events.map(ev => ({
-        daysOfWeek: ev.extendedProps.daysOfWeek,
-        startTime:  ev.extendedProps.startTime,
-        endTime:    ev.extendedProps.endTime
+       days_of_week: ev.extendedProps.daysOfWeek,
+       start_time:   ev.extendedProps.startTime,
+       end_time:     ev.extendedProps.endTime
       }));
 
-      const res = await fetch('http://localhost:8000/profile/consultant/timetable', {
+      const res = await fetch('http://localhost:8000/appointment/consultant/timetable', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

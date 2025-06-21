@@ -142,267 +142,157 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>   
     <script>
-        (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
-        // Sample appointment data
-        const appointments = [
-          {
-            status: 'upcoming',
-            date: '12.05.2025',
-            time: '14:30',
-            consultant: 'AMIDOVICH',
-            topic: 'Visa Application',
-            info: 'Please check my documents.',
-            meetingLink: 'https//zoom.com',
-          },
-          {
-            status: 'pending',
-            date: '20.06.2025',
-            time: '09:00',
-            consultant: 'Mike Brown',
-            topic: 'Finding Apartment',
-            info: 'Still searching for a room.',
-            meetingLink: 'https//zoom.com',
-          },
-          {
-            status: 'previous',
-            date: '10.03.2025',
-            time: '10:00',
-            consultant: 'Julia Weber',
-            topic: 'Blocked Account',
-            info: 'Documents reviewed.',
-            meetingLink: 'https//zoom.com',
-          },
-          {
-            status: 'pending',
-            date: '21.06.2025',
-            time: '10:00',
-            consultant: 'Meg Brown',
-            topic: 'Finding Apartment',
-            info: 'Still searching for a room.',
-            meetingLink: 'https//zoom.com',
-          }
-          
-          
-        ];
-        
-        
-        function renderAppointments(status) {
-  const container = document.querySelector('.appointments-container');
-  container.innerHTML = ''; // Clear old content
+(async () => {
+  await autoEnforceRoleFromPath();
+})();
 
-  const filteredAppointments = appointments.filter(app => app.status === status);
+let appointments = [];
+let tempAcceptedData = null;
+let tempRejectData = null;
+let rejectReason = "";
 
-  if (filteredAppointments.length === 0) {
-    container.innerHTML = '<p>No appointments found.</p>';
+// Fetch consultant's appointments from backend
+async function loadAppointments() {
+  const token = sessionStorage.getItem("accessToken");
+  const res = await fetch("http://localhost:8000/appointment/consultant/appointments", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) {
+    document.querySelector('.appointments-container').innerHTML = '<p>Failed to load appointments.</p>';
     return;
   }
+  appointments = await res.json();
+  renderAppointments(getCurrentTab());
+}
 
-  filteredAppointments.forEach(app => {
-    const card = document.createElement('div');
-    card.className = 'appointment-card';
+function renderAppointments(status) {
+  const container = document.querySelector('.appointments-container');
+  container.innerHTML = '';
+  const filteredAppointments = appointments.filter(app => app.status === status);
+
+// Render appointments by status
+filteredAppointments.forEach(app => {
+  const card = document.createElement('div');
+  card.className = 'appointment-card';
 
   card.innerHTML = `
     <div class="appointment-info">
-      <p class="appointment-date">${app.date}, ${app.time} - ${getOneHourLater(app.time)}</p>
-      <p class="consultant-name">${app.consultant}</p>
-
+      <p class="appointment-date">${formatDate(app.date)}, ${app.start_time} - ${getOneHourLater(app.start_time)}</p>
+      <p class="consultant-name"><b>${app.student_name || "Student"}</b></p>
       <label class="meeting_label">Meeting Topic:</label>
       <select disabled>
-        <option selected>${app.topic}</option>
+        <option selected>${app.reason || ""}</option>
       </select>
-
       <label class="add_label">Additional Info:</label>
-      <textarea disabled>${app.info}</textarea>
+      <textarea disabled>${app.info || ""}</textarea>
+      ${(app.platform && (app.status === "pending" || app.status === "upcoming")) ? `
+        <label class="add_label">Meeting Platform:</label>
+        <input type="text" value="${app.platform}" disabled />
+      ` : ""}
+      ${(app.status === "rejected" && app.rejection_reason) ? `
+        <label class="add_label">Rejection Reason:</label>
+        <textarea disabled>${app.rejection_reason}</textarea>
+      ` : ""}
     </div>
-
     <div class="appointment-actions">
-${ status === 'pending' ? `
-  <div class="pending-actions">
-    <button class="accept-btn" onclick="openLinkModal('${app.date}', '${app.time}', '${app.consultant}', '${app.topic}', '${app.info}')">Accept</button>
-    <button class="reject-btn" onclick="rejectAppointment('${app.date}', '${app.time}')">Reject</button>
-  </div>
-` : (status === 'upcoming' ? `
-  <label>Meeting Link:</label>
-  <input type="text" value="${app.meetingLink}" readonly onclick="window.open('${app.meetingLink}')">
-` : '') }
-      ${status === 'upcoming' ? `<a class="message-btn" href="#">Send a message</a>` : ''}
+      ${status === 'pending' ? `
+        <div class="pending-actions">
+          <button class="accept-btn" onclick="openLinkModal(${app.id})">Approve & Send Link</button>
+          <button class="reject-btn" onclick="openRejectModal(${app.id})">Reject</button>
+        </div>
+      ` : (status === 'upcoming' ? `
+        <label>Meeting Link:</label>
+        <input type="text" value="${app.meeting_link || ""}" readonly onclick="window.open('${app.meeting_link || "#"}')">
+        <a class="message-btn" href="#">Send a message</a>
+      ` : '')}
     </div>
   `;
-
-
-
-    container.appendChild(card);
-  });
+  container.appendChild(card);
+});
 }
 
-        
+// Tab logic
 const tabs = document.querySelectorAll('.tab');
-
 tabs.forEach(tab => {
   tab.addEventListener('click', function() {
     tabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-
-    const status = tab.getAttribute('data-status');
-    renderAppointments(status);
+    renderAppointments(tab.getAttribute('data-status'));
   });
 });
-
-// Render default "upcoming" appointments on page load
-renderAppointments('upcoming');
-
-        
-
-
-const defaultTab = window.location.hash.replace("#", "") || "upcoming";
-renderAppointments(defaultTab);
-
-function acceptAppointment(date, time) {
-  alert(`Accepted appointment on ${date} at ${time}`);
+function getCurrentTab() {
+  const active = document.querySelector('.tab.active');
+  return active ? active.getAttribute('data-status') : 'upcoming';
 }
 
-function rejectAppointment(date, time) {
-  const index = appointments.findIndex(app =>
-    app.date === date &&
-    app.time === time &&
-    app.status === 'pending'
-  );
-
-  if (index !== -1) {
-    const rejectedApp = { ...appointments[index], status: 'rejected' };
-    appointments.splice(index, 1); 
-    appointments.push(rejectedApp); 
-  }
-
-  document.querySelectorAll('.tab').forEach(tab => {
-    if (tab.dataset.status === 'rejected') {
-      tab.classList.add('active');
-      tab.click(); 
-    } else {
-      tab.classList.remove('active');
-    }
-  });
-}
-
-
-
-tabs.forEach(t => {
-  if (t.dataset.status === defaultTab) {
-    t.classList.add('active');
-  } else {
-    t.classList.remove('active');
-  }
-});
-
-// Pop-up window logic
-let tempAcceptedData = null;
-
-function openLinkModal(date, time, consultant, topic, info) {
+// Approve: open modal to enter meeting link
+function openLinkModal(appId) {
+  tempAcceptedData = appId;
   document.getElementById('linkModal').style.display = 'flex';
   document.getElementById('meetingLinkInput').value = '';
-  tempAcceptedData = { date, time, consultant, topic, info };
 }
-
 function closeLinkModal() {
   document.getElementById('linkModal').style.display = 'none';
   tempAcceptedData = null;
 }
-
 window.addEventListener("click", function(e) {
   const modal = document.getElementById('linkModal');
   if (e.target === modal) closeLinkModal();
 });
-
-function sendMeetingLink() {
+async function sendMeetingLink() {
   const link = document.getElementById('meetingLinkInput').value.trim();
   if (!link) {
     alert("Please enter a valid meeting link.");
     return;
   }
-
-  // Find and remove the exact appointment object
-  const index = appointments.findIndex(app =>
-    app.date === tempAcceptedData.date &&
-    app.time === tempAcceptedData.time &&
-    app.consultant === tempAcceptedData.consultant &&
-    app.topic === tempAcceptedData.topic &&
-    app.info === tempAcceptedData.info
-  );
-
-  if (index !== -1) {
-    appointments.splice(index, 1);
-  }
-
-  appointments.push({
-    ...tempAcceptedData,
-    status: 'upcoming',
-    meetingLink: link
+  const token = sessionStorage.getItem("accessToken");
+  // Approve appointment
+  const res = await fetch(`http://localhost:8000/appointment/approve/${tempAcceptedData}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ meeting_link: link })
   });
-
-closeLinkModal();
-
-
-document.querySelectorAll('.tab').forEach(tab => {
-  if (tab.dataset.status === 'upcoming') {
-    tab.classList.add('active');
-    tab.click();
+  closeLinkModal();
+  if (res.ok) {
+    alert("Appointment approved and link sent!");
+    loadAppointments();
   } else {
-    tab.classList.remove('active');
+    alert("Failed to approve appointment.");
   }
-});
-
 }
 
-
-let tempRejectData = null;
-
-function rejectAppointment(date, time) {
-  tempRejectData = { date, time };
+// Reject: open modal to enter reason
+function openRejectModal(appId) {
+  tempRejectData = appId;
   document.getElementById('rejectModal').style.display = 'flex';
 }
-
 function closeRejectModal() {
   document.getElementById('rejectModal').style.display = 'none';
   tempRejectData = null;
 }
-
-function confirmRejection() {
-  if (!tempRejectData) return;
-
-  const index = appointments.findIndex(app =>
-    app.date === tempRejectData.date &&
-    app.time === tempRejectData.time &&
-    app.status === 'pending'
-  );
-
-  if (index !== -1) {
-    const rejectedApp = { ...appointments[index], status: 'rejected' };
-    appointments.splice(index, 1);
-    appointments.push(rejectedApp);
-  }
-
-  closeRejectModal();
-
-
-  document.querySelectorAll('.tab').forEach(tab => {
-    if (tab.dataset.status === 'rejected') {
-      tab.classList.add('active');
-      tab.click();
-    } else {
-      tab.classList.remove('active');
-    }
-  });
-}
-
-
 window.addEventListener("click", function(e) {
   const modal = document.getElementById('rejectModal');
   if (e.target === modal) closeRejectModal();
 });
+async function confirmRejection() {
+  const reason = prompt("Please enter a reason for rejection:");
+  if (!reason) return;
+  const token = sessionStorage.getItem("accessToken");
+  const res = await fetch(`http://localhost:8000/appointment/reject/${tempRejectData}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ reason })
+  });
+  closeRejectModal();
+  if (res.ok) {
+    alert("Appointment rejected.");
+    loadAppointments();
+  } else {
+    alert("Failed to reject appointment.");
+  }
+}
 
-
+// Helper: get one hour later
 function getOneHourLater(startTime) {
   const [hour, minute] = startTime.split(':').map(Number);
   const end = new Date();
@@ -410,7 +300,23 @@ function getOneHourLater(startTime) {
   return end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
+// On page load
+window.onload = () => {
+  // Set default tab
+  const defaultTab = window.location.hash.replace("#", "") || "upcoming";
+  tabs.forEach(t => {
+    if (t.dataset.status === defaultTab) t.classList.add('active');
+    else t.classList.remove('active');
+  });
+  loadAppointments();
+};
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr;
+  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+}
 
-        </script>
+</script>
 </body>
 </html>

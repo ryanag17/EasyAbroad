@@ -17,7 +17,6 @@ from app.support.routes import support_router
 from app.admin.routes import router as admin_user_management_router
 from app.admin import routes as admin_routes
 from app.appointment.routes import router as appointment_router
-
 # 1) Ensure any missing ENV vars fallback to defaults if needed
 os.environ.setdefault("DB_HOST",            "127.0.0.1")
 os.environ.setdefault("DB_USER",            "appuser")
@@ -80,6 +79,7 @@ app.include_router(admin_routes.router, prefix="/admin")
 app.include_router(appointment_router)
 # 7) Messaging endpoints (student⇄consultant only)
 from app.messages.routes import router as messages_router  # ✅
+
 
 app.include_router(messages_router)
 

@@ -132,14 +132,9 @@
           <h3>Book a Consultation</h3>
           <p id="selectedTimeText">Selected time: </p>
       
-          <label>Please provide the reason of your request.</label>
-          <select>
-            <option value="">-- Select an option --</option>
-            <option value="accommodation">Finding accommodation</option>
-            <option value="social">Social life and making friends</option>
-            <option value="university">University information</option>
-            <option value="cityspots">Best/worst city spots, weekend plans</option>
-          </select>
+<select id="meetingTopic">
+  <option value="">-- Select an option --</option>
+</select>
       
           <label>Which video chat platform would you prefer?</label>
           <select>
@@ -218,131 +213,145 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>     
     <script>
-        (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
-    let calendar;
-    let currentDate = new Date();
-    let selectedEvent = null;
-        
-    function renderCalendar(startDate) {
-      
-      
-      const calendarEl = document.getElementById('calendar');
-      if (calendar) calendar.destroy();
+(async () => {
+  await autoEnforceRoleFromPath();
+})();
 
+let calendar;
+let currentDate = new Date();
+let selectedEvent = null;
+let selectedSlotInfo = null;
+let consultantId = new URLSearchParams(window.location.search).get("id");
 
-      calendar = new FullCalendar.Calendar(calendarEl, {
-        locale: 'en-gb',
-        slotLabelFormat: {
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false
-},
-dayHeaderFormat: {
-  weekday: 'short',
-  day: '2-digit',
-  month: '2-digit'
-},
-// past time
-  nowIndicator: true,
-  slotLabelClassNames: function(arg) {
-    const now = new Date();
-    const slotTime = arg.date;
-    return (slotTime < now) ? ['fc-past-slot'] : '';
-  },
-  slotLaneClassNames: function(arg) {
-    const now = new Date();
-    const slotTime = arg.date;
-    return (slotTime < now) ? ['fc-past-slot'] : '';
-  },
-// past time END
-
-  initialView: 'timeGridWeek',
-  initialDate: startDate,
-  allDaySlot: false,
-  slotMinTime: '00:00:00',
-  slotMaxTime: '24:00:00',
-  expandRows: true,
-  headerToolbar: false,
-  firstDay: 1,
-  selectable: false,
-  eventClick: function(info) {
-  const now = new Date();
-  if (info.event.start < now) {
-    alert("You cannot select a past time slot.");
-    return;
+async function fetchConsultantName() {
+  // Try study profile first, then internship profile if not found
+  let res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
+  if (!res.ok) {
+    res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
   }
-  if (selectedEvent) selectedEvent.setProp('color', '#28a745');
-  selectedEvent = info.event;
-  selectedEvent.setProp('color', '#1e7e34');
-},
-
-  events: [
-    {
-      title: 'Available',
-      startRecur: '2024-01-01',
-      daysOfWeek: ['2'],
-      startTime: '09:00:00',
-      endTime: '10:00:00',
-      color: '#28a745'
-    },
-    {
-      title: 'Available',
-      startRecur: '2024-01-01',
-      daysOfWeek: ['6'],
-      startTime: '13:30:00',
-      endTime: '14:30:00',
-      color: '#28a745'
-    },
-    {
-      title: 'Available',
-      startRecur: '2024-01-01',
-      daysOfWeek: ['2'],
-      startTime: '11:00:00',
-      endTime: '12:00:00',
-      color: '#28a745'
-    },
-    {
-      title: 'Available',
-      startRecur: '2024-01-01',
-      daysOfWeek: ['3'],
-      startTime: '09:00:00',
-      endTime: '10:00:00',
-      color: '#28a745'
-    },
-    {
-      title: 'Available',
-      startRecur: '2024-01-01',
-      daysOfWeek: ['2'],
-      startTime: '14:00:00',
-      endTime: '15:00:00',
-      color: '#28a745'
-    }
-  ],
-  eventTimeFormat: { hour: 'numeric', minute: '2-digit', meridiem: false }
-});
-
-const continueBtn = document.querySelector(".continue-btn");
-continueBtn.addEventListener("click", function () {
-  if (selectedEvent) {
-    const time = selectedEvent.start;
-    openBookingPopup(time);
+  if (res.ok) {
+    const data = await res.json();
+    document.getElementById('consultant-name').textContent =
+      `${data.first_name} ${data.last_name}`;
   } else {
-    alert("Please select a time slot first.");
+    document.getElementById('consultant-name').textContent = "[consultant name]";
   }
-});
+}
 
+// Fetch consultant's timetable and render calendar with booked slots disabled
+async function fetchAndRenderCalendar(startDate) {
+  // Fetch consultant's slots
+  const res = await fetch(`http://localhost:8000/appointment/consultant/timetable/${consultantId}`);
+  const slots = await res.json();
 
+  // Fetch consultant's booked appointments (pending/upcoming)
+  const apptRes = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/appointments`);
+  const appointments = apptRes.ok ? await apptRes.json() : [];
 
-      calendar.render();
+  // Build a set of booked date+time for quick lookup
+  const booked = new Set(
+    appointments
+      .filter(a => a.status === "pending" || a.status === "upcoming")
+      .map(a => `${a.date}|${a.start_time}|${a.end_time}`)
+  );
+
+  // Transform slots to FullCalendar events (for next 4 weeks)
+  const events = [];
+  slots.forEach(slot => {
+    slot.days_of_week.forEach(day => {
+      for (let week = 0; week < 4; week++) {
+        const base = new Date(startDate);
+        base.setDate(base.getDate() - base.getDay() + day + (week * 7));
+        const dateStr = base.toISOString().slice(0, 10);
+        const key = `${dateStr}|${slot.start_time}|${slot.end_time}`;
+        const isBooked = booked.has(key);
+
+        events.push({
+          title: isBooked ? 'Booked' : 'Available',
+          start: `${dateStr}T${slot.start_time}`,
+          end: `${dateStr}T${slot.end_time}`,
+          color: isBooked ? '#ccc' : '#28a745',
+          editable: false,
+          display: 'block',
+          extendedProps: {
+            dayOfWeek: day,
+            startTime: slot.start_time,
+            endTime: slot.end_time,
+            isBooked: isBooked
+          }
+        });
+      }
+    });
+  });
+
+  renderCalendar(startDate, events);
+}
+
+function renderCalendar(startDate, events) {
+  const calendarEl = document.getElementById('calendar');
+  if (calendar) calendar.destroy();
+
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: 'en-gb',
+    slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+    dayHeaderFormat: { weekday: 'short', day: '2-digit', month: '2-digit' },
+    nowIndicator: true,
+    slotLabelClassNames: function(arg) {
+      const now = new Date();
+      const slotTime = arg.date;
+      return (slotTime < now) ? ['fc-past-slot'] : '';
+    },
+    slotLaneClassNames: function(arg) {
+      const now = new Date();
+      const slotTime = arg.date;
+      return (slotTime < now) ? ['fc-past-slot'] : '';
+    },
+    initialView: 'timeGridWeek',
+    initialDate: startDate,
+    allDaySlot: false,
+    slotMinTime: '00:00:00',
+    slotMaxTime: '24:00:00',
+    expandRows: true,
+    headerToolbar: false,
+    firstDay: 1,
+    selectable: false,
+    events: events,
+    eventTimeFormat: { hour: 'numeric', minute: '2-digit', meridiem: false },
+    eventClick: function(info) {
+      if (info.event.extendedProps.isBooked) {
+        alert("This slot is already booked.");
+        return;
+      }
+      const now = new Date();
+      if (info.event.start < now) {
+        alert("You cannot select a past time slot.");
+        return;
+      }
+      if (selectedEvent) selectedEvent.setProp('color', '#28a745');
+      selectedEvent = info.event;
+      selectedEvent.setProp('color', '#1e7e34');
+      selectedSlotInfo = info.event;
     }
+  });
 
-    // Modal window
-    function openBookingPopup(time) {
+  const continueBtn = document.querySelector(".continue-btn");
+  continueBtn.onclick = function () {
+    if (selectedEvent) {
+      openBookingPopup(selectedEvent.start, selectedEvent.end);
+    } else {
+      alert("Please select a time slot first.");
+    }
+  };
+
+  calendar.render();
+}
+
+// Modal window
+async function openBookingPopup(start, end) {
+  await populateSpecialtiesDropdown(); // <-- Add this line
   const modal = document.getElementById("bookingModal");
   const text = document.getElementById("selectedTimeText");
-  text.textContent = "Selected time: " + time.toLocaleString();
+  text.textContent = "Selected time: " + start.toLocaleString() + " - " + end.toLocaleTimeString();
   modal.style.display = "flex";
 }
 
@@ -350,24 +359,145 @@ function closeModal() {
   document.getElementById("bookingModal").style.display = "none";
 }
 
-function confirmBooking() {
-  closeModal();
-  alert("Your appointment has been confirmed!");
-}
-    // Modal window END
+async function confirmBooking() {
+  if (!selectedSlotInfo) {
+    alert("No slot selected.");
+    return;
+  }
+const reason = document.getElementById('meetingTopic').value;
+const platform = document.querySelector('#bookingModal select:nth-of-type(2)').value;
+const textarea = document.querySelector("#bookingModal textarea");
+const extraInfo = textarea.value;
 
-    function changeWeek(offset) {
-      currentDate.setDate(currentDate.getDate() + (offset * 7));
-      renderCalendar(currentDate);
+  if (!reason || !platform) {
+    alert("Please select a reason and a platform.");
+    return;
+  }
+
+  // Prepare booking data
+  const date = selectedSlotInfo.start.toISOString().slice(0, 10);
+  const start_time = selectedSlotInfo.extendedProps.startTime;
+  const end_time = selectedSlotInfo.extendedProps.endTime;
+
+  const token = sessionStorage.getItem('accessToken');
+  try {
+    const res = await fetch('http://localhost:8000/appointment/book', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        consultant_id: consultantId,
+        date: date,
+        start_time: start_time,
+        end_time: end_time,
+        reason: reason,      // <-- only the topic
+        info: extraInfo,     // <-- only the additional info
+        platform: platform
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      alert('❌ ' + (err.detail || JSON.stringify(err)));
+      return;
     }
+    closeModal();
+    alert("✅ Your appointment has been requested and is pending consultant approval.");
+    window.location.href = "appointments.html";
+  } catch (e) {
+    alert("❌ Booking failed. Please try again.");
+  }
+}
 
-    window.onload = () => {
-      renderCalendar(currentDate);
-    };
-    
-    function goToCurrentWeek() {
+// Modal window END
+
+function changeWeek(offset) {
+  currentDate.setDate(currentDate.getDate() + (offset * 7));
+  fetchAndRenderCalendar(currentDate);
+}
+
+window.onload = () => {
+  fetchConsultantName();
+  fetchAndRenderCalendar(currentDate);
+};
+
+function goToCurrentWeek() {
   currentDate = new Date();
-  renderCalendar(currentDate);
+  fetchAndRenderCalendar(currentDate);
+}
+
+async function populateSpecialtiesDropdown() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const consultantId = urlParams.get("id");
+  const consultantType = urlParams.get("type"); // "study" or "internship"
+
+  // Help topics mapping
+  let helpMap, res, data, specialties = [];
+  if (consultantType === "internship") {
+    helpMap = {
+      accommodation: "Finding accommodation",
+      social_life: "Social life and making friends",
+      company_info: "Company information",
+      travel_info: "Best and worst city spots"
+    };
+    res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
+  } else {
+    helpMap = {
+      accommodation: "Finding accommodation",
+      social_life: "Social life and making friends",
+      uni_info: "University information",
+      travel_info: "Best/worst city spots, weekend plans"
+    };
+    res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
+  }
+
+  if (res.ok) {
+    data = await res.json();
+    specialties = Object.entries(helpMap)
+      .filter(([key]) => data[key])
+      .map(([, label]) => label);
+  }
+
+  // Fallback: if no specialties, show all for that type
+  if (!specialties.length) {
+    specialties = Object.values(helpMap);
+  }
+
+  // Populate meeting topic dropdown
+  const topicSelect = document.getElementById('meetingTopic');
+  topicSelect.innerHTML = '<option value="">-- Select an option --</option>';
+  specialties.forEach(topic => {
+    topicSelect.innerHTML += `<option value="${topic}">${topic}</option>`;
+  });
+
+  // Platform mapping
+  const platformMap = {
+    zoom: "Zoom",
+    microsoft_teams: "Microsoft Teams",
+    google_meet: "Google Meet",
+    apple_facetime: "Apple FaceTime"
+  };
+
+  let platforms = [];
+  if (data) {
+    platforms = Object.entries(platformMap)
+      .filter(([key]) => data[key])
+      .map(([, label]) => label);
+  }
+  // Fallback: if no platforms, show all
+  if (!platforms.length) {
+    platforms = Object.values(platformMap);
+  }
+
+  // Populate platform dropdown
+  const platformSelect = document.querySelector('#bookingModal select[id="platformSelect"], #bookingModal select:nth-of-type(2)');
+  if (platformSelect) {
+    platformSelect.innerHTML = '<option value="">-- Select a platform --</option>';
+    platforms.forEach(platform => {
+      platformSelect.innerHTML += `<option value="${platform}">${platform}</option>`;
+    });
+  }
 }
 
   </script>
