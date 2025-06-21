@@ -7,6 +7,7 @@ from app.auth.token_verification import get_current_user
 from app.appointment.models import ConsultantAvailability, Appointment, AppointmentStatus
 from app.appointment.schemas import ConsultantAvailabilityOut as Slot, AppointmentCreate, AppointmentOut
 from fastapi import Body
+from sqlalchemy.orm import Session
 
 router = APIRouter(
     prefix="/appointment",
@@ -135,12 +136,20 @@ async def get_my_appointments(
     q = select(Appointment).options(joinedload(Appointment.consultant)).where(Appointment.student_id == current_user["user_id"])
     result = await db.execute(q)
     appointments = result.scalars().all()
-    # Add consultant_name to each appointment
+    now = datetime.now()
+    updated = False
     for appt in appointments:
+        end_time = appt.end_time or appt.start_time
+        appt_end = datetime.combine(appt.date, datetime.strptime(end_time, "%H:%M").time())
+        if appt.status == "upcoming" and appt_end < now:
+            appt.status = "previous"
+            updated = True
         if hasattr(appt, "consultant") and appt.consultant:
             appt.consultant_name = f"{appt.consultant.first_name} {appt.consultant.last_name}"
         else:
             appt.consultant_name = ""
+    if updated:
+        await db.commit()
     return appointments
 
 @router.post("/reject/{appointment_id}", response_model=AppointmentOut)
@@ -179,11 +188,21 @@ async def get_consultant_appointments(
     q = select(Appointment).options(joinedload(Appointment.student)).where(Appointment.consultant_id == current_user["user_id"])
     result = await db.execute(q)
     appointments = result.scalars().all()
+    now = datetime.now()
+    updated = False
     for appt in appointments:
+        # Use end_time if available, otherwise start_time
+        end_time = appt.end_time or appt.start_time
+        appt_end = datetime.combine(appt.date, datetime.strptime(end_time, "%H:%M").time())
+        if appt.status == "upcoming" and appt_end < now:
+            appt.status = "previous"
+            updated = True
         if hasattr(appt, "student") and appt.student:
             appt.student_name = f"{appt.student.first_name} {appt.student.last_name}"
         else:
             appt.student_name = ""
+    if updated:
+        await db.commit()
     return appointments
 
 from fastapi import Body
@@ -204,3 +223,27 @@ async def approve_appointment(
     await db.commit()
     await db.refresh(appt)
     return appt
+
+from datetime import datetime, timedelta
+from sqlalchemy.future import select
+
+@router.post("/{appointment_id}/cancel")
+async def cancel_appointment(
+    appointment_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+    reason: str = Body(..., embed=True)
+):
+    result = await db.execute(select(Appointment).where(Appointment.id == appointment_id))
+    appt = result.scalars().first()
+    if not appt:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    if current_user["user_id"] not in [appt.student_id, appt.consultant_id]:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    meeting_dt = datetime.combine(appt.date, datetime.strptime(appt.start_time, "%H:%M").time())
+    if meeting_dt - datetime.now() <= timedelta(hours=24):
+        raise HTTPException(status_code=400, detail="Cannot cancel less than 24h before meeting")
+    appt.status = "rejected"
+    appt.rejection_reason = reason
+    await db.commit()
+    return {"detail": "Appointment cancelled"}

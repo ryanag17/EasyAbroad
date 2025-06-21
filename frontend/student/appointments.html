@@ -71,7 +71,18 @@
 
       
       </section>
-    
+  
+      <div id="cancelModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeCancelModal()">&times;</span>
+    <p>Please enter a reason for cancellation:</p>
+    <textarea id="cancelReasonInput" rows="3" style="width:100%;"></textarea>
+    <div class="modal-buttons">
+      <button onclick="confirmCancellation()">Confirm Cancel</button>
+      <button onclick="closeCancelModal()">Cancel</button>
+    </div>
+  </div>
+</div>
     
       
         
@@ -118,7 +129,7 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
     <script>
- (async () => {
+(async () => {
   await autoEnforceRoleFromPath();
 })();
 
@@ -147,6 +158,30 @@ function formatDate(dateStr) {
   const d = new Date(dateStr);
   if (isNaN(d)) return dateStr;
   return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+}
+
+// Helper: can cancel if >24h before meeting
+function canCancel(app) {
+  const meetingDateTime = new Date(`${app.date}T${app.start_time || app.time}:00`);
+  const now = new Date();
+  return app.status === "upcoming" && (meetingDateTime - now > 24 * 60 * 60 * 1000);
+}
+
+// Cancel appointment function
+async function cancelAppointment(appointmentId) {
+  if (!confirm("Are you sure you want to cancel this appointment?")) return;
+  const token = sessionStorage.getItem("accessToken");
+  const res = await fetch(`http://localhost:8000/appointment/${appointmentId}/cancel`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  if (res.ok) {
+    alert("Appointment cancelled.");
+    window.location.reload();
+  } else {
+    const data = await res.json().catch(() => ({}));
+    alert(data.detail || "Failed to cancel appointment.");
+  }
 }
 
 // Render appointments by status
@@ -178,7 +213,7 @@ function renderAppointments(status) {
     let rejectionBlock = '';
     if (status === 'rejected' && app.rejection_reason) {
       rejectionBlock = `
-        <label class="add_label" style="margin-top:10px;">Reason of rejection:</label>
+        <label class="add_label" style="margin-top:10px;">${app.rejection_reason === "Cancellation" ? "Cancellation" : "Reason of rejection:"}</label>
         <textarea disabled>${app.rejection_reason}</textarea>
       `;
     }
@@ -198,6 +233,9 @@ function renderAppointments(status) {
       <div class="appointment-actions">
         ${meetingLinkBlock}
         <a class="message-btn" href="#">Send a message</a>
+       ${status === 'upcoming' && canCancel(app) ? `
+  <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
+` : ''}
         ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?id=${app.consultant_id || ""}">Review</a>` : ''}
       </div>
     `;
@@ -205,6 +243,7 @@ function renderAppointments(status) {
     container.appendChild(card);
   });
 }
+
 // Tab logic
 const tabs = document.querySelectorAll('.tab');
 tabs.forEach(tab => {
@@ -232,6 +271,46 @@ window.onload = async () => {
   appointments = await fetchAppointments();
   renderAppointments(getCurrentTab());
 };
+
+let tempCancelId = null;
+
+function openCancelModal(appId) {
+  tempCancelId = appId;
+  document.getElementById('cancelReasonInput').value = '';
+  document.getElementById('cancelModal').style.display = 'flex';
+}
+function closeCancelModal() {
+  document.getElementById('cancelModal').style.display = 'none';
+  tempCancelId = null;
+}
+window.addEventListener("click", function(e) {
+  const modal = document.getElementById('cancelModal');
+  if (e.target === modal) closeCancelModal();
+});
+
+async function confirmCancellation() {
+  const reason = document.getElementById('cancelReasonInput').value.trim();
+  if (!reason) {
+    alert("Please enter a reason for cancellation.");
+    return;
+  }
+  const token = sessionStorage.getItem("accessToken");
+  const res = await fetch(`http://localhost:8000/appointment/${tempCancelId}/cancel`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ reason })
+  });
+  closeCancelModal();
+  if (res.ok) {
+    alert("Appointment cancelled.");
+    window.location.reload();
+  } else {
+    const data = await res.json().catch(() => ({}));
+    alert(data.detail || "Failed to cancel appointment.");
+  }
+}
+
+
         </script>
 </body>
 </html>

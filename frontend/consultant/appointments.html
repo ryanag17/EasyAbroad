@@ -99,7 +99,17 @@
   </div>
 </div>
         
-      
+<div id="cancelModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeCancelModal()">&times;</span>
+    <p>Please enter a reason for cancellation:</p>
+    <textarea id="cancelReasonInput" rows="3" style="width:100%;"></textarea>
+    <div class="modal-buttons">
+      <button onclick="confirmCancellation()">Confirm Cancel</button>
+      <button onclick="closeCancelModal()">Cancel</button>
+    </div>
+  </div>
+</div>
       
     <footer>
         <div>
@@ -170,45 +180,59 @@ function renderAppointments(status) {
   container.innerHTML = '';
   const filteredAppointments = appointments.filter(app => app.status === status);
 
-// Render appointments by status
-filteredAppointments.forEach(app => {
-  const card = document.createElement('div');
-  card.className = 'appointment-card';
+  filteredAppointments.forEach(app => {
+    const card = document.createElement('div');
+    card.className = 'appointment-card';
 
-  card.innerHTML = `
-    <div class="appointment-info">
-      <p class="appointment-date">${formatDate(app.date)}, ${app.start_time} - ${getOneHourLater(app.start_time)}</p>
-      <p class="consultant-name"><b>${app.student_name || "Student"}</b></p>
-      <label class="meeting_label">Meeting Topic:</label>
-      <select disabled>
-        <option selected>${app.reason || ""}</option>
-      </select>
-      <label class="add_label">Additional Info:</label>
-      <textarea disabled>${app.info || ""}</textarea>
-      ${(app.platform && (app.status === "pending" || app.status === "upcoming")) ? `
-        <label class="add_label">Meeting Platform:</label>
-        <input type="text" value="${app.platform}" disabled />
-      ` : ""}
-      ${(app.status === "rejected" && app.rejection_reason) ? `
-        <label class="add_label">Rejection Reason:</label>
-        <textarea disabled>${app.rejection_reason}</textarea>
-      ` : ""}
-    </div>
-    <div class="appointment-actions">
-      ${status === 'pending' ? `
-        <div class="pending-actions">
-          <button class="accept-btn" onclick="openLinkModal(${app.id})">Approve & Send Link</button>
-          <button class="reject-btn" onclick="openRejectModal(${app.id})">Reject</button>
-        </div>
-      ` : (status === 'upcoming' ? `
+    // Meeting link for upcoming
+    let meetingLinkBlock = '';
+    if (status === 'upcoming' && app.meeting_link) {
+      meetingLinkBlock = `
         <label>Meeting Link:</label>
         <input type="text" value="${app.meeting_link || ""}" readonly onclick="window.open('${app.meeting_link || "#"}')">
-        <a class="message-btn" href="#">Send a message</a>
-      ` : '')}
-    </div>
-  `;
-  container.appendChild(card);
-});
+      `;
+    }
+
+    // Rejection reason for rejected
+    let rejectionBlock = '';
+    if (status === 'rejected' && app.rejection_reason) {
+      rejectionBlock = `
+        <label class="add_label" style="margin-top:10px;">${app.rejection_reason === "Cancellation" ? "Cancellation" : "Reason of rejection:"}</label>
+        <textarea disabled>${app.rejection_reason}</textarea>
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="appointment-info">
+        <p class="appointment-date">${formatDate(app.date)}, ${app.start_time} - ${getOneHourLater(app.start_time)}</p>
+        <p class="consultant-name"><b>${app.student_name || "Student"}</b></p>
+        <label class="meeting_label">Meeting Topic:</label>
+        <select disabled>
+          <option selected>${app.reason || ""}</option>
+        </select>
+        <label class="add_label">Additional Info:</label>
+        <textarea disabled>${app.info || ""}</textarea>
+        ${(app.platform && (app.status === "pending" || app.status === "upcoming")) ? `
+          <label class="add_label">Meeting Platform:</label>
+          <input type="text" value="${app.platform}" disabled />
+        ` : ""}
+        ${rejectionBlock}
+      </div>
+      <div class="appointment-actions">
+        ${status === 'pending' ? `
+          <div class="pending-actions">
+            <button class="accept-btn" onclick="openLinkModal(${app.id})">Approve & Send Link</button>
+            <button class="reject-btn" onclick="openRejectModal(${app.id})">Reject</button>
+          </div>
+        ` : (status === 'upcoming' ? `
+          ${meetingLinkBlock}
+          <a class="message-btn" href="#">Send a message</a>
+          ${canCancel(app) ? `<a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>` : ''}
+        ` : '')}
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
 
 // Tab logic
@@ -317,6 +341,64 @@ function formatDate(dateStr) {
   return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
 }
 
+function canCancel(app) {
+  // Combine date and start_time into a Date object
+  const meetingDateTime = new Date(`${app.date}T${app.start_time || app.time}:00`);
+  const now = new Date();
+  return app.status === "upcoming" && (meetingDateTime - now > 24 * 60 * 60 * 1000);
+}
+
+async function cancelAppointment(appointmentId) {
+  if (!confirm("Are you sure you want to cancel this appointment?")) return;
+  const res = await fetch(`http://localhost:8000/appointment/${appointmentId}/cancel`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` }
+  });
+  if (res.ok) {
+    alert("Appointment cancelled.");
+    window.location.reload();
+  } else {
+    const data = await res.json().catch(() => ({}));
+    alert(data.detail || "Failed to cancel appointment.");
+  }
+}
+
+let tempCancelId = null;
+
+function openCancelModal(appId) {
+  tempCancelId = appId;
+  document.getElementById('cancelReasonInput').value = '';
+  document.getElementById('cancelModal').style.display = 'flex';
+}
+function closeCancelModal() {
+  document.getElementById('cancelModal').style.display = 'none';
+  tempCancelId = null;
+}
+window.addEventListener("click", function(e) {
+  const modal = document.getElementById('cancelModal');
+  if (e.target === modal) closeCancelModal();
+});
+
+async function confirmCancellation() {
+  const reason = document.getElementById('cancelReasonInput').value.trim();
+  if (!reason) {
+    alert("Please enter a reason for cancellation.");
+    return;
+  }
+  const res = await fetch(`http://localhost:8000/appointment/${tempCancelId}/cancel`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ reason })
+  });
+  closeCancelModal();
+  if (res.ok) {
+    alert("Appointment cancelled.");
+    window.location.reload();
+  } else {
+    const data = await res.json().catch(() => ({}));
+    alert(data.detail || "Failed to cancel appointment.");
+  }
+}
 </script>
 </body>
 </html>
