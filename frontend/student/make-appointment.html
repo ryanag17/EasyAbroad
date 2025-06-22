@@ -261,10 +261,13 @@ async function fetchAndRenderCalendar(startDate) {
     slot.days_of_week.forEach(day => {
       for (let week = 0; week < 4; week++) {
         const base = new Date(startDate);
-        base.setDate(base.getDate() - base.getDay() + day + (week * 7));
-        const dateStr = base.toISOString().slice(0, 10);
-        const key = `${dateStr}|${slot.start_time}|${slot.end_time}`;
-        const isBooked = booked.has(key);
+const monday = new Date(base);
+      monday.setDate(base.getDate() - ((base.getDay() + 6) % 7) + (week * 7));
+const slotDate = new Date(monday);
+      slotDate.setDate(monday.getDate() + (day - 1));
+      const dateStr = slotDate.toISOString().slice(0, 10);
+      const key = `${dateStr}|${slot.start_time}|${slot.end_time}`;
+      const isBooked = booked.has(key);
 
         events.push({
           title: isBooked ? 'Booked' : 'Available',

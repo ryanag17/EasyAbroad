@@ -142,7 +142,28 @@
     return;
   }
 
-  document.querySelector(".consultant-name").textContent = "User #" + partnerId;
+async function loadPartnerInfo(partnerId) {
+  const token = sessionStorage.getItem("accessToken");
+  try {
+    const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("Failed to fetch user info");
+    const user = await res.json();
+    document.querySelector(".consultant-name").textContent =
+      user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || `User #${partnerId}`;
+    document.querySelector(".avatar").src =
+      user.profile_picture
+        ? "http://localhost:8000" + user.profile_picture
+        : "../images/avatar.png";
+  } catch (e) {
+    document.querySelector(".consultant-name").textContent = `User #${partnerId}`;
+    document.querySelector(".avatar").src = "../images/avatar.png";
+  }
+}
+
+await loadPartnerInfo(partnerId);
+
 
   // 2) Load existing thread
   async function loadThread() {

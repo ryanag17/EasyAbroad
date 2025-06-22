@@ -124,55 +124,81 @@ const token    = sessionStorage.getItem("accessToken");
     window.addEventListener("DOMContentLoaded", fetchThreads);
 
     // 2) Render the list of conversation "threads"
-    function renderThreads(threads) {
-      const container = document.querySelector('.chat-list-container');
-      container.innerHTML = '';
+  function renderThreads(threads) {
+  const container = document.querySelector('.chat-list-container');
+  container.innerHTML = '';
 
-      if (threads.length === 0) {
-        container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
-        return;
-      }
+  if (threads.length === 0) {
+    container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
+    return;
+  }
 
-      threads.forEach(t => {
-        // Determine partner ID & name
-        const partnerId   = t.from_me ? t.receiver_id : t.sender_id;
-        const partnerName = `${t.first_name} ${t.last_name}`;
+  threads.forEach(async t => {
+    // Determine partner ID & name
+    const partnerId   = t.from_me ? t.receiver_id : t.sender_id;
+    const partnerName = `${t.first_name} ${t.last_name}`;
 
-        // Build card
-        const card = document.createElement('div');
-        card.className = 'message-card';
-        card.innerHTML = `
-          <div class="chat-avatar">
-            <img src="../images/avatar.png" alt="Avatar">
-          </div>
-          <div class="chat-content">
-            <h3>${partnerName}</h3>
-            <p class="message-preview">${t.message}</p>
-            <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
-          </div>
-          <div class="chat-actions">
-            <button onclick="confirmDelete(${partnerId})">🗑️</button>
-          </div>
-        `;
-
-        // Clicking opens the chat thread
-        card.addEventListener('click', () => {
-          window.location.href = `chat.html?partnerId=${partnerId}`;
-        });
-
-        container.appendChild(card);
-      });
+    // Fetch partner profile info
+ let profilePic = "../images/avatar.png";
+try {
+  const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  if (res.ok) {
+    const user = await res.json();
+    if (user.profile_picture) {
+      profilePic = "http://localhost:8000" + user.profile_picture;
     }
+  }
+} catch (e) {
+  // fallback to default avatar
+}
+const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
+  headers: { "Authorization": `Bearer ${token}` }
+});
+    // Build card
+    const card = document.createElement('div');
+    card.className = 'message-card';
+    card.innerHTML = `
+      <div class="chat-avatar">
+        <img src="${profilePic}" alt="Avatar">
+      </div>
+      <div class="chat-content">
+        <h3>${partnerName}</h3>
+        <p class="message-preview">${t.message}</p>
+        <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
+      </div>
+      <div class="chat-actions">
+        <button onclick="confirmDelete(${partnerId})">🗑️</button>
+      </div>
+    `;
 
-    // 3) Confirm delete (you can wire up real API delete later)
-    function confirmDelete(partnerId) {
-      event.stopPropagation();
-      if (confirm("Delete this conversation?")) {
-        // TODO: call DELETE /messages/with/{partnerId} if supported
-        alert("Conversation deleted locally.");
+    // Clicking opens the chat thread
+    card.addEventListener('click', () => {
+      window.location.href = `chat.html?partnerId=${partnerId}`;
+    });
+
+    container.appendChild(card);
+  });
+}
+function confirmDelete(partnerId) {
+  event.stopPropagation();
+  if (confirm("Delete this conversation?")) {
+    const token = sessionStorage.getItem("accessToken");
+    fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+      method: "DELETE",
+      headers: { "Authorization": `Bearer ${token}` }
+    })
+    .then(res => {
+      if (res.ok) {
+        alert("Conversation deleted.");
         fetchThreads();
+      } else {
+        alert("Failed to delete conversation.");
       }
-    }
+    });
+  }
+}
     </script>
 </body>
 </html>

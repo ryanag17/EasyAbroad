@@ -232,7 +232,7 @@ function renderAppointments(status) {
       </div>
       <div class="appointment-actions">
         ${meetingLinkBlock}
-        <a class="message-btn" href="#">Send a message</a>
+       <a class="message-btn" href="chat.html?partnerId=${app.consultant_id}">Send a message</a>
        ${status === 'upcoming' && canCancel(app) ? `
   <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
 ` : ''}

@@ -30,11 +30,7 @@ async def send_message(
     recipient = await db.get(User, data.receiver_id)
     if not recipient:
         raise HTTPException(status_code=404, detail="Recipient not found")
-    if recipient.role == user["role"]:  # changed
-        raise HTTPException(
-            status_code=403,
-            detail="Messaging is only allowed between students and consultants"
-        )
+  
 
     token = fernet.encrypt(data.message.encode())
     raw = base64.urlsafe_b64decode(token)
@@ -79,9 +75,7 @@ async def get_conversation_summaries(
         if partner_id in seen:
             continue
         partner = await db.get(User, partner_id)
-        if partner.role == user["role"]:  # changed
-            continue
-
+       
         seen.add(partner_id)
         text = fernet.decrypt(m.encrypted_message).decode()
         out.append({
@@ -107,11 +101,7 @@ async def get_full_thread(
     partner = await db.get(User, partner_id)
     if not partner:
         raise HTTPException(status_code=404, detail="User not found")
-    if partner.role == user["role"]:  # changed
-        raise HTTPException(
-            status_code=403,
-            detail="Messaging is only allowed between students and consultants"
-        )
+ 
 
     q = await db.execute(
         select(Message)
@@ -140,3 +130,34 @@ async def get_full_thread(
         })
 
     return thread
+
+users_router = APIRouter(prefix="/users", tags=["users"])
+@users_router.get("/{user_id}")
+async def get_user(user_id: int, db: AsyncSession = Depends(get_db), user=Depends(get_current_user)):
+    result = await db.execute(select(User).where(User.id == user_id))
+    user_obj = result.scalars().first()
+    if not user_obj:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {
+        "id": user_obj.id,
+        "full_name": f"{user_obj.first_name} {user_obj.last_name}",
+        "first_name": user_obj.first_name,
+        "last_name": user_obj.last_name,
+        "profile_picture": user_obj.profile_picture
+    }
+
+
+
+@router.delete("/with/{partner_id}")
+async def delete_conversation(partner_id: int, db: AsyncSession = Depends(get_db), user=Depends(get_current_user)):
+    result = await db.execute(
+        Message.__table__.delete().where(
+            or_(
+                ((Message.sender_id == user["user_id"]) & (Message.receiver_id == partner_id)),
+                ((Message.receiver_id == user["user_id"]) & (Message.sender_id == partner_id))
+            )
+        )
+    )
+    await db.commit()
+    print("Deleted rows:", result.rowcount)  # Optional: for debugging
+    return {"detail": "Conversation deleted"}

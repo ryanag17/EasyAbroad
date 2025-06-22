@@ -191,6 +191,9 @@ async def require_admin_user(user=Depends(get_current_user)):
         )
     return user
 
+
+
+
 # ─── Remove or comment out all legacy /messages handlers below ────────────
 # from .models import Message, User
 # from .schemas.message import SendMessageSchema, MessageOut

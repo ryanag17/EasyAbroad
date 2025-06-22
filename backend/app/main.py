@@ -80,9 +80,9 @@ app.include_router(appointment_router)
 # 7) Messaging endpoints (student⇄consultant only)
 from app.messages.routes import router as messages_router  # ✅
 
-
 app.include_router(messages_router)
-
+from app.messages.routes import users_router
+app.include_router(users_router)
 # 7) Health check
 @app.get("/", status_code=200)
 def root():
