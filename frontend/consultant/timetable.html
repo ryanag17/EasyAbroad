@@ -320,8 +320,27 @@
         nowIndicator: true,
         selectable: isEditable,
         selectMirror: true,
+        selectAllow: function(selectionInfo) {
+        return true; // allow any selection
+        },
+select: function(info) {
+  if (!isEditable) return;
+
+  const fixedEnd = new Date(info.start.getTime() + 60 * 60 * 1000);
+
+  pendingSlot = {
+    start: info.start,
+    end: fixedEnd
+  };
+
+  const text = info.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
+               '–' +
+               fixedEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  document.getElementById('confirmSlotText').textContent = `Mark availability for ${text}?`;
+  document.getElementById('confirmSlotModal').style.display = 'flex';
+},
         headerToolbar: false,
-        select: isEditable ? handleSlotClick : null,
         eventClick: handleEventClick,
         events: events,
         eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
