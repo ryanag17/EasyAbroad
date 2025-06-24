@@ -224,11 +224,15 @@ function renderAppointments(status) {
             <button class="accept-btn" onclick="openLinkModal(${app.id})">Approve & Send Link</button>
             <button class="reject-btn" onclick="openRejectModal(${app.id})">Reject</button>
           </div>
-        ` : (status === 'upcoming' ? `
-          ${meetingLinkBlock}
-          <button class="message-btn" onclick="window.location.href='chat.html?partnerId=${app.student_id}'">Send message</button>
-          ${canCancel(app) ? `<a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>` : ''}
-        ` : '')}
+        ` : `
+          ${status === 'upcoming' ? meetingLinkBlock : ''}
+          ${['upcoming', 'rejected', 'previous'].includes(status) ? `
+            <button class="message-btn" onclick="window.location.href='chat.html?partnerId=${app.student_id}'">Send message</button>
+          ` : ''}
+          ${status === 'upcoming' && canCancel(app) ? `
+            <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
+          ` : ''}
+        `}
       </div>
     `;
     container.appendChild(card);
