@@ -1242,8 +1242,7 @@ span {
     justify-content: center;
     flex-direction: column;
     padding-bottom: 70px;
-    padding-top: 50px;
-    min-height: 150vh;
+    min-height: 100vh;
   }
   
   .user-avatar,
