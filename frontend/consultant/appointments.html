@@ -232,7 +232,7 @@ function renderAppointments(status) {
           ${status === 'upcoming' && canCancel(app) ? `
             <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
           ` : ''}
-        `}
+        `} 
       </div>
     `;
     container.appendChild(card);
