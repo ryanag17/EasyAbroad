@@ -7,36 +7,35 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/all.min.css">
-    <style>
-        .mail_contact,
-        .name_input{
-            background-color: #e6e6e6;
-        }
-        .contact_message{
-            border: 2px solid #d1d3d4;
-            border-radius: 5px;
-        }
-    </style>
 </head>
 <body class="body_contact">
     <header id="dynamic-header"></header>
     
     <h2 class="contact_us_h2">Contact us</h2>
     <p class="contact_p_out">We’re here to support you with your upcoming study/work abroad experience! Whether you have questions about our platform, need assistance with booking a session, or have encountered any issues, don’t hesitate to get in touch with us.</p>
-    <form class="form_contact">
+
+    <form action="https://formsubmit.co/d5fade07a22664cd85defb5e5c6f3582" class="form_contact">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_subject" value="New Contact Us Inquiry!">
+        <input type="hidden" name="_template" value="table">
+
         <h2 class="contact_h2">Send Us a Message:</h2>
         <p class="contact_p_text">Fill out the form below, and we’ll get back to you as soon as possible. We typically reply within 24 hours!</p>
-        <p class="contact_p" type="Name:"><input type="text" class="name_input" id="name" placeholder="Write your name here..." /></p>
-        <p class="contact_p" type="Email:"><input type="email" id="email-id" placeholder="How to contact you..." oninput="checker()" class="mail_contact"></p>
-        <div id="icon">
-        </div>
-        <p id="error-msg">Please Enter A Valid Email</p>
-        <p class="contact_p" type="Message:">
-            <textarea class="contact_message" placeholder="What would you like to tell us.."></textarea>
+        <p class="contact_p"><input type="text" name="name" class="name_input" placeholder="Your name..." required></p>
+        <p class="contact_p"><input type="email" name="email" class="mail_contact" placeholder="Your Email Address..." required></p>
+        <p class="contact_p">
+            <textarea name="message" class="contact_message" placeholder="What would you like to tell us.." required></textarea>
         </p>          
-        <button class="contact_btn">Send Message</button>
-        
-      </form>
+        <button type="submit" class="contact_btn">Send Message</button>
+    </form>
+
+    <div id="success-modal">
+        <div class="modal-content">
+            <p> Thank you! Your message has been sent.</p>
+            <button onclick="closeModal()" class="close-btn">Close</button>
+        </div>
+    </div>
+    
       <p class="contact_p_end">We’re excited to hear from you and help you on your journey abroad!</p>
       
       <footer>
@@ -78,10 +77,42 @@
     </footer>
     
     <script src="auth.js"></script>
+    <script src="script.js"></script>    
     <script>
     injectHeader();
-    </script>
 
-    <script src="script.js"></script>   
+document.querySelector(".form_contact").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const form = this;
+    const formData = new FormData(form);
+    const messageField = form.querySelector('textarea[name="message"]');
+    const messageValue = messageField.value.trim();
+
+    if (messageValue.length < 20) {
+        alert("Please write at least 20 characters in your message.");
+        return;
+    }
+
+    fetch(form.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            document.getElementById("success-modal").style.display = "flex";
+            form.reset();
+        } else {
+            alert("Oops! There was a problem submitting your form.");
+        }
+    }).catch(error => {
+        alert("Oops! There was a problem submitting your form.");
+    });
+});
+
+
+    </script>
 </body>
 </html>
