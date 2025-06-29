@@ -236,7 +236,7 @@ function renderAppointments(status) {
        ${status === 'upcoming' && canCancel(app) ? `
   <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
 ` : ''}
-        ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?id=${app.consultant_id || ""}">Review</a>` : ''}
+        ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?appointment_id=${app.id}">Review</a>` : ''}
       </div>
     `;
 

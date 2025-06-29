@@ -46,7 +46,7 @@
       <div class="profile-header">
         <img src="../images/avatar.png" alt="Consultant Avatar" class="avatar">
         <div>
-          <h2>First Name, Last Name <a href="reviews.html" class="review">(currently have no review)</a></h2>
+          <h2 id="consultantNameHeader"></h2>
           <div class="info-row"><strong>Focus of Consultancy:</strong> Study Abroad</div>
           <div class="info-row"><strong>University Name:</strong> </div>
           <div class="info-row"><strong>Course Name:</strong> </div>
@@ -109,6 +109,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  async function fetchAverageRating(consultantId) {
+    try {
+      const res = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`);
+      const data = await res.json();
+      return data.average_rating ?? null;
+    } catch (e) {
+      console.warn("Rating fetch failed:", e);
+      return null;
+    }
+  }
+
   try {
     const response = await fetch(`http://localhost:8000/consultancy/study/public/${userId}`);
     if (!response.ok) throw new Error("Profile not found or not accepted.");
@@ -135,8 +146,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       : "../images/avatar.png";
 
     // Name
-    document.querySelector("h2").innerHTML =
-      `${first_name} ${last_name} <a href="reviews.html" class="review">(currently have no review)</a>`;
+    const avgRating = await fetchAverageRating(userId);
+    const ratingText = avgRating ? `(${avgRating.toFixed(1)}/5 ★)` : "(currently has no reviews)";
+    document.getElementById("consultantNameHeader").innerHTML =
+      `${first_name} ${last_name} <a href="reviews.html?id=${userId}&name=${encodeURIComponent(first_name + ' ' + last_name)}" class="review">${ratingText}</a>`;
+
+
 
     // Info fields
     document.querySelectorAll(".info-row")[1].innerHTML =

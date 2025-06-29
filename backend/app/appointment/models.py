@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Enum 
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Enum, Text, DateTime, CheckConstraint
 from sqlalchemy.dialects.mysql import JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import func
 import enum
 
 from app.db import Base
@@ -46,3 +47,21 @@ class Appointment(Base):
     rejection_reason = Column(String, nullable=True)
     student = relationship("User", foreign_keys=[student_id])
     consultant = relationship("User", foreign_keys=[consultant_id])
+
+class ConsultantReview(Base):
+    __tablename__ = "consultant_reviews"
+
+    id = Column(Integer, primary_key=True, index=True)
+    booking_id = Column(Integer, ForeignKey("appointments.id", ondelete="CASCADE"), unique=True, nullable=False)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    consultant_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    rating = Column(Integer, nullable=False)
+    review_text = Column(Text, nullable=True)
+    submitted_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    student = relationship("User", foreign_keys=[student_id], backref="reviews")  # Relationship to the student (User)
+    consultant = relationship("User", foreign_keys=[consultant_id], backref="consultant_reviews")  # Relationship to the consultant (User)
+
+    __table_args__ = (
+        CheckConstraint('rating BETWEEN 1 AND 5', name='check_rating_range'),
+    )

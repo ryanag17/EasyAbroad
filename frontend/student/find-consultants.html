@@ -363,6 +363,18 @@ window.onload = async function () {
 
   let allConsultants = [];
 
+  async function fetchAverageRating(consultantId) {
+    try {
+      const res = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`);
+      const data = await res.json();
+      return data.average_rating ?? null;
+    } catch (e) {
+      console.warn("Rating fetch failed:", e);
+      return null;
+    }
+  }
+
+
   async function fetchConsultants() {
   try {
     const [studyRes, internshipRes] = await Promise.all([
@@ -384,7 +396,7 @@ window.onload = async function () {
         from: formatDate(s.education_start),
         to: formatDate(s.education_finish)
       },
-      rating: null,
+      rating: await fetchAverageRating(s.user_id),
       location: await geocode(s.city_of_study, s.country_of_study)
     })));
 
@@ -399,7 +411,7 @@ window.onload = async function () {
         from: formatDate(i.internship_start),
         to: formatDate(i.internship_finish)
       },
-      rating: null,
+      rating: await fetchAverageRating(i.user_id),
       location: await geocode(i.city_of_internship, i.country_of_internship)
     })));
 
@@ -522,6 +534,7 @@ function applyFilters() {
         <p>${c.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</p>
         <p>${c.institution}</p>
         <p><small>${c.period.from} – ${c.period.to}</small></p>
+        <p style="margin: 6px 0;"><strong>${c.rating ? `${c.rating.toFixed(1)}/5 ★` : 'No Reviews Yet'}</strong></p>
         <button class="profile-btn" onclick="goToConsultantProfile('${c.user_id}', '${c.focus}')">View Profile</button>
       `;
       listContainer.appendChild(div);

@@ -604,22 +604,7 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- 15) Consultant_Reviews table
-CREATE TABLE IF NOT EXISTS consultant_reviews (
-  id              INT PRIMARY KEY AUTO_INCREMENT,
-  booking_id      INT NOT NULL UNIQUE,
-  student_id      INT NOT NULL,
-  consultant_id   INT NOT NULL,
-  rating          TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-  review_text     TEXT,
-  submitted_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-  FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
-  FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (consultant_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- 16) Appointments table
+-- 15) Appointments table
 CREATE TABLE IF NOT EXISTS appointments (
   id INT AUTO_INCREMENT PRIMARY KEY,
   consultant_id INT NOT NULL,
@@ -635,6 +620,21 @@ CREATE TABLE IF NOT EXISTS appointments (
   FOREIGN KEY (consultant_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
   info VARCHAR(255) NULL
+);
+
+-- 16) Consultant_Reviews table
+CREATE TABLE IF NOT EXISTS consultant_reviews (
+  id              INT PRIMARY KEY AUTO_INCREMENT,
+  booking_id      INT NOT NULL UNIQUE,
+  student_id      INT NOT NULL,
+  consultant_id   INT NOT NULL,
+  rating          TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  review_text     TEXT,
+  submitted_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (booking_id) REFERENCES appointments(id) ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (consultant_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- ─────────────────────────────────────────────────────────────────────────────

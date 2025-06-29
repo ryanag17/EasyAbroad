@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, and_
+from sqlalchemy import select, delete, and_, func
 from typing import List
 from app.db import get_db
 from app.auth.token_verification import get_current_user
-from app.appointment.models import ConsultantAvailability, Appointment, AppointmentStatus
-from app.appointment.schemas import ConsultantAvailabilityOut as Slot, AppointmentCreate, AppointmentOut
+from app.appointment.models import ConsultantAvailability, Appointment, AppointmentStatus, ConsultantReview
+from app.appointment.schemas import ConsultantAvailabilityOut as Slot, AppointmentCreate, AppointmentOut, ReviewCreate, ReviewOut
 from fastapi import Body
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
+from app.auth.models import User
 
 router = APIRouter(
     prefix="/appointment",
@@ -247,3 +248,136 @@ async def cancel_appointment(
     appt.rejection_reason = reason
     await db.commit()
     return {"detail": "Appointment cancelled"}
+
+@router.post("/review", response_model=ReviewOut)
+async def submit_review(
+    data: ReviewCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    booking = await db.get(Appointment, data.booking_id)
+    if not booking or booking.student_id != current_user["user_id"]:
+        raise HTTPException(403, "Unauthorized to review this appointment.")
+
+    result = await db.execute(
+        select(ConsultantReview).where(ConsultantReview.booking_id == data.booking_id)
+    )
+    existing_review = result.scalar()
+    if existing_review:
+        raise HTTPException(400, "Review already submitted for this appointment.")
+
+    review = ConsultantReview(
+        booking_id=data.booking_id,
+        student_id=current_user["user_id"],
+        consultant_id=booking.consultant_id,
+        rating=data.rating,
+        review_text=data.review_text
+    )
+    db.add(review)
+    await db.commit()
+    await db.refresh(review)
+    return review
+
+@router.get("/consultant/{consultant_id}/average-rating")
+async def get_consultant_average_rating(
+    consultant_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(func.avg(ConsultantReview.rating), func.count(ConsultantReview.id))
+        .where(ConsultantReview.consultant_id == consultant_id)
+    )
+    avg, count = result.first()
+    return {
+        "average_rating": round(avg or 0, 2),
+        "total_reviews": count
+    }
+
+@router.get("/consultant/{consultant_id}/reviews", response_model=List[ReviewOut])
+async def get_consultant_reviews(
+    consultant_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(ConsultantReview)
+        .options(selectinload(ConsultantReview.student))  # Now works because 'student' is defined in the model
+        .where(ConsultantReview.consultant_id == consultant_id)
+    )
+    reviews = result.scalars().all()
+
+    output = []
+    for r in reviews:
+        student_name = None
+        if r.student:
+            student_name = f"{r.student.first_name} {r.student.last_name}"
+        output.append(
+            ReviewOut(
+                id=r.id,
+                booking_id=r.booking_id,
+                student_id=r.student_id,
+                consultant_id=r.consultant_id,
+                rating=r.rating,
+                review_text=r.review_text,
+                submitted_at=r.submitted_at,
+                student_name=student_name,
+            )
+        )
+    return output
+
+
+@router.get("/booking/{booking_id}/consultant")
+async def get_consultant_info_from_booking(
+    booking_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    booking = await db.get(Appointment, booking_id)
+    if not booking:
+        raise HTTPException(404, "Booking not found")
+    if booking.student_id != current_user["user_id"]:
+        raise HTTPException(403, "Unauthorized")
+    
+    consultant = await db.get(User, booking.consultant_id)
+    if not consultant:
+        raise HTTPException(404, "Consultant not found")
+    
+    return {
+        "consultant_id": consultant.id,
+        "first_name": consultant.first_name,
+        "last_name": consultant.last_name
+    }
+
+@router.get("/review/{booking_id}")
+async def get_review_by_booking(
+    booking_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    result = await db.execute(
+        select(ConsultantReview).where(
+            (ConsultantReview.booking_id == booking_id) &
+            (ConsultantReview.student_id == current_user["user_id"])
+        )
+    )
+    review = result.scalar_one_or_none()
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+
+    return {
+        "id": review.id,
+        "rating": review.rating,
+        "review_text": review.review_text,
+        "submitted_at": review.submitted_at.isoformat()
+    }
+
+@router.get("/consultant/{consultant_id}/average-rating")
+async def get_average_rating(
+    consultant_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(func.avg(ConsultantReview.rating))
+        .where(ConsultantReview.consultant_id == consultant_id)
+    )
+    avg = result.scalar()
+    return {"average_rating": round(avg, 2) if avg is not None else None}
