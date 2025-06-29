@@ -34,7 +34,7 @@
                     <a href="user-management.html"> <li> User Management </li></a>
                     <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
                     <a href="support-tickets.html"> <li> Support Tickets </li></a>
-                    <a href="email-announcement.html"> <li> Email Announcement </li></a>
+                    
                     <a href="settings.html"> <li> Settings</li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
@@ -102,7 +102,8 @@
 </table>
 </div>
     
-  
+  <div id="pagination" class="pagination"></div>
+
     <footer>
         <div>
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
@@ -146,6 +147,61 @@
   (async () => {
     await autoEnforceRoleFromPath();
   })();
+
+let currentPage = 1;
+const itemsPerPage = 10;
+
+function paginate(data) {
+  const start = (currentPage - 1) * itemsPerPage;
+  return data.slice(start, start + itemsPerPage);
+}
+
+function renderPagination(totalItems) {
+  const pagination = document.getElementById("pagination");
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  pagination.innerHTML = "";
+
+  if (totalPages <= 1) {
+    pagination.style.display = "none";
+    return;
+  }
+
+  pagination.style.display = "flex";
+
+  if (currentPage > 1) {
+    const prev = document.createElement("button");
+    prev.textContent = "Previous";
+    prev.onclick = () => {
+      currentPage--;
+      renderTable(users);
+    };
+    pagination.appendChild(prev);
+  }
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === currentPage) {
+      btn.disabled = true;
+    }
+    btn.onclick = () => {
+      currentPage = i;
+      renderTable(users);
+    };
+    pagination.appendChild(btn);
+  }
+
+  if (currentPage < totalPages) {
+    const next = document.createElement("button");
+    next.textContent = "Next";
+    next.onclick = () => {
+      currentPage++;
+      renderTable(users);
+    };
+    pagination.appendChild(next);
+  }
+}
+
 
   let users = [];
 
@@ -195,23 +251,26 @@
     }
   }
 
-  function renderTable(data) {
-    tbody.innerHTML = '';
-    data.forEach(user => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${user.id}</td>
-        <td>${user.firstName}</td>
-        <td>${user.lastName}</td>
-        <td>${user.email}</td>
-        <td>${user.role}</td>
-        <td>${user.status}</td>
-        <td>${new Date(user.registered).toLocaleDateString()}</td>
-        <td><button class="view-btn" onclick="viewUser('${user.id}')">View</button></td>
-      `;
-      tbody.appendChild(row);
-    });
-  }
+function renderTable(data) {
+  const paginated = paginate(data);
+  tbody.innerHTML = '';
+  paginated.forEach(user => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${user.id}</td>
+      <td>${user.firstName}</td>
+      <td>${user.lastName}</td>
+      <td>${user.email}</td>
+      <td>${user.role}</td>
+      <td>${user.status}</td>
+      <td>${new Date(user.registered).toLocaleDateString()}</td>
+      <td><button class="view-btn" onclick="viewUser('${user.id}')">View</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+  renderPagination(data.length);
+}
+
 
   function viewUser(id) {
     window.location.href = 'view-user.html?user=' + id;
