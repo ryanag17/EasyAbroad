@@ -192,7 +192,27 @@ async def require_admin_user(user=Depends(get_current_user)):
     return user
 
 
+@router.delete("/profile", summary="Delete your own account")
+async def delete_account(
+    data: dict,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    from app.auth.models import User as UserModel
+    from sqlalchemy import delete as sa_delete
 
+    # Validate email and password
+    user = await db.get(UserModel, current_user.id)
+    if not user or user.email.lower() != data.get("email", "").lower():
+        raise HTTPException(400, "Email or password is incorrect")
+    import bcrypt
+    if not bcrypt.checkpw(data.get("password", "").encode(), user.password_hash.encode()):
+        raise HTTPException(400, "Email or password is incorrect")
+
+    # Delete user
+    await db.delete(user)
+    await db.commit()
+    return {"message": "Account deleted successfully"}
 
 # ─── Remove or comment out all legacy /messages handlers below ────────────
 # from .models import Message, User
