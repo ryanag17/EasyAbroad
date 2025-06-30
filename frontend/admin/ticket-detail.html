@@ -189,7 +189,7 @@
   })();  
   const params = new URLSearchParams(window.location.search);
   const ticketId = params.get("id");
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   const localFormat = {
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     dateStyle: "short",

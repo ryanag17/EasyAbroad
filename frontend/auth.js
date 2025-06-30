@@ -11,11 +11,11 @@ const HOME_REDIRECTS = {
 
 // 1) Utility functions
 function isLoggedIn() {
-  return !!sessionStorage.getItem("accessToken");
+  return !!localStorage.getItem("accessToken");
 }
 
 function getUserType() {
-  return sessionStorage.getItem("userType");
+  return localStorage.getItem("userType");
 }
 
 function requireAuth(redirectIfMissing = "log-in.html") {
@@ -25,8 +25,8 @@ function requireAuth(redirectIfMissing = "log-in.html") {
 }
 
 async function requireRole(requiredRole) {
-  const token = sessionStorage.getItem("accessToken");
-  const currentRole = sessionStorage.getItem("userType");
+  const token = localStorage.getItem("accessToken");
+  const currentRole = localStorage.getItem("userType");
 
   if (!token || !currentRole || currentRole !== requiredRole) {
     window.location.href = "../log-in.html";
@@ -50,7 +50,7 @@ async function requireRole(requiredRole) {
     if (!res.ok) throw new Error("Unauthorized");
 
   } catch (err) {
-    sessionStorage.clear();
+    localStorage.clear();
     window.location.href = "../log-in.html";
   }
 }
@@ -68,8 +68,8 @@ async function autoEnforceRoleFromPath() {
 
 
 async function redirectIfAuthenticated() {
-  const token = sessionStorage.getItem("accessToken");
-  const role = sessionStorage.getItem("userType");
+  const token = localStorage.getItem("accessToken");
+  const role = localStorage.getItem("userType");
 
   if (!token || !role) return;
 
@@ -92,7 +92,7 @@ async function redirectIfAuthenticated() {
 
   if (!endpoint || !redirectPath) {
     console.warn("Invalid role or endpoint config for role:", role);
-    sessionStorage.clear();
+    localStorage.clear();
     return;
   }
 
@@ -109,11 +109,11 @@ async function redirectIfAuthenticated() {
     if (res.ok) {
       window.location.href = redirectPath;
     } else {
-      sessionStorage.clear();
+      localStorage.clear();
     }
   } catch (err) {
     console.error("Token validation failed:", err);
-    sessionStorage.clear();
+    localStorage.clear();
   }
 }
 
@@ -232,7 +232,7 @@ async function confirmSignOut() {
     console.warn("Logout failed:", err);
   }
 
-  sessionStorage.clear(); // Clear access token + role info
+  localStorage.clear(); // Clear access token + role info
   window.location.href = "/"; // Redirect to landing or login
 }
 

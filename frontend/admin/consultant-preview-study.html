@@ -172,7 +172,7 @@
     await autoEnforceRoleFromPath();
   })();  
   const API = "http://localhost:8000";
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   const userId = new URLSearchParams(window.location.search).get("user_id");
   const isViewOnly = new URLSearchParams(window.location.search).get("mode") === "view";
 

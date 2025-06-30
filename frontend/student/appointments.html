@@ -137,7 +137,7 @@ let appointments = [];
 
 // Fetch appointments for the logged-in student
 async function fetchAppointments() {
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   if (!token) {
     window.location.href = "../log-in.html";
     return [];
@@ -170,7 +170,7 @@ function canCancel(app) {
 // Cancel appointment function
 async function cancelAppointment(appointmentId) {
   if (!confirm("Are you sure you want to cancel this appointment?")) return;
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   const res = await fetch(`http://localhost:8000/appointment/${appointmentId}/cancel`, {
     method: "POST",
     headers: { "Authorization": `Bearer ${token}` }
@@ -299,7 +299,7 @@ async function confirmCancellation() {
     alert("Please enter a reason for cancellation.");
     return;
   }
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   const res = await fetch(`http://localhost:8000/appointment/${tempCancelId}/cancel`, {
     method: "POST",
     headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },

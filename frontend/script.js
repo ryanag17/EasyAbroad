@@ -197,8 +197,8 @@ async function loginUser() {
     const data = await res.json();
     if (res.ok && data.access_token) {
       // 1) store the JWT + role
-      sessionStorage.setItem("accessToken", data.access_token);
-      sessionStorage.setItem("userType", data.role); // ✅ this is the missing piece
+      localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("userType", data.role); // ✅ this is the missing piece
 
       // 2) redirect
       if (data.role === "student") {
@@ -224,7 +224,7 @@ async function loginUser() {
 
 // 5) FETCH PROFILE
 async function fetchProfile(role) {
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   const res = await fetch(`${API_BASE}/${role}/profile`, {
     method: "GET",
     headers: {
@@ -344,7 +344,7 @@ window.validateLoginForm = validateLoginForm;
 async function fetchMessages() {
   const res = await fetch("http://localhost:8000/messages", {
     headers: {
-      "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+      "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
     }
   });
   const threads = await res.json();

@@ -100,7 +100,7 @@ const confirmModal = document.getElementById('confirmModal');
 const confirmText = document.getElementById('confirmText');
 
 let changingToStatus = '';
-const token = sessionStorage.getItem("accessToken");
+const token = localStorage.getItem("accessToken");
 
 async function loadUserData() {
   if (!userId) {
@@ -189,7 +189,7 @@ async function confirmChange(yes) {
   if (!yes) return;
 
   try {
-    const token = sessionStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
     const response = await fetch(`http://localhost:8000/admin/users/${userId}/status`, {
       method: "PATCH",
       headers: {

@@ -144,7 +144,7 @@
       }
 
       try {
-        const token = sessionStorage.getItem("accessToken");
+        const token = localStorage.getItem("accessToken");
         if (!token) throw new Error("Not authenticated");
 
         // 2) call the real DELETE endpoint
@@ -164,7 +164,7 @@
         }
 
         alert(body.message);  // “Account deleted successfully”
-        sessionStorage.clear();
+        localStorage.clear();
         window.location.href = "/";  // back to landing
 
       } catch (err) {

@@ -121,7 +121,7 @@
 (async () => {
     await autoEnforceRoleFromPath();
 
-    const token = sessionStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
     const urlParams = new URLSearchParams(window.location.search);
     const appointmentId = urlParams.get("appointment_id");
 

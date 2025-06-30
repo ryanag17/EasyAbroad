@@ -243,7 +243,7 @@
 
     // Fetchin and showin consultant’s name
     async function loadConsultantName() {
-      const token = sessionStorage.getItem('accessToken');
+      const token = localStorage.getItem('accessToken');
       const res = await fetch('http://localhost:8000/profile/consultant', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -255,7 +255,7 @@
 
     // Loading availability from backend
     async function loadAvailability() {
-      const token = sessionStorage.getItem('accessToken');
+      const token = localStorage.getItem('accessToken');
       const res = await fetch('http://localhost:8000/appointment/consultant/timetable', {
         headers: {
           'Content-Type': 'application/json',
@@ -281,7 +281,7 @@
 
     // Saving edited availability to backend
     async function saveAvailability() {
-      const token = sessionStorage.getItem('accessToken');
+      const token = localStorage.getItem('accessToken');
       const slots = events.map(ev => ({
        days_of_week: ev.extendedProps.daysOfWeek,
        start_time:   ev.extendedProps.startTime,

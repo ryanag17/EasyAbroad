@@ -128,7 +128,7 @@
     const confirmDelete = confirm("This action cannot be undone. Do you want to continue?");
     if (!confirmDelete) return;
 
-    const token = sessionStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
     const endpoint = type === "study"
       ? "http://localhost:8000/consultancy/study"
       : "http://localhost:8000/consultancy/internship";
@@ -199,7 +199,7 @@
   }
 
   async function fetchAndRenderProfiles() {
-    const token = sessionStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
     if (!token) return;
 
     try {

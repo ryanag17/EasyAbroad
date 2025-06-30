@@ -212,7 +212,7 @@ function renderPagination(totalItems) {
 
   async function fetchUsers() {
     try {
-      const token = sessionStorage.getItem('accessToken');
+      const token = localStorage.getItem('accessToken');
       const searchQuery = searchInput.value.trim();
       const searchColumn = document.getElementById('searchColumn').value;
       const role = roleFilter.value !== 'all' ? roleFilter.value : '';

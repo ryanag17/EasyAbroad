@@ -374,7 +374,7 @@
     };
 
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       const response = await fetch("http://localhost:8000/admin/users", {
         method: "POST",
         headers: {
@@ -410,7 +410,7 @@
     bdayInput.max = maxDate.toISOString().split("T")[0];
     bdayInput.min = minDate.toISOString().split("T")[0];
 
-    const token = sessionStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
     if (!token) return;
 
     try {

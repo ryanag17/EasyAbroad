@@ -126,7 +126,7 @@
   })();  
     document.addEventListener("DOMContentLoaded", async () => {
       const API_BASE = "http://localhost:8000";
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         alert("Please log in first.");
         return window.location.href = "../log-in.html";
@@ -158,7 +158,7 @@
       } catch (err) {
         console.error("Failed to load profile:", err);
         alert("Failed to load user info. Please log in again.");
-        sessionStorage.clear(); // Clear broken token
+        localStorage.clear(); // Clear broken token
         window.location.href = "../log-in.html";
       }
     });

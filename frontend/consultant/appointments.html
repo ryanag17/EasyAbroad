@@ -163,7 +163,7 @@ let rejectReason = "";
 
 // Fetch consultant's appointments from backend
 async function loadAppointments() {
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   const res = await fetch("http://localhost:8000/appointment/consultant/appointments", {
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -278,7 +278,7 @@ async function sendMeetingLink() {
     alert("Please enter a valid meeting link.");
     return;
   }
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   // Approve appointment
   const res = await fetch(`http://localhost:8000/appointment/approve/${tempAcceptedData}`, {
     method: "POST",
@@ -310,7 +310,7 @@ window.addEventListener("click", function(e) {
 async function confirmRejection() {
   const reason = prompt("Please enter a reason for rejection:");
   if (!reason) return;
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   const res = await fetch(`http://localhost:8000/appointment/reject/${tempRejectData}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -361,7 +361,7 @@ async function cancelAppointment(appointmentId) {
   if (!confirm("Are you sure you want to cancel this appointment?")) return;
   const res = await fetch(`http://localhost:8000/appointment/${appointmentId}/cancel`, {
     method: "POST",
-    headers: { "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` }
+    headers: { "Authorization": `Bearer ${localStorage.getItem("accessToken")}` }
   });
   if (res.ok) {
     alert("Appointment cancelled.");
@@ -396,7 +396,7 @@ async function confirmCancellation() {
   }
   const res = await fetch(`http://localhost:8000/appointment/${tempCancelId}/cancel`, {
     method: "POST",
-    headers: { "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`, "Content-Type": "application/json" },
+    headers: { "Authorization": `Bearer ${localStorage.getItem("accessToken")}`, "Content-Type": "application/json" },
     body: JSON.stringify({ reason })
   });
   closeCancelModal();

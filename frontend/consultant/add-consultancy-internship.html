@@ -280,7 +280,7 @@
 async function submitForm() {
   const form = document.getElementById("consultancyForm");
   const formData = new FormData(form);
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
 
   // ✅ Manually map help[] and call[] checkboxes to booleans
   const helpValues = Array.from(document.querySelectorAll('input[name="help[]"]:checked')).map(cb => cb.value);
@@ -322,7 +322,7 @@ async function submitForm() {
 
     // Populate country dropdown
     document.addEventListener("DOMContentLoaded", async () => {
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       if (!token) return;
 
       const countrySel = document.getElementById("country");

@@ -99,7 +99,7 @@
   await autoEnforceRoleFromPath();
 })();
 document.addEventListener("DOMContentLoaded", async () => {
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   if (!token) return window.location.href = "../log-in.html";
 
   const userId = new URLSearchParams(window.location.search).get("id");

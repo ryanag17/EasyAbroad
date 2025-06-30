@@ -106,7 +106,7 @@
 (async () => {
     await autoEnforceRoleFromPath();
 
-    const token = sessionStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
     const urlParams = new URLSearchParams(window.location.search);
 
     // Get the consultant_id from the 'id' query parameter

@@ -161,7 +161,7 @@
   })();  
   const params = new URLSearchParams(window.location.search);
   const ticketId = params.get("id");
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   const localFormat = {
     day: "2-digit",
     month: "2-digit",

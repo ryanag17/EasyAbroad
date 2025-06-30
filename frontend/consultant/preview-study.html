@@ -139,7 +139,7 @@
     await autoEnforceRoleFromPath();
   })();  
   async function loadPreview() {
-    const token = sessionStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
     if (!token) return window.location.href = "../log-in.html";
 
     const headers = { Authorization: `Bearer ${token}` };

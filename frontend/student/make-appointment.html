@@ -382,7 +382,7 @@ const extraInfo = textarea.value;
   const start_time = selectedSlotInfo.extendedProps.startTime;
   const end_time = selectedSlotInfo.extendedProps.endTime;
 
-  const token = sessionStorage.getItem('accessToken');
+  const token = localStorage.getItem('accessToken');
   try {
     const res = await fetch('http://localhost:8000/appointment/book', {
       method: 'POST',

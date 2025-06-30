@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const tbody = document.getElementById('submissionBody');
   const tabButtons = document.querySelectorAll('.tab-button');
   const typeFilter = document.getElementById('typeFilter'); // ⬅️ new reference
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
 
   let allSubmissions = [];  // ⬅️ global store for current status set
 
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const res = await fetch(`${API_BASE}/profile/admin`, { headers });
     if (!res.ok) {
       alert("Admin access only. Please log in.");
-      sessionStorage.clear();
+      localStorage.clear();
       window.location.href = "../log-in.html";
     }
   }

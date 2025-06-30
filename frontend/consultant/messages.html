@@ -107,7 +107,7 @@
 })();
 
 const MESSAGES_API_BASE = "http://localhost:8000/messages";
-const token = sessionStorage.getItem("accessToken");
+const token = localStorage.getItem("accessToken");
 
 // 1) Fetch conversation summaries on page load
 async function fetchThreads() {
@@ -185,7 +185,7 @@ function renderThreads(threads) {
 async function confirmDelete(partnerId) {
   event.stopPropagation();
   if (confirm("Delete this conversation?")) {
-    const token = sessionStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
     const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
       method: "DELETE",
       headers: { "Authorization": `Bearer ${token}` }

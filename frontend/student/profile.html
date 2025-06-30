@@ -200,7 +200,7 @@ fileInput.addEventListener('change', async function () {
   const formData = new FormData();
   formData.append("file", file);
 
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
 
   const res = await fetch("http://localhost:8000/profile/upload-picture", {
     method: "POST",
@@ -231,7 +231,7 @@ if (res.ok) {
       const API_BASE = "http://localhost:8000";
 
       // Backend functions
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         alert("Please log in first.");
         return window.location.href = "../log-in.html";

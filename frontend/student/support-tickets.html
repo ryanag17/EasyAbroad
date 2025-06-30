@@ -162,7 +162,7 @@
   (async () => {
     await autoEnforceRoleFromPath();
   })();  
-  const token = sessionStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   const list = document.getElementById("ticketList");
   const pagination = document.getElementById("pagination");
   let allTickets = [], currentPage = 1;

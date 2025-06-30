@@ -121,7 +121,7 @@
 (async () => {
   await autoEnforceRoleFromPath();
 
-  const token     = sessionStorage.getItem("accessToken");
+  const token     = localStorage.getItem("accessToken");
   const params    = new URLSearchParams(window.location.search);
   const partnerId = params.get("partnerId");
   if (!partnerId) {
