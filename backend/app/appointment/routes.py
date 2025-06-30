@@ -249,7 +249,8 @@ async def cancel_appointment(
     await db.commit()
     return {"detail": "Appointment cancelled"}
 
-@router.post("/review", response_model=ReviewOut)
+# Allows only students to submit reviews after appointment is done and doesn't allow multiple reviews.
+@router.post("/review", response_model=ReviewOut, summary="Student: Submit Review.")
 async def submit_review(
     data: ReviewCreate,
     db: AsyncSession = Depends(get_db),
@@ -278,7 +279,8 @@ async def submit_review(
     await db.refresh(review)
     return review
 
-@router.get("/consultant/{consultant_id}/average-rating")
+# Calculates average rating and number of reviews per consultant.
+@router.get("/consultant/{consultant_id}/average-rating", summary="Student: Calculate and show average rating and number of reviews of consultant.")
 async def get_consultant_average_rating(
     consultant_id: int,
     db: AsyncSession = Depends(get_db)
@@ -293,7 +295,8 @@ async def get_consultant_average_rating(
         "total_reviews": count
     }
 
-@router.get("/consultant/{consultant_id}/reviews", response_model=List[ReviewOut])
+# On the student view, shows the ratings/reviews for the consultant being viewed.
+@router.get("/consultant/{consultant_id}/reviews", response_model=List[ReviewOut], summary="Student: Get reviews/ratings for consultant and display them.")
 async def get_consultant_reviews(
     consultant_id: int,
     db: AsyncSession = Depends(get_db)
@@ -324,8 +327,8 @@ async def get_consultant_reviews(
         )
     return output
 
-
-@router.get("/booking/{booking_id}/consultant")
+# Basic consultant info is gathered from the student's appointment.
+@router.get("/booking/{booking_id}/consultant", summary="Student: Fetch basic consultant info from appointment.")
 async def get_consultant_info_from_booking(
     booking_id: int,
     db: AsyncSession = Depends(get_db),
@@ -347,7 +350,8 @@ async def get_consultant_info_from_booking(
         "last_name": consultant.last_name
     }
 
-@router.get("/review/{booking_id}")
+# Shows student the review and rating they had already given to consultant after appointment.
+@router.get("/review/{booking_id}", summary="Student: Show already written review.")
 async def get_review_by_booking(
     booking_id: int,
     db: AsyncSession = Depends(get_db),
@@ -370,7 +374,8 @@ async def get_review_by_booking(
         "submitted_at": review.submitted_at.isoformat()
     }
 
-@router.get("/consultant/{consultant_id}/average-rating")
+# Shows average rating of consultant.
+@router.get("/consultant/{consultant_id}/average-rating", summary="Consultant/Student: Average rating of consultant.")
 async def get_average_rating(
     consultant_id: int,
     db: AsyncSession = Depends(get_db)
@@ -381,3 +386,38 @@ async def get_average_rating(
     )
     avg = result.scalar()
     return {"average_rating": round(avg, 2) if avg is not None else None}
+
+# Allows consultants to view reviews written about them.
+@router.get("/consultant/reviews/me", response_model=List[ReviewOut], summary="Consultant: view my reviews.")
+async def get_my_consultant_reviews(
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    if current_user["role"] != "consultant":
+        raise HTTPException(403, "Not a consultant")
+
+    result = await db.execute(
+        select(ConsultantReview)
+        .options(selectinload(ConsultantReview.student))
+        .where(ConsultantReview.consultant_id == current_user["user_id"])
+    )
+    reviews = result.scalars().all()
+
+    output = []
+    for r in reviews:
+        student_name = None
+        if r.student:
+            student_name = f"{r.student.first_name} {r.student.last_name}"
+        output.append(
+            ReviewOut(
+                id=r.id,
+                booking_id=r.booking_id,
+                student_id=r.student_id,
+                consultant_id=r.consultant_id,
+                rating=r.rating,
+                review_text=r.review_text,
+                submitted_at=r.submitted_at,
+                student_name=student_name,
+            )
+        )
+    return output

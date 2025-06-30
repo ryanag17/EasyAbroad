@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+</head>
+<body>
+    <header class="user-header">
+            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+            
+            <div class="bell-menu">
+                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
+                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+            <!-- Menu function -->
+            <div id="menuHamToggle">
+                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                <input type="checkbox">
+    
+                <!-- Lets create three line hamburger menu
+                Can animate to display as ham menu and closing menu tag.
+                -->
+                <span></span>
+                <span></span>
+                <span></span>
+    
+                <!-- Here menu goes -->
+                <ul id="mainMenu">
+                    <a href="profile.html"> <li> Profile </li></a>
+                    <a href="appointments.html"> <li> Appointments </li></a>
+                    <a href="messages.html"> <li> Messages </li></a>
+                    <a href="support-tickets.html"><li>Support Tickets</li></a>
+                    <a href="settings.html"> <li> Settings </li></a>
+                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+                </ul>
+            </div>
+            <!-- Menu function END -->
+            </div>
+ 
+    </header>
+    
+    
+<!-- Sign Out Confirmation Modal -->
+<div id="signOutModal" class="modal-overlay">
+  <div class="modal-content">
+    <p>Are you sure you want to sign out?</p>
+    <div class="modal-buttons">
+      <button onclick="confirmSignOut()">Yes</button>
+      <button onclick="closeModal()">No</button>
+    </div>
+  </div>
+</div>
+  
+    <main class="reviews-container">
+    <h2 class="reviews-title">Your Reviews:</h2>
+    <div class="reviews-summary" id="reviewsSummary">
+    </div>
+
+    <section id="reviewsContainer"></section>
+    </main>
+
+    
+    <footer>
+        <div>
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/twitter.png" alt="X">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+                <a href="" class="twitter_link1">
+                    <img src="../images/youtube.png" alt="YouTube">
+                </a>
+                <a href="" class="twitter_link">
+                    <img src="../images/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="../faq.html" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="../contact-us.html" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="../privacy-policy.html" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="../about-us.html" class="class_footer">
+                <p>About Us</p>
+            </a>
+            <a href="../terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
+        </div>
+    </footer>
+  <script src="../auth.js"></script>
+  <script src="../script.js"></script>
+    <script>
+(async () => {
+  await autoEnforceRoleFromPath();
+
+  const token = localStorage.getItem("accessToken");
+
+  try {
+    // Fetch reviews for the logged-in consultant
+    const reviewsRes = await fetch("http://localhost:8000/appointment/consultant/reviews/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!reviewsRes.ok) {
+      alert("Failed to fetch reviews.");
+      return;
+    }
+
+    const reviews = await reviewsRes.json();
+    const container = document.getElementById("reviewsContainer");
+
+    if (reviews.length === 0) {
+      document.getElementById("reviewsSummary").innerHTML = "<p>You have not received any reviews yet.</p>";
+      return;
+    }
+
+    // Calculate average and distribution
+    let total = 0;
+    const ratingCounts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+    reviews.forEach(review => {
+      ratingCounts[review.rating]++;
+      total += review.rating;
+    });
+    const average = total / reviews.length;
+
+    document.getElementById("reviewsSummary").innerHTML = `
+      <p>Average Rating: ${average.toFixed(2)} (${reviews.length} reviews)</p>
+      <div id="ratingDistribution">
+        <p>1 Star: ${ratingCounts[1]}</p>
+        <p>2 Stars: ${ratingCounts[2]}</p>
+        <p>3 Stars: ${ratingCounts[3]}</p>
+        <p>4 Stars: ${ratingCounts[4]}</p>
+        <p>5 Stars: ${ratingCounts[5]}</p>
+      </div>
+    `;
+
+    // Render reviews
+    reviews.forEach(review => {
+      const div = document.createElement("div");
+      div.classList.add("review-item", "review-box");
+
+      const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
+      div.innerHTML = `
+        <div class="review-header">
+          <h3>${review.student_name || "Anonymous"}</h3>
+          <p>${stars}</p>
+        </div>
+        <p>${review.review_text}</p>
+        <small>Submitted on: ${new Date(review.submitted_at).toLocaleString()}</small>
+      `;
+      container.appendChild(div);
+    });
+
+  } catch (err) {
+    alert("Error loading reviews: " + err.message);
+  }
+})();
+</script>
+</body>
+</html>
