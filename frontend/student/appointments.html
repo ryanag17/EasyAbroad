@@ -210,10 +210,15 @@ function renderAppointments(status) {
     }
 
     // Rejection reason for rejected
-    let rejectionBlock = '';
-    if (status === 'rejected' && app.rejection_reason) {
-      rejectionBlock = `
-        <label class="add_label" style="margin-top:10px;">${app.rejection_reason === "Cancellation" ? "Cancellation" : "Reason of rejection:"}</label>
+    let reasonBlock = '';
+    if (status === 'rejected' && app.cancellation_reason) {
+      reasonBlock = `
+        <label class="add_label" style="margin-top:10px;">Cancellation Reason:</label>
+        <textarea disabled>${app.cancellation_reason}</textarea>
+      `;
+    } else if (status === 'rejected' && app.rejection_reason) {
+      reasonBlock = `
+        <label class="add_label" style="margin-top:10px;">Reason of rejection:</label>
         <textarea disabled>${app.rejection_reason}</textarea>
       `;
     }
@@ -228,7 +233,7 @@ function renderAppointments(status) {
         </select>
         <label class="add_label">Additional Info:</label>
         <textarea disabled>${app.info || ""}</textarea>
-        ${rejectionBlock}
+        ${reasonBlock}
       </div>
       <div class="appointment-actions">
         ${meetingLinkBlock}

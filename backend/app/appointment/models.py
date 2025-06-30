@@ -45,6 +45,7 @@ class Appointment(Base):
     status = Column(Enum(AppointmentStatus), default=AppointmentStatus.pending)
     meeting_link = Column(String, nullable=True)
     rejection_reason = Column(String, nullable=True)
+    cancellation_reason = Column(String, nullable=True) 
     student = relationship("User", foreign_keys=[student_id])
     consultant = relationship("User", foreign_keys=[consultant_id])
 

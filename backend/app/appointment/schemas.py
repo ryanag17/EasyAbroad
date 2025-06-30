@@ -31,6 +31,7 @@ class AppointmentOut(BaseModel):
     status: str
     meeting_link: Optional[str]
     rejection_reason: Optional[str] = None
+    cancellation_reason: Optional[str] = None
     consultant_name: Optional[str] = None
     student_name: Optional[str] = None
 

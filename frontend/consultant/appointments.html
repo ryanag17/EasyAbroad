@@ -194,13 +194,18 @@ function renderAppointments(status) {
     }
 
     // Rejection reason for rejected
-    let rejectionBlock = '';
-    if (status === 'rejected' && app.rejection_reason) {
-      rejectionBlock = `
-        <label class="add_label" style="margin-top:10px;">${app.rejection_reason === "Cancellation" ? "Cancellation" : "Reason of rejection:"}</label>
-        <textarea disabled>${app.rejection_reason}</textarea>
-      `;
-    }
+let reasonBlock = '';
+if (app.cancellation_reason) {
+  reasonBlock = `
+    <label class="add_label" style="margin-top:10px;">Cancellation Reason:</label>
+    <textarea disabled>${app.cancellation_reason}</textarea>
+  `;
+} else if (app.rejection_reason) {
+  reasonBlock = `
+    <label class="add_label" style="margin-top:10px;">Reason of rejection:</label>
+    <textarea disabled>${app.rejection_reason}</textarea>
+  `;
+}
 
     card.innerHTML = `
       <div class="appointment-info">
@@ -216,7 +221,7 @@ function renderAppointments(status) {
           <label class="add_label">Meeting Platform:</label>
           <input type="text" value="${app.platform}" disabled />
         ` : ""}
-        ${rejectionBlock}
+        ${reasonBlock}
       </div>
       <div class="appointment-actions">
         ${status === 'pending' ? `

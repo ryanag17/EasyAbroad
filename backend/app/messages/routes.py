@@ -27,6 +27,10 @@ async def send_message(
     db: AsyncSession = Depends(get_db),
     user: dict = Depends(get_current_user)  # changed
 ):
+    
+    if len(data.message) > 500:
+        raise HTTPException(status_code=400, detail="Message cannot exceed 500 characters.")
+
     recipient = await db.get(User, data.receiver_id)
     if not recipient:
         raise HTTPException(status_code=404, detail="Recipient not found")

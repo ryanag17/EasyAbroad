@@ -58,7 +58,7 @@ origins = [
 # 4) CORS: allow only your frontend origin and credentials
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,         # ← wildcard for now
+    allow_origins=["*"],         # ← wildcard for now
     allow_credentials=True, 
     allow_methods=["*"],
     allow_headers=["*"],

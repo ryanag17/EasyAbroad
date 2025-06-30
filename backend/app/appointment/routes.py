@@ -245,7 +245,7 @@ async def cancel_appointment(
     if meeting_dt - datetime.now() <= timedelta(hours=24):
         raise HTTPException(status_code=400, detail="Cannot cancel less than 24h before meeting")
     appt.status = "rejected"
-    appt.rejection_reason = reason
+    appt.cancellation_reason = reason
     await db.commit()
     return {"detail": "Appointment cancelled"}
 

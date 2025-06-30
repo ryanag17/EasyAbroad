@@ -181,17 +181,25 @@
     container.scrollTop = container.scrollHeight;
   }
 
+
   // 4) Send new message
   async function sendMessage() {
     const input = document.getElementById("messageInput");
     const text  = input.value.trim();
     if (!text) return;
 
+      if (text.length > 500) {
+    alert("Message cannot exceed 500 characters.");
+    return;
+  }
+
     const payload = {
       receiver_id: +partnerId,
       message:     text,
       booking_id:  null
     };
+
+    
 
     const res = await fetch("http://localhost:8000/messages/send", {
       method:  "POST",

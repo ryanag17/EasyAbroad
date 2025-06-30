@@ -617,6 +617,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   status ENUM('pending','upcoming','previous','rejected') DEFAULT 'pending',
   meeting_link VARCHAR(255),
   rejection_reason VARCHAR(255),
+    cancellation_reason VARCHAR(255),
   FOREIGN KEY (consultant_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
   info VARCHAR(255) NULL
