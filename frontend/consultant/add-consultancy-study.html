@@ -140,8 +140,28 @@
         </div>
 
       </form>
-    </main>
+          <!-- Confirmation Modal -->
+<div id="confirmModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <p>Are you sure all the information is correct?</p>
+    <div class="modal-buttons">
+      <button onclick="submitForm()">Yes</button>
+      <button onclick="closeConfirmModal()">No</button>
+    </div>
+  </div>
+</div>
 
+<!-- Success Modal -->
+<div id="submittedModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <p>Your consultancy profile has been submitted.<br>Once approved by the admin, it will become visible.</p>
+    <div class="modal-buttons">
+      <button onclick="closeSubmittedModal()">OK</button>
+    </div>
+  </div>
+</div>
+    </main>
+<!--  -->
 
     <footer>
         <div>
@@ -186,6 +206,15 @@
     await autoEnforceRoleFromPath();
   })();  
 
+      function closeConfirmModal() {
+    document.getElementById("confirmModal").style.display = "none";
+  }
+
+  /* (Optional) close the sign-out modal too, while you’re here) */
+  function closeModal() {
+    document.getElementById("signOutModal").style.display = "none";
+  }
+  
 function validateThenSubmit() {
   const toDate = new Date(document.getElementById("education_finish").value);
   const limitDate = new Date();
@@ -217,6 +246,8 @@ function validateThenSubmit() {
     document.getElementById("call-warning").style.display = "none";
   }
 
+
+  
   // Also check required fields manually
   const requiredFields = ["university_name", "course_name", "education_start", "education_finish", "country_of_study", "city_of_study", "proof_of_education"];
   for (const id of requiredFields) {
@@ -314,26 +345,7 @@ async function submitForm() {
 
     
   <script src="../auth.js"></script>  
-    <!-- Confirmation Modal -->
-<div id="confirmModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content">
-    <p>Are you sure all the information is correct?</p>
-    <div class="modal-buttons">
-      <button onclick="submitForm()">Yes</button>
-      <button onclick="closeConfirmModal()">No</button>
-    </div>
-  </div>
-</div>
 
-<!-- Success Modal -->
-<div id="submittedModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content">
-    <p>Your consultancy profile has been submitted.<br>Once approved by the admin, it will become visible.</p>
-    <div class="modal-buttons">
-      <button onclick="closeSubmittedModal()">OK</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>

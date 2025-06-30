@@ -161,6 +161,7 @@
 </div>
 </div>
 <!-- Modal window END -->
+  <div class="calendar-scroll-container">
 <div class="calendar-wrapper">
 <div class="header">
 <h2>Timetable of <span id="consultant-name">[consultant name]</span></h2>
@@ -168,8 +169,10 @@
 <button class="edit-btn" type="button">Edit</button>
 </div>
 </div>
+
 <div id="calendar"></div>
 </div>
+  </div>
 <!-- Modal timeslot confirmation window -->
 <div class="modal" id="confirmSlotModal">
 <div class="modal-content">
@@ -321,7 +324,9 @@
         selectable: isEditable,
         selectMirror: true,
         selectAllow: function(selectionInfo) {
-        return true; // allow any selection
+            const h = selectionInfo.start.getHours();
+            // disallow anything that starts at 23:00 or later
+            return h < 23;
         },
 select: function(info) {
   if (!isEditable) return;
