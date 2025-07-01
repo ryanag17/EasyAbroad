@@ -23,7 +23,7 @@
     .reply.admin { background: #f1f1f1; }
     .reply-form textarea {
       width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;
-      resize: vertical;
+      resize: vertical; margin-top: 20px;
     }
     .reply-form button {
       margin-top: 10px;
@@ -108,7 +108,7 @@
   <main class="ticket-container">
     <div class="support-ticket-list">
       <div style="margin-bottom: 20px;">
-        <a href="support-tickets.html" style="color:#cc2f8b; text-decoration:none; font-weight:bold;">← Back to Support Tickets</a>
+        <a href="support-tickets.html" class="back-button">← Back to Support Tickets</a>
       </div>
       <div class="ticket-header">
 <div style="margin-bottom: 12px;">
@@ -140,24 +140,15 @@
 
     <div class="reply-form" id="replyFormContainer" style="display:none;">
       <textarea id="replyInput" rows="4" placeholder="Write your message..."></textarea>
-      <button onclick="submitReply()">Send Reply</button>
+      <button onclick="submitReply()" class="back-button">Send Reply</button>
     </div>
 
     <footer>
-        <div>
+        <div class="logo_icons">
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
             <div class="social-icons">
                 <a href="" class="twitter_link">
-                    <img src="../images/twitter.png" alt="X">
-                </a>
-                <a href="" class="twitter_link">
                     <img src="../images/instagram.png" alt="Instagram">
-                </a>
-                <a href="" class="twitter_link1">
-                    <img src="../images/youtube.png" alt="YouTube">
-                </a>
-                <a href="" class="twitter_link">
-                    <img src="../images/linkedin.png" alt="LinkedIn">
                 </a>
             </div>
         </div>

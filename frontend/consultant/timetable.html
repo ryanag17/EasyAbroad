@@ -164,7 +164,7 @@
   <div class="calendar-scroll-container">
 <div class="calendar-wrapper">
 <div class="header">
-<h2>Timetable of <span id="consultant-name">[consultant name]</span></h2>
+<h2>Timetable of<span id="consultant-name"></span></h2>
 <div class="form-buttons-timetable">
 <button class="edit-btn" type="button">Edit</button>
 </div>
@@ -195,23 +195,14 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <footer>
-<div>
-<div class="footer-logo"><img alt="" class="pic_logo" src="../images/logo.png"/></div>
-<div class="social-icons">
-<a class="twitter_link" href="">
-<img alt="X" src="../images/twitter.png"/>
-</a>
-<a class="twitter_link" href="">
-<img alt="Instagram" src="../images/instagram.png"/>
-</a>
-<a class="twitter_link1" href="">
-<img alt="YouTube" src="../images/youtube.png"/>
-</a>
-<a class="twitter_link" href="">
-<img alt="LinkedIn" src="../images/linkedin.png"/>
-</a>
-</div>
-</div>
+<div class="logo_icons">
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+            </div>
+        </div>
 <div class="footer-links">
 <h4 class="h4_service">Service &amp; Contacts</h4>
 <a class="class_footer" href="../faq.html">
@@ -243,6 +234,7 @@
     let pendingSlot = null;
     let events = [];
     let isEditable = false;
+    let maxSlotsAlertShown = false;
 
     // Fetchin and showin consultant’s name
     async function loadConsultantName() {
@@ -324,10 +316,50 @@
         selectable: isEditable,
         selectMirror: true,
         selectAllow: function(selectionInfo) {
-            const h = selectionInfo.start.getHours();
-            // disallow anything that starts at 23:00 or later
-            return h < 23;
-        },
+  const selectionStart = selectionInfo.start;
+  const selectionEnd = new Date(selectionStart.getTime() + 60 * 60 * 1000);
+  const selectionDay = selectionStart.getDay();
+
+  // 1. Block if more than 10 slots on this day
+  let slotsToday = 0;
+  for (const ev of events) {
+    const evDay = Array.isArray(ev.daysOfWeek) ? ev.daysOfWeek[0] : ev.daysOfWeek;
+    if (evDay === selectionDay) {
+      slotsToday++;
+    }
+  }
+  if (slotsToday >= 10) {
+    if (!maxSlotsAlertShown) {
+      alert("❗ You cannot have more than 10 available slots on a single day.");
+      maxSlotsAlertShown = true;
+      setTimeout(() => { maxSlotsAlertShown = false; }, 1500); // Prevent spamming alert
+    }
+    return false;
+  }
+
+  // 2. Block if selection overlaps with any slot on this day
+  for (const ev of events) {
+    const evDay = Array.isArray(ev.daysOfWeek) ? ev.daysOfWeek[0] : ev.daysOfWeek;
+    if (evDay !== selectionDay) continue;
+
+    const [evStartH, evStartM] = ev.startTime.split(':').map(Number);
+    const [evEndH, evEndM] = ev.endTime.split(':').map(Number);
+    const evStart = new Date(selectionStart);
+    evStart.setHours(evStartH, evStartM, 0, 0);
+    const evEnd = new Date(selectionStart);
+    evEnd.setHours(evEndH, evEndM, 0, 0);
+
+    if ((selectionStart < evEnd) && (selectionEnd > evStart)) {
+      return false;
+    }
+  }
+
+  // 3. Block any slot starting at or after 23:00
+  return selectionStart.getHours() < 23;
+},
+
+
+
 select: function(info) {
   if (!isEditable) return;
 

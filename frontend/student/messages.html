@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header class="user-header">
@@ -59,20 +60,11 @@
     
     
     <footer>
-        <div>
+        <div class="logo_icons">
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
             <div class="social-icons">
                 <a href="" class="twitter_link">
-                    <img src="../images/twitter.png" alt="X">
-                </a>
-                <a href="" class="twitter_link">
                     <img src="../images/instagram.png" alt="Instagram">
-                </a>
-                <a href="" class="twitter_link1">
-                    <img src="../images/youtube.png" alt="YouTube">
-                </a>
-                <a href="" class="twitter_link">
-                    <img src="../images/linkedin.png" alt="LinkedIn">
                 </a>
             </div>
         </div>
@@ -165,11 +157,11 @@ const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
       </div>
       <div class="chat-content">
         <h3>${partnerName}</h3>
-        <p class="message-preview">${t.message}</p>
+        <p class="message-preview">${t.message.length > 50 ? t.message.substring(0, 50) + "..." : t.message}</p>
         <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
       </div>
       <div class="chat-actions">
-        <button onclick="confirmDelete(${partnerId})">🗑️</button>
+        <button onclick="confirmDelete(${partnerId})"><i class="fas fa-trash-alt delete-icon"></i></button>
       </div>
     `;
 

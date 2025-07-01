@@ -117,6 +117,12 @@ footer {
     flex-direction: row;
 }
 
+.logo_icons{
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
 .social-icons img {
     width: 24px;
     margin-right: 10px;
@@ -265,6 +271,10 @@ footer {
   /* consultant-timetable */
   .calendar-scroll-container{
     min-height: 0 !important;
+  }
+  .fc-col-header-cell-cushion {
+    font-size: 12px;
+    padding: 2px;
   }
 }
 
@@ -1827,6 +1837,10 @@ span {
 /* Student/appointments END */
 
 /* Student/messages START */
+.chat-overview-section{
+  padding-right: 10px;
+  padding-left: 10px;
+}
 
 .chat-list-container {
     padding: 20px;
@@ -1836,7 +1850,6 @@ span {
     display: flex;
     align-items: center;
     gap: 20px;
-    padding: 15px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
     transition: background 0.2s;
@@ -1857,6 +1870,73 @@ span {
     border-radius: 50%;
   }
   
+  .delete-icon {
+    color: #e91e63;      
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: transform 0.2s ease;
+  }
+  .delete-icon:hover {
+    transform: scale(1.2);
+  }
+  
+  .message-bubble {
+  max-width: 70%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+  
+.message-bubble.partner {
+  background-color: #ffa9dfa9;  /* Light grey for received */
+  align-self: flex-start;
+  border-radius: 18px;
+  padding: 10px 15px;
+  margin: 5px;
+  max-width: 70%;
+}
+
+.message-bubble.me {
+  background-color: #d2f8d2;  /* Light green for sent */
+  align-self: flex-end;
+  border-radius: 18px;
+  padding: 10px 15px;
+  margin: 5px;
+  max-width: 70%;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  overflow-y: auto;
+  height: 400px; /* or max-height: 100vh; */
+}
+
+#messageInput {
+  flex: 1;
+  resize: none;
+  min-height: 40px;
+  max-height: 300px;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 1.4;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  overflow-y: auto;
+  box-shadow: none;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
+#sendBtn{
+  height: 40px;
+  margin: auto;
+  margin-left: 10px;
+}
+
   .chat-content {
     flex: 1;
   }
@@ -2693,6 +2773,7 @@ textarea#reviewText {
 
 #calendar {
   max-width: 1000px;
+  min-width: 600px;
   margin: 0 auto;
 }
 
@@ -3208,15 +3289,14 @@ textarea#reviewText {
 .calendar-scroll-container {
   overflow-x: auto;
   max-width: 100%;
+  min-width: 100%;
+  min-height: 970px;
   height: 100%;
-  min-height: 1000px;
   padding-left: 10px;
   padding-right: 10px;
+  -webkit-overflow-scrolling: touch;
 }
 
-#calendar {
-  min-width: 700px;
-}
 
 
 .form-buttons-timetable{
@@ -3806,4 +3886,7 @@ textarea#reviewText {
   background-color: #000;
 }
 /* ticket-create END */
+/* ticket-detail */
+
+/* ticket-detail END */
 /* Admin END */
