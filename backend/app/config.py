@@ -53,7 +53,14 @@ class Settings(BaseSettings):
         "no-reply@easyabroad.com",
         description="Default From address for outgoing mail"
     )
-
+    EMAIL_USER: str = Field(
+        "no-reply@easyabroad.com",
+        description="SMTP username (usually your email address)"
+    )
+    EMAIL_PASSWORD: str = Field(
+        "",
+        description="SMTP password for your email account"
+    )
     # ─── Frontend ─────────────────────────────────────────────────────────────────
     FRONTEND_BASE_URL: str = Field(
         "http://localhost:8080",

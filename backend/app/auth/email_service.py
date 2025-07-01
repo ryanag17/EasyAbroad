@@ -3,12 +3,13 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
 from app.config import settings
 
 EMAIL_HOST        = settings.EMAIL_HOST
-EMAIL_PORT        = settings.EMAIL_PORT
+EMAIL_PORT        = int(settings.EMAIL_PORT)
 EMAIL_FROM        = settings.EMAIL_FROM
+EMAIL_USER        = settings.EMAIL_USER
+EMAIL_PASSWORD    = settings.EMAIL_PASSWORD
 FRONTEND_BASE_URL = settings.FRONTEND_BASE_URL
 
 
@@ -39,7 +40,8 @@ def send_reset_email(recipient_email: str, reset_token: str):
 
     try:
         with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as smtp:
+            smtp.starttls()  # Enable TLS
+            smtp.login(EMAIL_USER, EMAIL_PASSWORD)
             smtp.sendmail(EMAIL_FROM, recipient_email, msg.as_string())
     except Exception as e:
-        # Log error (print for simplicity). In production, use a logger.
         print(f"⚠️ Failed to send reset email to {recipient_email}: {e}")
