@@ -247,8 +247,14 @@ async def forgot_password(db: AsyncSession, data: ForgotPasswordRequest):
     )
     await db.commit()
 
-    # Send the reset link by email
-    send_reset_email(data.email, token)
+    result = await db.execute(
+    text("SELECT first_name, last_name FROM users WHERE email=:em"),
+    {"em": data.email}
+)
+    row = result.first()
+    user_name = f"{row.first_name} {row.last_name}" if row else None
+
+    send_reset_email(data.email, token, user_name)
     return {"message": "Reset email sent if the address exists."}
 
 
