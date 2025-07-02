@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 
 <body>
@@ -14,7 +16,11 @@
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
             
             <div class="bell-menu">
-                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
             <div id="menuHamToggle">
                 <input type="checkbox">
                 <span></span>
@@ -25,7 +31,6 @@
                     <a href="user-management.html"> <li> User Management </li></a>
                     <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
                     <a href="support-tickets.html"> <li> Support Tickets </li></a>
-                    
                     <a href="settings.html"> <li> Settings</li></a>
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>

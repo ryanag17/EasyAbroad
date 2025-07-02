@@ -1,299 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review your consultant</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
-    <style>
-        textarea:disabled {
-            background-color: #f5f5f5;
-            color: #333;
-            cursor: not-allowed;
-        }
-
-        .star {
-            cursor: pointer;
-            font-size: 2rem;
-            color: #ddd;
-        }
-
-        .star.filled {
-            color: gold;
-        }
-
-        .star.disabled {
-            cursor: default;
-            opacity: 0.7;
-        }
-    </style>
-</head>
-<body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  </head>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-            <!-- Menu function -->
-            <div id="menuHamToggle">
-                <!-- Create Hidden Checkbos, that will be used as Click Function-->
-                <input type="checkbox">
-    
-                <!-- Lets create three line hamburger menu
-                Can animate to display as ham menu and closing menu tag.
-                -->
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                <!-- Here menu goes -->
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="support-tickets.html"><li>Support Tickets</li></a>
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            <!-- Menu function END -->
-            </div>
- 
-    </header>
-    
-<!-- Sign Out Confirmation Modal -->
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
-    </div>
-  </div>
-</div>
+      <a href="home.html" class="to_the_main">
+        <div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo">
+        </div>
+      </a>
 
-<main>
-    <section class="review-container">
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox">
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"><li>Profile</li></a>
+            <a href="appointments.html"><li>Appointments</li></a>
+            <a href="messages.html"><li>Messages</li></a>
+            <a href="support-tickets.html"><li>Support Tickets</li></a>
+            <a href="settings.html"><li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <section class="review-container">
         <h1>Time to review the consultant</h1>
         <p id="reviewPrompt">How did you find your meeting with <span id="consultantName"></span>?</p>
 
         <div class="star-rating" id="starRating"></div>
 
         <div class="form-group">
-            <label for="reviewText">Write a Review</label>
-            <textarea id="reviewText" placeholder="What is most important to know?" maxlength="500"></textarea>
-            <div class="char-count"><span id="charCount">0</span>/500</div>
+          <label for="reviewText">Write a Review</label>
+          <textarea id="reviewText" placeholder="What is most important to know?" maxlength="500"></textarea>
+          <div class="char-count"><span id="charCount">0</span>/500</div>
         </div>
 
         <p id="reviewError" class="warning-text" style="display: none;"></p>
 
         <button type="submit" id="submitReview" class="save-button_ticket">Submit</button>
-    </section>
-</main>
+      </section>
+    </main>
 
-<footer>
-    <div class="logo_icons">
-            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
-            <div class="social-icons">
-                <a href="" class="twitter_link">
-                    <img src="../images/instagram.png" alt="Instagram">
-                </a>
-            </div>
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo">
         </div>
-    <div class="footer-links">
+        <div class="social-icons">
+          <a href="" class="twitter_link">
+            <img src="../images/instagram.png" alt="Instagram">
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
         <h4>Service & Contacts</h4>
         <a href="../faq.html"><p>FAQ</p></a>
         <a href="../contact-us.html"><p>Contact Us</p></a>
         <a href="../privacy-policy.html"><p>Privacy Policy</p></a>
         <a href="../about-us.html"><p>About Us</p></a>
         <a href="../terms-conditions.html"><p>Terms and Conditions</p></a>
-    </div>
-</footer>
+      </div>
+    </footer>
 
-<script src="../auth.js"></script>
-<script src="../script.js"></script>
+    <script src="../auth.js"></script>
+    <script src="../script.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
 
-<script>
-(async () => {
-    await autoEnforceRoleFromPath();
+        const token = localStorage.getItem("accessToken");
+        const urlParams = new URLSearchParams(window.location.search);
+        const appointmentId = urlParams.get("appointment_id");
 
-    const token = localStorage.getItem("accessToken");
-    const urlParams = new URLSearchParams(window.location.search);
-    const appointmentId = urlParams.get("appointment_id");
+        if (!appointmentId) {
+          alert("Missing appointment ID.");
+          window.location.href = "appointments.html";
+          return;
+        }
 
-    if (!appointmentId) {
-        alert("Missing appointment ID.");
-        window.location.href = "appointments.html";
-        return;
-    }
+        const consultantNameElement = document.getElementById("consultantName");
+        const starRating = document.getElementById("starRating");
+        const reviewText = document.getElementById("reviewText");
+        const charCount = document.getElementById("charCount");
+        const submitBtn = document.getElementById("submitReview");
+        const reviewError = document.getElementById("reviewError");
+        const title = document.querySelector("h1");
 
-    const consultantNameElement = document.getElementById("consultantName");
-    const starRating = document.getElementById("starRating");
-    const reviewText = document.getElementById("reviewText");
-    const charCount = document.getElementById("charCount");
-    const submitBtn = document.getElementById("submitReview");
-    const reviewError = document.getElementById("reviewError");
-    const title = document.querySelector('h1');
+        let selectedRating = 0;
+        let isDirty = false;
 
-    let selectedRating = 0;
-    let isDirty = false;
-
-    async function fetchConsultant() {
-        try {
+        async function fetchConsultant() {
+          try {
             const res = await fetch(`http://localhost:8000/appointment/booking/${appointmentId}/consultant`, {
-                headers: { Authorization: `Bearer ${token}` }
+              headers: { Authorization: `Bearer ${token}` },
             });
 
             if (!res.ok) {
-                throw new Error("Failed to fetch consultant info.");
+              throw new Error("Failed to fetch consultant info.");
             }
 
             const data = await res.json();
             consultantNameElement.textContent = ` ${data.first_name} ${data.last_name}`;
             title.textContent = `Time to review ${data.first_name} ${data.last_name}`;
             return data;
-        } catch (error) {
+          } catch (error) {
             alert(error.message);
             window.location.href = "appointments.html";
+          }
         }
-    }
 
-    async function checkExistingReview() {
-        const res = await fetch(`http://localhost:8000/appointment/review/${appointmentId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        if (res.status === 404) {
-            return null; // No review yet
-        }
-        if (!res.ok) {
+        async function checkExistingReview() {
+          const res = await fetch(`http://localhost:8000/appointment/review/${appointmentId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.status === 404) {
+            return null;
+          }
+          if (!res.ok) {
             alert("Failed to check existing review.");
             return null;
+          }
+          return await res.json();
         }
-        return await res.json();
-    }
 
-    for (let i = 1; i <= 5; i++) {
-        const star = document.createElement("span");
-        star.classList.add("star");
-        star.innerHTML = "★";
-        star.dataset.value = i;
-        starRating.appendChild(star);
-    }
+        for (let i = 1; i <= 5; i++) {
+          const star = document.createElement("span");
+          star.classList.add("star");
+          star.innerHTML = "★";
+          star.dataset.value = i;
+          starRating.appendChild(star);
+        }
 
-    starRating.addEventListener("mouseover", (e) => {
-        if (e.target.classList.contains("star")) {
+        starRating.addEventListener("mouseover", (e) => {
+          if (e.target.classList.contains("star")) {
             const hoverValue = parseInt(e.target.dataset.value);
             updateStars(hoverValue);
-        }
-    });
+          }
+        });
 
-    starRating.addEventListener("mouseout", () => {
-        updateStars(selectedRating);
-    });
+        starRating.addEventListener("mouseout", () => {
+          updateStars(selectedRating);
+        });
 
-    starRating.addEventListener("click", (e) => {
-        if (e.target.classList.contains("star")) {
+        starRating.addEventListener("click", (e) => {
+          if (e.target.classList.contains("star")) {
             selectedRating = parseInt(e.target.dataset.value);
             updateStars(selectedRating);
             isDirty = true;
-        }
-    });
-
-    function updateStars(value) {
-        document.querySelectorAll(".star").forEach((star, index) => {
-            star.classList.toggle("filled", index < value);
+          }
         });
-    }
 
-    reviewText.addEventListener("input", () => {
-        const length = reviewText.value.length;
-        charCount.textContent = length;
-        reviewError.style.display = "none";
-        isDirty = true;
-    });
+        function updateStars(value) {
+          document.querySelectorAll(".star").forEach((star, index) => {
+            star.classList.toggle("filled", index < value);
+          });
+        }
 
-    submitBtn.addEventListener("click", async () => {
-        const text = reviewText.value.trim();
+        reviewText.addEventListener("input", () => {
+          const length = reviewText.value.length;
+          charCount.textContent = length;
+          reviewError.style.display = "none";
+          isDirty = true;
+        });
 
-        if (selectedRating === 0) {
+        submitBtn.addEventListener("click", async () => {
+          const text = reviewText.value.trim();
+
+          if (selectedRating === 0) {
             reviewError.textContent = "Please select a star rating.";
             reviewError.style.display = "block";
             return;
-        }
+          }
 
-        if (text.length < 10) {
+          if (text.length < 10) {
             reviewError.textContent = "Review must be at least 10 characters.";
             reviewError.style.display = "block";
             return;
-        }
+          }
 
-        if (!confirm("Are you sure you want to submit your review?")) return;
+          if (!confirm("Are you sure you want to submit your review?")) return;
 
-        try {
+          try {
             const res = await fetch("http://localhost:8000/appointment/review", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    booking_id: parseInt(appointmentId),
-                    rating: selectedRating,
-                    review_text: text
-                })
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                booking_id: parseInt(appointmentId),
+                rating: selectedRating,
+                review_text: text,
+              }),
             });
 
             if (res.ok) {
-                alert("Your review has been submitted.");
-                isDirty = false;
-                window.location.href = "appointments.html#previous";
+              alert("Your review has been submitted.");
+              isDirty = false;
+              window.location.href = "appointments.html#previous";
             } else {
-                const data = await res.json().catch(() => ({}));
-                reviewError.textContent = data.detail || "Failed to submit review.";
-                reviewError.style.display = "block";
+              const data = await res.json().catch(() => ({}));
+              reviewError.textContent = data.detail || "Failed to submit review.";
+              reviewError.style.display = "block";
             }
-        } catch (error) {
+          } catch (error) {
             reviewError.textContent = error.message;
             reviewError.style.display = "block";
-        }
-    });
-
-    window.addEventListener("beforeunload", (e) => {
-        if (isDirty) {
-            e.preventDefault();
-            e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-        }
-    });
-
-    const consultantData = await fetchConsultant();
-    const existingReview = await checkExistingReview();
-
-    if (existingReview) {
-        selectedRating = existingReview.rating;
-        updateStars(selectedRating);
-
-        // Disable stars
-        document.querySelectorAll(".star").forEach(star => {
-            star.style.pointerEvents = "none";
-            star.style.opacity = "0.7";
+          }
         });
 
-        // Disable text input
-        reviewText.value = existingReview.review_text;
-        reviewText.disabled = true;
-        charCount.textContent = existingReview.review_text.length;
+        window.addEventListener("beforeunload", (e) => {
+          if (isDirty) {
+            e.preventDefault();
+            e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
+          }
+        });
 
-        // Disable submit button
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Review already submitted";
-        submitBtn.style.cursor = "not-allowed";
-        submitBtn.style.opacity = "0.7";
-    }
-})();
-</script>
+        const consultantData = await fetchConsultant();
+        const existingReview = await checkExistingReview();
 
-</body>
+        if (existingReview) {
+          selectedRating = existingReview.rating;
+          updateStars(selectedRating);
+
+          document.querySelectorAll(".star").forEach((star) => {
+            star.style.pointerEvents = "none";
+            star.style.opacity = "0.7";
+          });
+
+          reviewText.value = existingReview.review_text;
+          reviewText.disabled = true;
+          charCount.textContent = existingReview.review_text.length;
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Review already submitted";
+          submitBtn.style.cursor = "not-allowed";
+          submitBtn.style.opacity = "0.7";
+        }
+      })();
+    </script>
+  </body>
 </html>

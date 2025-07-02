@@ -1,231 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 <body>
-    <header class="user-header">
-        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-        
-        <div class="bell-menu">
-            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-            <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-        <!-- Menu function -->
-        <div id="menuHamToggle">
-            <!-- Create Hidden Checkbos, that will be used as Click Function-->
-            <input type="checkbox">
+  <header class="user-header">
+    <a href="home.html" class="to_the_main">
+      <div class="logo"><img src="../images/logo.png" alt="" class="pic_logo" /></div>
+    </a>
+    <div class="bell-menu">
+      <a href="notifications.html" class="bell-div notif-bell-wrapper">
+        <i class="far fa-bell bell-icon">
+          <span id="notifBadge" class="notification-badge"></span>
+        </i>
+      </a>
+      <div id="menuHamToggle">
+        <input type="checkbox" />
+        <span></span>
+        <span></span>
+        <span></span>
+        <ul id="mainMenu">
+          <a href="profile.html"><li>Profile</li></a>
+          <a href="appointments.html"><li>Appointments</li></a>
+          <a href="messages.html"><li>Messages</li></a>
+          <a href="support-tickets.html"><li>Support Tickets</li></a>
+          <a href="settings.html"><li>Settings</li></a>
+          <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
+        </ul>
+      </div>
+    </div>
+  </header>
 
-            <!-- Lets create three line hamburger menu
-            Can animate to display as ham menu and closing menu tag.
-            -->
-            <span></span>
-            <span></span>
-            <span></span>
-
-            <!-- Here menu goes -->
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="support-tickets.html"><li>Support Tickets</li></a>
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-        </div>
-        <!-- Menu function END -->
-        </div>
-
-    </header>
-    
-<!-- Sign Out Confirmation Modal -->
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+  <div id="signOutModal" class="modal-overlay">
+    <div class="modal-content">
+      <p>Are you sure you want to sign out?</p>
+      <div class="modal-buttons">
+        <button onclick="confirmSignOut()">Yes</button>
+        <button onclick="closeModal()">No</button>
+      </div>
     </div>
   </div>
-</div>    
-    
-    <section class="chat-conversation-section">
 
-        <!-- Header -->
-        <div class="chat-header">
-          <button class="back-button" onclick="goBackToInbox()">← Back to Messages</button>
-          <div class="consultant-info">
-            <img src="../images/avatar.png" alt="Consultant" class="avatar">
-            <a href="#" class="consultant-name">AMIDOVICH</a>
-          </div>
-        </div>
-      
-        <!-- Chat messages (scrollable) -->
-        <div class="chat-messages" id="chatMessages">
-          <!-- Messages will be added by JS -->
-        </div>
-      
-        <!-- Message input area -->
-        <div class="chat-input">
-          <textarea type="text" id="messageInput" placeholder="Type a message..." ></textarea>
-          <button  id="sendBtn">Send</button>
-        </div>
-      
-      </section>
-    
-      <footer>
-        <div class="logo_icons">
-            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
-            <div class="social-icons">
-                <a href="" class="twitter_link">
-                    <img src="../images/instagram.png" alt="Instagram">
-                </a>
-            </div>
-        </div>
-        <div class="footer-links">
-            <h4 class="h4_service">Service & Contacts</h4>
-            <a href="../faq.html" class="class_footer">
-                <p>FAQ</p> 
-            </a>
-            <a href="../contact-us.html" class="class_footer">
-                <p>Contact Us</p> 
-            </a>
-            <a href="../privacy-policy.html" class="class_footer">
-                <p>Privacy Policy</p> 
-            </a>
-            <a href="../about-us.html" class="class_footer">
-                <p>About Us</p>
-            </a>
-            <a href="../terms-conditions.html" class="class_footer">
-              <p>Terms and Conditions</p>
-          </a>
-        </div>
-    </footer>
+  <section class="chat-conversation-section">
+    <div class="chat-header">
+      <button class="back-button" onclick="goBackToInbox()">← Back to Messages</button>
+      <div class="consultant-info">
+        <img src="../images/avatar.png" alt="Consultant" class="avatar" />
+        <a href="#" class="consultant-name">AMIDOVICH</a>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input">
+      <textarea id="messageInput" placeholder="Type a message..."></textarea>
+      <button id="sendBtn">Send</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo_icons">
+      <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo" /></div>
+      <div class="social-icons">
+        <a href="" class="twitter_link">
+          <img src="../images/instagram.png" alt="Instagram" />
+        </a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4 class="h4_service">Service & Contacts</h4>
+      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
+      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
+    </div>
+  </footer>
 
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
-    <script>
-(async () => {
-  await autoEnforceRoleFromPath();
+  <script>
+    (async () => {
+      await autoEnforceRoleFromPath();
 
-  const token     = localStorage.getItem("accessToken");
-  const params    = new URLSearchParams(window.location.search);
-  const partnerId = params.get("partnerId");
-  if (!partnerId) {
-    alert("No conversation selected.");
-    return;
-  }
+      const token = localStorage.getItem("accessToken");
+      const params = new URLSearchParams(window.location.search);
+      const partnerId = params.get("partnerId");
+      if (!partnerId) {
+        alert("No conversation selected.");
+        return;
+      }
 
-  // 1) Load consultant info and update header
-  async function loadConsultantInfo(consultantId) {
-    try {
-      const res = await fetch(`http://localhost:8000/users/${consultantId}`, {
-        headers: { "Authorization": `Bearer ${token}` }
+      async function loadConsultantInfo(consultantId) {
+        try {
+          const res = await fetch(`http://localhost:8000/users/${consultantId}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+          if (!res.ok) throw new Error("Failed to fetch user info");
+          const user = await res.json();
+          document.querySelector(".consultant-name").textContent =
+            user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || "Consultant";
+          document.querySelector(".avatar").src =
+            user.profile_picture
+              ? "http://localhost:8000" + user.profile_picture
+              : "../images/avatar.png";
+        } catch (e) {
+          document.querySelector(".consultant-name").textContent = "User #" + partnerId;
+          document.querySelector(".avatar").src = "../images/avatar.png";
+        }
+      }
+
+      await loadConsultantInfo(partnerId);
+
+      async function loadThread() {
+        const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (!res.ok) return console.error("Failed to load thread", res.status);
+        const msgs = await res.json();
+        renderChat(msgs);
+      }
+
+      function renderChat(messages) {
+        const container = document.getElementById("chatMessages");
+        container.innerHTML = "";
+        messages.forEach(m => {
+          const bubble = document.createElement("div");
+          bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
+          bubble.innerHTML = `
+            <div class="bubble-content">
+              <p>${m.message}</p>
+              <span class="timestamp">
+                ${new Date(m.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>`;
+          container.appendChild(bubble);
+        });
+        container.scrollTop = container.scrollHeight;
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const text = input.value.trim();
+        if (!text) return;
+
+        if (text.length > 500) {
+          alert("Message cannot exceed 500 characters.");
+          return;
+        }
+
+        const payload = {
+          receiver_id: +partnerId,
+          message: text,
+          booking_id: null
+        };
+
+        const res = await fetch("http://localhost:8000/messages/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          return alert("Failed to send message: " + res.status);
+        }
+
+        input.value = "";
+        await loadThread();
+      }
+
+      document.getElementById("sendBtn").addEventListener("click", sendMessage);
+      document.getElementById("messageInput").addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
       });
-      if (!res.ok) throw new Error("Failed to fetch user info");
-      const user = await res.json();
-      document.querySelector(".consultant-name").textContent =
-        user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || "Consultant";
-      document.querySelector(".avatar").src =
-      user.profile_picture
-    ? "http://localhost:8000" + user.profile_picture
-    : "../images/avatar.png";
-    } catch (e) {
-      // fallback
-      document.querySelector(".consultant-name").textContent = "User #" + partnerId;
-      document.querySelector(".avatar").src = "../images/avatar.png";
-    }
-  }
 
-  await loadConsultantInfo(partnerId);
+      window.goBackToInbox = () => window.location.href = "messages.html";
 
-  // 2) Load existing thread
-  async function loadThread() {
-    const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!res.ok) return console.error("Failed to load thread", res.status);
-    const msgs = await res.json();
-    renderChat(msgs);
-  }
-
-  // 3) Render chat bubbles & auto-scroll
-  function renderChat(messages) {
-    const container = document.getElementById("chatMessages");
-    container.innerHTML = "";
-    messages.forEach(m => {
-      const bubble = document.createElement("div");
-      bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
-      bubble.innerHTML = `
-        <div class="bubble-content">
-          <p>${m.message}</p>
-          <span class="timestamp">
-            ${new Date(m.sent_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
-          </span>
-        </div>`;
-      container.appendChild(bubble);
-    });
-    container.scrollTop = container.scrollHeight;
-  }
-
-
-  // 4) Send new message
-  async function sendMessage() {
-    const input = document.getElementById("messageInput");
-    const text  = input.value.trim();
-    if (!text) return;
-
-      if (text.length > 500) {
-    alert("Message cannot exceed 500 characters.");
-    return;
-  }
-
-    const payload = {
-      receiver_id: +partnerId,
-      message:     text,
-      booking_id:  null
-    };
-
-    
-
-    const res = await fetch("http://localhost:8000/messages/send", {
-      method:  "POST",
-      headers: {
-        "Content-Type":  "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) {
-      return alert("Failed to send message: " + res.status);
-    }
-
-    input.value = "";
-    await loadThread();
-  }
-
-  // 5) Wire up send button + Enter key
-  document.getElementById("sendBtn")
-          .addEventListener("click", sendMessage);
-  document.getElementById("messageInput")
-          .addEventListener("keydown", e => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-
-  // 6) Back button
-  window.goBackToInbox = () => window.location.href = "messages.html";
-
-  // 7) Initial load
-  await loadThread();
-})();
-    </script>
-    
+      await loadThread();
+    })();
+  </script>
 </body>
 </html>

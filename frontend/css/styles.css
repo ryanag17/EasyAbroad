@@ -1165,35 +1165,39 @@ span {
 
 /* Privacy-policy END */
 
-/* Student Start */
 
-/* Student/home */
+/* User Header START */
 .user-header{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    
 }
 .bell-menu{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 }
-.bell-image{
-    width: 33px;
-    height: 33px;
-    
-}
 .bell-div{
     padding-right: 20px;
 }
-
-
-
-
-
-/* Menu Button */
-
+.bell-icon {
+  position: relative;
+  font-size: 30px;
+  color: #d62d81;
+  cursor: pointer;
+}
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: #d62d81;
+  color: white;
+  border-radius: 50%;
+  padding: 4px 7px; /* increased padding */
+  font-size: 12px;  /* was 10px before */
+  display: none;
+  user-select: none; /* <-- prevent selecting text */
+}
 #menuHamToggle {
     display: block;
     top: 3px;
@@ -1201,8 +1205,6 @@ span {
   z-index: 10000;
     user-select: none;
 }
-
-/* toggle on click item */
 #menuHamToggle input{
     display: block;
     width: 40px;
@@ -1214,8 +1216,6 @@ span {
     opacity: 0;
     z-index: 2;
 }
-
-/* Making hamburger */
 #menuHamToggle span{
     display: block;
     width: 33px;
@@ -1230,35 +1230,25 @@ span {
                 background 0.7s cubic-bezier(0.1, 0.2, 0.5, 1.0),
                 opacity .7s ease;
 }
-
-
 #menuHamToggle span:first-child{
     transform-origin: 0% 0%;
 }
-
 #menuHamToggle span:nth-last-child(2){
     transform-origin: 0% 100%;
 }
-
-/* Rotate the hamburger on cross mark on click */
 #menuHamToggle input:checked ~ span {
     opacity: 1;
     transform: rotate(45deg) translate(-2px, -1px);
     background: #d62d81;
 }
-/* Hiding the middle one to make perfect cross */
 #menuHamToggle input:checked ~ span:nth-last-child(3){
     opacity: 0;
     transform: rotate(0deg) scale(0.2, 0.2);
 }
-
-/* Change the direction of last one */
 #menuHamToggle input:checked ~ span:nth-last-child(2)
 {
     transform: rotate(-45deg) translate(0, -1px);
 }
-
-/* Position the menu on the top left */
 #mainMenu {
   position: absolute;
   width: 300px;
@@ -1272,7 +1262,6 @@ span {
   transform: translate(0%, -100%); /* Just change the value to animate it from another direction */
   transition: transform 1s cubic-bezier(0.55, 0.2, 0.05, 1.0);
 }
-
 #mainMenu li{
   padding: 5px 5px;
   font-size: 20px;
@@ -1280,21 +1269,18 @@ span {
   text-align: center;
   color: black;
 }
-
 #mainMenu li:hover {
   background: #d62d8180;
   color: black;
   font-weight: bold;
 }
-
-/* Slide it on click */
 #menuHamToggle input:checked ~ ul {
     transform: none;
 }
-/* Menu Button END */
+/* User Header END */
 
-
-
+/* Student Start */
+/* Student/home */
 .user-section {
     text-align: center;
     background-image: url('../images/background.png');
@@ -3869,9 +3855,295 @@ textarea#reviewText {
     }
 /* consultant-preview-internship END */
 
-/* ticket-create */
+/* Admin END */
 
-.save-button_ticket{
+
+
+
+
+
+/* CSS from HTML Files START */
+/* ticket-detail.html */
+.support-ticket-list {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-header h2 {
+  margin: 0 0 10px;
+}
+
+.reply-list {
+  margin-top: 20px;
+}
+
+.reply {
+  border-top: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.reply.admin {
+  background: #f1f1f1;
+}
+
+.reply-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  margin-top: 20px;
+}
+
+.reply-form button {
+  margin-top: 10px;
+  background: #cc2f8b;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reply p {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-line;
+  max-width: 100%;
+}
+
+/*  Consultant & Student-specific  */
+
+.reply .text-truncate {
+  display: inline-block;
+  max-height: 6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Admin-specific */
+
+#statusDropdown {
+  padding: 5px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+}
+
+.ticket-meta {
+  margin: 10px 0 20px;
+  font-size: 15px;
+}
+
+.meta-row {
+  margin: 6px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+/* ticket-detail.html */
+
+/* student/review-consultant.html */
+        textarea:disabled {
+            background-color: #f5f5f5;
+            color: #333;
+            cursor: not-allowed;
+        }
+
+        .star {
+            cursor: pointer;
+            font-size: 2rem;
+            color: #ddd;
+        }
+
+        .star.filled {
+            color: gold;
+        }
+
+        .star.disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+/* student/review-consultant.html */
+
+/* support-tickets.html */
+.support-ticket-list {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-item {
+  border-left: 4px solid #cc2f8b;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  background: #f9f9f9;
+  border-radius: 6px;
+}
+
+.ticket-item h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.ticket-item .status {
+  font-weight: bold;
+  color: #333;
+}
+
+.ticket-item .description {
+  overflow-wrap: break-word;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #cc2f8b;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+/* support-tickets.html */
+
+/* admin/support-tickets.html */
+.submission-filter {
+  margin: 1.5rem 2rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #333;
+}
+
+.submission-filter select {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.submission-filter select:focus {
+  outline: none;
+  border-color: #ec008c;
+  box-shadow: 0 0 0 2px rgba(236, 0, 140, 0.15);
+}
+
+.submission-table-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  overflow-x: auto;
+}
+
+.submission-table {
+  min-width: 800px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.submission-table th,
+.submission-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.submission-table th {
+  background-color: #f4f4f4;
+  font-weight: 600;
+}
+
+.submission-action-link {
+  color: deeppink;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.submission-action-link:hover {
+  color: #a30056;
+}
+/* admin/support-tickets.html */
+
+/* consultant and student/ticket-create.html */
+.support-ticket-list {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.send-button {
+  background-color: #cc2f8b;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.send-button:hover {
+  background-color: #b02678;
+}
+
+.warning-text {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.save-button_ticket {
   padding: 10px 24px;
   font-size: 15px;
   background-color: #d62d81;
@@ -3882,11 +4154,7 @@ textarea#reviewText {
   transition: background-color 0.3s ease;
 }
 
-.save-button_ticket:hover{
+.save-button_ticket:hover {
   background-color: #000;
 }
-/* ticket-create END */
-/* ticket-detail */
-
-/* ticket-detail END */
-/* Admin END */
+/* consultant and student/ticket-create.html */

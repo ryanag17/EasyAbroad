@@ -638,6 +638,19 @@ CREATE TABLE IF NOT EXISTS consultant_reviews (
   FOREIGN KEY (consultant_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+
+-- 16) notifications table
+CREATE TABLE notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    content TEXT NOT NULL,
+    type VARCHAR(50) DEFAULT 'info',
+    is_read BOOLEAN DEFAULT FALSE,
+    redirect_url VARCHAR(255) DEFAULT '#',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- ─────────────────────────────────────────────────────────────────────────────
 -- END OF 01_init.sql
 -- ─────────────────────────────────────────────────────────────────────────────

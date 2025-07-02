@@ -8,6 +8,8 @@
 <link href="../images/favicon.png" rel="icon" type="image/png"/>
 <link href="../css/styles.css" rel="stylesheet"/>
 <link href="../css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 <style>
         .header {
             display: flex;
@@ -93,20 +95,21 @@
 <body>
 <header class="user-header">
 <a class="to_the_main" href="home.html"><div class="logo"><img alt="" class="pic_logo" src="../images/logo.png"/></div></a>
-<div class="bell-menu">
-<!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-<a class="bell-div" href="notifications.html"><div class="bell-image"><img alt="" class="pic_logo" src="../images/bell.png"/></div></a>
-<!-- Menu function -->
+            <div class="bell-menu">
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
+
 <div id="menuHamToggle">
-<!-- Create Hidden Checkbos, that will be used as Click Function-->
+
 <input type="checkbox"/>
-<!-- Lets create three line hamburger menu
-                Can animate to display as ham menu and closing menu tag.
-                -->
+
 <span></span>
 <span></span>
 <span></span>
-<!-- Here menu goes -->
+
 <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
@@ -118,10 +121,10 @@
 <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
 </ul>
 </div>
-<!-- Menu function END -->
+
 </div>
 </header>
-<!-- Sign Out Confirmation Modal -->
+
 <div class="modal-overlay" id="signOutModal">
 <div class="modal-content">
 <p>Are you sure you want to sign out?</p>
@@ -131,7 +134,7 @@
 </div>
 </div>
 </div>
-<!-- Modal window -->
+
 <div class="modal" id="bookingModal">
 <div class="modal-content">
 <h3>Book a Consultation</h3>
@@ -160,7 +163,7 @@
 </div>
 </div>
 </div>
-<!-- Modal window END -->
+
   <div class="calendar-scroll-container">
 <div class="calendar-wrapper">
 <div class="header">
@@ -173,7 +176,7 @@
 <div id="calendar"></div>
 </div>
   </div>
-<!-- Modal timeslot confirmation window -->
+
 <div class="modal" id="confirmSlotModal">
 <div class="modal-content">
 <h3 id="confirmSlotText">Are you sure to book this timeslot?</h3>
@@ -183,7 +186,7 @@
 </div>
 </div>
 </div>
-<!-- Discard Modal window -->
+
 <div class="modal" id="discardModal">
 <div class="modal-content">
 <h3 id="discardSlotText">Are you sure to discard this timeslot of availability?</h3>
@@ -236,19 +239,19 @@
     let isEditable = false;
     let maxSlotsAlertShown = false;
 
-    // Fetchin and showin consultant’s name
+    
     async function loadConsultantName() {
       const token = localStorage.getItem('accessToken');
       const res = await fetch('http://localhost:8000/profile/consultant', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (!res.ok) return; // silently fail
+      if (!res.ok) return; 
       const data = await res.json();
       document.getElementById('consultant-name').textContent =
         `${data.first_name} ${data.last_name}`;
     }
 
-    // Loading availability from backend
+    
     async function loadAvailability() {
       const token = localStorage.getItem('accessToken');
       const res = await fetch('http://localhost:8000/appointment/consultant/timetable', {
@@ -274,7 +277,7 @@
       renderCalendar(currentDate);
     }
 
-    // Saving edited availability to backend
+    
     async function saveAvailability() {
       const token = localStorage.getItem('accessToken');
       const slots = events.map(ev => ({
@@ -298,7 +301,7 @@
       alert('✅ Timetable saved!');
     }
 
-    // Rendering FullCalendar with drag-select & edit-mode
+    
     function renderCalendar(startDate) {
       const calendarEl = document.getElementById('calendar');
       if (calendar) calendar.destroy();
@@ -320,7 +323,7 @@
   const selectionEnd = new Date(selectionStart.getTime() + 60 * 60 * 1000);
   const selectionDay = selectionStart.getDay();
 
-  // 1. Block if more than 10 slots on this day
+  
   let slotsToday = 0;
   for (const ev of events) {
     const evDay = Array.isArray(ev.daysOfWeek) ? ev.daysOfWeek[0] : ev.daysOfWeek;
@@ -332,12 +335,12 @@
     if (!maxSlotsAlertShown) {
       alert("❗ You cannot have more than 10 available slots on a single day.");
       maxSlotsAlertShown = true;
-      setTimeout(() => { maxSlotsAlertShown = false; }, 1500); // Prevent spamming alert
+      setTimeout(() => { maxSlotsAlertShown = false; }, 1500); 
     }
     return false;
   }
 
-  // 2. Block if selection overlaps with any slot on this day
+  
   for (const ev of events) {
     const evDay = Array.isArray(ev.daysOfWeek) ? ev.daysOfWeek[0] : ev.daysOfWeek;
     if (evDay !== selectionDay) continue;
@@ -354,7 +357,7 @@
     }
   }
 
-  // 3. Block any slot starting at or after 23:00
+  
   return selectionStart.getHours() < 23;
 },
 
@@ -392,9 +395,9 @@ select: function(info) {
       calendar.render();
     }
 
-    // When you drag-select a range
+    
     function handleSlotClick(info) {
-      // use the exact start & end from the drag-select
+      
       pendingSlot = {
         start: info.start,
         end:   info.end
@@ -412,14 +415,14 @@ select: function(info) {
       document.getElementById('confirmSlotModal').style.display = 'none';
     }
 
-    // When you confirm the drag-select
+    
     function confirmSlotBooking() {
       if (!pendingSlot) return;
       const dow = pendingSlot.start.getDay();
       const startStr = pendingSlot.start.toTimeString().slice(0,5);
       const endStr   = pendingSlot.end  .toTimeString().slice(0,5);
 
-      // pushing new “Available” event
+      
       events.push({
         title: 'Available',
         daysOfWeek: [dow],
@@ -433,7 +436,7 @@ select: function(info) {
       renderCalendar(currentDate);
     }
 
-    // Removing existing slot
+    
     let slotToDiscard = null;
     function handleEventClick(info) {
       const { daysOfWeek, startTime, endTime } = info.event.extendedProps;
@@ -454,7 +457,7 @@ select: function(info) {
       renderCalendar(currentDate);
     }
 
-    // Wiring the Edit/Save button
+    
     document.querySelector('.edit-btn').addEventListener('click', async () => {
       if (isEditable) {
         try {
@@ -468,7 +471,7 @@ select: function(info) {
       renderCalendar(currentDate);
     });
 
-    // On load
+    
     document.addEventListener('DOMContentLoaded', () => {
       loadConsultantName();
       loadAvailability().catch(e => alert('⚠️ ' + e.message));

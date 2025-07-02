@@ -7,6 +7,8 @@
   <link rel="icon" type="image/png" href="../images/favicon.png">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/all.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 
 <body>
@@ -17,27 +19,23 @@
       </div>
     </a>
 
-    <div class="bell-menu">
-      <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-      <a href="notifications.html" class="bell-div">
-        <div class="bell-image">
-          <img src="../images/bell.png" alt="" class="pic_logo">
-        </div>
-      </a>
+            <div class="bell-menu">
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
 
-      <!-- Menu function -->
+      
       <div id="menuHamToggle">
-        <!-- Create Hidden Checkbos, that will be used as Click Function-->
+        
         <input type="checkbox">
 
-        <!-- Lets create three line hamburger menu
-        Can animate to display as ham menu and closing menu tag.
-        -->
         <span></span>
         <span></span>
         <span></span>
 
-        <!-- Here menu goes -->
+        
         <ul id="mainMenu">
             <a href="profile.html"> <li> Profile </li></a>
             <a href="user-management.html"> <li> User Management </li></a>
@@ -48,11 +46,11 @@
             <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
         </ul>
       </div>
-      <!-- Menu function END -->
+      
     </div>
   </header>
 
-<!-- Sign Out Confirmation Modal -->
+
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
     <p>Are you sure you want to sign out?</p>
@@ -66,7 +64,7 @@
   <section class="profile-section">
     <div class="profile-container">
       <div class="profile-picture">
-        <!-- Profile Picture -->
+        
         <div class="profile-pic-wrapper">
           <img id="profilePic" src="../images/avatar.png" alt="Profile Picture" class="avatar">
           <label for="fileInput" class="change-pic-link">Change profile picture</label>
@@ -154,7 +152,7 @@
       (async () => {
     await autoEnforceRoleFromPath();
   })();  
-        // Image selector
+        
     const fileInput = document.getElementById('fileInput');
     const profilePic = document.getElementById('profilePic');
 
@@ -183,7 +181,7 @@ fileInput.addEventListener('change', async function () {
   const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
   profilePic.src = timestampedUrl;
 
-  // Wait a moment before refreshing to let the image appear
+  
   setTimeout(() => {
     window.location.reload();
   }, 1);
@@ -193,7 +191,7 @@ fileInput.addEventListener('change', async function () {
 }
 });
 
-        // Image selector
+        
     
     document.addEventListener("DOMContentLoaded", async () => {
       const API_BASE = "http://localhost:8000";
@@ -205,7 +203,7 @@ fileInput.addEventListener('change', async function () {
         "Content-Type" : "application/json"
       };
 
-      // fields & button
+      
       const editBtn = document.querySelector(".edit-btn");
       const fields  = Array.from(
         document.querySelectorAll(
@@ -213,7 +211,7 @@ fileInput.addEventListener('change', async function () {
         )
       );
 
-      // 1) load profile
+      
       const profRes = await fetch(`${API_BASE}/profile/admin`, { headers });
       if (!profRes.ok) {
         console.error(await profRes.text());
@@ -222,7 +220,7 @@ fileInput.addEventListener('change', async function () {
       }
       const profile = await profRes.json();
 
-      // 2) populate inputs
+      
       document.getElementById("name").value     = profile.first_name || "";
       document.getElementById("surname").value  = profile.last_name  || "";
       document.querySelector('input[name="birthday"]').value = profile.birthday || "";
@@ -237,7 +235,7 @@ fileInput.addEventListener('change', async function () {
 
 
 
-      // countries dropdown
+      
       const countrySel = document.getElementById("country");
       countrySel.innerHTML = `<option value="">Select</option>`;
       const countries = await (await fetch(`${API_BASE}/profile/countries`, { headers })).json();
@@ -247,7 +245,7 @@ fileInput.addEventListener('change', async function () {
         countrySel.append(o);
       });
 
-      // 3) edit/save toggle
+      
       let editing = false;
       editBtn.addEventListener("click", async () => {
         if (!editing) {

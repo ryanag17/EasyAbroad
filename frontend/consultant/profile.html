@@ -7,10 +7,12 @@
   <link rel="icon" type="image/png" href="../images/favicon.png">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/all.min.css">
-  <!-- Choices.js CSS -->
+  
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-  <!-- Choices.js JS -->
+  
   <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 
 <body>
@@ -21,27 +23,23 @@
       </div>
     </a>
 
-    <div class="bell-menu">
-      <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-      <a href="notifications.html" class="bell-div">
-        <div class="bell-image">
-          <img src="../images/bell.png" alt="" class="pic_logo">
-        </div>
-      </a>
+            <div class="bell-menu">
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
 
-      <!-- Menu function -->
+      
       <div id="menuHamToggle">
-        <!-- Create Hidden Checkbos, that will be used as Click Function-->
+        
         <input type="checkbox">
 
-        <!-- Lets create three line hamburger menu
-        Can animate to display as ham menu and closing menu tag.
-        -->
         <span></span>
         <span></span>
         <span></span>
 
-        <!-- Here menu goes -->
+        
         <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
@@ -53,11 +51,11 @@
           <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
         </ul>
       </div>
-      <!-- Menu function END -->
+      
     </div>
   </header>
 
-<!-- Sign Out Confirmation Modal -->
+
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
     <p>Are you sure you want to sign out?</p>
@@ -72,7 +70,7 @@
   <section class="profile-section">
     <div class="profile-container">
       <div class="profile-picture">
-        <!-- Profile Picture -->
+        
         <div class="profile-pic-wrapper">
           <img id="profilePic" src="../images/avatar.png" alt="Profile Picture" class="avatar">
           <label for="fileInput" class="change-pic-link">Change Profile Picture</label>
@@ -167,7 +165,7 @@
       (async () => {
     await autoEnforceRoleFromPath();
   })();  
-    // Image selector
+    
     const fileInput = document.getElementById('fileInput');
     const profilePic = document.getElementById('profilePic');
 
@@ -196,7 +194,7 @@
         const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
         profilePic.src = timestampedUrl;
 
-        // Wait a moment before refreshing to let the image appear
+        
         setTimeout(() => {
           window.location.reload();
         }, 1);
@@ -216,7 +214,7 @@
         "Content-Type": "application/json"
       };
 
-      // Grab form fields + button
+      
       const editBtn = document.querySelector(".edit-btn");
       const fields = Array.from(
         document.querySelectorAll(
@@ -224,7 +222,7 @@
         )
       );
 
-      // 1) Fetch profile
+      
       const profRes = await fetch(`${API_BASE}/profile/consultant`, { headers });
       if (!profRes.ok) {
         alert("Not authenticated – please log in again");
@@ -244,7 +242,7 @@
           ? `http://localhost:8000${profile.profile_picture}`
           : "../images/avatar.png";
 
-      // 3) Countries dropdown
+      
       const countrySel = document.getElementById("country");
       countrySel.innerHTML = `<option value="">Select</option>`;
       const countries = await (await fetch(`${API_BASE}/profile/countries`, { headers })).json();
@@ -254,7 +252,7 @@
         countrySel.append(o);
       });
 
-      // 4) Languages multi-select
+      
       const langSel = document.getElementById("languages");
       const allLangs = await (await fetch(`${API_BASE}/profile/languages`, { headers })).json();
 
@@ -274,19 +272,19 @@
         shouldSort: false
       });
 
-      // Manually enforce max 5 selections
+      
       langSel.addEventListener('addItem', function (event) {
         const selected = langChoices.getValue(true);
 
         if (selected.length > 5) {
-          // Remove only the just-added item
+          
           langChoices.removeActiveItemsByValue(event.detail.value);
           alert("You can select a maximum of 5 languages.");
         }
       });
-      langChoices.disable(); // start read-only
+      langChoices.disable(); 
 
-      // 5) Edit / Save toggle
+      
       let editing = false;
       editBtn.addEventListener("click", async () => {
         if (!editing) {

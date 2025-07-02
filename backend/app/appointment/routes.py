@@ -9,6 +9,7 @@ from app.appointment.schemas import ConsultantAvailabilityOut as Slot, Appointme
 from fastapi import Body
 from sqlalchemy.orm import Session, selectinload
 from app.auth.models import User
+from app.notification.models import Notification
 
 router = APIRouter(
     prefix="/appointment",
@@ -86,8 +87,8 @@ async def get_consultant_timetable(
         for r in rows
     ]
 
-# Student books an appointment (with overlap check)
-@router.post("/book", response_model=AppointmentOut)
+# Student books an appointment (with overlap check) (with notification)
+@router.post("/book", response_model=AppointmentOut, summary="Student: book appointment (with notification)")
 async def book_appointment(
     data: AppointmentCreate,
     db: AsyncSession = Depends(get_db),
@@ -124,7 +125,28 @@ async def book_appointment(
     db.add(appt)
     await db.commit()
     await db.refresh(appt)
+
+    # Fetch student name
+    student = await db.get(User, current_user["user_id"])
+    student_name = f"{student.first_name} {student.last_name}" if student else "the student"
+
+    # Create notification for consultant
+    notif_content = (
+        f"You have received a new appointment request from {student_name} "
+        f"for {data.date}, {data.start_time}-{data.end_time}."
+    )
+    new_notif = Notification(
+        user_id=data.consultant_id,
+        content=notif_content,
+        type="info",
+        redirect_url=f"/consultant/appointments.html"
+    )
+    db.add(new_notif)
+    await db.commit()
+    await db.refresh(new_notif)
+
     return appt
+
 
 # Student fetches their own appointments
 from sqlalchemy.orm import joinedload
@@ -153,7 +175,8 @@ async def get_my_appointments(
         await db.commit()
     return appointments
 
-@router.post("/reject/{appointment_id}", response_model=AppointmentOut)
+# Consultant: reject appointment request (with notification)
+@router.post("/reject/{appointment_id}", response_model=AppointmentOut, summary="Consultant: reject appointment request (with notification)")
 async def reject_appointment(
     appointment_id: int,
     reason: str = Body(..., embed=True),
@@ -165,9 +188,26 @@ async def reject_appointment(
         raise HTTPException(403, "Not allowed")
     appt.status = AppointmentStatus.rejected
     appt.rejection_reason = reason
+
+    # Get consultant's name
+    consultant = await db.get(User, appt.consultant_id)
+    consultant_name = f"{consultant.first_name} {consultant.last_name}" if consultant else "the consultant"
+
+    # Create notification for student
+    notif_content = f"Your appointment request for {consultant_name} has been rejected."
+    new_notif = Notification(
+        user_id=appt.student_id,
+        content=notif_content,
+        type="info",
+        redirect_url="/student/appointments.html"
+    )
+    db.add(new_notif)
+
     await db.commit()
     await db.refresh(appt)
+    await db.refresh(new_notif)
     return appt
+
 
 @router.get("/consultant/{consultant_id}/appointments", response_model=List[AppointmentOut])
 async def get_public_consultant_appointments(
@@ -208,27 +248,44 @@ async def get_consultant_appointments(
 
 from fastapi import Body
 
-@router.post("/approve/{appointment_id}", response_model=AppointmentOut)
+# Consultant: approve the appointment request (with notification)
+@router.post("/approve/{appointment_id}", response_model=AppointmentOut, summary="Consultant: approve the appointment request (with notification)")
 async def approve_appointment(
     appointment_id: int,
     meeting_link: str = Body(..., embed=True),
     db: AsyncSession = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
-    # Only consultants can approve
     appt = await db.get(Appointment, appointment_id)
     if not appt or appt.consultant_id != current_user["user_id"]:
         raise HTTPException(403, "Not allowed")
     appt.status = "upcoming"
     appt.meeting_link = meeting_link
+
+    # Get consultant's name
+    consultant = await db.get(User, appt.consultant_id)
+    consultant_name = f"{consultant.first_name} {consultant.last_name}" if consultant else "the consultant"
+
+    # Create notification text
+    notif_content = f"Your appointment request for {consultant_name} has been approved."
+    new_notif = Notification(
+        user_id=appt.student_id,
+        content=notif_content,
+        type="info",
+        redirect_url="/student/appointments.html"
+    )
+    db.add(new_notif)
+
     await db.commit()
     await db.refresh(appt)
+    await db.refresh(new_notif)
     return appt
 
 from datetime import datetime, timedelta
 from sqlalchemy.future import select
 
-@router.post("/{appointment_id}/cancel")
+# Cancel appointment (with notification)
+@router.post("/{appointment_id}/cancel", summary="Cancel appointment (with notification)")
 async def cancel_appointment(
     appointment_id: int,
     db: AsyncSession = Depends(get_db),
@@ -244,13 +301,33 @@ async def cancel_appointment(
     meeting_dt = datetime.combine(appt.date, datetime.strptime(appt.start_time, "%H:%M").time())
     if meeting_dt - datetime.now() <= timedelta(hours=24):
         raise HTTPException(status_code=400, detail="Cannot cancel less than 24h before meeting")
-    appt.status = "rejected"
+
+    appt.status = AppointmentStatus.rejected
     appt.cancellation_reason = reason
+
+    # Determine recipient
+    if current_user["user_id"] == appt.student_id:
+        recipient_id = appt.consultant_id
+        who = "student"
+    else:
+        recipient_id = appt.student_id
+        who = "consultant"
+
+    notif_content = f"Your appointment has been canceled by the {who}."
+    new_notif = Notification(
+        user_id=recipient_id,
+        content=notif_content,
+        type="info",
+        redirect_url="/student/appointments.html" if who == "consultant" else "/consultant/appointments"
+    )
+    db.add(new_notif)
+
     await db.commit()
+    await db.refresh(new_notif)
     return {"detail": "Appointment cancelled"}
 
-# Allows only students to submit reviews after appointment is done and doesn't allow multiple reviews.
-@router.post("/review", response_model=ReviewOut, summary="Student: Submit Review.")
+# Allows only students to submit reviews after appointment is done and doesn't allow multiple reviews (with notification)
+@router.post("/review", response_model=ReviewOut, summary="Student: Submit Review (with notification)")
 async def submit_review(
     data: ReviewCreate,
     db: AsyncSession = Depends(get_db),
@@ -275,8 +352,28 @@ async def submit_review(
         review_text=data.review_text
     )
     db.add(review)
+
+    # Fetch student name
+    student = await db.get(User, current_user["user_id"])
+    student_name = f"{student.first_name} {student.last_name}" if student else "A student"
+
+    # Create notification for consultant
+    notif_content = f"You have received a new review from {student_name}."
+    new_notif = Notification(
+        user_id=booking.consultant_id,
+        content=notif_content,
+        type="info",
+        redirect_url="/consultant/reviews.html"
+    )
+    db.add(new_notif)
+
+    # Commit both together
     await db.commit()
+
+    # Refresh both
     await db.refresh(review)
+    await db.refresh(new_notif)
+
     return review
 
 # Calculates average rating and number of reviews per consultant.

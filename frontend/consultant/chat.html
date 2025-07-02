@@ -7,27 +7,30 @@
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 <body>
     <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
             
             <div class="bell-menu">
-                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-            <!-- Menu function -->
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
+            
             <div id="menuHamToggle">
-                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                
                 <input type="checkbox">
     
-                <!-- Lets create three line hamburger menu
-                Can animate to display as ham menu and closing menu tag.
-                -->
+
                 <span></span>
                 <span></span>
                 <span></span>
     
-                <!-- Here menu goes -->
+                
                 <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
@@ -39,11 +42,11 @@
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
-            <!-- Menu function END -->
+            
             </div>
  
     </header>
-<!-- Sign Out Confirmation Modal -->
+
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
     <p>Are you sure you want to sign out?</p>
@@ -57,22 +60,22 @@
     
     <section class="chat-conversation-section">
 
-        <!-- Header -->
+        
         <div class="chat-header">
           <button class="back-button" onclick="goBackToInbox()">← Back to Messages</button>
           <div class="consultant-info">
             <img src="../images/avatar.png" alt="Consultant" class="avatar">
             <a href="#" class="consultant-name">AMIDOVICH</a>
           </div>
-<!--           <button class="report-btn">⚠️</button> -->
+
         </div>
       
-        <!-- Chat messages (scrollable) -->
+        
         <div class="chat-messages" id="chatMessages">
-          <!-- Messages will be added by JS -->
+          
         </div>
       
-        <!-- Message input area -->
+        
         <div class="chat-input">
           <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500">
           <button  id="sendBtn">Send</button>
@@ -80,7 +83,7 @@
       
       </section>
       
-      <!-- Report Pop-up window -->
+      
 <div id="reportModal" class="modal" style="display: none;">
   <div class="modal-content">
     <span class="close-button" onclick="closeReportModal()">&times;</span>
@@ -156,7 +159,7 @@ async function loadPartnerInfo(partnerId) {
 await loadPartnerInfo(partnerId);
 
 
-  // 2) Load existing thread
+  
   async function loadThread() {
     const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
       headers: { "Authorization": `Bearer ${token}` }
@@ -166,7 +169,7 @@ await loadPartnerInfo(partnerId);
     renderChat(msgs);
   }
 
-  // 3) Render chat bubbles & auto-scroll
+  
   function renderChat(messages) {
     const container = document.getElementById("chatMessages");
     container.innerHTML = "";
@@ -185,7 +188,7 @@ await loadPartnerInfo(partnerId);
     container.scrollTop = container.scrollHeight;
   }
 
-  // 4) Send new message
+  
   async function sendMessage() {
     const input = document.getElementById("messageInput");
     const text  = input.value.trim();
@@ -213,7 +216,7 @@ await loadPartnerInfo(partnerId);
     await loadThread();
   }
 
-  // 5) Wire up send button + Enter key
+  
   document.getElementById("sendBtn")
           .addEventListener("click", sendMessage);
   document.getElementById("messageInput")
@@ -224,10 +227,10 @@ await loadPartnerInfo(partnerId);
     }
   });
 
-  // 6) Back button
+  
   window.goBackToInbox = () => window.location.href = "messages.html";
 
-  // 7) Initial load
+  
   await loadThread();
 })();
 

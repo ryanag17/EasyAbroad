@@ -1,199 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviews</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
-</head>
-<body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  </head>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-            <!-- Menu function -->
-            <div id="menuHamToggle">
-                <!-- Create Hidden Checkbos, that will be used as Click Function-->
-                <input type="checkbox">
-    
-                <!-- Lets create three line hamburger menu
-                Can animate to display as ham menu and closing menu tag.
-                -->
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                <!-- Here menu goes -->
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="support-tickets.html"><li>Support Tickets</li></a>
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            <!-- Menu function END -->
-            </div>
- 
+      <a href="home.html" class="to_the_main">
+        <div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo">
+        </div>
+      </a>
+
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox">
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"><li>Profile</li></a>
+            <a href="appointments.html"><li>Appointments</li></a>
+            <a href="messages.html"><li>Messages</li></a>
+            <a href="support-tickets.html"><li>Support Tickets</li></a>
+            <a href="settings.html"><li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
-    
-<!-- Sign Out Confirmation Modal -->
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
-    </div>
-  </div>
-</div>
-  
-    <main class="reviews-container">
-    <h2 class="reviews-title">Reviews of<span id="consultantName">[Consultant Name]</span></h2>
-    <div class="reviews-summary" id="reviewsSummary">
+
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
 
-    <section id="reviewsContainer"></section>
+    <main class="reviews-container">
+      <h2 class="reviews-title">Reviews of<span id="consultantName">[Consultant Name]</span></h2>
+      <div class="reviews-summary" id="reviewsSummary"></div>
+      <section id="reviewsContainer"></section>
     </main>
 
-    
     <footer>
-        <div class="logo_icons">
-            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
-            <div class="social-icons">
-                <a href="" class="twitter_link">
-                    <img src="../images/instagram.png" alt="Instagram">
-                </a>
-            </div>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo">
         </div>
-        <div class="footer-links">
-            <h4 class="h4_service">Service & Contacts</h4>
-            <a href="../faq.html" class="class_footer">
-                <p>FAQ</p> 
-            </a>
-            <a href="../contact-us.html" class="class_footer">
-                <p>Contact Us</p> 
-            </a>
-            <a href="../privacy-policy.html" class="class_footer">
-                <p>Privacy Policy</p> 
-            </a>
-            <a href="../about-us.html" class="class_footer">
-                <p>About Us</p>
-            </a>
-            <a href="../terms-conditions.html" class="class_footer">
-              <p>Terms and Conditions</p>
+        <div class="social-icons">
+          <a href="" class="twitter_link">
+            <img src="../images/instagram.png" alt="Instagram">
           </a>
         </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
+      </div>
     </footer>
-  <script src="../auth.js"></script>
-  <script src="../script.js"></script>
+
+    <script src="../auth.js"></script>
+    <script src="../script.js"></script>
     <script>
-(async () => {
-    await autoEnforceRoleFromPath();
+      (async () => {
+        await autoEnforceRoleFromPath();
 
-    const token = localStorage.getItem("accessToken");
-    const urlParams = new URLSearchParams(window.location.search);
+        const token = localStorage.getItem("accessToken");
+        const urlParams = new URLSearchParams(window.location.search);
+        const consultantId = urlParams.get("id");
+        const consultantName = urlParams.get("name");
 
-    // Get the consultant_id from the 'id' query parameter
-    const consultantId = urlParams.get("id");
-    const consultantName = urlParams.get("name");
-
-    if (!consultantId) {
-        // If the consultant_id is missing, show an error message
-        const errorContainer = document.createElement('div');
-        errorContainer.innerHTML = "<p style='color: red;'>Error: Missing consultant ID. Please check the URL and try again.</p>";
-        document.body.prepend(errorContainer); // Adds the error message at the top of the page
-        return; // Stop the rest of the code from executing
-    }
-
-    try {
-        // Set the consultant name on the page
-        const nameElement = document.getElementById("consultantName");
-        nameElement.innerText = ` ${consultantName || "Consultant"}`; // Fallback if no name is provided
-
-        // Fetch average rating for the consultant
-        const avgRatingRes = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (!avgRatingRes.ok) {
-            alert("Failed to fetch average rating.");
-            return;
+        if (!consultantId) {
+          const errorContainer = document.createElement("div");
+          errorContainer.innerHTML = "<p style='color: red;'>Error: Missing consultant ID. Please check the URL and try again.</p>";
+          document.body.prepend(errorContainer);
+          return;
         }
 
-        const avgRating = await avgRatingRes.json();
-        const reviewsSummary = document.getElementById("reviewsSummary");
+        try {
+          const nameElement = document.getElementById("consultantName");
+          nameElement.innerText = ` ${consultantName || "Consultant"}`;
 
-        if (avgRating.average_rating === null) {
+          const avgRatingRes = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (!avgRatingRes.ok) {
+            alert("Failed to fetch average rating.");
+            return;
+          }
+
+          const avgRating = await avgRatingRes.json();
+          const reviewsSummary = document.getElementById("reviewsSummary");
+
+          if (avgRating.average_rating === null) {
             reviewsSummary.innerHTML = "<p>This consultant has no reviews yet.</p>";
-        } else {
+          } else {
             reviewsSummary.innerHTML = `
-                <p>Average Rating: ${avgRating.average_rating} (${avgRating.total_reviews} reviews)</p>
-                <div id="ratingDistribution"></div>
+              <p>Average Rating: ${avgRating.average_rating} (${avgRating.total_reviews} reviews)</p>
+              <div id="ratingDistribution"></div>
             `;
-            
-            // Now fetch individual reviews
+
             const reviewsRes = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/reviews`, {
-                headers: { Authorization: `Bearer ${token}` }
+              headers: { Authorization: `Bearer ${token}` },
             });
 
             if (!reviewsRes.ok) {
-                alert("Failed to fetch reviews.");
-                return;
+              alert("Failed to fetch reviews.");
+              return;
             }
 
             const reviews = await reviewsRes.json();
             const container = document.getElementById("reviewsContainer");
 
             if (reviews.length === 0) {
-                container.innerHTML = "<p>No reviews available for this consultant yet.</p>";
-                return;
+              container.innerHTML = "<p>No reviews available for this consultant yet.</p>";
+              return;
             }
 
-            // Loop through reviews and render them
-            reviews.forEach(review => {
-                const div = document.createElement("div");
-                div.classList.add("review-item");
-                div.classList.add("review-box");  // Add a specific class for styling
+            reviews.forEach((review) => {
+              const div = document.createElement("div");
+              div.classList.add("review-item");
+              div.classList.add("review-box");
 
-                // Generate stars
-                const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
-                div.innerHTML = `
-                    <div class="review-header">
-                        <h3>${review.student_name || "Anonymous"}</h3>
-                        <p>${stars}</p>
-                    </div>
-                    <p>${review.review_text}</p>
-                    <small>Submitted on: ${new Date(review.submitted_at).toLocaleString()}</small>
-                `;
-                container.appendChild(div);
+              const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
+              div.innerHTML = `
+                <div class="review-header">
+                  <h3>${review.student_name || "Anonymous"}</h3>
+                  <p>${stars}</p>
+                </div>
+                <p>${review.review_text}</p>
+                <small>Submitted on: ${new Date(review.submitted_at).toLocaleString()}</small>
+              `;
+              container.appendChild(div);
             });
 
-            // Optionally: Render the rating distribution
-            const ratingCounts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
-            reviews.forEach(review => {
-                ratingCounts[review.rating]++;
+            const ratingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            reviews.forEach((review) => {
+              ratingCounts[review.rating]++;
             });
 
             const ratingDistribution = document.getElementById("ratingDistribution");
             ratingDistribution.innerHTML = `
-                <p>1 Star: ${ratingCounts[1]}</p>
-                <p>2 Stars: ${ratingCounts[2]}</p>
-                <p>3 Stars: ${ratingCounts[3]}</p>
-                <p>4 Stars: ${ratingCounts[4]}</p>
-                <p>5 Stars: ${ratingCounts[5]}</p>
+              <p>1 Star: ${ratingCounts[1]}</p>
+              <p>2 Stars: ${ratingCounts[2]}</p>
+              <p>3 Stars: ${ratingCounts[3]}</p>
+              <p>4 Stars: ${ratingCounts[4]}</p>
+              <p>5 Stars: ${ratingCounts[5]}</p>
             `;
+          }
+        } catch (error) {
+          alert("Error loading reviews: " + error.message);
         }
-    } catch (error) {
-        alert("Error loading reviews: " + error.message);
-    }
-})();
-</script>
-</body>
+      })();
+    </script>
+  </body>
 </html>

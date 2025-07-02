@@ -16,21 +16,21 @@
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
             
             <div class="bell-menu">
-                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-            <!-- Menu function -->
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
+            
             <div id="menuHamToggle">
-                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                
                 <input type="checkbox">
     
-                <!-- Lets create three line hamburger menu
-                Can animate to display as ham menu and closing menu tag.
-                -->
                 <span></span>
                 <span></span>
                 <span></span>
     
-                <!-- Here menu goes -->
+                
                 <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
@@ -42,13 +42,13 @@
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
-            <!-- Menu function END -->
+            
             </div>
  
     </header>
     
     
-<!-- Sign Out Confirmation Modal -->
+
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
     <p>Are you sure you want to sign out?</p>
@@ -58,7 +58,6 @@
     </div>
   </div>
 </div>
-
   
     <main class="notifications-container">
       <h2>Notifications</h2>
@@ -66,7 +65,7 @@
       </div>
     </main>
 
-    <footer>
+<footer>
         <div class="logo_icons">
             <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
             <div class="social-icons">
@@ -95,190 +94,296 @@
         </div>
     </footer>
 
-  <script src="../auth.js"></script>
-  <script src="../script.js"></script>  
-    <script>
-        (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
 
 
-      //dumb dummy data
+<script src="../auth.js"></script>
+<script src="../script.js"></script>
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
+  await loadNotifications();
+})();
 
-      const notifications = [
-        {
-          id: 1,
-          type: "message",
-          text: "You have a message! Check your new message.",
-          read: false,
-          redirect: "messages.html"
-        },
-        {
-          id: 2,
-          type: "appointment",
-          text: "You have a new meeting request. Click to see the details.",
-          read: false,
-          redirect: "appointments.html"
-        }
-      ];
+let notifications = [];
+const notificationArea = document.getElementById("notificationArea");
 
-      const notificationArea = document.getElementById("notificationArea");
+async function loadNotifications() {
+  notificationArea.innerHTML = "<p>Loading notifications...</p>";
 
-      function renderNotifications(selectedIds = []) {
-        notificationArea.innerHTML = "";
-
-        if (notifications.length === 0) {
-          notificationArea.innerHTML = `<p>There are currently no notifications.</p>`;
-          return;
-        }
-
-        const selectAllDiv = document.createElement("div");
-        selectAllDiv.classList.add("select-all-row");
-        selectAllDiv.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; width: 100%;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <input type="checkbox" id="selectAll" />
-              <label for="selectAll">Select all</label>
-            </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <button id="toggleReadSelected" class="bulk-btn">Mark Selected</button>
-              <button id="deleteSelected" class="bulk-btn">Delete Selected</button>
-            </div>
-          </div>
-        `;
-        notificationArea.appendChild(selectAllDiv);
-
-        notifications.forEach((notif) => {
-          const div = document.createElement("div");
-          div.className = `notification-row ${notif.read ? "read" : "unread"}`;
-          div.innerHTML = `
-            <input type="checkbox" class="notif-checkbox" data-id="${notif.id}" ${selectedIds.includes(notif.id) ? "checked" : ""} />
-            <span class="notif-text" onclick="window.location.href='${notif.redirect}'" style="cursor: pointer;">
-              ${notif.text}
-            </span>
-            <button class="mark-btn" onclick="toggleRead(${notif.id})">
-              <i class="fas ${notif.read ? 'fa-envelope-open' : 'fa-envelope'}"></i>
-            </button>
-            <button class="trash-btn" onclick="deleteNotification(${notif.id})">
-              <i class="fas fa-trash"></i>
-            </button>
-          `;
-          notificationArea.appendChild(div);
-        });
-
-        document.querySelectorAll(".notif-checkbox").forEach(cb => {
-          cb.addEventListener("change", syncSelectAllCheckbox);
-        });
-
-        syncSelectAllCheckbox();
-        setupEventListeners();
-        updateToggleButtonText();
+  try {
+    const token = localStorage.getItem("accessToken");
+    const res = await fetch("http://localhost:8000/notifications/me", {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
+    });
 
-      function setupEventListeners() {
-        const toggleReadBtn = document.getElementById("toggleReadSelected");
-        const checkboxes = document.querySelectorAll(".notif-checkbox");
+    if (!res.ok) {
+      notificationArea.innerHTML = `<p>Failed to fetch notifications.</p>`;
+      return;
+    }
 
-        checkboxes.forEach(cb => {
-          cb.addEventListener("change", () => updateToggleButtonText());
-        });
+    const data = await res.json();
+    notifications = data.map(n => ({
+      id: n.id,
+      text: n.content,
+      read: n.is_read,
+      redirect: n.redirect_url || "#"  
+    }));
 
-        document.getElementById("selectAll").addEventListener("change", function () {
-          const isChecked = this.checked;
-          document.querySelectorAll(".notif-checkbox").forEach(cb => {
-            cb.checked = isChecked;
-          });
-          updateToggleButtonText();
-        });
+    renderNotifications();
+  } catch (err) {
+    notificationArea.innerHTML = `<p>Error loading notifications.</p>`;
+  }
+}
 
-        toggleReadBtn.addEventListener("click", () => {
-          const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
-          if (selectedCheckboxes.length === 0) {
-            alert("Please select at least one notification.");
-            return;
-          }
+async function openNotification(id, redirectUrl) {
+  const notif = notifications.find(n => n.id === id);
+  if (!notif) return;
 
-          const selectedIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.getAttribute("data-id")));
-          const allRead = selectedIds.every(id => {
-            const notif = notifications.find(n => n.id === id);
-            return notif && notif.read;
-          });
-
-          selectedIds.forEach(id => {
-            const notif = notifications.find(n => n.id === id);
-            if (notif) notif.read = !allRead;
-          });
-
-          renderNotifications(selectedIds);
-        });
-
-        document.getElementById("deleteSelected").addEventListener("click", () => {
-          const selected = document.querySelectorAll(".notif-checkbox:checked");
-          if (selected.length === 0) {
-            alert("Please select at least one notification.");
-            return;
-          }
-          if (confirm("Are you sure you want to delete the selected notifications?")) {
-            const idsToDelete = Array.from(selected).map(cb => parseInt(cb.getAttribute("data-id")));
-            for (const id of idsToDelete) {
-              const index = notifications.findIndex(n => n.id === id);
-              if (index !== -1) notifications.splice(index, 1);
-            }
-            renderNotifications();
-          }
-        });
+  const token = localStorage.getItem("accessToken");
+  try {
+    if (!notif.read) {
+      const res = await fetch(`http://localhost:8000/notifications/${id}/mark-read`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        notif.read = true;
+        renderNotifications([]);  
+        updateNotificationBadge();
       }
+    }
+    
+    window.location.href = redirectUrl;
+  } catch (err) {
+    console.error("Failed to mark notification as read:", err);
+    
+    window.location.href = redirectUrl;
+  }
+}
 
-      function updateToggleButtonText() {
-        const toggleReadBtn = document.getElementById("toggleReadSelected");
-        const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
+function renderNotifications(selectedIds = []) {
+  notificationArea.innerHTML = "";
 
-        if (selectedCheckboxes.length === 0) {
-          toggleReadBtn.textContent = "Mark Selected";
-          return;
+  if (notifications.length === 0) {
+    notificationArea.innerHTML = `<p>There are currently no notifications.</p>`;
+    return;
+  }
+
+  const selectAllDiv = document.createElement("div");
+  selectAllDiv.classList.add("select-all-row");
+  selectAllDiv.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" id="selectAll" />
+        <label for="selectAll">Select all</label>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button id="toggleReadSelected" class="bulk-btn">Mark Selected</button>
+        <button id="deleteSelected" class="bulk-btn">Delete Selected</button>
+      </div>
+    </div>
+  `;
+  notificationArea.appendChild(selectAllDiv);
+
+  notifications.forEach((notif) => {
+    const div = document.createElement("div");
+    div.className = `notification-row ${notif.read ? "read" : "unread"}`;
+    div.innerHTML = `
+      <input type="checkbox" class="notif-checkbox" data-id="${notif.id}" ${selectedIds.includes(notif.id) ? "checked" : ""} />
+      <span class="notif-text" onclick="openNotification(${notif.id}, '${notif.redirect}')" style="cursor: pointer;">
+        ${notif.text}
+      </span>
+      <button class="mark-btn" onclick="toggleRead(${notif.id})">
+        <i class="fas ${notif.read ? 'fa-envelope-open' : 'fa-envelope'}"></i>
+      </button>
+      <button class="trash-btn" onclick="deleteNotification(${notif.id})">
+        <i class="fas fa-trash"></i>
+      </button>
+    `;
+    notificationArea.appendChild(div);
+  });
+
+  document.querySelectorAll(".notif-checkbox").forEach(cb => {
+    cb.addEventListener("change", syncSelectAllCheckbox);
+  });
+
+  syncSelectAllCheckbox();
+  setupEventListeners();
+  updateToggleButtonText();
+}
+
+function setupEventListeners() {
+  const toggleReadBtn = document.getElementById("toggleReadSelected");
+  const checkboxes = document.querySelectorAll(".notif-checkbox");
+
+  checkboxes.forEach(cb => {
+    cb.addEventListener("change", () => updateToggleButtonText());
+  });
+
+  document.getElementById("selectAll").addEventListener("change", function () {
+    const isChecked = this.checked;
+    document.querySelectorAll(".notif-checkbox").forEach(cb => {
+      cb.checked = isChecked;
+    });
+    updateToggleButtonText();
+  });
+
+  toggleReadBtn.addEventListener("click", async () => {
+    const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
+    if (selectedCheckboxes.length === 0) {
+      alert("Please select at least one notification.");
+      return;
+    }
+
+    const token = localStorage.getItem("accessToken");
+    const selectedIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.getAttribute("data-id")));
+
+    const allRead = selectedIds.every(id => {
+      const notif = notifications.find(n => n.id === id);
+      return notif && notif.read;
+    });
+
+    for (const id of selectedIds) {
+      const notif = notifications.find(n => n.id === id);
+      if (!notif) continue;
+
+      try {
+        const url = allRead 
+          ? `http://localhost:8000/notifications/${id}/mark-unread`
+          : `http://localhost:8000/notifications/${id}/mark-read`;
+
+        const res = await fetch(url, {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+          notif.read = !allRead;
+          updateNotificationBadge();
         }
+      } catch (err) {
+        console.error("Failed to toggle bulk read state:", err);
+      }
+    }
 
-        let anyUnread = false;
-        selectedCheckboxes.forEach(cb => {
-          const notif = notifications.find(n => n.id === parseInt(cb.getAttribute("data-id")));
-          if (notif && !notif.read) anyUnread = true;
+    renderNotifications(selectedIds);
+  });
+
+  document.getElementById("deleteSelected").addEventListener("click", async () => {
+    const selected = document.querySelectorAll(".notif-checkbox:checked");
+    if (selected.length === 0) {
+      alert("Please select at least one notification.");
+      return;
+    }
+    if (!confirm("Are you sure you want to delete the selected notifications?")) {
+      return;
+    }
+
+    const token = localStorage.getItem("accessToken");
+    const idsToDelete = Array.from(selected).map(cb => parseInt(cb.getAttribute("data-id")));
+
+    for (const id of idsToDelete) {
+      try {
+        const res = await fetch(`http://localhost:8000/notifications/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` }
         });
-
-        toggleReadBtn.textContent = anyUnread ? "Mark Selected as Read" : "Mark Selected as Unread";
-      }
-
-      function toggleRead(id) {
-        const notif = notifications.find(n => n.id === id);
-        if (notif) {
-          notif.read = !notif.read;
-          renderNotifications([id]);
-        }
-      }
-
-      function deleteNotification(id) {
-        if (confirm("Are you sure you want to delete this notification?")) {
+        if (res.ok) {
           const index = notifications.findIndex(n => n.id === id);
-          if (index !== -1) {
-            notifications.splice(index, 1);
-            renderNotifications();
-          }
+          if (index !== -1) notifications.splice(index, 1);
         }
+      } catch (err) {
+        console.error("Failed to delete notification:", err);
       }
+    }
 
-      function syncSelectAllCheckbox() {
-        const selectAllCheckbox = document.getElementById("selectAll");
-        const checkboxes = document.querySelectorAll(".notif-checkbox");
-        const checked = document.querySelectorAll(".notif-checkbox:checked");
+    renderNotifications();
+  });
+}
 
-        if (checkboxes.length > 0 && checkboxes.length === checked.length) {
-          selectAllCheckbox.checked = true;
-        } else {
-          selectAllCheckbox.checked = false;
-        }
+async function toggleRead(id) {
+  const notif = notifications.find(n => n.id === id);
+  if (!notif) return;
+
+  const token = localStorage.getItem("accessToken");
+  try {
+    const url = notif.read 
+      ? `http://localhost:8000/notifications/${id}/mark-unread`
+      : `http://localhost:8000/notifications/${id}/mark-read`;
+
+    const res = await fetch(url, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (res.ok) {
+      notif.read = !notif.read;
+      renderNotifications([]);
+      updateNotificationBadge();
+    }
+  } catch (err) {
+    console.error("Failed to toggle read state:", err);
+  }
+}
+
+async function deleteNotification(id) {
+  if (!confirm("Are you sure you want to delete this notification?")) {
+    return;
+  }
+
+  const token = localStorage.getItem("accessToken");
+  try {
+    const res = await fetch(`http://localhost:8000/notifications/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (res.ok) {
+      const index = notifications.findIndex(n => n.id === id);
+      if (index !== -1) {
+        notifications.splice(index, 1);
+        renderNotifications();
+        updateNotificationBadge();
       }
+    }
+  } catch (err) {
+    console.error("Failed to delete notification:", err);
+  }
+}
 
-      renderNotifications();
-    </script>
+function updateToggleButtonText() {
+  const toggleReadBtn = document.getElementById("toggleReadSelected");
+  const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
 
-</body>
-</html>
+  if (selectedCheckboxes.length === 0) {
+    toggleReadBtn.textContent = "Mark Selected";
+    return;
+  }
+
+  let anyUnread = false;
+  selectedCheckboxes.forEach(cb => {
+    const notif = notifications.find(n => n.id === parseInt(cb.getAttribute("data-id")));
+    if (notif && !notif.read) anyUnread = true;
+  });
+
+  toggleReadBtn.textContent = anyUnread ? "Mark Selected as Read" : "Mark Selected as Unread";
+}
+
+function syncSelectAllCheckbox() {
+  const selectAllCheckbox = document.getElementById("selectAll");
+  const checkboxes = document.querySelectorAll(".notif-checkbox");
+  const checked = document.querySelectorAll(".notif-checkbox:checked");
+
+  if (checkboxes.length > 0 && checkboxes.length === checked.length) {
+    selectAllCheckbox.checked = true;
+  } else {
+    selectAllCheckbox.checked = false;
+  }
+}
+</script>
+
+
+  </body>
+  </html>

@@ -7,61 +7,57 @@
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <header class="user-header">
-        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-        
+        <a href="home.html" class="to_the_main">
+            <div class="logo">
+                <img src="../images/logo.png" alt="" class="pic_logo">
+            </div>
+        </a>
         <div class="bell-menu">
-            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-            <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-        <!-- Menu function -->
-        <div id="menuHamToggle">
-            <!-- Create Hidden Checkbos, that will be used as Click Function-->
-            <input type="checkbox">
-
-            <!-- Lets create three line hamburger menu
-            Can animate to display as ham menu and closing menu tag.
-            -->
-            <span></span>
-            <span></span>
-            <span></span>
-
-            <!-- Here menu goes -->
+            <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                </i>
+            </a>
+            <div id="menuHamToggle">
+                <input type="checkbox">
+                <span></span>
+                <span></span>
+                <span></span>
                 <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
+                    <a href="profile.html"><li>Profile</li></a>
+                    <a href="appointments.html"><li>Appointments</li></a>
+                    <a href="messages.html"><li>Messages</li></a>
                     <a href="support-tickets.html"><li>Support Tickets</li></a>
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+                    <a href="settings.html"><li>Settings</li></a>
+                    <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
                 </ul>
+            </div>
         </div>
-        <!-- Menu function END -->
-        </div>
-
     </header>
+
     <section class="chat-overview-section">
         <div class="chat-list-container"></div>
-      </section>
-      
-<!-- Sign Out Confirmation Modal -->
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+    </section>
+
+    <div id="signOutModal" class="modal-overlay">
+        <div class="modal-content">
+            <p>Are you sure you want to sign out?</p>
+            <div class="modal-buttons">
+                <button onclick="confirmSignOut()">Yes</button>
+                <button onclick="closeModal()">No</button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-    
-    
-    
+
     <footer>
         <div class="logo_icons">
-            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="footer-logo">
+                <img src="../images/logo.png" alt="" class="pic_logo">
+            </div>
             <div class="social-icons">
                 <a href="" class="twitter_link">
                     <img src="../images/instagram.png" alt="Instagram">
@@ -70,127 +66,112 @@
         </div>
         <div class="footer-links">
             <h4 class="h4_service">Service & Contacts</h4>
-            <a href="../faq.html" class="class_footer">
-                <p>FAQ</p> 
-            </a>
-            <a href="../contact-us.html" class="class_footer">
-                <p>Contact Us</p> 
-            </a>
-            <a href="../privacy-policy.html" class="class_footer">
-                <p>Privacy Policy</p> 
-            </a>
-            <a href="../about-us.html" class="class_footer">
-                <p>About Us</p>
-            </a>
-            <a href="../terms-conditions.html" class="class_footer">
-              <p>Terms and Conditions</p>
-          </a>
+            <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+            <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+            <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
+            <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+            <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
         </div>
     </footer>
 
-  <script src="../auth.js"></script>
-  <script src="../script.js"></script>    
+    <script src="../auth.js"></script>
+    <script src="../script.js"></script>
     <script>
-   (async () => {
-      await autoEnforceRoleFromPath();
-    })();
+        (async () => {
+            await autoEnforceRoleFromPath();
+        })();
 
-const MESSAGES_API_BASE = "http://localhost:8000/messages";
+        const MESSAGES_API_BASE = "http://localhost:8000/messages";
+        const token = localStorage.getItem("accessToken");
 
-const token    = localStorage.getItem("accessToken");
+        async function fetchThreads() {
+            const res = await fetch(MESSAGES_API_BASE, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (!res.ok) {
+                console.error("Failed to load threads", res.status);
+                return;
+            }
+            const threads = await res.json();
+            renderThreads(threads);
+        }
 
+        window.addEventListener("DOMContentLoaded", fetchThreads);
 
-    // 1) Fetch conversation summaries on page load
-    async function fetchThreads() {
-      const res = await fetch(MESSAGES_API_BASE, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (!res.ok) {
-        console.error("Failed to load threads", res.status);
-        return;
-      }
-      const threads = await res.json();
-      renderThreads(threads);
-    }
+        function renderThreads(threads) {
+            const container = document.querySelector('.chat-list-container');
+            container.innerHTML = '';
 
-    window.addEventListener("DOMContentLoaded", fetchThreads);
+            if (threads.length === 0) {
+                container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
+                return;
+            }
 
-    // 2) Render the list of conversation "threads"
-  function renderThreads(threads) {
-  const container = document.querySelector('.chat-list-container');
-  container.innerHTML = '';
+            threads.forEach(async t => {
+                const partnerId = t.from_me ? t.receiver_id : t.sender_id;
+                const partnerName = `${t.first_name} ${t.last_name}`;
 
-  if (threads.length === 0) {
-    container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
-    return;
-  }
+                let profilePic = "../images/avatar.png";
+                try {
+                    const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    });
+                    if (res.ok) {
+                        const user = await res.json();
+                        if (user.profile_picture) {
+                            profilePic = "http://localhost:8000" + user.profile_picture;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch user picture", e);
+                }
 
-  threads.forEach(async t => {
-    // Determine partner ID & name
-    const partnerId   = t.from_me ? t.receiver_id : t.sender_id;
-    const partnerName = `${t.first_name} ${t.last_name}`;
+                const card = document.createElement('div');
+                card.className = 'message-card';
+                card.innerHTML = `
+                    <div class="chat-avatar">
+                        <img src="${profilePic}" alt="Avatar">
+                    </div>
+                    <div class="chat-content">
+                        <h3>${partnerName}</h3>
+                        <p class="message-preview">${t.message.length > 50 ? t.message.substring(0, 50) + "..." : t.message}</p>
+                        <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
+                    </div>
+                    <div class="chat-actions">
+                        <button onclick="confirmDelete(event, ${partnerId})"><i class="fas fa-trash-alt delete-icon"></i></button>
+                    </div>
+                `;
 
-    // Fetch partner profile info
- let profilePic = "../images/avatar.png";
-try {
-  const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
-    headers: { "Authorization": `Bearer ${token}` }
-  });
-  if (res.ok) {
-    const user = await res.json();
-    if (user.profile_picture) {
-      profilePic = "http://localhost:8000" + user.profile_picture;
-    }
-  }
-} catch (e) {
-  // fallback to default avatar
-}
-const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
-  headers: { "Authorization": `Bearer ${token}` }
-});
-    // Build card
-    const card = document.createElement('div');
-    card.className = 'message-card';
-    card.innerHTML = `
-      <div class="chat-avatar">
-        <img src="${profilePic}" alt="Avatar">
-      </div>
-      <div class="chat-content">
-        <h3>${partnerName}</h3>
-        <p class="message-preview">${t.message.length > 50 ? t.message.substring(0, 50) + "..." : t.message}</p>
-        <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
-      </div>
-      <div class="chat-actions">
-        <button onclick="confirmDelete(${partnerId})"><i class="fas fa-trash-alt delete-icon"></i></button>
-      </div>
-    `;
+                card.addEventListener('click', () => {
+                    window.location.href = `chat.html?partnerId=${partnerId}`;
+                });
 
-    // Clicking opens the chat thread
-    card.addEventListener('click', () => {
-      window.location.href = `chat.html?partnerId=${partnerId}`;
-    });
+                container.appendChild(card);
+            });
+        }
 
-    container.appendChild(card);
-  });
-}
-function confirmDelete(partnerId) {
-  event.stopPropagation();
-  if (confirm("Delete this conversation?")) {
-    const token = localStorage.getItem("accessToken");
-    fetch(`http://localhost:8000/messages/with/${partnerId}`, {
-      method: "DELETE",
-      headers: { "Authorization": `Bearer ${token}` }
-    })
-    .then(res => {
-      if (res.ok) {
-        alert("Conversation deleted.");
-        fetchThreads();
-      } else {
-        alert("Failed to delete conversation.");
-      }
-    });
-  }
-}
+        function confirmDelete(event, partnerId) {
+            event.stopPropagation();
+            if (confirm("Delete this conversation?")) {
+                const token = localStorage.getItem("accessToken");
+                fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${token}` }
+                })
+                .then(res => {
+                    if (res.ok) {
+                        alert("Conversation deleted.");
+                        fetchThreads();
+                    } else {
+                        alert("Failed to delete conversation.");
+                    }
+                })
+                .catch(err => {
+                    console.error("Error deleting conversation:", err);
+                    alert("Failed to delete conversation.");
+                });
+            }
+        }
     </script>
 </body>
 </html>

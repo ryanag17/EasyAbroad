@@ -363,3 +363,36 @@ async function fetchMessages() {
 // ─────────────────────────────────────────────────────────────
 // Backend JS Functions END
 // ─────────────────────────────────────────────────────────────
+
+// Notification Base
+async function updateNotificationBadge() {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return;
+
+  try {
+    const res = await fetch("http://localhost:8000/notifications/me", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const unreadCount = data.filter(n => !n.is_read).length;
+    const badge = document.getElementById("notifBadge");
+
+    if (!badge) return;
+
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = "inline";
+    } else {
+      badge.style.display = "none";
+    }
+  } catch (err) {
+    console.error("Failed to fetch notifications:", err);
+  }
+}
+updateNotificationBadge();
+setInterval(updateNotificationBadge, 10000);

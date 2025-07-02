@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 
 <body>
@@ -14,21 +16,21 @@
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
             
             <div class="bell-menu">
-                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-            <!-- Menu function -->
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
+            
             <div id="menuHamToggle">
-                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                
                 <input type="checkbox">
     
-                <!-- Lets create three line hamburger menu
-                Can animate to display as ham menu and closing menu tag.
-                -->
                 <span></span>
                 <span></span>
                 <span></span>
     
-                <!-- Here menu goes -->
+                
                 <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
@@ -40,13 +42,13 @@
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
-            <!-- Menu function END -->
+            
             </div>
  
     </header>
     
     
-      <!-- Sign Out Confirmation Modal -->
+      
   <div id="signOutModal" class="modal-overlay">
       <div class="modal-content">
         <p>Are you sure you want to sign out?</p>
@@ -110,7 +112,7 @@
         <input type="file" id="proof" name="proof_of_internship" accept=".pdf,.jpg,.jpeg,.png" required />
       </div>
 
-      <!-- Help & Call options (same structure as study.html) -->
+      
       <div class="options-section">
         <div class="options-box">
           <p><strong>You can help students with:</strong> <br />(Choose at least 2)</p>
@@ -168,7 +170,7 @@
     </footer>
 
 
-  <!-- Confirmation Modal -->
+  
   <div id="confirmModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
       <p>Are you sure all the information is correct?</p>
@@ -180,7 +182,7 @@
   </div>
 
 
-  <!-- Success Modal -->
+  
   <div id="submittedModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
       <p>Your consultancy profile has been submitted.<br />Once approved by the admin, it will become visible.</p>
@@ -234,7 +236,7 @@
         document.getElementById("call-warning").style.display = "none";
       }
 
-      // Basic required field check
+      
       const requiredFields = [
         "company_name",
         "department_name",
@@ -264,13 +266,13 @@ async function submitForm() {
   const formData = new FormData(form);
   const token = localStorage.getItem("accessToken");
 
-  // ✅ Manually map help[] and call[] checkboxes to booleans
+  
   const helpValues = Array.from(document.querySelectorAll('input[name="help[]"]:checked')).map(cb => cb.value);
   const callValues = Array.from(document.querySelectorAll('input[name="call[]"]:checked')).map(cb => cb.value);
 
   formData.set("accommodation", helpValues.includes("Accommodation"));
   formData.set("social_life", helpValues.includes("Social"));
-  formData.set("company_info", helpValues.includes("Company Info"));  // adjusted from "University Info"
+  formData.set("company_info", helpValues.includes("Company Info"));  
   formData.set("travel_info", helpValues.includes("City Tips"));
 
   formData.set("zoom", callValues.includes("Zoom"));
@@ -283,7 +285,7 @@ async function submitForm() {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
-        // Do NOT set Content-Type manually when using FormData
+        
       },
       body: formData
     });
@@ -302,7 +304,7 @@ async function submitForm() {
   }
 }
 
-    // Populate country dropdown
+    
     document.addEventListener("DOMContentLoaded", async () => {
       const token = localStorage.getItem("accessToken");
       if (!token) return;

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text
+from sqlalchemy import text, select
 from pathlib import Path
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
@@ -9,6 +9,8 @@ import shutil
 from app.auth.token_verification import get_current_user
 from app.db import get_db
 from app.consultancy.schemas import EducationCreate
+from app.notification.models import Notification
+from app.auth.models import User
 
 consultancy_router = APIRouter(prefix="/consultancy", tags=["consultancy"])
 BASE_UPLOAD_DIR = Path("static/uploads/proof_documents")
@@ -48,6 +50,7 @@ async def upload_study_proof(
     relative_path = save_proof_file(file, user_id, "study")
     return {"message": "Study proof uploaded successfully", "path": relative_path}
 
+# Consultant: Upload proof of internship
 @consultancy_router.post("/upload-proof/internship", summary="Consultant: Upload proof of internship")
 async def upload_internship_proof(
     file: UploadFile = File(...),
@@ -75,7 +78,6 @@ def geocode_city_country(city: str, country: str):
         pass
     return None, None
 
-# Consultant: Submit study consultancy
 @consultancy_router.post("/study", summary="Consultant: Submit education consultancy")
 async def submit_study_info(
     university_name: str = Form(...),
@@ -141,9 +143,23 @@ async def submit_study_info(
     })
 
     await db.commit()
+
+    # Notify all admins
+    notif_content = "A new study consultancy profile has been submitted and is pending verification."
+    admin_users = await db.execute(select(User).where(User.role == "admin"))
+    for admin_user in admin_users.scalars().all():
+        new_notif = Notification(
+            user_id=admin_user.id,
+            content=notif_content,
+            type="info",
+            redirect_url="/admin/consultant-verification.html"
+        )
+        db.add(new_notif)
+
+    await db.commit()
+
     return {"message": "Study consultancy profile submitted successfully"}
 
-# Consultant: Submit internship consultancy
 @consultancy_router.post("/internship", summary="Consultant: Submit internship consultancy")
 async def submit_internship_info(
     company_name: str = Form(...),
@@ -209,12 +225,22 @@ async def submit_internship_info(
     })
 
     await db.commit()
+
+    # Notify all admins
+    notif_content = "A new internship consultancy profile has been submitted and is pending verification."
+    admin_users = await db.execute(select(User).where(User.role == "admin"))
+    for admin_user in admin_users.scalars().all():
+        new_notif = Notification(
+            user_id=admin_user.id,
+            content=notif_content,
+            type="info",
+            redirect_url="/admin/consultant-verification.html"
+        )
+        db.add(new_notif)
+
+    await db.commit()
+
     return {"message": "Internship consultancy profile submitted successfully"}
-
-
-
-
-
 
 # Consultant: View Their Own Submitted Application
 @consultancy_router.get("/study/me", summary="Consultant: Get current user's study consultancy")
@@ -336,8 +362,8 @@ class StudyStatusUpdateRequest(BaseModel):
     status: str
     short_note: str = ""
 
-# Admin: Approve or reject
-@consultancy_router.patch("/study/{user_id}/status", summary="Admin: Update study application status")
+# Admin: Update study application status (with notification)
+@consultancy_router.patch("/study/{user_id}/status", summary="Admin: Update study application status (with notification)")
 async def update_study_status(
     user_id: int,
     payload: StudyStatusUpdateRequest,
@@ -350,8 +376,11 @@ async def update_study_status(
     if payload.status not in {"accepted", "rejected"}:
         raise HTTPException(status_code=400, detail="Invalid status.")
 
-    # 1. Get proof file path
-    result = await db.execute(text("SELECT proof_of_education FROM Education WHERE user_id = :uid"), {"uid": user_id})
+    # Get and delete proof file
+    result = await db.execute(
+        text("SELECT proof_of_education FROM Education WHERE user_id = :uid"),
+        {"uid": user_id}
+    )
     row = result.fetchone()
     if row and row.proof_of_education:
         filepath = Path("." + row.proof_of_education)
@@ -361,7 +390,7 @@ async def update_study_status(
             except Exception as e:
                 print(f"Failed to delete file {filepath}: {e}")
 
-    # 2. Update DB
+    # Update DB
     await db.execute(text("""
         UPDATE Education
         SET status = :s,
@@ -376,13 +405,25 @@ async def update_study_status(
         "vid": current_user["user_id"],
         "uid": user_id
     })
+
+    # Create notification with redirect
+    notif_content = f"Your study consultancy application has been {payload.status}."
+    new_notif = Notification(
+        user_id=user_id,
+        content=notif_content,
+        type="info",
+        redirect_url="/consultant/preview-study.html"
+    )
+    db.add(new_notif)
+
     await db.commit()
+    await db.refresh(new_notif)
+
     return {"message": f"Study application {payload.status} and document deleted."}
 
 
-
-# Admin: Approve or reject
-@consultancy_router.patch("/internship/{user_id}/status", summary="Admin: Update internship application status")
+# Admin: Update internship application status (with notification)
+@consultancy_router.patch("/internship/{user_id}/status", summary="Admin: Update internship application status (with notification)")
 async def update_internship_status(
     user_id: int,
     status: str,
@@ -395,7 +436,11 @@ async def update_internship_status(
     if status not in {"accepted", "rejected"}:
         raise HTTPException(status_code=400, detail="Invalid status.")
 
-    result = await db.execute(text("SELECT proof_of_internship FROM Internship WHERE user_id = :uid"), {"uid": user_id})
+    # Get and delete proof file
+    result = await db.execute(
+        text("SELECT proof_of_internship FROM Internship WHERE user_id = :uid"),
+        {"uid": user_id}
+    )
     row = result.fetchone()
     if row and row.proof_of_internship:
         filepath = Path("." + row.proof_of_internship)
@@ -405,6 +450,7 @@ async def update_internship_status(
             except Exception as e:
                 print(f"Failed to delete file {filepath}: {e}")
 
+    # Update DB
     await db.execute(text("""
         UPDATE Internship
         SET status = :s,
@@ -419,8 +465,22 @@ async def update_internship_status(
         "vid": current_user["user_id"],
         "uid": user_id
     })
+
+    # Create notification with redirect
+    notif_content = f"Your internship consultancy application has been {status}."
+    new_notif = Notification(
+        user_id=user_id,
+        content=notif_content,
+        type="info",
+        redirect_url="/consultant/preview-internship.html"
+    )
+    db.add(new_notif)
+
     await db.commit()
+    await db.refresh(new_notif)
+
     return {"message": f"Internship application {status} and document deleted."}
+
 
 # Admin: Manually delete outdated consultancy profiles
 @consultancy_router.delete("/admin/cleanup-expired", summary="Admin: Manually delete outdated consultancy profiles")

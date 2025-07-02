@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 
 <body>
@@ -14,21 +16,21 @@
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
             
             <div class="bell-menu">
-                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-            <!-- Menu function -->
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
+            
             <div id="menuHamToggle">
-                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                
                 <input type="checkbox">
-    
-                <!-- Lets create three line hamburger menu
-                Can animate to display as ham menu and closing menu tag.
-                -->
+
                 <span></span>
                 <span></span>
                 <span></span>
     
-                <!-- Here menu goes -->
+                
                 <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="user-management.html"> <li> User Management </li></a>
@@ -39,13 +41,13 @@
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
-            <!-- Menu function END -->
+            
             </div>
  
     </header>
     
     
-<!-- Sign Out Confirmation Modal -->
+
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
     <p>Are you sure you want to sign out?</p>
@@ -85,12 +87,12 @@
         </tr>
       </thead>
       <tbody class="submission-body" id="submissionBody">
-        <!-- Dynamic rows -->
+        
       </tbody>
     </table>
   </div>
-  <!-- reset dummy data -->
-<!--   <button onclick="resetDummyData()">Reset to Default</button> -->
+  
+
   
     <footer>
         <div class="logo_icons">
@@ -131,10 +133,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const API_BASE = "http://localhost:8000";
   const tbody = document.getElementById('submissionBody');
   const tabButtons = document.querySelectorAll('.tab-button');
-  const typeFilter = document.getElementById('typeFilter'); // ⬅️ new reference
+  const typeFilter = document.getElementById('typeFilter'); 
   const token = localStorage.getItem("accessToken");
 
-  let allSubmissions = [];  // ⬅️ global store for current status set
+  let allSubmissions = [];  
 
   if (!token) {
     alert("Please log in.");
@@ -171,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ...internshipData.map(d => ({ ...d, type: "internship" }))
       ];
 
-      filterAndRender(); // ⬅️ always apply current filter
+      filterAndRender(); 
     } catch (error) {
       console.error("Fetch error:", error);
       tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red">Error loading data</td></tr>`;
@@ -179,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function filterAndRender() {
-    const selectedType = typeFilter?.value || "all"; // all | study | internship
+    const selectedType = typeFilter?.value || "all"; 
     const filtered = selectedType === "all"
       ? allSubmissions
       : allSubmissions.filter(sub => sub.type === selectedType);
@@ -218,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tbody.appendChild(row);
     }
 
-    // Attach preview click listeners
+    
     document.querySelectorAll(".submission-action-link").forEach(link => {
       link.addEventListener("click", () => {
         const userId = link.dataset.userId;
@@ -260,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialStatus = new URLSearchParams(window.location.search).get("status") || "pending";
     setActiveTab(initialStatus);
     setupTabListeners();
-    setupFilterListener(); // ⬅️ activate dropdown
+    setupFilterListener(); 
     fetchSubmissions(initialStatus);
   }
 

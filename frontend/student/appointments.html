@@ -7,28 +7,29 @@
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 <body>
     <header class="user-header">
         <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
         
-        <div class="bell-menu">
-            <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-            <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-        <!-- Menu function -->
+            <div class="bell-menu">
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
         <div id="menuHamToggle">
-            <!-- Create Hidden Checkbos, that will be used as Click Function-->
             <input type="checkbox">
 
-            <!-- Lets create three line hamburger menu
-            Can animate to display as ham menu and closing menu tag.
-            -->
+
             <span></span>
             <span></span>
             <span></span>
 
-            <!-- Here menu goes -->
-                <ul id="mainMenu">
+
+            <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
                     <a href="messages.html"> <li> Messages </li></a>
@@ -37,13 +38,11 @@
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
         </div>
-        <!-- Menu function END -->
         </div>
 
     </header>
     
     
-<!-- Sign Out Confirmation Modal -->
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
     <p>Are you sure you want to sign out?</p>
@@ -56,8 +55,7 @@
     
     
     <section class="appointments-section">
-<!--  -->
-        <!-- Tabs -->
+
         <div class="appointment-tabs">
           <button class="tab active" data-status="upcoming">Upcoming</button>
           <button class="tab" data-status="previous">Previous</button>
@@ -65,7 +63,6 @@
           <button class="tab" data-status="rejected">Rejected</button>
         </div>
       
-        <!-- Appointment Card -->
        
 <div class="appointments-container"></div>
 
@@ -126,7 +123,7 @@
 
 let appointments = [];
 
-// Fetch appointments for the logged-in student
+
 async function fetchAppointments() {
   const token = localStorage.getItem("accessToken");
   if (!token) {
@@ -143,7 +140,7 @@ async function fetchAppointments() {
   return await res.json();
 }
 
-// Format date as DD.MM.YYYY
+
 function formatDate(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
@@ -151,14 +148,14 @@ function formatDate(dateStr) {
   return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
 }
 
-// Helper: can cancel if >24h before meeting
+
 function canCancel(app) {
   const meetingDateTime = new Date(`${app.date}T${app.start_time || app.time}:00`);
   const now = new Date();
   return app.status === "upcoming" && (meetingDateTime - now > 24 * 60 * 60 * 1000);
 }
 
-// Cancel appointment function
+
 async function cancelAppointment(appointmentId) {
   if (!confirm("Are you sure you want to cancel this appointment?")) return;
   const token = localStorage.getItem("accessToken");
@@ -175,7 +172,7 @@ async function cancelAppointment(appointmentId) {
   }
 }
 
-// Render appointments by status
+
 function renderAppointments(status) {
   const container = document.querySelector('.appointments-container');
   container.innerHTML = '';
@@ -191,7 +188,7 @@ function renderAppointments(status) {
     const card = document.createElement('div');
     card.className = 'appointment-card';
 
-    // Meeting link for upcoming
+    
     let meetingLinkBlock = '';
     if (status === 'upcoming' && app.meeting_link) {
       meetingLinkBlock = `
@@ -200,7 +197,7 @@ function renderAppointments(status) {
       `;
     }
 
-    // Rejection reason for rejected
+    
     let reasonBlock = '';
     if (status === 'rejected' && app.cancellation_reason) {
       reasonBlock = `
@@ -240,7 +237,7 @@ function renderAppointments(status) {
   });
 }
 
-// Tab logic
+
 const tabs = document.querySelectorAll('.tab');
 tabs.forEach(tab => {
   tab.addEventListener('click', function() {
@@ -255,9 +252,9 @@ function getCurrentTab() {
   return active ? active.getAttribute('data-status') : 'upcoming';
 }
 
-// On page load
+
 window.onload = async () => {
-  // Set default tab
+  
   const defaultTab = window.location.hash.replace("#", "") || "upcoming";
   tabs.forEach(t => {
     if (t.dataset.status === defaultTab) t.classList.add('active');

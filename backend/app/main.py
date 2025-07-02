@@ -83,6 +83,11 @@ from app.messages.routes import router as messages_router  # ✅
 app.include_router(messages_router)
 from app.messages.routes import users_router
 app.include_router(users_router)
+
+
+from app.notification.routes import router as notification_router
+app.include_router(notification_router)
+
 # 7) Health check
 @app.get("/", status_code=200)
 def root():

@@ -131,7 +131,11 @@ function injectHeader() {
     headerHTML = `
       <a href="${base}home.html" class="to_the_main"><div class="logo"><img src="images/logo.png" alt="" class="pic_logo"></div></a>
       <div class="bell-menu">
-        <a href="${base}notifications.html" class="bell-div"><div class="bell-image"><img src="images/bell.png" alt="" class="pic_logo"></div></a>
+        <a href="${base}notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
         <div id="menuHamToggle">
           <input type="checkbox"><span></span><span></span><span></span>
           <ul id="mainMenu">
@@ -149,7 +153,11 @@ function injectHeader() {
     headerHTML = `
       <a href="${base}home.html" class="to_the_main"><div class="logo"><img src="images/logo.png" alt="" class="pic_logo"></div></a>
       <div class="bell-menu">
-        <a href="${base}notifications.html" class="bell-div"><div class="bell-image"><img src="images/bell.png" alt="" class="pic_logo"></div></a>
+        <a href="${base}notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
         <div id="menuHamToggle">
           <input type="checkbox"><span></span><span></span><span></span>
           <ul id="mainMenu">
@@ -169,7 +177,11 @@ function injectHeader() {
     headerHTML = `
       <a href="${base}home.html" class="to_the_main"><div class="logo"><img src="images/logo.png" alt="" class="pic_logo"></div></a>
       <div class="bell-menu">
-        <a href="${base}notifications.html" class="bell-div"><div class="bell-image"><img src="images/bell.png" alt="" class="pic_logo"></div></a>
+        <a href="${base}notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
         <div id="menuHamToggle">
           <input type="checkbox"><span></span><span></span><span></span>
           <ul id="mainMenu">

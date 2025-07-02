@@ -7,27 +7,30 @@
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 <body>
     <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
             
             <div class="bell-menu">
-                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-            <!-- Menu function -->
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
+            
             <div id="menuHamToggle">
-                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                
                 <input type="checkbox">
     
-                <!-- Lets create three line hamburger menu
-                Can animate to display as ham menu and closing menu tag.
-                -->
+
                 <span></span>
                 <span></span>
                 <span></span>
     
-                <!-- Here menu goes -->
+                
                 <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
@@ -39,13 +42,13 @@
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
-            <!-- Menu function END -->
+            
             </div>
  
     </header>
     
     
-<!-- Sign Out Confirmation Modal -->
+
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
     <p>Are you sure you want to sign out?</p>
@@ -60,7 +63,7 @@
     
     <section class="appointments-section">
 
-        <!-- Tabs -->
+        
         <div class="appointment-tabs">
           <button class="tab active" data-status="upcoming">Upcoming</button>
           <button class="tab" data-status="previous">Previous</button>
@@ -68,7 +71,7 @@
           <button class="tab" data-status="rejected">Rejected</button>
         </div>
       
-        <!-- Appointment Card -->
+        
        
         <div class="appointments-container"></div>
 
@@ -76,7 +79,7 @@
     </section>
     
     
-      <!-- Meeting Accept Link Modal -->
+      
 <div class="modal" id="linkModal">
   <div class="modal-content">
     <span class="close-button" onclick="closeLinkModal()">&times;</span>
@@ -87,7 +90,7 @@
 </div>
 
 
-<!-- Rejection Modal -->
+
 <div id="rejectModal" class="modal">
   <div class="modal-content">
     <span class="close-button" onclick="closeRejectModal()">&times;</span>
@@ -152,7 +155,7 @@ let tempAcceptedData = null;
 let tempRejectData = null;
 let rejectReason = "";
 
-// Fetch consultant's appointments from backend
+
 async function loadAppointments() {
   const token = localStorage.getItem("accessToken");
   const res = await fetch("http://localhost:8000/appointment/consultant/appointments", {
@@ -175,7 +178,7 @@ function renderAppointments(status) {
     const card = document.createElement('div');
     card.className = 'appointment-card';
 
-    // Meeting link for upcoming
+    
     let meetingLinkBlock = '';
     if (status === 'upcoming' && app.meeting_link) {
       meetingLinkBlock = `
@@ -184,7 +187,7 @@ function renderAppointments(status) {
       `;
     }
 
-    // Rejection reason for rejected
+    
 let reasonBlock = '';
 if (app.cancellation_reason) {
   reasonBlock = `
@@ -235,7 +238,7 @@ if (app.cancellation_reason) {
   });
 }
 
-// Tab logic
+
 const tabs = document.querySelectorAll('.tab');
 tabs.forEach(tab => {
   tab.addEventListener('click', function() {
@@ -249,7 +252,7 @@ function getCurrentTab() {
   return active ? active.getAttribute('data-status') : 'upcoming';
 }
 
-// Approve: open modal to enter meeting link
+
 function openLinkModal(appId) {
   tempAcceptedData = appId;
   document.getElementById('linkModal').style.display = 'flex';
@@ -270,7 +273,7 @@ async function sendMeetingLink() {
     return;
   }
   const token = localStorage.getItem("accessToken");
-  // Approve appointment
+  
   const res = await fetch(`http://localhost:8000/appointment/approve/${tempAcceptedData}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -285,7 +288,7 @@ async function sendMeetingLink() {
   }
 }
 
-// Reject: open modal to enter reason
+
 function openRejectModal(appId) {
   tempRejectData = appId;
   document.getElementById('rejectModal').style.display = 'flex';
@@ -316,7 +319,7 @@ async function confirmRejection() {
   }
 }
 
-// Helper: get one hour later
+
 function getOneHourLater(startTime) {
   const [hour, minute] = startTime.split(':').map(Number);
   const end = new Date();
@@ -324,9 +327,9 @@ function getOneHourLater(startTime) {
   return end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
-// On page load
+
 window.onload = () => {
-  // Set default tab
+  
   const defaultTab = window.location.hash.replace("#", "") || "upcoming";
   tabs.forEach(t => {
     if (t.dataset.status === defaultTab) t.classList.add('active');
@@ -342,7 +345,7 @@ function formatDate(dateStr) {
 }
 
 function canCancel(app) {
-  // Combine date and start_time into a Date object
+  
   const meetingDateTime = new Date(`${app.date}T${app.start_time || app.time}:00`);
   const now = new Date();
   return app.status === "upcoming" && (meetingDateTime - now > 24 * 60 * 60 * 1000);

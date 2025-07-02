@@ -14,6 +14,7 @@ from app.messages.models import Message
 from app.auth.token_verification import get_current_user
 from app.messages.schemas import MessageOut
 from app.messages.schemas import SendMessageSchema, MessageOut
+from app.notification.models import Notification
 
 
 
@@ -21,27 +22,25 @@ fernet = Fernet(os.environ["MESSAGE_ENCRYPTION_KEY"].encode())
 router = APIRouter(prefix="/messages", tags=["messages"])
 
 
-@router.post("/send", response_model=dict, summary="Send message")
+@router.post("/send", response_model=dict, summary="Send message (with notification)")
 async def send_message(
     data: SendMessageSchema,
     db: AsyncSession = Depends(get_db),
-    user: dict = Depends(get_current_user)  # changed
+    user: dict = Depends(get_current_user)
 ):
-    
     if len(data.message) > 500:
         raise HTTPException(status_code=400, detail="Message cannot exceed 500 characters.")
 
     recipient = await db.get(User, data.receiver_id)
     if not recipient:
         raise HTTPException(status_code=404, detail="Recipient not found")
-  
 
     token = fernet.encrypt(data.message.encode())
     raw = base64.urlsafe_b64decode(token)
     iv = raw[9:9 + 16]
 
     msg = Message(
-        sender_id=user["user_id"],  # changed
+        sender_id=user["user_id"],
         receiver_id=data.receiver_id,
         booking_id=data.booking_id,
         encrypted_message=token,
@@ -49,10 +48,34 @@ async def send_message(
         sent_at=datetime.utcnow()
     )
     db.add(msg)
+
+    sender_obj = await db.get(User, user["user_id"])
+    sender_name = f"{sender_obj.first_name} {sender_obj.last_name}" if sender_obj else "A user"
+
+    if recipient.role == "consultant":
+        redirect_url = f"/consultant/chat.html?partnerId={user['user_id']}"
+    elif recipient.role == "student":
+        redirect_url = f"/student/chat.html?partnerId={user['user_id']}"
+    else:
+        if user["role"] == "consultant":
+            redirect_url = "/consultant/messages.html"
+        elif user["role"] == "student":
+            redirect_url = "/student/messages.html"
+
+    notif_content = f"You have received a new message from {sender_name}."
+    new_notif = Notification(
+        user_id=data.receiver_id,
+        content=notif_content,
+        type="info",
+        redirect_url=redirect_url
+    )
+    db.add(new_notif)
+
     await db.commit()
+    await db.refresh(msg)
+    await db.refresh(new_notif)
 
     return {"status": "sent"}
-
 
 @router.get("", response_model=List[MessageOut], summary="Fetches a list of last messages")
 async def get_conversation_summaries(

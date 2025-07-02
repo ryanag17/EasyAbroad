@@ -7,14 +7,16 @@ from sqlalchemy import select
 from sqlalchemy.orm import aliased
 
 from app.db import get_db
+from app.auth.models import User
 from app.auth.token_verification import get_current_user
 from app.support.schemas import SupportTicketCreate, SupportTicketResponse
 from app.support.models import SupportTicket, TicketStatus
+from app.notification.models import Notification
 
 support_router = APIRouter(prefix="/support", tags=["Support"])
 
-# Student or Consultant: Create a support ticket
-@support_router.post("/", summary="Student or Consultant: Create a support ticket", status_code=201)
+# Student or Consultant: Create a support ticket (with notification)
+@support_router.post("/", summary="Student or Consultant: Create a support ticket (with notification)", status_code=201)
 async def create_support_ticket(
     ticket: SupportTicketCreate,
     db: AsyncSession = Depends(get_db),
@@ -30,16 +32,30 @@ async def create_support_ticket(
             updated_at=datetime.utcnow().replace(tzinfo=timezone.utc),
         )
         db.add(new_ticket)
+
+        # Notify all admins
+        notif_content = f"A new support ticket '{ticket.subject}' has been created."
+        admin_users = await db.execute(select(User).where(User.role == "admin"))
+        for admin_user in admin_users.scalars().all():
+            new_notif = Notification(
+                user_id=admin_user.id,
+                content=notif_content,
+                type="info",
+                redirect_url="/admin/support-tickets.html"
+            )
+            db.add(new_notif)
+
         await db.commit()
-        await db.refresh(new_ticket)  # get the ticket ID and state after commit
+        await db.refresh(new_ticket)
+
         return {
             "message": "Support ticket created successfully.",
             "ticket_id": new_ticket.id
         }
     except Exception as e:
-         await db.rollback()  
-         raise HTTPException(status_code=500, detail=f"Failed to create support ticket: {str(e)}")
-    
+        await db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to create support ticket: {str(e)}")
+
 
 
 # Admin: List all support tickets
@@ -160,8 +176,8 @@ async def get_ticket_by_id(
 from app.support.models import SupportTicketMessage
 from app.support.schemas import TicketReplyCreate
 
-# All users: Reply ticket
-@support_router.post("/{ticket_id}/reply", summary="All users: Reply ticket")
+# All users: Reply ticket (with notification)
+@support_router.post("/{ticket_id}/reply", summary="All users: Reply ticket (with notification)")
 async def post_ticket_reply(
     ticket_id: int,
     reply: TicketReplyCreate,
@@ -182,11 +198,49 @@ async def post_ticket_reply(
         message=reply.message
     )
     db.add(new_message)
+
+    # Determine who should receive notification
+    if current_user["role"] == "admin":
+        notif_content = f"You have received a new reply from admin on your support ticket '{ticket.subject}'."
+        
+        user = await db.get(User, ticket.user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="Ticket owner not found.")
+        user_folder = "student" if user.role == "student" else "consultant"
+        
+        new_notif = Notification(
+            user_id=ticket.user_id,
+            content=notif_content,
+            type="info",
+            redirect_url=f"/{user_folder}/ticket-detail.html?id={ticket.id}"
+        )
+        db.add(new_notif)
+    else:
+        notif_content = f"A new reply was posted on ticket '{ticket.subject}' by the user."
+        admin_users = await db.execute(select(User).where(User.role == "admin"))
+        for admin_user in admin_users.scalars().all():
+            new_notif = Notification(
+                user_id=admin_user.id,
+                content=notif_content,
+                type="info",
+                redirect_url=f"/admin/ticket-detail.html?id={ticket.id}"
+            )
+            db.add(new_notif)
+
+    if current_user["role"] == "admin":
+        db.add(new_notif)
+
     await db.commit()
+    await db.refresh(new_message)
+
+    if current_user["role"] == "admin":
+        await db.refresh(new_notif)
+
     return {"message": "Reply sent successfully"}
 
-# Admin: Update support ticket status
-@support_router.patch("/{ticket_id}/status", summary="Admin: Update support ticket status")
+
+# Admin: Update support ticket status (with notification)
+@support_router.patch("/{ticket_id}/status", summary="Admin: Update support ticket status (with notification)")
 async def update_ticket_status(
     ticket_id: int,
     status_update: dict,
@@ -201,6 +255,11 @@ async def update_ticket_status(
     if not ticket:
         raise HTTPException(status_code=404, detail="Ticket not found")
 
+    # Fetch user object
+    user = await db.get(User, ticket.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Ticket owner not found.")
+
     new_status = status_update.get("status", ticket.status)
     ticket.status = new_status
     ticket.updated_at = datetime.utcnow()
@@ -209,5 +268,18 @@ async def update_ticket_status(
         ticket.resolved_by = current_user["user_id"]
         ticket.resolved_at = datetime.utcnow()
 
+    # Create notification to ticket creator
+    notif_content = f"The status of your support ticket '{ticket.subject}' has been updated to '{new_status}'."
+    user_folder = "student" if user.role == "student" else "consultant"
+    new_notif = Notification(
+        user_id=ticket.user_id,
+        content=notif_content,
+        type="info",
+        redirect_url=f"/{user_folder}/ticket-detail.html?id={ticket.id}"
+    )
+    db.add(new_notif)
+
     await db.commit()
+    await db.refresh(new_notif)
+
     return {"message": "Status updated"}

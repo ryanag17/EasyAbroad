@@ -7,94 +7,7 @@
   <link rel="icon" type="image/png" href="../images/favicon.png">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/all.min.css">
-  <style>
-    .submission-filter {
-      margin: 1.5rem 2rem 0;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-weight: 500;
-      font-size: 1rem;
-      color: #333;
-    }
-
-    .submission-filter select {
-      padding: 8px 12px;
-      font-size: 0.95rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      background-color: #fff;
-      transition: border-color 0.3s ease;
-      cursor: pointer;
-    }
-
-    .submission-filter select:focus {
-      outline: none;
-      border-color: #ec008c;
-      box-shadow: 0 0 0 2px rgba(236, 0, 140, 0.15);
-    }
-
-    .submission-table-container {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      margin: 20px;
-      overflow-x: auto;
-    }
-
-    .submission-table {
-      min-width: 800px;
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .submission-table th,
-    .submission-table td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    .submission-table th {
-      background-color: #f4f4f4;
-      font-weight: 600;
-    }
-
-    .submission-action-link {
-      color: deeppink;
-      font-weight: bold;
-      text-decoration: none;
-      cursor: pointer;
-      transition: color 0.2s ease;
-    }
-
-    .submission-action-link:hover {
-      color: #a30056;
-    }
-
-    .pagination {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      margin-top: 20px;
-    }
-
-    .pagination button {
-      background-color: #cc2f8b;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .pagination button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-  </style>
-
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 </head>
 <body>
@@ -102,10 +15,12 @@
     <a href="home.html" class="to_the_main">
       <div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
     </a>
-    <div class="bell-menu">
-      <a href="notifications.html" class="bell-div">
-        <div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div>
-      </a>
+            <div class="bell-menu">
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
       <div id="menuHamToggle">
         <input type="checkbox">
         <span></span><span></span><span></span>
@@ -121,7 +36,7 @@
     </div>
   </header>
 
-  <!-- Sign Out Modal -->
+  
   <div id="signOutModal" class="modal-overlay">
     <div class="modal-content">
       <p>Are you sure you want to sign out?</p>

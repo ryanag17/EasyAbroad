@@ -7,27 +7,29 @@
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 <body>
     <header class="user-header">
             <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
             
             <div class="bell-menu">
-                <!-- Bell Image link (https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fen%2Fpink-notification-bell-icon-png-symbol%2F&psig=AOvVaw3wDQe_UEJ1ORQ8DEZl_sjQ&ust=1745994682173000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCKi-9ZzP_IwDFQAAAAAdAAAAABAK) -->
-                <a href="notifications.html" class="bell-div"><div class="bell-image"><img src="../images/bell.png" alt="" class="pic_logo"></div></a>
-            <!-- Menu function -->
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
+            
             <div id="menuHamToggle">
-                <!-- Create Hidden Checkbos, that will be used as Click Function-->
+                
                 <input type="checkbox">
     
-                <!-- Lets create three line hamburger menu
-                Can animate to display as ham menu and closing menu tag.
-                -->
                 <span></span>
                 <span></span>
                 <span></span>
     
-                <!-- Here menu goes -->
+                
                 <ul id="mainMenu">
                     <a href="profile.html"> <li> Profile </li></a>
                     <a href="appointments.html"> <li> Appointments </li></a>
@@ -39,7 +41,7 @@
                     <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
                 </ul>
             </div>
-            <!-- Menu function END -->
+            
             </div>
  
     </header>
@@ -47,7 +49,7 @@
         <div class="chat-list-container"></div>
       </section>
       
-<!-- Sign Out Confirmation Modal -->
+
 <div id="signOutModal" class="modal-overlay">
   <div class="modal-content">
     <p>Are you sure you want to sign out?</p>
@@ -58,7 +60,7 @@
   </div>
 </div>
 
-    <!--  -->
+    
     
     
     <footer>
@@ -100,7 +102,7 @@
 const MESSAGES_API_BASE = "http://localhost:8000/messages";
 const token = localStorage.getItem("accessToken");
 
-// 1) Fetch conversation summaries on page load
+
 async function fetchThreads() {
   const res = await fetch(MESSAGES_API_BASE, {
     headers: { "Authorization": `Bearer ${token}` }
@@ -115,7 +117,7 @@ async function fetchThreads() {
 
 window.addEventListener("DOMContentLoaded", fetchThreads);
 
-// 2) Render the list of conversation "threads"
+
 function renderThreads(threads) {
   const container = document.querySelector('.chat-list-container');
   container.innerHTML = '';
@@ -126,12 +128,12 @@ function renderThreads(threads) {
   }
 
   threads.forEach(async t => {
-    // Get consultant's user ID from JWT
+    
     const consultantId = JSON.parse(atob(token.split('.')[1])).sub;
-    // Always set partnerId to the student (the other user)
+    
     const partnerId = (t.sender_id === consultantId) ? t.receiver_id : t.sender_id;
 
-    // Fetch partner (student) profile info
+    
     let profilePic = "../images/avatar.png";
     let partnerName = "User";
     try {
@@ -147,7 +149,7 @@ function renderThreads(threads) {
       }
     } catch (e) {}
 
-    // Build card
+    
     const card = document.createElement('div');
     card.className = 'message-card';
     card.innerHTML = `
@@ -164,7 +166,7 @@ function renderThreads(threads) {
       </div>
     `;
 
-    // Clicking opens the chat thread with the student
+    
     card.addEventListener('click', () => {
       window.location.href = `chat.html?partnerId=${partnerId}`;
     });
