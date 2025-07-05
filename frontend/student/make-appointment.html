@@ -321,6 +321,8 @@ function closeModal() {
 }
 
 async function confirmBooking() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type');
     if (!selectedSlotInfo) {
         showInAppAlert("⚠️ No slot selected.");
         return;
@@ -353,7 +355,8 @@ async function confirmBooking() {
                 end_time: end_time,
                 reason: reason,
                 info: extraInfo,
-                platform: platform
+                platform: platform,
+                type: type
             })
         });
         if (!res.ok) {
@@ -387,6 +390,7 @@ function goToCurrentWeek() {
 
 async function populateSpecialtiesDropdown() {
     const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type');
     const consultantId = urlParams.get("id");
     const consultantType = urlParams.get("type");
 

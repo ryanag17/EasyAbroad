@@ -120,7 +120,8 @@ async def book_appointment(
         reason=data.reason,
         info=data.info,
         platform=data.platform,
-        status=AppointmentStatus.pending
+        status=AppointmentStatus.pending,
+        type=data.type
     )
     db.add(appt)
     await db.commit()

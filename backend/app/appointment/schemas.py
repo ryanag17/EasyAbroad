@@ -18,6 +18,8 @@ class AppointmentCreate(BaseModel):
     info: Optional[str] = None
     platform: str
     rejection_reason: Optional[str] = None
+    type: str
+
 class AppointmentOut(BaseModel):
     id: int
     consultant_id: int
@@ -34,7 +36,8 @@ class AppointmentOut(BaseModel):
     cancellation_reason: Optional[str] = None
     consultant_name: Optional[str] = None
     student_name: Optional[str] = None
-
+    type: str
+    
     class Config:
         orm_mode = True
 

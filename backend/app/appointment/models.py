@@ -48,6 +48,7 @@ class Appointment(Base):
     cancellation_reason = Column(String, nullable=True) 
     student = relationship("User", foreign_keys=[student_id])
     consultant = relationship("User", foreign_keys=[consultant_id])
+    type = Column(String, nullable=False)
 
 class ConsultantReview(Base):
     __tablename__ = "consultant_reviews"

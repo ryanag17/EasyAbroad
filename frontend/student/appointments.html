@@ -207,8 +207,10 @@ function renderAppointments(status) {
 
     card.innerHTML = `
       <div class="appointment-info">
-        <p class="consultant-name"><b>${app.consultant_name || app.consultant || ""}</b></p>
-        <p class="appointment-date">${formatDate(app.date)}, ${app.start_time || app.time} - ${app.end_time || ""}</p>
+      <p class="appointment-date">${formatDate(app.date)}, ${app.start_time || app.time} - ${app.end_time || ""}</p>
+      <p class="appointment-type" style="margin-bottom:8px; color:#d62d81; font-weight:bold;">
+      ${app.type === "study" ? "Consultation for Study" : app.type === "internship" ? "Consultation for Internship" : ""}
+      </p>
         <label class="meeting_label">Meeting Topic:</label>
         <select disabled>
           <option selected>${app.reason || ""}</option>
