@@ -103,83 +103,101 @@
 
     <script src="../auth.js"></script>
     <script src="../script.js"></script>
-    <script>
-        (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
-      async function loadPreview() {
-        const token = localStorage.getItem("accessToken");
-        if (!token) return window.location.href = "../log-in.html";
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
+})();  
 
-        const headers = { Authorization: `Bearer ${token}` };
+async function loadPreview() {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return window.location.href = "../log-in.html";
 
-        try {
-          const [profileRes, internshipRes] = await Promise.all([
-            fetch("http://localhost:8000/profile/consultant", { headers }),
-            fetch("http://localhost:8000/consultancy/internship/me", { headers })
-          ]);
-          const profile = await profileRes.json();
-          const internship = await internshipRes.json();
+  const headers = { Authorization: `Bearer ${token}` };
 
-          const avatar = document.querySelector(".avatar");
-          avatar.src = profile.profile_picture?.startsWith("/static/")
-            ? `http://localhost:8000${profile.profile_picture}`
-            : "../images/avatar.png";
+  try {
+    const [profileRes, internshipRes] = await Promise.all([
+      fetch("http://localhost:8000/profile/consultant", { headers }),
+      fetch("http://localhost:8000/consultancy/internship/me", { headers })
+    ]);
+    
+    if (!profileRes.ok || !internshipRes.ok) {
+      showInAppAlert("❌ Failed to load profile data.");
+      return;
+    }
 
-          const firstName = profile.first_name || "Consultant";
-          const lastName = profile.last_name || "";
+    const profile = await profileRes.json();
+    const internship = await internshipRes.json();
 
-          document.querySelector("h2").innerHTML = `
-            ${firstName} ${lastName}
-            <a href="reviews.html" class="review">(currently have no review)</a>`;
+    const avatar = document.querySelector(".avatar");
+    avatar.src = profile.profile_picture?.startsWith("/static/")
+      ? `http://localhost:8000${profile.profile_picture}`
+      : "../images/avatar.png";
 
-          const infoRows = document.querySelectorAll(".info-row");
-          infoRows[1].innerHTML = `<strong>Company Name:</strong> ${internship.company_name}`;
-          infoRows[2].innerHTML = `<strong>Department Name:</strong> ${internship.department_name}`;
-          infoRows[3].innerHTML = `<strong>Work Period:</strong> From ${formatDate(internship.internship_start)} To ${formatDate(internship.internship_finish)}`;
-          infoRows[4].innerHTML = `<strong>Location of Internship Abroad:</strong> ${internship.city_of_internship}, ${internship.country_of_internship}`;
-          infoRows[5].innerHTML = `<strong>Current Location:</strong> ${profile.city || "–"}, ${profile.country || "–"}`;
-          infoRows[6].innerHTML = `<strong>Languages:</strong> ${profile.languages.length ? profile.languages.join(", ") : "–"}`;
+    const firstName = profile.first_name || "Consultant";
+    const lastName = profile.last_name || "";
 
-          document.querySelector(".help-list h3").textContent = `${firstName} can help you with:`;
-          document.querySelector(".call-list h3").textContent = `${firstName} can call you via:`;
+    document.querySelector("h2").innerHTML = `
+      ${firstName} ${lastName}
+      <a href="reviews.html" class="review">(currently have no review)</a>`;
 
-          const helpMap = {
-            accommodation: "Finding accommodation",
-            social_life: "Social life and making friends",
-            company_info: "Company information",
-            travel_info: "Best and worst city spots including travel and weekend plans"
-          };
-          document.querySelector(".help-list ul").innerHTML = Object.entries(helpMap)
-            .filter(([key]) => internship[key])
-            .map(([, label]) => `<li> ${label}</li>`)
-            .join("") || "<li>–</li>";
+    const infoRows = document.querySelectorAll(".info-row");
+    infoRows[1].innerHTML = `<strong>Company Name:</strong> ${internship.company_name || "–"}`;
+    infoRows[2].innerHTML = `<strong>Department Name:</strong> ${internship.department_name || "–"}`;
+    infoRows[3].innerHTML = `<strong>Work Period:</strong> From ${formatDate(internship.internship_start)} To ${formatDate(internship.internship_finish)}`;
+    infoRows[4].innerHTML = `<strong>Location of Internship Abroad:</strong> ${internship.city_of_internship || "–"}, ${internship.country_of_internship || "–"}`;
+    infoRows[5].innerHTML = `<strong>Current Location:</strong> ${profile.city || "–"}, ${profile.country || "–"}`;
+    infoRows[6].innerHTML = `<strong>Languages:</strong> ${profile.languages.length ? profile.languages.join(", ") : "–"}`;
 
-          const callMap = {
-            zoom: "Zoom",
-            microsoft_teams: "Microsoft Teams",
-            google_meet: "Google Meet",
-            apple_facetime: "Apple FaceTime"
-          };
-          document.querySelector(".call-list ul").innerHTML = Object.entries(callMap)
-            .filter(([key]) => internship[key])
-            .map(([, label]) => `<li> ${label}</li>`)
-            .join("") || "<li>–</li>";
+    document.querySelector(".help-list h3").textContent = `${firstName} can help you with:`;
+    document.querySelector(".call-list h3").textContent = `${firstName} can call you via:`;
 
-        } catch (err) {
-          console.error("Error loading preview:", err);
-          alert("Something went wrong loading your consultancy profile.");
-        }
-      }
+    const helpMap = {
+      accommodation: "Finding accommodation",
+      social_life: "Social life and making friends",
+      company_info: "Company information",
+      travel_info: "Best and worst city spots including travel and weekend plans"
+    };
+    document.querySelector(".help-list ul").innerHTML = Object.entries(helpMap)
+      .filter(([key]) => internship[key])
+      .map(([, label]) => `<li>${label}</li>`)
+      .join("") || "<li>–</li>";
 
-      function formatDate(dateStr) {
-        const d = new Date(dateStr);
-        if (isNaN(d)) return "–";
-        return `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
-      }
+    const callMap = {
+      zoom: "Zoom",
+      microsoft_teams: "Microsoft Teams",
+      google_meet: "Google Meet",
+      apple_facetime: "Apple FaceTime"
+    };
+    document.querySelector(".call-list ul").innerHTML = Object.entries(callMap)
+      .filter(([key]) => internship[key])
+      .map(([, label]) => `<li>${label}</li>`)
+      .join("") || "<li>–</li>";
+
+  } catch (err) {
+    console.error("Error loading preview:", err);
+    showInAppAlert("❌ Something went wrong loading your consultancy profile.");
+  }
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  if (isNaN(d)) return "–";
+  return `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+}
+
+document.addEventListener("DOMContentLoaded", loadPreview);
+</script>
 
 
-      document.addEventListener("DOMContentLoaded", loadPreview);
-    </script>
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

@@ -98,112 +98,130 @@
 
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
-  <script>
-    (async () => {
-      await autoEnforceRoleFromPath();
-    })();
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
+})();
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return window.location.href = "../log-in.html";
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return window.location.href = "../log-in.html";
 
-      const userId = new URLSearchParams(window.location.search).get("id");
-      if (!userId) {
-        alert("Missing consultant ID in URL.");
-        return;
-      }
+  const userId = new URLSearchParams(window.location.search).get("id");
+  if (!userId) {
+    showInAppAlert("❗ Missing consultant ID in URL.");
+    return;
+  }
 
-      async function fetchAverageRating(consultantId) {
-        try {
-          const res = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`);
-          const data = await res.json();
-          return data.average_rating ?? null;
-        } catch (e) {
-          console.warn("Rating fetch failed:", e);
-          return null;
-        }
-      }
+  async function fetchAverageRating(consultantId) {
+    try {
+      const res = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`);
+      const data = await res.json();
+      return data.average_rating ?? null;
+    } catch (e) {
+      console.warn("Rating fetch failed:", e);
+      return null;
+    }
+  }
 
-      try {
-        const response = await fetch(`http://localhost:8000/consultancy/internship/public/${userId}`);
-        if (!response.ok) throw new Error("Profile not found or not accepted.");
-        const data = await response.json();
+  try {
+    const response = await fetch(`http://localhost:8000/consultancy/internship/public/${userId}`);
+    if (!response.ok) throw new Error("Profile not found or not accepted.");
+    const data = await response.json();
 
-        const {
-          first_name,
-          last_name,
-          profile_picture,
-          company_name,
-          department_name,
-          internship_start,
-          internship_finish,
-          city_of_internship,
-          country_of_internship,
-          current_city,
-          current_country,
-          languages = []
-        } = data;
+    const {
+      first_name,
+      last_name,
+      profile_picture,
+      company_name,
+      department_name,
+      internship_start,
+      internship_finish,
+      city_of_internship,
+      country_of_internship,
+      current_city,
+      current_country,
+      languages = []
+    } = data;
 
-        document.querySelector(".avatar").src = profile_picture?.startsWith("/static/")
-          ? `http://localhost:8000${profile_picture}`
-          : "../images/avatar.png";
+    document.querySelector(".avatar").src = profile_picture?.startsWith("/static/")
+      ? `http://localhost:8000${profile_picture}`
+      : "../images/avatar.png";
 
-        const avgRating = await fetchAverageRating(userId);
-        const ratingText = avgRating ? `(${avgRating.toFixed(1)}/5 ★)` : "(currently has no reviews)";
-        document.getElementById("consultantNameHeader").innerHTML =
-          `${first_name} ${last_name} <a href="reviews.html?id=${userId}&name=${encodeURIComponent(first_name + ' ' + last_name)}" class="review">${ratingText}</a>`;
+    const avgRating = await fetchAverageRating(userId);
+    const ratingText = avgRating ? `(${avgRating.toFixed(1)}/5 ★)` : "(currently has no reviews)";
+    document.getElementById("consultantNameHeader").innerHTML =
+      `${first_name} ${last_name} <a href="reviews.html?id=${userId}&name=${encodeURIComponent(first_name + ' ' + last_name)}" class="review">${ratingText}</a>`;
 
-        document.querySelectorAll(".info-row")[1].innerHTML =
-          `<strong>Company name:</strong> ${company_name}`;
-        document.querySelectorAll(".info-row")[2].innerHTML =
-          `<strong>Department name:</strong> ${department_name}`;
-        document.querySelectorAll(".info-row")[3].innerHTML =
-          `<strong>Internship period:</strong> From ${formatDate(internship_start)} to ${formatDate(internship_finish)}`;
-        document.querySelectorAll(".info-row")[4].innerHTML =
-          `<strong>Location of internship:</strong> ${city_of_internship}, ${country_of_internship}`;
-        document.querySelectorAll(".info-row")[5].innerHTML =
-          `<strong>Current location:</strong> ${current_city || "–"}, ${current_country || "–"}`;
-        document.querySelectorAll(".info-row")[6].innerHTML =
-          `<strong>Languages:</strong> ${languages.length ? languages.join(", ") : "–"}`;
+    document.querySelectorAll(".info-row")[1].innerHTML =
+      `<strong>Company name:</strong> ${company_name}`;
+    document.querySelectorAll(".info-row")[2].innerHTML =
+      `<strong>Department name:</strong> ${department_name}`;
+    document.querySelectorAll(".info-row")[3].innerHTML =
+      `<strong>Internship period:</strong> From ${formatDate(internship_start)} to ${formatDate(internship_finish)}`;
+    document.querySelectorAll(".info-row")[4].innerHTML =
+      `<strong>Location of internship:</strong> ${city_of_internship}, ${country_of_internship}`;
+    document.querySelectorAll(".info-row")[5].innerHTML =
+      `<strong>Current location:</strong> ${current_city || "–"}, ${current_country || "–"}`;
+    document.querySelectorAll(".info-row")[6].innerHTML =
+      `<strong>Languages:</strong> ${languages.length ? languages.join(", ") : "–"}`;
 
-        document.querySelector(".help-list h3").textContent = `${first_name} can help you with:`;
-        document.querySelector(".call-list h3").textContent = `${first_name} can call you via:`;
+    document.querySelector(".help-list h3").textContent = `${first_name} can help you with:`;
+    document.querySelector(".call-list h3").textContent = `${first_name} can call you via:`;
 
-        const helpMap = {
-          accommodation: "Finding accommodation",
-          social_life: "Social life and making friends",
-          company_info: "Company information",
-          travel_info: "Best and worst city spots including travel and weekend plans"
-        };
-        document.querySelector(".help-list ul").innerHTML = Object.entries(helpMap)
-          .filter(([key]) => data[key])
-          .map(([, label]) => `<li>${label}</li>`)
-          .join("");
+    const helpMap = {
+      accommodation: "Finding accommodation",
+      social_life: "Social life and making friends",
+      company_info: "Company information",
+      travel_info: "Best and worst city spots including travel and weekend plans"
+    };
+    document.querySelector(".help-list ul").innerHTML = Object.entries(helpMap)
+      .filter(([key]) => data[key])
+      .map(([, label]) => `<li>${label}</li>`)
+      .join("");
 
-        const callMap = {
-          zoom: "Zoom",
-          microsoft_teams: "Microsoft Teams",
-          google_meet: "Google Meet",
-          apple_facetime: "Apple FaceTime"
-        };
-        document.querySelector(".call-list ul").innerHTML = Object.entries(callMap)
-          .filter(([key]) => data[key])
-          .map(([, label]) => `<li>${label}</li>`)
-          .join("");
+    const callMap = {
+      zoom: "Zoom",
+      microsoft_teams: "Microsoft Teams",
+      google_meet: "Google Meet",
+      apple_facetime: "Apple FaceTime"
+    };
+    document.querySelector(".call-list ul").innerHTML = Object.entries(callMap)
+      .filter(([key]) => data[key])
+      .map(([, label]) => `<li>${label}</li>`)
+      .join("");
 
-      } catch (err) {
-        console.error("Error loading consultant profile:", err);
-        alert("Failed to load consultant profile.");
-      }
+  } catch (err) {
+    console.error("Error loading consultant profile:", err);
+    showInAppAlert("❌ Failed to load consultant profile.");
+  }
 
-      document.getElementById("bookBtn").href = `make-appointment.html?id=${userId}&type=internship`;
-
-      function formatDate(dateStr) {
-        const d = new Date(dateStr);
-        if (isNaN(d)) return "–";
-        return `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
-      }
+  document.getElementById("bookBtn").addEventListener("click", function(e) {
+    e.preventDefault();
+    showInAppConfirm("Do you want to book a consultation meeting with this consultant?", () => {
+      window.location.href = `make-appointment.html?id=${userId}&type=internship`;
     });
-  </script>
+  });
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return "–";
+    return `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+  }
+});
+</script>
+
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

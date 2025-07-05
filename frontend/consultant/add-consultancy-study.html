@@ -195,19 +195,18 @@
     </footer>
 
 <script>
-    (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
+(async () => {
+  await autoEnforceRoleFromPath();
+})();  
 
-      function closeConfirmModal() {
-    document.getElementById("confirmModal").style.display = "none";
-  }
+function closeConfirmModal() {
+  document.getElementById("confirmModal").style.display = "none";
+}
 
-  /* (Optional) close the sign-out modal too, while you’re here) */
-  function closeModal() {
-    document.getElementById("signOutModal").style.display = "none";
-  }
-  
+function closeModal() {
+  document.getElementById("signOutModal").style.display = "none";
+}
+
 function validateThenSubmit() {
   const toDate = new Date(document.getElementById("education_finish").value);
   const limitDate = new Date();
@@ -239,9 +238,6 @@ function validateThenSubmit() {
     document.getElementById("call-warning").style.display = "none";
   }
 
-
-  
-  
   const requiredFields = ["university_name", "course_name", "education_start", "education_finish", "country_of_study", "city_of_study", "proof_of_education"];
   for (const id of requiredFields) {
     const el = document.getElementsByName(id)[0];
@@ -258,14 +254,11 @@ function validateThenSubmit() {
   }
 }
 
-
 async function submitForm() {
   const form = document.getElementById("consultancyForm");
   const formData = new FormData(form);
-
   const token = localStorage.getItem("accessToken");
 
-  
   const helpValues = Array.from(document.querySelectorAll('input[name="help[]"]:checked')).map(cb => cb.value);
   const callValues = Array.from(document.querySelectorAll('input[name="call[]"]:checked')).map(cb => cb.value);
 
@@ -284,7 +277,6 @@ async function submitForm() {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
-        
       },
       body: formData
     });
@@ -295,50 +287,56 @@ async function submitForm() {
       document.getElementById("confirmModal").style.display = "none";
       document.getElementById("submittedModal").style.display = "flex";
     } else {
-      alert("Error: " + (data?.detail || "Unknown error"));
+      showInAppAlert("Error: " + (data?.detail || "Unknown error"));
       console.error(data);
     }
   } catch (err) {
-    alert("Failed to submit form.");
+    showInAppAlert("Failed to submit form. " + err.message);
     console.error(err);
   }
 }
 
+function closeSubmittedModal() {
+  document.getElementById("submittedModal").style.display = "none";
+  window.location.href = "consultancy-areas.html"; 
+}
 
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return;
 
-  function closeSubmittedModal() {
-    document.getElementById("submittedModal").style.display = "none";
-    window.location.href = "consultancy-areas.html"; 
+  const countrySel = document.getElementById("country");
+  if (!countrySel) return;
+
+  try {
+    const res = await fetch("http://localhost:8000/profile/countries", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("Failed to fetch countries");
+
+    const countries = await res.json();
+    countries.forEach(c => {
+      const o = new Option(c, c);
+      countrySel.appendChild(o);
+    });
+  } catch (err) {
+    console.error("Could not load countries:", err);
   }
-
-  
-  document.addEventListener("DOMContentLoaded", async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-
-    const countrySel = document.getElementById("country");
-    if (!countrySel) return;
-
-    try {
-      const res = await fetch("http://localhost:8000/profile/countries", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Failed to fetch countries");
-
-      const countries = await res.json();
-      countries.forEach(c => {
-        const o = new Option(c, c);
-        countrySel.appendChild(o);
-      });
-    } catch (err) {
-      console.error("Could not load countries:", err);
-    }
-  });
+});
 </script>
+
 
     
   <script src="../auth.js"></script>  
 
-
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

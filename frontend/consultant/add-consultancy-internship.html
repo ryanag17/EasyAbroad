@@ -192,141 +192,149 @@
     </div>
   </div>
 
-  <script>
-      (async () => {
+<script>
+  (async () => {
     await autoEnforceRoleFromPath();
   })();  
 
-    function closeConfirmModal() {
-      document.getElementById("confirmModal").style.display = "none";
-    }
-    function closeSubmittedModal() {
-      document.getElementById("submittedModal").style.display = "none";
-      window.location.href = "consultancy-areas.html";
-    }
-
-    function validateThenSubmit() {
-      const toDate = new Date(document.getElementById("internship_finish").value);
-      const limitDate = new Date();
-      limitDate.setFullYear(limitDate.getFullYear() - 5);
-
-      const helpOptions = document.querySelectorAll('input[name="help[]"]:checked').length;
-      const callOptions = document.querySelectorAll('input[name="call[]"]:checked').length;
-
-      let valid = true;
-
-      if (toDate < limitDate) {
-        document.getElementById("date-warning").style.display = "block";
-        valid = false;
-      } else {
-        document.getElementById("date-warning").style.display = "none";
-      }
-
-      if (helpOptions < 2) {
-        document.getElementById("help-warning").style.display = "block";
-        valid = false;
-      } else {
-        document.getElementById("help-warning").style.display = "none";
-      }
-
-      if (callOptions < 2) {
-        document.getElementById("call-warning").style.display = "block";
-        valid = false;
-      } else {
-        document.getElementById("call-warning").style.display = "none";
-      }
-
-      
-      const requiredFields = [
-        "company_name",
-        "department_name",
-        "internship_start",
-        "internship_finish",
-        "country_of_internship",
-        "city_of_internship",
-        "proof_of_internship"
-      ];
-      for (const id of requiredFields) {
-        const el = document.getElementsByName(id)[0];
-        if (!el || !el.value) {
-          valid = false;
-          el?.classList.add("input-error");
-        } else {
-          el?.classList.remove("input-error");
-        }
-      }
-
-      if (valid) {
-        document.getElementById("confirmModal").style.display = "flex";
-      }
-    }
-
-async function submitForm() {
-  const form = document.getElementById("consultancyForm");
-  const formData = new FormData(form);
-  const token = localStorage.getItem("accessToken");
-
-  
-  const helpValues = Array.from(document.querySelectorAll('input[name="help[]"]:checked')).map(cb => cb.value);
-  const callValues = Array.from(document.querySelectorAll('input[name="call[]"]:checked')).map(cb => cb.value);
-
-  formData.set("accommodation", helpValues.includes("Accommodation"));
-  formData.set("social_life", helpValues.includes("Social"));
-  formData.set("company_info", helpValues.includes("Company Info"));  
-  formData.set("travel_info", helpValues.includes("City Tips"));
-
-  formData.set("zoom", callValues.includes("Zoom"));
-  formData.set("microsoft_teams", callValues.includes("Teams"));
-  formData.set("google_meet", callValues.includes("Google Meet"));
-  formData.set("apple_facetime", callValues.includes("FaceTime"));
-
-  try {
-    const res = await fetch("http://localhost:8000/consultancy/internship", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`
-        
-      },
-      body: formData
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      document.getElementById("confirmModal").style.display = "none";
-      document.getElementById("submittedModal").style.display = "flex";
-    } else {
-      alert("Error: " + (data?.detail || "Unknown error"));
-      console.error(data);
-    }
-  } catch (err) {
-    alert("Failed to submit form.");
-    console.error(err);
+  function closeConfirmModal() {
+    document.getElementById("confirmModal").style.display = "none";
   }
-}
+  function closeSubmittedModal() {
+    document.getElementById("submittedModal").style.display = "none";
+    window.location.href = "consultancy-areas.html";
+  }
 
-    
-    document.addEventListener("DOMContentLoaded", async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
+  function validateThenSubmit() {
+    const toDate = new Date(document.getElementById("internship_finish").value);
+    const limitDate = new Date();
+    limitDate.setFullYear(limitDate.getFullYear() - 5);
 
-      const countrySel = document.getElementById("country");
-      try {
-        const res = await fetch("http://localhost:8000/profile/countries", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch countries");
+    const helpOptions = document.querySelectorAll('input[name="help[]"]:checked').length;
+    const callOptions = document.querySelectorAll('input[name="call[]"]:checked').length;
 
-        const countries = await res.json();
-        countries.forEach((c) => {
-          const o = new Option(c, c);
-          countrySel.appendChild(o);
-        });
-      } catch (err) {
-        console.error("Could not load countries:", err);
+    let valid = true;
+
+    if (toDate < limitDate) {
+      document.getElementById("date-warning").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("date-warning").style.display = "none";
+    }
+
+    if (helpOptions < 2) {
+      document.getElementById("help-warning").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("help-warning").style.display = "none";
+    }
+
+    if (callOptions < 2) {
+      document.getElementById("call-warning").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("call-warning").style.display = "none";
+    }
+
+    const requiredFields = [
+      "company_name",
+      "department_name",
+      "internship_start",
+      "internship_finish",
+      "country_of_internship",
+      "city_of_internship",
+      "proof_of_internship"
+    ];
+    for (const id of requiredFields) {
+      const el = document.getElementsByName(id)[0];
+      if (!el || !el.value) {
+        valid = false;
+        el?.classList.add("input-error");
+      } else {
+        el?.classList.remove("input-error");
       }
-    });
-  </script>
+    }
+
+    if (valid) {
+      document.getElementById("confirmModal").style.display = "flex";
+    }
+  }
+
+  async function submitForm() {
+    const form = document.getElementById("consultancyForm");
+    const formData = new FormData(form);
+    const token = localStorage.getItem("accessToken");
+
+    const helpValues = Array.from(document.querySelectorAll('input[name="help[]"]:checked')).map(cb => cb.value);
+    const callValues = Array.from(document.querySelectorAll('input[name="call[]"]:checked')).map(cb => cb.value);
+
+    formData.set("accommodation", helpValues.includes("Accommodation"));
+    formData.set("social_life", helpValues.includes("Social"));
+    formData.set("company_info", helpValues.includes("Company Info"));  
+    formData.set("travel_info", helpValues.includes("City Tips"));
+
+    formData.set("zoom", callValues.includes("Zoom"));
+    formData.set("microsoft_teams", callValues.includes("Teams"));
+    formData.set("google_meet", callValues.includes("Google Meet"));
+    formData.set("apple_facetime", callValues.includes("FaceTime"));
+
+    try {
+      const res = await fetch("http://localhost:8000/consultancy/internship", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById("confirmModal").style.display = "none";
+        document.getElementById("submittedModal").style.display = "flex";
+      } else {
+        showInAppAlert("Error: " + (data?.detail || "Unknown error"));
+        console.error(data);
+      }
+    } catch (err) {
+      showInAppAlert("Failed to submit form. " + err.message);
+      console.error(err);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+
+    const countrySel = document.getElementById("country");
+    try {
+      const res = await fetch("http://localhost:8000/profile/countries", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch countries");
+
+      const countries = await res.json();
+      countries.forEach((c) => {
+        const o = new Option(c, c);
+        countrySel.appendChild(o);
+      });
+    } catch (err) {
+      console.error("Could not load countries:", err);
+    }
+  });
+</script>
+
 
   <script src="../auth.js"></script>
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

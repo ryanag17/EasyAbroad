@@ -220,11 +220,10 @@ function renderPagination(totalItems) {
       if (status) queryParams.append('status', status);
 
       const response = await fetch(`http://localhost:8000/admin/users?${queryParams.toString()}`, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
-
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) throw new Error('Failed to fetch users');
 
@@ -240,7 +239,7 @@ function renderPagination(totalItems) {
       renderTable(users);
     } catch (err) {
       console.error(err);
-      alert('Error fetching users. Make sure you are logged in and have access.');
+      showInAppAlert('Error fetching users. Make sure you are logged in and have access.');
     }
   }
 
@@ -264,68 +263,74 @@ function renderTable(data) {
   renderPagination(data.length);
 }
 
+function viewUser(id) {
+  window.location.href = 'view-user.html?user=' + id;
+}
 
-  function viewUser(id) {
-    window.location.href = 'view-user.html?user=' + id;
-  }
+function applyFilters() {
+  const search = searchInput.value.toLowerCase();
+  const selectedColumn = document.getElementById('searchColumn').value;
+  const role = roleFilter.value;
+  const status = statusFilter.value;
 
-  function applyFilters() {
-    const search = searchInput.value.toLowerCase();
-    const selectedColumn = document.getElementById('searchColumn').value;
-    const role = roleFilter.value;
-    const status = statusFilter.value;
+  renderTable(users.filter(user => {
+    let matchesSearch = true;
 
-    renderTable(users.filter(user => {
-      let matchesSearch = true;
+    if (search) {
+      const columnMap = {
+        first_name: user.firstName.toLowerCase(),
+        last_name: user.lastName.toLowerCase(),
+        email: user.email.toLowerCase(),
+        id: String(user.id).toLowerCase(),
+      };
 
-      if (search) {
-        const columnMap = {
-          first_name: user.firstName.toLowerCase(),
-          last_name: user.lastName.toLowerCase(),
-          email: user.email.toLowerCase(),
-          id: String(user.id).toLowerCase(),
-        };
+      matchesSearch = columnMap[selectedColumn]?.includes(search);
+    }
 
-        matchesSearch = columnMap[selectedColumn]?.includes(search);
-      }
+    const matchesRole = role === 'all' || user.role === role;
+    const matchesStatus = status === 'all' || user.status.toLowerCase() === status;
 
-      const matchesRole = role === 'all' || user.role === role;
-      const matchesStatus = status === 'all' || user.status.toLowerCase() === status;
+    return matchesSearch && matchesRole && matchesStatus;
+  }));
+}
 
-      return matchesSearch && matchesRole && matchesStatus;
-    }));
-  }
-
-
-  function sortTable(colIndex) {
-    const rows = [...tbody.rows];
-    const asc = tbody.getAttribute('data-sort') !== 'asc';
-    rows.sort((a, b) => {
-      const A = a.cells[colIndex].innerText.toLowerCase();
-      const B = b.cells[colIndex].innerText.toLowerCase();
-      return asc ? A.localeCompare(B) : B.localeCompare(A);
-    });
-    tbody.innerHTML = '';
-    rows.forEach(row => tbody.appendChild(row));
-    tbody.setAttribute('data-sort', asc ? 'asc' : 'desc');
-  }
-
-  searchInput.addEventListener('input', () => {
-    applyFilters();
+function sortTable(colIndex) {
+  const rows = [...tbody.rows];
+  const asc = tbody.getAttribute('data-sort') !== 'asc';
+  rows.sort((a, b) => {
+    const A = a.cells[colIndex].innerText.toLowerCase();
+    const B = b.cells[colIndex].innerText.toLowerCase();
+    return asc ? A.localeCompare(B) : B.localeCompare(A);
   });
+  tbody.innerHTML = '';
+  rows.forEach(row => tbody.appendChild(row));
+  tbody.setAttribute('data-sort', asc ? 'asc' : 'desc');
+}
 
-  roleFilter.addEventListener('change', () => {
-    applyFilters();
-  });
+searchInput.addEventListener('input', () => {
+  applyFilters();
+});
 
-  statusFilter.addEventListener('change', () => {
-    applyFilters();
-  });
+roleFilter.addEventListener('change', () => {
+  applyFilters();
+});
 
-  
-  fetchUsers();
+statusFilter.addEventListener('change', () => {
+  applyFilters();
+});
+
+fetchUsers();
 </script>
 
-    
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

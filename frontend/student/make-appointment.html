@@ -186,271 +186,284 @@
         </div>
     </footer>
 
-    <script src="../auth.js"></script>
-    <script src="../script.js"></script>
-    <script>
-        (async () => {
-            await autoEnforceRoleFromPath();
-        })();
+<script src="../auth.js"></script>
+<script src="../script.js"></script>
+<script>
+(async () => {
+    await autoEnforceRoleFromPath();
+})();
 
-        let calendar;
-        let currentDate = new Date();
-        let selectedEvent = null;
-        let selectedSlotInfo = null;
-        let consultantId = new URLSearchParams(window.location.search).get("id");
+let calendar;
+let currentDate = new Date();
+let selectedEvent = null;
+let selectedSlotInfo = null;
+let consultantId = new URLSearchParams(window.location.search).get("id");
 
-        async function fetchConsultantName() {
-            let res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
-            if (!res.ok) {
-                res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
-            }
-            if (res.ok) {
-                const data = await res.json();
-                document.getElementById('consultant-name').textContent = `${data.first_name} ${data.last_name}`;
-            } else {
-                document.getElementById('consultant-name').textContent = "[consultant name]";
-            }
-        }
+async function fetchConsultantName() {
+    let res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
+    if (!res.ok) {
+        res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
+    }
+    if (res.ok) {
+        const data = await res.json();
+        document.getElementById('consultant-name').textContent = `${data.first_name} ${data.last_name}`;
+    } else {
+        document.getElementById('consultant-name').textContent = "[consultant name]";
+    }
+}
 
-        async function fetchAndRenderCalendar(startDate) {
-            const res = await fetch(`http://localhost:8000/appointment/consultant/timetable/${consultantId}`);
-            const slots = await res.json();
+async function fetchAndRenderCalendar(startDate) {
+    const res = await fetch(`http://localhost:8000/appointment/consultant/timetable/${consultantId}`);
+    const slots = await res.json();
 
-            const apptRes = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/appointments`);
-            const appointments = apptRes.ok ? await apptRes.json() : [];
+    const apptRes = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/appointments`);
+    const appointments = apptRes.ok ? await apptRes.json() : [];
 
-            const booked = new Set(
-                appointments
-                    .filter(a => a.status === "pending" || a.status === "upcoming")
-                    .map(a => `${a.date}|${a.start_time}|${a.end_time}`)
-            );
+    const booked = new Set(
+        appointments
+            .filter(a => a.status === "pending" || a.status === "upcoming")
+            .map(a => `${a.date}|${a.start_time}|${a.end_time}`)
+    );
 
-            const events = [];
-            slots.forEach(slot => {
-                slot.days_of_week.forEach(day => {
-                    for (let week = 0; week < 4; week++) {
-                        const base = new Date(startDate);
-                        const monday = new Date(base);
-                        monday.setDate(base.getDate() - ((base.getDay() + 6) % 7) + (week * 7));
-                        const slotDate = new Date(monday);
-                        slotDate.setDate(monday.getDate() + (day - 1));
-                        const dateStr = slotDate.toISOString().slice(0, 10);
-                        const key = `${dateStr}|${slot.start_time}|${slot.end_time}`;
-                        const isBooked = booked.has(key);
+    const events = [];
+    slots.forEach(slot => {
+        slot.days_of_week.forEach(day => {
+            for (let week = 0; week < 4; week++) {
+                const base = new Date(startDate);
+                const monday = new Date(base);
+                monday.setDate(base.getDate() - ((base.getDay() + 6) % 7) + (week * 7));
+                const slotDate = new Date(monday);
+                slotDate.setDate(monday.getDate() + (day - 1));
+                const dateStr = slotDate.toISOString().slice(0, 10);
+                const key = `${dateStr}|${slot.start_time}|${slot.end_time}`;
+                const isBooked = booked.has(key);
 
-                        events.push({
-                            title: isBooked ? 'Booked' : 'Available',
-                            start: `${dateStr}T${slot.start_time}`,
-                            end: `${dateStr}T${slot.end_time}`,
-                            color: isBooked ? '#ccc' : '#28a745',
-                            editable: false,
-                            display: 'block',
-                            extendedProps: {
-                                dayOfWeek: day,
-                                startTime: slot.start_time,
-                                endTime: slot.end_time,
-                                isBooked: isBooked
-                            }
-                        });
+                events.push({
+                    title: isBooked ? 'Booked' : 'Available',
+                    start: `${dateStr}T${slot.start_time}`,
+                    end: `${dateStr}T${slot.end_time}`,
+                    color: isBooked ? '#ccc' : '#28a745',
+                    editable: false,
+                    display: 'block',
+                    extendedProps: {
+                        dayOfWeek: day,
+                        startTime: slot.start_time,
+                        endTime: slot.end_time,
+                        isBooked: isBooked
                     }
                 });
-            });
+            }
+        });
+    });
 
-            renderCalendar(startDate, events);
-        }
+    renderCalendar(startDate, events);
+}
 
-        function renderCalendar(startDate, events) {
-            const calendarEl = document.getElementById('calendar');
-            if (calendar) calendar.destroy();
+function renderCalendar(startDate, events) {
+    const calendarEl = document.getElementById('calendar');
+    if (calendar) calendar.destroy();
 
-            calendar = new FullCalendar.Calendar(calendarEl, {
-                locale: 'en-gb',
-                slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
-                dayHeaderFormat: { weekday: 'short', day: '2-digit', month: '2-digit' },
-                nowIndicator: true,
-                initialView: 'timeGridWeek',
-                initialDate: startDate,
-                allDaySlot: false,
-                slotMinTime: '00:00:00',
-                slotMaxTime: '24:00:00',
-                expandRows: true,
-                headerToolbar: false,
-                firstDay: 1,
-                selectable: false,
-                events: events,
-                eventTimeFormat: { hour: 'numeric', minute: '2-digit', meridiem: false },
-                eventClick: function(info) {
-                    if (info.event.extendedProps.isBooked) {
-                        alert("This slot is already booked.");
-                        return;
-                    }
-                    const now = new Date();
-                    if (info.event.start < now) {
-                        alert("You cannot select a past time slot.");
-                        return;
-                    }
-                    if (selectedEvent) selectedEvent.setProp('color', '#28a745');
-                    selectedEvent = info.event;
-                    selectedEvent.setProp('color', '#1e7e34');
-                    selectedSlotInfo = info.event;
-                }
-            });
-
-            const continueBtn = document.querySelector(".continue-btn");
-            continueBtn.onclick = function () {
-                if (selectedEvent) {
-                    openBookingPopup(selectedEvent.start, selectedEvent.end);
-                } else {
-                    alert("Please select a time slot first.");
-                }
-            };
-
-            calendar.render();
-        }
-
-        async function openBookingPopup(start, end) {
-            await populateSpecialtiesDropdown();
-            const modal = document.getElementById("bookingModal");
-            const text = document.getElementById("selectedTimeText");
-            text.textContent = "Selected time: " + start.toLocaleString() + " - " + end.toLocaleTimeString();
-            modal.style.display = "flex";
-        }
-
-        function closeModal() {
-            document.getElementById("bookingModal").style.display = "none";
-        }
-
-        async function confirmBooking() {
-            if (!selectedSlotInfo) {
-                alert("No slot selected.");
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'en-gb',
+        slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+        dayHeaderFormat: { weekday: 'short', day: '2-digit', month: '2-digit' },
+        nowIndicator: true,
+        initialView: 'timeGridWeek',
+        initialDate: startDate,
+        allDaySlot: false,
+        slotMinTime: '00:00:00',
+        slotMaxTime: '24:00:00',
+        expandRows: true,
+        headerToolbar: false,
+        firstDay: 1,
+        selectable: false,
+        events: events,
+        eventTimeFormat: { hour: 'numeric', minute: '2-digit', meridiem: false },
+        eventClick: function(info) {
+            if (info.event.extendedProps.isBooked) {
+                showInAppAlert("⚠️ This slot is already booked.");
                 return;
             }
-            const reason = document.getElementById('meetingTopic').value;
-            const platform = document.querySelector('#bookingModal select:nth-of-type(2)').value;
-            const extraInfo = document.querySelector("#bookingModal textarea").value;
-
-            if (!reason || !platform) {
-                alert("Please select a reason and a platform.");
+            const now = new Date();
+            if (info.event.start < now) {
+                showInAppAlert("⚠️ You cannot select a past time slot.");
                 return;
             }
-
-            const date = selectedSlotInfo.start.toISOString().slice(0, 10);
-            const start_time = selectedSlotInfo.extendedProps.startTime;
-            const end_time = selectedSlotInfo.extendedProps.endTime;
-
-            const token = localStorage.getItem('accessToken');
-            try {
-                const res = await fetch('http://localhost:8000/appointment/book', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        consultant_id: consultantId,
-                        date: date,
-                        start_time: start_time,
-                        end_time: end_time,
-                        reason: reason,
-                        info: extraInfo,
-                        platform: platform
-                    })
-                });
-                if (!res.ok) {
-                    const err = await res.json();
-                    alert('❌ ' + (err.detail || JSON.stringify(err)));
-                    return;
-                }
-                closeModal();
-                alert("✅ Your appointment has been requested and is pending consultant approval.");
-                window.location.href = "appointments.html";
-            } catch (e) {
-                alert("❌ Booking failed. Please try again.");
-            }
+            if (selectedEvent) selectedEvent.setProp('color', '#28a745');
+            selectedEvent = info.event;
+            selectedEvent.setProp('color', '#1e7e34');
+            selectedSlotInfo = info.event;
         }
+    });
 
-        function changeWeek(offset) {
-            currentDate.setDate(currentDate.getDate() + (offset * 7));
-            fetchAndRenderCalendar(currentDate);
+    const continueBtn = document.querySelector(".continue-btn");
+    continueBtn.onclick = function () {
+        if (selectedEvent) {
+            openBookingPopup(selectedEvent.start, selectedEvent.end);
+        } else {
+            showInAppAlert("⚠️ Please select a time slot first.");
         }
+    };
 
-        window.onload = () => {
-            fetchConsultantName();
-            fetchAndRenderCalendar(currentDate);
+    calendar.render();
+}
+
+async function openBookingPopup(start, end) {
+    await populateSpecialtiesDropdown();
+    const modal = document.getElementById("bookingModal");
+    const text = document.getElementById("selectedTimeText");
+    text.textContent = "Selected time: " + start.toLocaleString() + " - " + end.toLocaleTimeString();
+    modal.style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("bookingModal").style.display = "none";
+}
+
+async function confirmBooking() {
+    if (!selectedSlotInfo) {
+        showInAppAlert("⚠️ No slot selected.");
+        return;
+    }
+    const reason = document.getElementById('meetingTopic').value;
+    const platform = document.querySelector('#bookingModal select:nth-of-type(2)').value;
+    const extraInfo = document.querySelector("#bookingModal textarea").value;
+
+    if (!reason || !platform) {
+        showInAppAlert("⚠️ Please select a reason and a platform.");
+        return;
+    }
+
+    const date = selectedSlotInfo.start.toISOString().slice(0, 10);
+    const start_time = selectedSlotInfo.extendedProps.startTime;
+    const end_time = selectedSlotInfo.extendedProps.endTime;
+
+    const token = localStorage.getItem('accessToken');
+    try {
+        const res = await fetch('http://localhost:8000/appointment/book', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                consultant_id: consultantId,
+                date: date,
+                start_time: start_time,
+                end_time: end_time,
+                reason: reason,
+                info: extraInfo,
+                platform: platform
+            })
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            showInAppAlert('❌ ' + (err.detail || JSON.stringify(err)));
+            return;
+        }
+        closeModal();
+        showInAppAlert("✅ Your appointment has been requested and is pending consultant approval.", () => {
+            window.location.href = "appointments.html";
+        });
+    } catch (e) {
+        showInAppAlert("❌ Booking failed. Please try again.");
+    }
+}
+
+function changeWeek(offset) {
+    currentDate.setDate(currentDate.getDate() + (offset * 7));
+    fetchAndRenderCalendar(currentDate);
+}
+
+window.onload = () => {
+    fetchConsultantName();
+    fetchAndRenderCalendar(currentDate);
+};
+
+function goToCurrentWeek() {
+    currentDate = new Date();
+    fetchAndRenderCalendar(currentDate);
+}
+
+async function populateSpecialtiesDropdown() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const consultantId = urlParams.get("id");
+    const consultantType = urlParams.get("type");
+
+    let helpMap, res, data, specialties = [];
+    if (consultantType === "internship") {
+        helpMap = {
+            accommodation: "Finding accommodation",
+            social_life: "Social life and making friends",
+            company_info: "Company information",
+            travel_info: "Best and worst city spots"
         };
+        res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
+    } else {
+        helpMap = {
+            accommodation: "Finding accommodation",
+            social_life: "Social life and making friends",
+            uni_info: "University information",
+            travel_info: "Best/worst city spots, weekend plans"
+        };
+        res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
+    }
 
-        function goToCurrentWeek() {
-            currentDate = new Date();
-            fetchAndRenderCalendar(currentDate);
-        }
+    if (res.ok) {
+        data = await res.json();
+        specialties = Object.entries(helpMap)
+            .filter(([key]) => data[key])
+            .map(([, label]) => label);
+    }
 
-        async function populateSpecialtiesDropdown() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const consultantId = urlParams.get("id");
-            const consultantType = urlParams.get("type");
+    if (!specialties.length) {
+        specialties = Object.values(helpMap);
+    }
 
-            let helpMap, res, data, specialties = [];
-            if (consultantType === "internship") {
-                helpMap = {
-                    accommodation: "Finding accommodation",
-                    social_life: "Social life and making friends",
-                    company_info: "Company information",
-                    travel_info: "Best and worst city spots"
-                };
-                res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
-            } else {
-                helpMap = {
-                    accommodation: "Finding accommodation",
-                    social_life: "Social life and making friends",
-                    uni_info: "University information",
-                    travel_info: "Best/worst city spots, weekend plans"
-                };
-                res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
-            }
+    const topicSelect = document.getElementById('meetingTopic');
+    topicSelect.innerHTML = '<option value="">-- Select an option --</option>';
+    specialties.forEach(topic => {
+        topicSelect.innerHTML += `<option value="${topic}">${topic}</option>`;
+    });
 
-            if (res.ok) {
-                data = await res.json();
-                specialties = Object.entries(helpMap)
-                    .filter(([key]) => data[key])
-                    .map(([, label]) => label);
-            }
+    const platformMap = {
+        zoom: "Zoom",
+        microsoft_teams: "Microsoft Teams",
+        google_meet: "Google Meet",
+        apple_facetime: "Apple FaceTime"
+    };
 
-            if (!specialties.length) {
-                specialties = Object.values(helpMap);
-            }
+    let platforms = [];
+    if (data) {
+        platforms = Object.entries(platformMap)
+            .filter(([key]) => data[key])
+            .map(([, label]) => label);
+    }
 
-            const topicSelect = document.getElementById('meetingTopic');
-            topicSelect.innerHTML = '<option value="">-- Select an option --</option>';
-            specialties.forEach(topic => {
-                topicSelect.innerHTML += `<option value="${topic}">${topic}</option>`;
-            });
+    if (!platforms.length) {
+        platforms = Object.values(platformMap);
+    }
 
-            const platformMap = {
-                zoom: "Zoom",
-                microsoft_teams: "Microsoft Teams",
-                google_meet: "Google Meet",
-                apple_facetime: "Apple FaceTime"
-            };
+    const platformSelect = document.querySelector('#bookingModal select:nth-of-type(2)');
+    if (platformSelect) {
+        platformSelect.innerHTML = '<option value="">-- Select a platform --</option>';
+        platforms.forEach(platform => {
+            platformSelect.innerHTML += `<option value="${platform}">${platform}</option>`;
+        });
+    }
+}
+</script>
 
-            let platforms = [];
-            if (data) {
-                platforms = Object.entries(platformMap)
-                    .filter(([key]) => data[key])
-                    .map(([, label]) => label);
-            }
 
-            if (!platforms.length) {
-                platforms = Object.values(platformMap);
-            }
 
-            const platformSelect = document.querySelector('#bookingModal select:nth-of-type(2)');
-            if (platformSelect) {
-                platformSelect.innerHTML = '<option value="">-- Select a platform --</option>';
-                platforms.forEach(platform => {
-                    platformSelect.innerHTML += `<option value="${platform}">${platform}</option>`;
-                });
-            }
-        }
-    </script>
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

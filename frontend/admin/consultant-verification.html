@@ -126,9 +126,10 @@
   <script src="../script.js"></script>
 
 <script>
-    (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
+(async () => {
+  await autoEnforceRoleFromPath();
+})();  
+
 document.addEventListener("DOMContentLoaded", () => {
   const API_BASE = "http://localhost:8000";
   const tbody = document.getElementById('submissionBody');
@@ -139,8 +140,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let allSubmissions = [];  
 
   if (!token) {
-    alert("Please log in.");
-    return (window.location.href = "../log-in.html");
+    showInAppAlert("Please log in.", () => {
+      window.location.href = "../log-in.html";
+    });
+    return;
   }
 
   const headers = {
@@ -151,9 +154,10 @@ document.addEventListener("DOMContentLoaded", () => {
   async function checkAdminAccess() {
     const res = await fetch(`${API_BASE}/profile/admin`, { headers });
     if (!res.ok) {
-      alert("Admin access only. Please log in.");
-      localStorage.clear();
-      window.location.href = "../log-in.html";
+      showInAppAlert("Admin access only. Please log in.", () => {
+        localStorage.clear();
+        window.location.href = "../log-in.html";
+      });
     }
   }
 
@@ -220,7 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tbody.appendChild(row);
     }
 
-    
     document.querySelectorAll(".submission-action-link").forEach(link => {
       link.addEventListener("click", () => {
         const userId = link.dataset.userId;
@@ -271,6 +274,15 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 
     
 </body>

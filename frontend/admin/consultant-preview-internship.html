@@ -155,17 +155,19 @@
   <script src="../script.js"></script>  
 
 <script>
-    (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
+(async () => {
+  await autoEnforceRoleFromPath();
+})();  
+
 const API = "http://localhost:8000";
 const token = localStorage.getItem("accessToken");
 const userId = new URLSearchParams(window.location.search).get("user_id");
 const isViewOnly = new URLSearchParams(window.location.search).get("mode") === "view";
 
 if (!token || !userId) {
-  alert("Unauthorized or invalid link.");
-  window.location.href = "consultant-verification.html";
+  showInAppAlert("Unauthorized or invalid link.", () => {
+    window.location.href = "consultant-verification.html";
+  });
 }
 
 fetch(`${API}/consultancy/internship/full/${userId}`, {
@@ -181,9 +183,7 @@ fetch(`${API}/consultancy/internship/full/${userId}`, {
   let { profile, internship } = data;
   const status = internship.status;
 
-  
   const proofContainer = document.getElementById("proofContainer");
-
   if (status === "pending") {
     proofContainer.style.display = "block";
     const proofLink = document.getElementById("proofLink");
@@ -193,13 +193,10 @@ fetch(`${API}/consultancy/internship/full/${userId}`, {
     proofContainer.style.display = "none";
   }
 
-
-  
   const noteInput = document.getElementById("shortNoteInput");
   noteInput.readOnly = (status === "rejected");
   noteInput.value = internship.short_note || "";
 
-  
   const buttonGroup = document.querySelector(".button-group");
   if (status === "pending") {
     buttonGroup.innerHTML = `
@@ -214,7 +211,6 @@ fetch(`${API}/consultancy/internship/full/${userId}`, {
     buttonGroup.style.display = "none";
   }
 
-  
   if (!profile.city || !profile.languages) {
     try {
       const extra = await fetch(`${API}/profile/admin/view/${userId}`, {
@@ -230,12 +226,10 @@ fetch(`${API}/consultancy/internship/full/${userId}`, {
     }
   }
 
-  
   document.getElementById("firstName").textContent = profile.first_name;
   document.getElementById("lastName").textContent = profile.last_name;
   document.getElementById("email").textContent = profile.email;
   document.getElementById("type").textContent = profile.role;
-
   document.getElementById("company").textContent = internship.company_name;
   document.getElementById("department").textContent = internship.department_name;
   document.getElementById("period").textContent = `${formatDate(internship.internship_start)} - ${formatDate(internship.internship_finish)}`;
@@ -260,10 +254,10 @@ fetch(`${API}/consultancy/internship/full/${userId}`, {
 })
 .catch(err => {
   console.error(err);
-  alert("Failed to load consultant details.");
-  window.location.href = "consultant-verification.html";
+  showInAppAlert("Failed to load consultant details.", () => {
+    window.location.href = "consultant-verification.html";
+  });
 });
-
 
 if (isViewOnly) {
   document.querySelector(".button-group").style.display = "none";
@@ -306,24 +300,32 @@ async function processDecision(confirm) {
       }
     });
 
-
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.detail || "Failed to update");
     }
 
-    alert(`Successfully ${selectedAction}.`);
-    window.location.href = "consultant-verification.html";
+    showInAppAlert(`Successfully ${selectedAction}.`, () => {
+      window.location.href = "consultant-verification.html";
+    });
   } catch (err) {
-    alert("Error submitting decision: " + err.message);
+    showInAppAlert("Error submitting decision: " + err.message);
   }
 }
-
 
 window.confirmAction = confirmAction;
 window.processDecision = processDecision;
 </script>
 
-    
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>    
 </body>
 </html>

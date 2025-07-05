@@ -103,7 +103,7 @@
             const token = localStorage.getItem("accessToken");
 
             if (!token) {
-                alert("Please log in first.");
+                showInAppAlert("⚠️ Please log in first.");
                 return window.location.href = "../log-in.html";
             }
 
@@ -128,11 +128,23 @@
 
             } catch (err) {
                 console.error("Failed to load profile:", err);
-                alert("Failed to load user info. Please log in again.");
+                showInAppAlert("❌ Failed to load user info. Please log in again.");
                 localStorage.clear();
                 window.location.href = "../log-in.html";
             }
         });
     </script>
+
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

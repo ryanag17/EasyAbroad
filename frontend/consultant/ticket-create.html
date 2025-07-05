@@ -114,9 +114,10 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>    
 <script>
-    (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
+(async () => {
+  await autoEnforceRoleFromPath();
+})();  
+
 const supportForm = document.getElementById("supportTicketForm");
 const topicInput = document.getElementById("topic");
 const messageInput = document.getElementById("message");
@@ -135,7 +136,6 @@ supportForm.addEventListener("submit", async (e) => {
   const message = messageInput.value.trim();
   const token = localStorage.getItem("accessToken");
 
-  
   if (topic.length < 5) {
     supportError.textContent = "Topic must be at least 5 characters.";
     supportError.style.display = "block";
@@ -149,12 +149,11 @@ supportForm.addEventListener("submit", async (e) => {
   }
 
   if (!token) {
-    supportError.textContent = "You are not logged in. Please log in first.";
-    supportError.style.display = "block";
+    showInAppAlert("❌ You are not logged in. Please log in first.");
     return;
   }
 
-  const confirmed = confirm("Are you sure you want to submit this ticket?");
+  const confirmed = await showInAppConfirm("Are you sure you want to submit this ticket?");
   if (!confirmed) return;
 
   try {
@@ -171,19 +170,16 @@ supportForm.addEventListener("submit", async (e) => {
       const data = await res.json();
       const ticketId = data.ticket_id;
       isSupportDirty = false;
-      window.location.replace(`ticket-detail.html?id=${ticketId}`);
+      showInAppAlert("✅ Support ticket submitted successfully!");
+      setTimeout(() => {
+        window.location.replace(`ticket-detail.html?id=${ticketId}`);
+      }, 1000);
     } else {
-      alert("Failed to create ticket");
+      const errorData = await res.json();
+      showInAppAlert("❌ Failed to create ticket: " + (errorData.detail || "Unknown error"));
     }
-
-
-
-    alert("Support ticket submitted successfully!");
-    isSupportDirty = false;
-
   } catch (error) {
-    supportError.textContent = error.message;
-    supportError.style.display = "block";
+    showInAppAlert("❌ Error: " + error.message);
   }
 });
 
@@ -194,17 +190,25 @@ window.addEventListener("beforeunload", (e) => {
   }
 });
 
-function confirmLeaveToTickets(e) {
+async function confirmLeaveToTickets(e) {
   e.preventDefault();
   if (isSupportDirty) {
-    const confirmed = confirm("You have unsaved changes. Are you sure you want to leave this page?");
+    const confirmed = await showInAppConfirm("You have unsaved changes. Are you sure you want to leave this page?");
     if (!confirmed) return;
   }
   window.location.href = "support-tickets.html";
 }
-
 </script>
 
 
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

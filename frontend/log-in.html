@@ -78,13 +78,18 @@
         if (!validateLoginForm()) return;
         loginUser();
       });
-
-    // This part causes the log in button to disappear, therefore I commented out SG 08.06
-    //   const token = localStorage.getItem("accessToken");
-    //   if (token) {
-    //     document.getElementById("loginBtn").style.display = "none";
-    //   }
      });
   </script>
+  
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -148,137 +148,157 @@
   </footer>
   <script src="../auth.js"></script>
   <script src="../script.js"></script>    
-  <script>
-      (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
-        
-    const fileInput = document.getElementById('fileInput');
-    const profilePic = document.getElementById('profilePic');
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
+})();  
+
+const fileInput = document.getElementById('fileInput');
+const profilePic = document.getElementById('profilePic');
 
 fileInput.addEventListener('change', async function () {
   const file = fileInput.files[0];
   if (!file || !file.type.startsWith('image/')) {
-    alert("Please select a valid image file.");
+    showInAppAlert("Please select a valid image file.");
     return;
   }
 
   const formData = new FormData();
   formData.append("file", file);
-
   const token = localStorage.getItem("accessToken");
 
-  const res = await fetch("http://localhost:8000/profile/upload-picture", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    },
-    body: formData
-  });
+  try {
+    const res = await fetch("http://localhost:8000/profile/upload-picture", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` },
+      body: formData
+    });
 
-  if (res.ok) {
-  const data = await res.json();
-  const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
-  profilePic.src = timestampedUrl;
+    if (res.ok) {
+      const data = await res.json();
+      const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
+      profilePic.src = timestampedUrl;
 
-  
-  setTimeout(() => {
-    window.location.reload();
-  }, 1);
-} else {
-  const err = await res.json();
-  alert("❌ Upload failed: " + (err.detail || err.message));
-}
+      setTimeout(() => window.location.reload(), 1);
+    } else {
+      const err = await res.json();
+      showInAppAlert("❌ Upload failed: " + (err.detail || err.message));
+    }
+  } catch (err) {
+    console.error("Upload error:", err);
+    showInAppAlert("❌ Failed to upload image.");
+  }
 });
 
-        
-    
-    document.addEventListener("DOMContentLoaded", async () => {
-      const API_BASE = "http://localhost:8000";
-      const token    = localStorage.getItem("accessToken");
-      if (!token) return alert("Please log in"), window.location.href = "../log-in.html";
+document.addEventListener("DOMContentLoaded", async () => {
+  const API_BASE = "http://localhost:8000";
+  const token    = localStorage.getItem("accessToken");
+  if (!token) {
+    showInAppAlert("Please log in.", () => window.location.href = "../log-in.html");
+    return;
+  }
 
-      const headers = {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type" : "application/json"
-      };
+  const headers = {
+    "Authorization": `Bearer ${token}`,
+    "Content-Type" : "application/json"
+  };
 
-      
-      const editBtn = document.querySelector(".edit-btn");
-      const fields  = Array.from(
-        document.querySelectorAll(
-          'input:not([name="birthday"]):not([name="email"]), select'
-        )
-      );
+  const editBtn = document.querySelector(".edit-btn");
+  const fields  = Array.from(
+    document.querySelectorAll(
+      'input:not([name="birthday"]):not([name="email"]), select'
+    )
+  );
 
-      
-      const profRes = await fetch(`${API_BASE}/profile/admin`, { headers });
-      if (!profRes.ok) {
-        console.error(await profRes.text());
-        alert("Not authenticated – please log in again");
-        return window.location.href = "../log-in.html";
-      }
-      const profile = await profRes.json();
+  try {
+    const profRes = await fetch(`${API_BASE}/profile/admin`, { headers });
+    if (!profRes.ok) {
+      console.error(await profRes.text());
+      showInAppAlert("Not authenticated – please log in again.", () => {
+        localStorage.clear();
+        window.location.href = "../log-in.html";
+      });
+      return;
+    }
+    const profile = await profRes.json();
 
-      
-      document.getElementById("name").value     = profile.first_name || "";
-      document.getElementById("surname").value  = profile.last_name  || "";
-      document.querySelector('input[name="birthday"]').value = profile.birthday || "";
-      document.getElementById("city").value     = profile.city       || "";
-      document.getElementById("country").value  = profile.country    || "";
-      document.getElementById("gender").value   = profile.gender     || "";
-      document.getElementById("email-id").value = profile.email      || "";
-      document.getElementById("profilePic").src =
+    document.getElementById("name").value     = profile.first_name || "";
+    document.getElementById("surname").value  = profile.last_name  || "";
+    document.querySelector('input[name="birthday"]').value = profile.birthday || "";
+    document.getElementById("city").value     = profile.city       || "";
+    document.getElementById("country").value  = profile.country    || "";
+    document.getElementById("gender").value   = profile.gender     || "";
+    document.getElementById("email-id").value = profile.email      || "";
+    document.getElementById("profilePic").src =
       profile.profile_picture && profile.profile_picture.startsWith("/static/")
       ? `http://localhost:8000${profile.profile_picture}`
       : "../images/avatar.png";
 
+    const countrySel = document.getElementById("country");
+    countrySel.innerHTML = `<option value="">Select</option>`;
+    const countries = await (await fetch(`${API_BASE}/profile/countries`, { headers })).json();
+    countries.forEach(c => {
+      const o = new Option(c, c);
+      if (c === profile.country) o.selected = true;
+      countrySel.append(o);
+    });
 
+    let editing = false;
+    editBtn.addEventListener("click", async () => {
+      if (!editing) {
+        fields.forEach(f => f.disabled = false);
+        editBtn.textContent = "Save";
+        editing = true;
+        return;
+      }
 
-      
-      const countrySel = document.getElementById("country");
-      countrySel.innerHTML = `<option value="">Select</option>`;
-      const countries = await (await fetch(`${API_BASE}/profile/countries`, { headers })).json();
-      countries.forEach(c => {
-        const o = new Option(c, c);
-        if (c === profile.country) o.selected = true;
-        countrySel.append(o);
-      });
+      const rawCountry = document.getElementById("country").value;
+      const payload = {
+        first_name: document.getElementById("name").value,
+        last_name:  document.getElementById("surname").value,
+        ...(rawCountry && { country_name: rawCountry }),
+        city:       document.getElementById("city").value,
+        gender:     document.getElementById("gender").value || null,
+      };
 
-      
-      let editing = false;
-      editBtn.addEventListener("click", async () => {
-        if (!editing) {
-          fields.forEach(f => f.disabled = false);
-          editBtn.textContent = "Save";
-          editing = true;
-          return;
-        }
-
-        const rawCountry = document.getElementById("country").value;
-        const payload = {
-          first_name:   document.getElementById("name").value,
-          last_name:    document.getElementById("surname").value,
-          ...(rawCountry && { country_name: rawCountry }),
-          city:         document.getElementById("city").value,
-          gender:       document.getElementById("gender").value || null,
-        };
-
+      try {
         const res = await fetch(`${API_BASE}/profile/admin`, {
           method: "PUT", headers, body: JSON.stringify(payload)
         });
+
         if (!res.ok) {
           const err = await res.json();
           console.error("Save error:", err);
-          return alert("Save failed: " + JSON.stringify(err.detail || err));
+          return showInAppAlert("Save failed: " + JSON.stringify(err.detail || err));
         }
 
         fields.forEach(f => f.disabled = true);
         editBtn.textContent = "Edit";
         editing = false;
-        alert("Your changes are saved");
-      });
+        showInAppAlert("✅ Your changes are saved");
+      } catch (err) {
+        console.error("Save failed:", err);
+        showInAppAlert("❌ Save request failed.");
+      }
     });
-  </script>
+
+  } catch (err) {
+    console.error("Profile load error:", err);
+    showInAppAlert("Error loading profile. Please try again.");
+  }
+});
+</script>
+
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

@@ -29,13 +29,6 @@
         </p>          
         <button type="submit" class="contact_btn">Send Message</button>
     </form>
-
-    <div id="success-modal">
-        <div class="modal-content">
-            <p> Thank you! Your message has been sent.</p>
-            <button onclick="closeModal()" class="close-btn">Close</button>
-        </div>
-    </div>
     
       <p class="contact_p_end">We’re excited to hear from you and help you on your journey abroad!</p>
       
@@ -71,7 +64,7 @@
     <script src="auth.js"></script>
     <script src="script.js"></script>    
     <script>
-    injectHeader();
+injectHeader();
 
 document.querySelector(".form_contact").addEventListener("submit", function(event) {
     event.preventDefault();
@@ -82,7 +75,7 @@ document.querySelector(".form_contact").addEventListener("submit", function(even
     const messageValue = messageField.value.trim();
 
     if (messageValue.length < 20) {
-        alert("Please write at least 20 characters in your message.");
+        showInAppAlert("Please write at least 20 characters in your message.");
         return;
     }
 
@@ -94,17 +87,29 @@ document.querySelector(".form_contact").addEventListener("submit", function(even
         }
     }).then(response => {
         if (response.ok) {
-            document.getElementById("success-modal").style.display = "flex";
-            form.reset();
+            showInAppAlert("Thank you! Your message has been sent.", () => {
+                form.reset();
+            });
         } else {
-            alert("Oops! There was a problem submitting your form.");
+            showInAppAlert("Oops! There was a problem submitting your form.");
         }
     }).catch(error => {
-        alert("Oops! There was a problem submitting your form.");
+        showInAppAlert("Oops! There was a problem submitting your form.");
     });
 });
 
 
     </script>
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

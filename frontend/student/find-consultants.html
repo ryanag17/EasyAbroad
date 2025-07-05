@@ -323,235 +323,227 @@
 <script src="../auth.js"></script>
 <script src="../script.js"></script>  
 <script>
-    (async () => {
+  (async () => {
     await autoEnforceRoleFromPath();
   })();  
-function goToConsultantProfile(userId, focus) {
-  const page = focus === 'internship'
-    ? 'consultant-profile-internship.html'
-    : 'consultant-profile-study.html';
-  window.location.href = `${page}?id=${userId}`;
-}
 
-window.onload = async function () {
-  document.getElementById("loadingOverlay").style.display = "flex";
-  
-  const map = L.map('map').setView([50, 10], 4);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
+  function goToConsultantProfile(userId, focus) {
+    const page = focus === 'internship'
+      ? 'consultant-profile-internship.html'
+      : 'consultant-profile-study.html';
+    window.location.href = `${page}?id=${userId}`;
+  }
 
-  delete L.Icon.Default.prototype._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-  });
+  window.onload = async function () {
+    document.getElementById("loadingOverlay").style.display = "flex";
+    
+    const map = L.map('map').setView([50, 10], 4);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-  const consultantInfoBox = document.getElementById('consultant-info');
-  const countryFilter = document.getElementById('country');
-  const cityFilter = document.getElementById('city');
-  const focusFilter = document.getElementById('focus');
-  const token = localStorage.getItem("accessToken");
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+    });
 
-  let allConsultants = [];
+    const countryFilter = document.getElementById('country');
+    const cityFilter = document.getElementById('city');
+    const focusFilter = document.getElementById('focus');
+    const token = localStorage.getItem("accessToken");
 
-  async function fetchAverageRating(consultantId) {
-    try {
-      const res = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`);
-      const data = await res.json();
-      return data.average_rating ?? null;
-    } catch (e) {
-      console.warn("Rating fetch failed:", e);
+    let allConsultants = [];
+
+    async function fetchAverageRating(consultantId) {
+      try {
+        const res = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`);
+        const data = await res.json();
+        return data.average_rating ?? null;
+      } catch (e) {
+        console.warn("Rating fetch failed:", e);
+        return null;
+      }
+    }
+
+    async function fetchConsultants() {
+      try {
+        const [studyRes, internshipRes] = await Promise.all([
+          fetch("http://localhost:8000/consultancy/study/approved", { headers: { Authorization: `Bearer ${token}` }}),
+          fetch("http://localhost:8000/consultancy/internship/approved", { headers: { Authorization: `Bearer ${token}` }})
+        ]);
+
+        const studyData = await studyRes.json();
+        const internshipData = await internshipRes.json();
+
+        const studyMapped = await Promise.all(studyData.map(async s => ({
+          user_id: s.user_id,
+          name: s.first_name + " " + s.last_name,
+          profilePic: s.profile_picture ? `http://localhost:8000${s.profile_picture}` : "../images/avatar.png",
+          city: s.city_of_study,
+          country: s.country_of_study,
+          focus: "study",
+          institution: s.university_name,
+          period: { from: formatDate(s.education_start), to: formatDate(s.education_finish) },
+          rating: await fetchAverageRating(s.user_id),
+          location: await geocode(s.city_of_study, s.country_of_study)
+        })));
+
+        const internshipMapped = await Promise.all(internshipData.map(async i => ({
+          user_id: i.user_id,
+          name: i.first_name + " " + i.last_name,
+          profilePic: i.profile_picture ? `http://localhost:8000${i.profile_picture}` : "../images/avatar.png",
+          city: i.city_of_internship,
+          country: i.country_of_internship,
+          focus: "internship",
+          institution: i.company_name,
+          period: { from: formatDate(i.internship_start), to: formatDate(i.internship_finish) },
+          rating: await fetchAverageRating(i.user_id),
+          location: await geocode(i.city_of_internship, i.country_of_internship)
+        })));
+
+        allConsultants = [...studyMapped, ...internshipMapped].filter(c => c.location);
+
+        const countrySet = new Set(allConsultants.map(c => c.country).filter(Boolean));
+        countryFilter.innerHTML = `<option value="">Select</option>`;
+        countrySet.forEach(country => {
+          const opt = document.createElement("option");
+          opt.value = country;
+          opt.textContent = country;
+          countryFilter.appendChild(opt);
+        });
+
+        applyFilters();
+      } catch (err) {
+        console.error("Failed to Fetch Consultants:", err);
+        showInAppAlert("❌ Failed to fetch consultants. Please try again later.");
+      }
+    }
+
+    async function geocode(city, country) {
+      try {
+        const query = `${city}, ${country}`;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        if (data.length > 0) {
+          return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        }
+      } catch (e) {
+        console.warn("Geocoding Failed:", e);
+      }
       return null;
     }
-  }
 
-
-  async function fetchConsultants() {
-  try {
-    const [studyRes, internshipRes] = await Promise.all([
-      fetch("http://localhost:8000/consultancy/study/approved", { headers: { Authorization: `Bearer ${token}` }}),
-      fetch("http://localhost:8000/consultancy/internship/approved", { headers: { Authorization: `Bearer ${token}` }})
-    ]);
-
-    const studyData = await studyRes.json();
-    const internshipData = await internshipRes.json();
-
-      const studyMapped = await Promise.all(studyData.map(async s => ({
-      user_id: s.user_id, name: s.first_name + " " + s.last_name,
-      profilePic: s.profile_picture ? `http://localhost:8000${s.profile_picture}` : "../images/avatar.png",
-      city: s.city_of_study,
-      country: s.country_of_study,
-      focus: "study",
-      institution: s.university_name,
-      period: {
-        from: formatDate(s.education_start),
-        to: formatDate(s.education_finish)
-      },
-      rating: await fetchAverageRating(s.user_id),
-      location: await geocode(s.city_of_study, s.country_of_study)
-    })));
-
-      const internshipMapped = await Promise.all(internshipData.map(async i => ({
-      user_id: i.user_id,  name: i.first_name + " " + i.last_name,
-      profilePic: i.profile_picture ? `http://localhost:8000${i.profile_picture}` : "../images/avatar.png",
-      city: i.city_of_internship,
-      country: i.country_of_internship,
-      focus: "internship",
-      institution: i.company_name,
-      period: {
-        from: formatDate(i.internship_start),
-        to: formatDate(i.internship_finish)
-      },
-      rating: await fetchAverageRating(i.user_id),
-      location: await geocode(i.city_of_internship, i.country_of_internship)
-    })));
-
-    allConsultants = [...studyMapped, ...internshipMapped].filter(c => c.location);
-
-    const countrySet = new Set(allConsultants.map(c => c.country).filter(Boolean));
-    countryFilter.innerHTML = `<option value="">Select</option>`;
-    countrySet.forEach(country => {
-      const opt = document.createElement("option");
-      opt.value = country;
-      opt.textContent = country;
-      countryFilter.appendChild(opt);
-    });
-
-    applyFilters();
-  } catch (err) {
-    console.error("Failed to Fetch Consultants:", err);
-  }
-}
-
-
-  const countrySet = new Set(allConsultants.map(c => c.country).filter(Boolean));
-  countryFilter.innerHTML = `<option value="">Select</option>`;
-  countrySet.forEach(country => {
-    const opt = document.createElement("option");
-    opt.value = country;
-    opt.textContent = country;
-    countryFilter.appendChild(opt);
-  });
-
-
-  async function geocode(city, country) {
-    try {
-      const query = `${city}, ${country}`;
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-      const data = await res.json();
-      if (data.length > 0) {
-        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-      }
-    } catch (e) {
-      console.warn("Geocoding Failed:", e);
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      if (isNaN(date)) return "-";
+      return `${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
     }
-    return null;
-  }
 
-  function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    if (isNaN(date)) return "-";
-    return `${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
-  }
+    let markers = [];
 
-  let markers = [];
+    function addMarkers(filteredConsultants) {
+      markers.forEach(marker => map.removeLayer(marker));
+      markers = [];
 
-  function addMarkers(filteredConsultants) {
-    markers.forEach(marker => map.removeLayer(marker));
-    markers = [];
+      filteredConsultants.forEach((consultant) => {
+        const marker = L.marker(consultant.location).addTo(map);
+        marker.bindPopup(`<strong>${consultant.name}</strong><br>${consultant.city}, ${consultant.country}`);
+        marker.on('click', () => showConsultantDetails(consultant));
+        markers.push(marker);
+      });
+    }
 
-    filteredConsultants.forEach((consultant) => {
-      const marker = L.marker(consultant.location).addTo(map);
-      marker.bindPopup(`<strong>${consultant.name}</strong><br>${consultant.city}, ${consultant.country}`);
-      marker.on('click', () => showConsultantDetails(consultant));
-      markers.push(marker);
-    });
-  }
-
-function showConsultantDetails(consultant) {
-  const popupContent = `
-      <div style="min-width: 260px; max-width: 300px; font-family: sans-serif; font-size: 14px;">
-      <div style="display: flex; align-items: center; margin-bottom: 10px;">
-        <img src="${consultant.profilePic}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;" />
-        <div>
-          <strong>${consultant.name}</strong><br>
-          ${consultant.country}, ${consultant.city}
+    function showConsultantDetails(consultant) {
+      const popupContent = `
+        <div style="min-width: 260px; max-width: 300px; font-family: sans-serif; font-size: 14px;">
+          <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <img src="${consultant.profilePic}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;" />
+            <div>
+              <strong>${consultant.name}</strong><br>
+              ${consultant.country}, ${consultant.city}
+            </div>
+          </div>
+          <div style="margin-bottom: 8px;">
+            <div><strong>Focus:</strong> ${consultant.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</div>
+            <div><strong>Institution:</strong> ${consultant.institution}</div>
+            <div><strong>Date of Mobility:</strong> ${consultant.period.from} – ${consultant.period.to}</div>
+            <div style="margin-top: 4px;"><strong>${consultant.rating ? `Currently Rated ${consultant.rating}/5` : 'Currently Have No Reviews'}</strong></div>
+          </div>
+          <button class="profile-btn" onclick="goToConsultantProfile('${consultant.user_id}', '${consultant.focus}')">View Profile</button>
         </div>
-      </div>
-      <div style="margin-bottom: 8px;">
-        <div><strong>Focus:</strong> ${consultant.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</div>
-        <div><strong>Institution:</strong> ${consultant.institution}</div>
-        <div><strong>Date of Mobility:</strong> ${consultant.period.from} – ${consultant.period.to}</div>
-        <div style="margin-top: 4px;"><strong>${consultant.rating ? `Currently Rated ${consultant.rating}/5` : 'Currently Have No Reviews'}</strong></div>
-      </div>
-      <button class="profile-btn" onclick="goToConsultantProfile('${consultant.user_id}', '${consultant.focus}')">View Profile</button>
-    </div>
-  `;
-
-  const popup = L.popup({ maxWidth: 300, closeButton: true, offset: [0, -10] })
-    .setLatLng(consultant.location)
-    .setContent(popupContent)
-    .openOn(map);
-}
-
-function applyFilters() {
-  const countryVal = countryFilter.value.toLowerCase();
-  const cityVal = cityFilter.value.toLowerCase();
-  const focusVal = focusFilter.value.toLowerCase();
-
-  const filtered = allConsultants.filter(c => {
-    const countryMatch = !countryVal || c.country.toLowerCase() === countryVal;
-    const cityMatch = !cityVal || c.city.toLowerCase().includes(cityVal);
-    const focusMatch = !focusVal || c.focus === focusVal;
-    return countryMatch && cityMatch && focusMatch;
-  });
-
-  addMarkers(filtered);
-
-  
-  const listContainer = document.getElementById("consultant-list");
-  listContainer.innerHTML = "";  
-
-  if (filtered.length === 0) {
-    listContainer.innerHTML = "<p>No consultants found for the selected filters.</p>";
-  } else {
-    filtered.forEach(c => {
-      const div = document.createElement("div");
-      div.className = "consultant-card";
-      div.innerHTML = `
-        <img src="${c.profilePic}" alt="Avatar">
-        <h4>${c.name}</h4>
-        <p><strong>${c.city}, ${c.country}</strong></p>
-        <p>${c.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</p>
-        <p>${c.institution}</p>
-        <p><small>${c.period.from} – ${c.period.to}</small></p>
-        <p style="margin: 6px 0;"><strong>${c.rating ? `${c.rating.toFixed(1)}/5 ★` : 'No Reviews Yet'}</strong></p>
-        <button class="profile-btn" onclick="goToConsultantProfile('${c.user_id}', '${c.focus}')">View Profile</button>
       `;
-      listContainer.appendChild(div);
-    });
-  }
-}
 
+      const popup = L.popup({ maxWidth: 300, closeButton: true, offset: [0, -10] })
+        .setLatLng(consultant.location)
+        .setContent(popupContent)
+        .openOn(map);
+    }
 
-  countryFilter.addEventListener('change', applyFilters);
-  cityFilter.addEventListener('input', applyFilters);
-  focusFilter.addEventListener('change', applyFilters);
+    function applyFilters() {
+      const countryVal = countryFilter.value.toLowerCase();
+      const cityVal = cityFilter.value.toLowerCase();
+      const focusVal = focusFilter.value.toLowerCase();
 
-  try {
-    await fetchConsultants();
-  } finally {
-    document.getElementById("loadingOverlay").style.display = "none";
-  }
+      const filtered = allConsultants.filter(c => {
+        const countryMatch = !countryVal || c.country.toLowerCase() === countryVal;
+        const cityMatch = !cityVal || c.city.toLowerCase().includes(cityVal);
+        const focusMatch = !focusVal || c.focus === focusVal;
+        return countryMatch && cityMatch && focusMatch;
+      });
 
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 300);
-};
+      addMarkers(filtered);
+
+      const listContainer = document.getElementById("consultant-list");
+      listContainer.innerHTML = "";  
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = "<p>No consultants found for the selected filters.</p>";
+      } else {
+        filtered.forEach(c => {
+          const div = document.createElement("div");
+          div.className = "consultant-card";
+          div.innerHTML = `
+            <img src="${c.profilePic}" alt="Avatar">
+            <h4>${c.name}</h4>
+            <p><strong>${c.city}, ${c.country}</strong></p>
+            <p>${c.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</p>
+            <p>${c.institution}</p>
+            <p><small>${c.period.from} – ${c.period.to}</small></p>
+            <p style="margin: 6px 0;"><strong>${c.rating ? `${c.rating.toFixed(1)}/5 ★` : 'No Reviews Yet'}</strong></p>
+            <button class="profile-btn" onclick="goToConsultantProfile('${c.user_id}', '${c.focus}')">View Profile</button>
+          `;
+          listContainer.appendChild(div);
+        });
+      }
+    }
+
+    countryFilter.addEventListener('change', applyFilters);
+    cityFilter.addEventListener('input', applyFilters);
+    focusFilter.addEventListener('change', applyFilters);
+
+    try {
+      await fetchConsultants();
+    } finally {
+      document.getElementById("loadingOverlay").style.display = "none";
+    }
+
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 300);
+  };
 </script>
 
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

@@ -108,46 +108,57 @@
     </footer>
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
-  <script>
-      (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
-    document.addEventListener("DOMContentLoaded", async () => {
-      const API_BASE = "http://localhost:8000";
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        alert("Please log in first.");
-        return window.location.href = "../log-in.html";
-      }
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
+})();  
 
-      const headers = {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      };
-
-      try {
-        const res = await fetch(`${API_BASE}/profile/admin`, { headers });
-        if (!res.ok) {
-          throw new Error("Unauthorized");
-        }
-
-        const profile = await res.json();
-        const name = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
-        document.querySelector(".user-fullname").textContent = name || "Admin";
-
-        
-        const avatarEl = document.getElementById("userAvatar");
-        avatarEl.src = profile.profile_picture
-          ? `http://localhost:8000${profile.profile_picture}?t=${new Date().getTime()}`
-          : "../images/avatar.png";
-
-      } catch (err) {
-        console.error("Failed to load profile:", err);
-        alert("Failed to load user info. Please log in again.");
-        localStorage.clear(); 
-        window.location.href = "../log-in.html";
-      }
+document.addEventListener("DOMContentLoaded", async () => {
+  const API_BASE = "http://localhost:8000";
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    showInAppAlert("Please log in first.", () => {
+      window.location.href = "../log-in.html";
     });
-  </script>
+    return;
+  }
+
+  const headers = {
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json"
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/profile/admin`, { headers });
+    if (!res.ok) throw new Error("Unauthorized");
+
+    const profile = await res.json();
+    const name = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
+    document.querySelector(".user-fullname").textContent = name || "Admin";
+
+    const avatarEl = document.getElementById("userAvatar");
+    avatarEl.src = profile.profile_picture
+      ? `http://localhost:8000${profile.profile_picture}?t=${new Date().getTime()}`
+      : "../images/avatar.png";
+  } catch (err) {
+    console.error("Failed to load profile:", err);
+    showInAppAlert("Failed to load user info. Please log in again.", () => {
+      localStorage.clear();
+      window.location.href = "../log-in.html";
+    });
+  }
+});
+</script>
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>  
 </body>
 </html>

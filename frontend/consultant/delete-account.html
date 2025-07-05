@@ -116,62 +116,83 @@
 
   <script src="../auth.js"></script>
   <script src="../script.js"></script>     
-    <script>
-  (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
-  const deleteForm = document.getElementById("deleteAccountForm");
-  const deleteEmail = document.getElementById("email");
-  const deletePassword = document.getElementById("deletePassword");
-  const deleteError = document.getElementById("deleteError");
-  let deleteFormDirty = false;
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
+})();  
 
-  
-  const dummyEmail = "user@example.com";
-  const dummyPassword = "123456";
+const deleteForm = document.getElementById("deleteAccountForm");
+const deleteEmail = document.getElementById("email");
+const deletePassword = document.getElementById("deletePassword");
+const deleteError = document.getElementById("deleteError");
+let deleteFormDirty = false;
 
-  deleteForm.addEventListener("input", () => {
-    deleteFormDirty = true;
-    deleteError.style.display = "none";
-  });
+// Dummy credentials for demo
+const dummyEmail = "user@example.com";
+const dummyPassword = "123456";
 
-  deleteForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+// Reset error on input
+deleteForm.addEventListener("input", () => {
+  deleteFormDirty = true;
+  deleteError.style.display = "none";
+});
 
-    const email = deleteEmail.value.trim();
-    const password = deletePassword.value;
+deleteForm.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-    if (email !== dummyEmail || password !== dummyPassword) {
-      deleteError.style.display = "block";
-      return;
-    }
+  const email = deleteEmail.value.trim();
+  const password = deletePassword.value;
 
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      deleteFormDirty = false;
-      alert("Your account has been deleted.");
+  if (email !== dummyEmail || password !== dummyPassword) {
+    deleteError.style.display = "block";
+    return;
+  }
+
+  if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+    deleteFormDirty = false;
+    showInAppAlert("✅ Your account has been deleted.");
+    setTimeout(() => {
       window.location.href = "../../";
+    }, 1500);
+  }
+});
+
+// Warn before leaving if form dirty
+window.addEventListener("beforeunload", (e) => {
+  if (deleteFormDirty) {
+    e.preventDefault();
+    e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
+  }
+});
+
+// Toggle password visibility
+document.querySelectorAll(".toggle-password").forEach(button => {
+  button.addEventListener("click", () => {
+    const target = button.getAttribute("toggle");
+    const input = document.querySelector(target);
+    if (!input) return;
+
+    if (input.type === "password") {
+      input.type = "text";
+      button.classList.add("visible");
+    } else {
+      input.type = "password";
+      button.classList.remove("visible");
     }
   });
+});
+</script>
 
-  window.addEventListener("beforeunload", (e) => {
-    if (deleteFormDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-    }
-  });
 
-  
-  document.querySelectorAll(".toggle-password").forEach(button => {
-    button.addEventListener("click", () => {
-      const targetId = button.getAttribute("data-target");
-      const input = document.getElementById(targetId);
-      const isPassword = input.type === "password";
 
-      input.type = isPassword ? "text" : "password";
-      button.textContent = isPassword ? "Hide" : "Show";
-    });
-  });
-
-    </script>
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

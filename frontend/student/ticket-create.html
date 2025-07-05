@@ -94,94 +94,104 @@
       </div>
     </footer>
 
-    <script src="../auth.js"></script>
-    <script src="../script.js"></script>
-    <script>
-      (async () => {
-        await autoEnforceRoleFromPath();
-      })();
+<script src="../auth.js"></script>
+<script src="../script.js"></script>
+<script>
+  (async () => {
+    await autoEnforceRoleFromPath();
+  })();
 
-      const supportForm = document.getElementById("supportTicketForm");
-      const topicInput = document.getElementById("topic");
-      const messageInput = document.getElementById("message");
-      const supportError = document.getElementById("supportError");
-      let isSupportDirty = false;
+  const supportForm = document.getElementById("supportTicketForm");
+  const topicInput = document.getElementById("topic");
+  const messageInput = document.getElementById("message");
+  const supportError = document.getElementById("supportError");
+  let isSupportDirty = false;
 
-      supportForm.addEventListener("input", () => {
-        isSupportDirty = true;
-        supportError.style.display = "none";
+  supportForm.addEventListener("input", () => {
+    isSupportDirty = true;
+    supportError.style.display = "none";
+  });
+
+  supportForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const topic = topicInput.value.trim();
+    const message = messageInput.value.trim();
+    const token = localStorage.getItem("accessToken");
+
+    if (topic.length < 5) {
+      supportError.textContent = "Topic must be at least 5 characters.";
+      supportError.style.display = "block";
+      return;
+    }
+
+    if (message.length < 10) {
+      supportError.textContent = "Message must be at least 10 characters.";
+      supportError.style.display = "block";
+      return;
+    }
+
+    if (!token) {
+      supportError.textContent = "You are not logged in. Please log in first.";
+      supportError.style.display = "block";
+      return;
+    }
+
+    const confirmed = await showInAppConfirm("Are you sure you want to submit this ticket?");
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch("http://localhost:8000/support/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ subject: topic, description: message }),
       });
 
-      supportForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const topic = topicInput.value.trim();
-        const message = messageInput.value.trim();
-        const token = localStorage.getItem("accessToken");
-
-        if (topic.length < 5) {
-          supportError.textContent = "Topic must be at least 5 characters.";
-          supportError.style.display = "block";
-          return;
-        }
-
-        if (message.length < 10) {
-          supportError.textContent = "Message must be at least 10 characters.";
-          supportError.style.display = "block";
-          return;
-        }
-
-        if (!token) {
-          supportError.textContent = "You are not logged in. Please log in first.";
-          supportError.style.display = "block";
-          return;
-        }
-
-        const confirmed = confirm("Are you sure you want to submit this ticket?");
-        if (!confirmed) return;
-
-        try {
-          const res = await fetch("http://localhost:8000/support/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ subject: topic, description: message }),
-          });
-
-          if (res.ok) {
-            const data = await res.json();
-            const ticketId = data.ticket_id;
-            isSupportDirty = false;
-            window.location.replace(`ticket-detail.html?id=${ticketId}`);
-          } else {
-            alert("Failed to create ticket");
-          }
-
-          alert("Support ticket submitted successfully!");
-          isSupportDirty = false;
-        } catch (error) {
-          supportError.textContent = error.message;
-          supportError.style.display = "block";
-        }
-      });
-
-      window.addEventListener("beforeunload", (e) => {
-        if (isSupportDirty) {
-          e.preventDefault();
-          e.returnValue = "You have unsaved changes.";
-        }
-      });
-
-      function confirmLeaveToTickets(e) {
-        e.preventDefault();
-        if (isSupportDirty) {
-          const confirmed = confirm("You have unsaved changes. Are you sure you want to leave this page?");
-          if (!confirmed) return;
-        }
-        window.location.href = "support-tickets.html";
+      if (res.ok) {
+        const data = await res.json();
+        const ticketId = data.ticket_id;
+        await showInAppAlert("Support ticket submitted successfully!");
+        isSupportDirty = false;
+        window.location.replace(`ticket-detail.html?id=${ticketId}`);
+      } else {
+        await showInAppAlert("Failed to create ticket");
       }
-    </script>
+    } catch (error) {
+      supportError.textContent = error.message;
+      supportError.style.display = "block";
+    }
+  });
+
+  window.addEventListener("beforeunload", (e) => {
+    if (isSupportDirty) {
+      e.preventDefault();
+      e.returnValue = "You have unsaved changes.";
+    }
+  });
+
+  async function confirmLeaveToTickets(e) {
+    e.preventDefault();
+    if (isSupportDirty) {
+      const confirmed = await showInAppConfirm("You have unsaved changes. Are you sure you want to leave this page?");
+      if (!confirmed) return;
+    }
+    window.location.href = "support-tickets.html";
+  }
+</script>
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
+    
   </body>
 </html>

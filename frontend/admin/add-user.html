@@ -209,7 +209,6 @@
     }
   })();
 
-  
   function checker() {
     const emailId = document.getElementById("email-id");
     const errorMsg = document.getElementById("error-msg");
@@ -237,7 +236,6 @@
   function validateAddUserForm() {
     let isValid = true;
 
-    
     document.querySelectorAll('.error-message').forEach(p => {
       p.style.display = 'none';
       p.textContent = '';
@@ -378,14 +376,15 @@
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("access_token", data.access_token);
-        alert("User created successfully!");
-        window.location.href = 'user-management.html';
+        showInAppAlert("User created successfully!", () => {
+          window.location.href = 'user-management.html';
+        });
       } else {
         const error = await response.json();
-        alert("Error: " + (error.detail || "Something went wrong."));
+        showInAppAlert("Error: " + (error.detail || "Something went wrong."));
       }
     } catch (err) {
-      alert("Network error: " + err.message);
+      showInAppAlert("Network error: " + err.message);
     }
   });
 
@@ -420,10 +419,18 @@
       console.error("Failed to load countries:", err);
     }
   });
-
 </script>
 
 
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 
     </body>
 </html>

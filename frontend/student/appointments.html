@@ -116,13 +116,12 @@
 
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
-    <script>
+<script>
 (async () => {
   await autoEnforceRoleFromPath();
 })();
 
 let appointments = [];
-
 
 async function fetchAppointments() {
   const token = localStorage.getItem("accessToken");
@@ -140,7 +139,6 @@ async function fetchAppointments() {
   return await res.json();
 }
 
-
 function formatDate(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
@@ -148,30 +146,28 @@ function formatDate(dateStr) {
   return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
 }
 
-
 function canCancel(app) {
   const meetingDateTime = new Date(`${app.date}T${app.start_time || app.time}:00`);
   const now = new Date();
   return app.status === "upcoming" && (meetingDateTime - now > 24 * 60 * 60 * 1000);
 }
 
-
 async function cancelAppointment(appointmentId) {
-  if (!confirm("Are you sure you want to cancel this appointment?")) return;
-  const token = localStorage.getItem("accessToken");
-  const res = await fetch(`http://localhost:8000/appointment/${appointmentId}/cancel`, {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${token}` }
+  showInAppConfirm("Are you sure you want to cancel this appointment?", async () => {
+    const token = localStorage.getItem("accessToken");
+    const res = await fetch(`http://localhost:8000/appointment/${appointmentId}/cancel`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (res.ok) {
+      showInAppAlert("✅ Appointment cancelled.");
+      window.location.reload();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      showInAppAlert(data.detail || "❌ Failed to cancel appointment.");
+    }
   });
-  if (res.ok) {
-    alert("Appointment cancelled.");
-    window.location.reload();
-  } else {
-    const data = await res.json().catch(() => ({}));
-    alert(data.detail || "Failed to cancel appointment.");
-  }
 }
-
 
 function renderAppointments(status) {
   const container = document.querySelector('.appointments-container');
@@ -188,7 +184,6 @@ function renderAppointments(status) {
     const card = document.createElement('div');
     card.className = 'appointment-card';
 
-    
     let meetingLinkBlock = '';
     if (status === 'upcoming' && app.meeting_link) {
       meetingLinkBlock = `
@@ -197,7 +192,6 @@ function renderAppointments(status) {
       `;
     }
 
-    
     let reasonBlock = '';
     if (status === 'rejected' && app.cancellation_reason) {
       reasonBlock = `
@@ -227,16 +221,15 @@ function renderAppointments(status) {
         ${meetingLinkBlock}
        <a class="message-btn" href="chat.html?partnerId=${app.consultant_id}">Send a message</a>
        ${status === 'upcoming' && canCancel(app) ? `
-  <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
-` : ''}
-        ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?appointment_id=${app.id}">Review</a>` : ''}
+         <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
+       ` : ''}
+       ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?appointment_id=${app.id}">Review</a>` : ''}
       </div>
     `;
 
     container.appendChild(card);
   });
 }
-
 
 const tabs = document.querySelectorAll('.tab');
 tabs.forEach(tab => {
@@ -252,9 +245,7 @@ function getCurrentTab() {
   return active ? active.getAttribute('data-status') : 'upcoming';
 }
 
-
 window.onload = async () => {
-  
   const defaultTab = window.location.hash.replace("#", "") || "upcoming";
   tabs.forEach(t => {
     if (t.dataset.status === defaultTab) t.classList.add('active');
@@ -272,10 +263,12 @@ function openCancelModal(appId) {
   document.getElementById('cancelReasonInput').value = '';
   document.getElementById('cancelModal').style.display = 'flex';
 }
+
 function closeCancelModal() {
   document.getElementById('cancelModal').style.display = 'none';
   tempCancelId = null;
 }
+
 window.addEventListener("click", function(e) {
   const modal = document.getElementById('cancelModal');
   if (e.target === modal) closeCancelModal();
@@ -284,7 +277,7 @@ window.addEventListener("click", function(e) {
 async function confirmCancellation() {
   const reason = document.getElementById('cancelReasonInput').value.trim();
   if (!reason) {
-    alert("Please enter a reason for cancellation.");
+    showInAppAlert("⚠️ Please enter a reason for cancellation.");
     return;
   }
   const token = localStorage.getItem("accessToken");
@@ -295,15 +288,26 @@ async function confirmCancellation() {
   });
   closeCancelModal();
   if (res.ok) {
-    alert("Appointment cancelled.");
+    showInAppAlert("✅ Appointment cancelled.");
     window.location.reload();
   } else {
     const data = await res.json().catch(() => ({}));
-    alert(data.detail || "Failed to cancel appointment.");
+    showInAppAlert(data.detail || "❌ Failed to cancel appointment.");
   }
 }
+</script>
 
 
-        </script>
+   
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

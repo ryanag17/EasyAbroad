@@ -116,115 +116,129 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>   
 <script>
-    (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
-  function previewProfile(type) {
-    const target = type === "study" ? "preview-study.html" : "preview-internship.html";
-    window.location.href = target;
-  }
+(async () => {
+  await autoEnforceRoleFromPath();
+})();
 
-  async function deleteProfile(type) {
-    const confirmDelete = confirm("This action cannot be undone. Do you want to continue?");
-    if (!confirmDelete) return;
+function previewProfile(type) {
+  const target = type === "study" ? "preview-study.html" : "preview-internship.html";
+  window.location.href = target;
+}
 
-    const token = localStorage.getItem("accessToken");
-    const endpoint = type === "study"
-      ? "http://localhost:8000/consultancy/study"
-      : "http://localhost:8000/consultancy/internship";
+async function deleteProfile(type) {
+  const confirmDelete = confirm("This action cannot be undone. Do you want to continue?");
+  if (!confirmDelete) return;
 
-    try {
-      const res = await fetch(endpoint, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  const token = localStorage.getItem("accessToken");
+  const endpoint = type === "study"
+    ? "http://localhost:8000/consultancy/study"
+    : "http://localhost:8000/consultancy/internship";
 
-      if (res.ok) {
-        renderProfile(type === "study" ? "studyContent" : "internshipContent", null, type);
-      } else {
-        alert("Failed to delete profile");
-      }
-    } catch (err) {
-      console.error("Deletion error:", err);
-    }
-  }
+  try {
+    const res = await fetch(endpoint, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-  function renderProfile(sectionId, profile, type) {
-    const container = document.getElementById(sectionId);
-    container.innerHTML = "";
-
-    if (profile) {
-      const status = profile.status || "pending";
-      let statusClass = "status-pending";
-      if (status === "accepted") statusClass = "status-accepted";
-      else if (status === "rejected") statusClass = "status-rejected";
-
-      container.innerHTML = `
-        <div class="profile-card">
-          ${type === "study" ? `
-            <div class="preview-block">
-              <strong>University name:</strong> ${profile.university_name}
-              <span class="status-badge ${statusClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
-            </div>
-            <div class="preview-block">
-              <strong>Education period:</strong> ${formatDate(profile.education_start)} - ${formatDate(profile.education_finish)}
-            </div>
-          ` : `
-            <div class="preview-block">
-              <strong>Company name:</strong> ${profile.company_name}
-              <span class="status-badge ${statusClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
-            </div>
-            <div class="preview-block">
-              <strong>Employment period:</strong> ${formatDate(profile.internship_start)} - ${formatDate(profile.internship_finish)}
-            </div>
-          `}
-        </div>
-        <div class="btn-group">
-          <button class="preview-btn" onclick="previewProfile('${type}')">Preview</button>
-          <button class="delete-btn" onclick="deleteProfile('${type}')">Delete</button>
-        </div>
-      `;
+    if (res.ok) {
+      renderProfile(type === "study" ? "studyContent" : "internshipContent", null, type);
+      showInAppAlert("✅ Profile deleted successfully.");
     } else {
-      const target = type === "study" ? "add-consultancy-study.html" : "add-consultancy-internship.html";
-      container.innerHTML = `
-        <p>Currently, there is no profile. Click Add to create your consultancy profile.</p>
-        <button class="add-btn" onclick="location.href='${target}'">Add</button>
-      `;
+      const data = await res.json().catch(() => ({}));
+      showInAppAlert("❌ Failed to delete profile: " + (data.detail || res.status));
     }
+  } catch (err) {
+    console.error("Deletion error:", err);
+    showInAppAlert("❌ Error deleting profile.");
   }
+}
 
-  function formatDate(dateStr) {
-    const d = new Date(dateStr);
-    return `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+function renderProfile(sectionId, profile, type) {
+  const container = document.getElementById(sectionId);
+  container.innerHTML = "";
+
+  if (profile) {
+    const status = profile.status || "pending";
+    let statusClass = "status-pending";
+    if (status === "accepted") statusClass = "status-accepted";
+    else if (status === "rejected") statusClass = "status-rejected";
+
+    container.innerHTML = `
+      <div class="profile-card">
+        ${type === "study" ? `
+          <div class="preview-block">
+            <strong>University name:</strong> ${profile.university_name}
+            <span class="status-badge ${statusClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+          </div>
+          <div class="preview-block">
+            <strong>Education period:</strong> ${formatDate(profile.education_start)} - ${formatDate(profile.education_finish)}
+          </div>
+        ` : `
+          <div class="preview-block">
+            <strong>Company name:</strong> ${profile.company_name}
+            <span class="status-badge ${statusClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+          </div>
+          <div class="preview-block">
+            <strong>Employment period:</strong> ${formatDate(profile.internship_start)} - ${formatDate(profile.internship_finish)}
+          </div>
+        `}
+      </div>
+      <div class="btn-group">
+        <button class="preview-btn" onclick="previewProfile('${type}')">Preview</button>
+        <button class="delete-btn" onclick="deleteProfile('${type}')">Delete</button>
+      </div>
+    `;
+  } else {
+    const target = type === "study" ? "add-consultancy-study.html" : "add-consultancy-internship.html";
+    container.innerHTML = `
+      <p>Currently, there is no profile. Click Add to create your consultancy profile.</p>
+      <button class="add-btn" onclick="location.href='${target}'">Add</button>
+    `;
   }
+}
 
-  async function fetchAndRenderProfiles() {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+}
 
-    try {
-      const [studyRes, internRes] = await Promise.all([
-        fetch("http://localhost:8000/consultancy/study/me", {
-          headers: { Authorization: `Bearer ${token}` }
-        }),
-        fetch("http://localhost:8000/consultancy/internship/me", {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-      ]);
+async function fetchAndRenderProfiles() {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return;
 
-      const studyProfile = studyRes.ok ? await studyRes.json() : null;
-      const internshipProfile = internRes.ok ? await internRes.json() : null;
+  try {
+    const [studyRes, internRes] = await Promise.all([
+      fetch("http://localhost:8000/consultancy/study/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
+      fetch("http://localhost:8000/consultancy/internship/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+    ]);
 
-      renderProfile("studyContent", studyProfile, "study");
-      renderProfile("internshipContent", internshipProfile, "internship");
-    } catch (err) {
-      console.error("Failed to load profiles:", err);
-    }
+    const studyProfile = studyRes.ok ? await studyRes.json() : null;
+    const internshipProfile = internRes.ok ? await internRes.json() : null;
+
+    renderProfile("studyContent", studyProfile, "study");
+    renderProfile("internshipContent", internshipProfile, "internship");
+  } catch (err) {
+    console.error("Failed to load profiles:", err);
+    showInAppAlert("❌ Failed to load consultancy profiles.");
   }
+}
 
-  window.onload = fetchAndRenderProfiles;
+window.onload = fetchAndRenderProfiles;
 </script>
 
 
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

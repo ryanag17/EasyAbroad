@@ -169,15 +169,16 @@ async function registerUser() {
     });
 
     if (res.ok) {
-      alert("✅ Registration successful! Redirecting to login…");
-      window.location.href = "log-in.html";
+      showInAppAlert("✅ Registration successful! Redirecting to login…", () => {
+        window.location.href = "log-in.html";
+      });
     } else {
       const data = await res.json();
-      alert("❌ Registration failed: " + (data.detail || data.message || res.status));
+      showInAppAlert("❌ Registration failed: " + (data.detail || data.message || res.status));
     }
   } catch (err) {
     console.error("Error during register:", err);
-    alert("❌ Registration failed due to network error");
+    showInAppAlert("❌ Registration failed due to network error");
   }
 }
 
@@ -208,19 +209,18 @@ async function loginUser() {
       } else if (data.role === "admin") {
         window.location.href = "admin/home.html";
       } else {
-        alert("Unknown role: " + data.role);
+        showInAppAlert("Unknown role: " + data.role);
       }
     }
     else {
-      alert("Login failed: " + (data.detail || data.message));
+      showInAppAlert("Login failed: " + (data.detail || data.message));
     }
   }
   catch (err) {
     console.error("Error during login:", err);
-    alert("❌ Login failed due to network error");
+    showInAppAlert("❌ Login failed due to network error");
   }
 }
-
 
 // 5) FETCH PROFILE
 async function fetchProfile(role) {
@@ -316,20 +316,21 @@ function validateLoginForm() {
   // 1) Basic email check
   const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
   if (!email.match(mailRegex)) {
-    alert("Please enter a valid email address.");
+    showInAppAlert("Please enter a valid email address.");
     document.getElementById("email-id").focus();
     return false;
   }
 
   // 2) Ensure password is not empty
   if (!pw) {
-    alert("Please enter your password.");
+    showInAppAlert("Please enter your password.");
     document.getElementById("password-id").focus();
     return false;
   }
 
   return true;
 }
+
 
 // Expose it so the login HTML can see it:
 window.validateLoginForm = validateLoginForm;
@@ -396,3 +397,60 @@ async function updateNotificationBadge() {
 }
 updateNotificationBadge();
 setInterval(updateNotificationBadge, 10000);
+
+
+function showInAppAlert(message, callback) {
+  const modal = document.getElementById("inAppModal");
+  const msg = document.getElementById("modalMessage");
+  const buttons = document.getElementById("modalButtons");
+  const confirmBtn = document.getElementById("modalConfirmButton");
+  const cancelBtn = document.getElementById("modalCancelButton");
+
+  msg.textContent = message;
+  buttons.style.display = "block";
+  confirmBtn.style.display = "inline-block";
+  cancelBtn.style.display = "none";
+
+  confirmBtn.textContent = "OK";
+
+  confirmBtn.onclick = () => {
+    modal.style.display = "none";
+    if (callback) callback();
+  };
+
+  modal.style.display = "flex";
+}
+
+function showInAppConfirm(message, callback) {
+  const modal = document.getElementById("inAppModal");
+  const msg = document.getElementById("modalMessage");
+  const confirmBtn = document.getElementById("modalConfirmButton");
+  const cancelBtn = document.getElementById("modalCancelButton");
+
+  if (!modal || !msg || !confirmBtn || !cancelBtn) {
+    console.error("Modal elements not found");
+    return;
+  }
+
+  msg.textContent = message;
+  confirmBtn.style.display = "inline-block";
+  cancelBtn.style.display = "inline-block";
+  modal.style.display = "flex";
+
+  // Remove old listeners
+  const newConfirm = confirmBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+
+  const newCancel = cancelBtn.cloneNode(true);
+  cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+  newConfirm.addEventListener("click", () => {
+    modal.style.display = "none";
+    callback(true);
+  });
+
+  newCancel.addEventListener("click", () => {
+    modal.style.display = "none";
+    callback(false);
+  });
+}

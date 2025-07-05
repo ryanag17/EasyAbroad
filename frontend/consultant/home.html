@@ -113,49 +113,55 @@
     </footer>
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
-  <script>
-      (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
-    document.addEventListener("DOMContentLoaded", async () => {
-      const API_BASE = "http://localhost:8000";
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        alert("Please log in first.");
-        return window.location.href = "../log-in.html";
-      }
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
+})();
 
-      const headers = {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      };
+document.addEventListener("DOMContentLoaded", async () => {
+  const API_BASE = "http://localhost:8000";
+  const token = localStorage.getItem("accessToken");
 
-      try {
-        const res = await fetch(`${API_BASE}/profile/consultant`, { headers });
-        if (!res.ok) {
-          throw new Error("Unauthorized");
-        }
+  if (!token) {
+    showInAppAlert("🔒 Please log in first.");
+    return (window.location.href = "../log-in.html");
+  }
 
-        const profile = await res.json();
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
 
-        
-        const name = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
-        document.querySelector(".user-fullname").textContent = name || "Consultant";
+  try {
+    const res = await fetch(`${API_BASE}/profile/consultant`, { headers });
+    if (!res.ok) throw new Error("Unauthorized");
 
-        
-        const avatarEl = document.getElementById("userAvatar");
-        avatarEl.src = profile.profile_picture
-          ? `http://localhost:8000${profile.profile_picture}?t=${new Date().getTime()}`
-          : "../images/avatar.png";
+    const profile = await res.json();
+    const name = [profile.first_name, profile.last_name].filter(Boolean).join(" ").trim();
+    document.querySelector(".user-fullname").textContent = name || "User";
 
-      } catch (err) {
-        console.error("Failed to load profile:", err);
-        alert("Failed to load user info. Please log in again.");
-        localStorage.clear(); 
-        window.location.href = "../log-in.html";
-      }
-    });
-  </script>
+    const avatar = document.getElementById("userAvatar");
+    avatar.src = profile.profile_picture
+      ? `${API_BASE}${profile.profile_picture}?t=${Date.now()}`
+      : "../images/avatar.png";
+  } catch (err) {
+    console.error("Failed to load profile:", err);
+    localStorage.clear();
+    showInAppAlert("⚠️ Session expired. Please log in again.");
+    setTimeout(() => (window.location.href = "../log-in.html"), 1500);
+  }
+});
+</script>
 
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

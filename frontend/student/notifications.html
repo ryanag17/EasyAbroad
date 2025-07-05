@@ -77,286 +77,294 @@
 
     <script src="../auth.js"></script>
     <script src="../script.js"></script>
-    <script>
-        (async () => {
-            await autoEnforceRoleFromPath();
-            await loadNotifications();
-        })();
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
+  await loadNotifications();
+})();
 
-        let notifications = [];
-        const notificationArea = document.getElementById("notificationArea");
+let notifications = [];
+const notificationArea = document.getElementById("notificationArea");
 
-        async function loadNotifications() {
-            notificationArea.innerHTML = "<p>Loading notifications...</p>";
+async function loadNotifications() {
+  notificationArea.innerHTML = "<p>Loading notifications...</p>";
 
-            try {
-                const token = localStorage.getItem("accessToken");
-                const res = await fetch("http://localhost:8000/notifications/me", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+  try {
+    const token = localStorage.getItem("accessToken");
+    const res = await fetch("http://localhost:8000/notifications/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-                if (!res.ok) {
-                    notificationArea.innerHTML = `<p>Failed to fetch notifications.</p>`;
-                    return;
-                }
+    if (!res.ok) {
+      notificationArea.innerHTML = `<p>Failed to fetch notifications.</p>`;
+      return;
+    }
 
-                const data = await res.json();
-                notifications = data.map(n => ({
-                    id: n.id,
-                    text: n.content,
-                    read: n.is_read,
-                    redirect: n.redirect_url || "#"
-                }));
+    const data = await res.json();
+    notifications = data.map(n => ({
+      id: n.id,
+      text: n.content,
+      read: n.is_read,
+      redirect: n.redirect_url || "#"
+    }));
 
-                renderNotifications();
-            } catch (err) {
-                notificationArea.innerHTML = `<p>Error loading notifications.</p>`;
-            }
+    renderNotifications();
+  } catch (err) {
+    notificationArea.innerHTML = `<p>Error loading notifications.</p>`;
+  }
+}
+
+async function openNotification(id, redirectUrl) {
+  const notif = notifications.find(n => n.id === id);
+  if (!notif) return;
+
+  const token = localStorage.getItem("accessToken");
+  try {
+    if (!notif.read) {
+      const res = await fetch(`http://localhost:8000/notifications/${id}/mark-read`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        notif.read = true;
+        renderNotifications([]);
+        updateNotificationBadge();
+      }
+    }
+    window.location.href = redirectUrl;
+  } catch (err) {
+    console.error("Failed to mark notification as read:", err);
+    window.location.href = redirectUrl;
+  }
+}
+
+function renderNotifications(selectedIds = []) {
+  notificationArea.innerHTML = "";
+
+  if (notifications.length === 0) {
+    notificationArea.innerHTML = `<p>There are currently no notifications.</p>`;
+    return;
+  }
+
+  const selectAllDiv = document.createElement("div");
+  selectAllDiv.classList.add("select-all-row");
+  selectAllDiv.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" id="selectAll" />
+        <label for="selectAll">Select all</label>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button id="toggleReadSelected" class="bulk-btn">Mark Selected</button>
+        <button id="deleteSelected" class="bulk-btn">Delete Selected</button>
+      </div>
+    </div>
+  `;
+  notificationArea.appendChild(selectAllDiv);
+
+  notifications.forEach((notif) => {
+    const div = document.createElement("div");
+    div.className = `notification-row ${notif.read ? "read" : "unread"}`;
+    div.innerHTML = `
+      <input type="checkbox" class="notif-checkbox" data-id="${notif.id}" ${selectedIds.includes(notif.id) ? "checked" : ""} />
+      <span class="notif-text" onclick="openNotification(${notif.id}, '${notif.redirect}')" style="cursor: pointer;">
+        ${notif.text}
+      </span>
+      <button class="mark-btn" onclick="toggleRead(${notif.id})">
+        <i class="fas ${notif.read ? 'fa-envelope-open' : 'fa-envelope'}"></i>
+      </button>
+      <button class="trash-btn" onclick="deleteNotification(${notif.id})">
+        <i class="fas fa-trash"></i>
+      </button>
+    `;
+    notificationArea.appendChild(div);
+  });
+
+  document.querySelectorAll(".notif-checkbox").forEach(cb => {
+    cb.addEventListener("change", syncSelectAllCheckbox);
+  });
+
+  syncSelectAllCheckbox();
+  setupEventListeners();
+  updateToggleButtonText();
+}
+
+function setupEventListeners() {
+  const toggleReadBtn = document.getElementById("toggleReadSelected");
+  const checkboxes = document.querySelectorAll(".notif-checkbox");
+
+  checkboxes.forEach(cb => {
+    cb.addEventListener("change", () => updateToggleButtonText());
+  });
+
+  document.getElementById("selectAll").addEventListener("change", function () {
+    const isChecked = this.checked;
+    document.querySelectorAll(".notif-checkbox").forEach(cb => {
+      cb.checked = isChecked;
+    });
+    updateToggleButtonText();
+  });
+
+  toggleReadBtn.addEventListener("click", async () => {
+    const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
+    if (selectedCheckboxes.length === 0) {
+      showInAppAlert("Please select at least one notification.");
+      return;
+    }
+
+    const token = localStorage.getItem("accessToken");
+    const selectedIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.getAttribute("data-id")));
+    const allRead = selectedIds.every(id => notifications.find(n => n.id === id && n.read));
+
+    for (const id of selectedIds) {
+      const notif = notifications.find(n => n.id === id);
+      if (!notif) continue;
+
+      try {
+        const url = allRead 
+          ? `http://localhost:8000/notifications/${id}/mark-unread`
+          : `http://localhost:8000/notifications/${id}/mark-read`;
+
+        const res = await fetch(url, {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+          notif.read = !allRead;
+          updateNotificationBadge();
         }
+      } catch (err) {
+        console.error("Failed to toggle bulk read state:", err);
+      }
+    }
 
-        async function openNotification(id, redirectUrl) {
-            const notif = notifications.find(n => n.id === id);
-            if (!notif) return;
+    renderNotifications(selectedIds);
+  });
 
-            const token = localStorage.getItem("accessToken");
-            try {
-                if (!notif.read) {
-                    const res = await fetch(`http://localhost:8000/notifications/${id}/mark-read`, {
-                        method: "PATCH",
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    if (res.ok) {
-                        notif.read = true;
-                        renderNotifications([]);
-                        updateNotificationBadge();
-                    }
-                }
-                window.location.href = redirectUrl;
-            } catch (err) {
-                console.error("Failed to mark notification as read:", err);
-                window.location.href = redirectUrl;
-            }
+  document.getElementById("deleteSelected").addEventListener("click", () => {
+    const selected = document.querySelectorAll(".notif-checkbox:checked");
+    if (selected.length === 0) {
+      showInAppAlert("Please select at least one notification.");
+      return;
+    }
+    showInAppConfirm("Are you sure you want to delete the selected notifications?", async (confirmed) => {
+      if (!confirmed) return;
+
+      const token = localStorage.getItem("accessToken");
+      const idsToDelete = Array.from(selected).map(cb => parseInt(cb.getAttribute("data-id")));
+
+      for (const id of idsToDelete) {
+        try {
+          const res = await fetch(`http://localhost:8000/notifications/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const index = notifications.findIndex(n => n.id === id);
+            if (index !== -1) notifications.splice(index, 1);
+          }
+        } catch (err) {
+          console.error("Failed to delete notification:", err);
         }
+      }
 
-        function renderNotifications(selectedIds = []) {
-            notificationArea.innerHTML = "";
+      renderNotifications();
+    });
+  });
+}
 
-            if (notifications.length === 0) {
-                notificationArea.innerHTML = `<p>There are currently no notifications.</p>`;
-                return;
-            }
+async function toggleRead(id) {
+  const notif = notifications.find(n => n.id === id);
+  if (!notif) return;
 
-            const selectAllDiv = document.createElement("div");
-            selectAllDiv.classList.add("select-all-row");
-            selectAllDiv.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; width: 100%;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="selectAll">
-                        <label for="selectAll">Select all</label>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <button id="toggleReadSelected" class="bulk-btn">Mark Selected</button>
-                        <button id="deleteSelected" class="bulk-btn">Delete Selected</button>
-                    </div>
-                </div>
-            `;
-            notificationArea.appendChild(selectAllDiv);
+  const token = localStorage.getItem("accessToken");
+  try {
+    const url = notif.read 
+      ? `http://localhost:8000/notifications/${id}/mark-unread`
+      : `http://localhost:8000/notifications/${id}/mark-read`;
 
-            notifications.forEach(notif => {
-                const div = document.createElement("div");
-                div.className = `notification-row ${notif.read ? "read" : "unread"}`;
-                div.innerHTML = `
-                    <input type="checkbox" class="notif-checkbox" data-id="${notif.id}" ${selectedIds.includes(notif.id) ? "checked" : ""}>
-                    <span class="notif-text" onclick="openNotification(${notif.id}, '${notif.redirect}')" style="cursor: pointer;">
-                        ${notif.text}
-                    </span>
-                    <button class="mark-btn" onclick="toggleRead(${notif.id})">
-                        <i class="fas ${notif.read ? 'fa-envelope-open' : 'fa-envelope'}"></i>
-                    </button>
-                    <button class="trash-btn" onclick="deleteNotification(${notif.id})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                notificationArea.appendChild(div);
-            });
+    const res = await fetch(url, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-            document.querySelectorAll(".notif-checkbox").forEach(cb => {
-                cb.addEventListener("change", syncSelectAllCheckbox);
-            });
+    if (res.ok) {
+      notif.read = !notif.read;
+      renderNotifications([]);
+      updateNotificationBadge();
+    }
+  } catch (err) {
+    console.error("Failed to toggle read state:", err);
+  }
+}
 
-            syncSelectAllCheckbox();
-            setupEventListeners();
-            updateToggleButtonText();
+async function deleteNotification(id) {
+  showInAppConfirm("Are you sure you want to delete this notification?", async (confirmed) => {
+    if (!confirmed) return;
+
+    const token = localStorage.getItem("accessToken");
+    try {
+      const res = await fetch(`http://localhost:8000/notifications/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.ok) {
+        const index = notifications.findIndex(n => n.id === id);
+        if (index !== -1) {
+          notifications.splice(index, 1);
+          renderNotifications();
+          updateNotificationBadge();
         }
+      }
+    } catch (err) {
+      console.error("Failed to delete notification:", err);
+    }
+  });
+}
 
-        function setupEventListeners() {
-            const toggleReadBtn = document.getElementById("toggleReadSelected");
-            const checkboxes = document.querySelectorAll(".notif-checkbox");
+function updateToggleButtonText() {
+  const toggleReadBtn = document.getElementById("toggleReadSelected");
+  const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
 
-            checkboxes.forEach(cb => {
-                cb.addEventListener("change", () => updateToggleButtonText());
-            });
+  if (selectedCheckboxes.length === 0) {
+    toggleReadBtn.textContent = "Mark Selected";
+    return;
+  }
 
-            document.getElementById("selectAll").addEventListener("change", function () {
-                const isChecked = this.checked;
-                document.querySelectorAll(".notif-checkbox").forEach(cb => {
-                    cb.checked = isChecked;
-                });
-                updateToggleButtonText();
-            });
+  let anyUnread = false;
+  selectedCheckboxes.forEach(cb => {
+    const notif = notifications.find(n => n.id === parseInt(cb.getAttribute("data-id")));
+    if (notif && !notif.read) anyUnread = true;
+  });
 
-            toggleReadBtn.addEventListener("click", async () => {
-                const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
-                if (selectedCheckboxes.length === 0) {
-                    alert("Please select at least one notification.");
-                    return;
-                }
+  toggleReadBtn.textContent = anyUnread ? "Mark Selected as Read" : "Mark Selected as Unread";
+}
 
-                const token = localStorage.getItem("accessToken");
-                const selectedIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.getAttribute("data-id")));
+function syncSelectAllCheckbox() {
+  const selectAllCheckbox = document.getElementById("selectAll");
+  const checkboxes = document.querySelectorAll(".notif-checkbox");
+  const checked = document.querySelectorAll(".notif-checkbox:checked");
 
-                const allRead = selectedIds.every(id => {
-                    const notif = notifications.find(n => n.id === id);
-                    return notif && notif.read;
-                });
+  if (checkboxes.length > 0 && checkboxes.length === checked.length) {
+    selectAllCheckbox.checked = true;
+  } else {
+    selectAllCheckbox.checked = false;
+  }
+}
+</script>
 
-                for (const id of selectedIds) {
-                    const notif = notifications.find(n => n.id === id);
-                    if (!notif) continue;
 
-                    try {
-                        const url = allRead
-                            ? `http://localhost:8000/notifications/${id}/mark-unread`
-                            : `http://localhost:8000/notifications/${id}/mark-read`;
 
-                        const res = await fetch(url, {
-                            method: "PATCH",
-                            headers: { Authorization: `Bearer ${token}` }
-                        });
-
-                        if (res.ok) {
-                            notif.read = !allRead;
-                            updateNotificationBadge();
-                        }
-                    } catch (err) {
-                        console.error("Failed to toggle bulk read state:", err);
-                    }
-                }
-
-                renderNotifications(selectedIds);
-            });
-
-            document.getElementById("deleteSelected").addEventListener("click", async () => {
-                const selected = document.querySelectorAll(".notif-checkbox:checked");
-                if (selected.length === 0) {
-                    alert("Please select at least one notification.");
-                    return;
-                }
-                if (!confirm("Are you sure you want to delete the selected notifications?")) {
-                    return;
-                }
-
-                const token = localStorage.getItem("accessToken");
-                const idsToDelete = Array.from(selected).map(cb => parseInt(cb.getAttribute("data-id")));
-
-                for (const id of idsToDelete) {
-                    try {
-                        const res = await fetch(`http://localhost:8000/notifications/${id}`, {
-                            method: "DELETE",
-                            headers: { Authorization: `Bearer ${token}` }
-                        });
-                        if (res.ok) {
-                            const index = notifications.findIndex(n => n.id === id);
-                            if (index !== -1) notifications.splice(index, 1);
-                        }
-                    } catch (err) {
-                        console.error("Failed to delete notification:", err);
-                    }
-                }
-
-                renderNotifications();
-            });
-        }
-
-        async function toggleRead(id) {
-            const notif = notifications.find(n => n.id === id);
-            if (!notif) return;
-
-            const token = localStorage.getItem("accessToken");
-            try {
-                const url = notif.read
-                    ? `http://localhost:8000/notifications/${id}/mark-unread`
-                    : `http://localhost:8000/notifications/${id}/mark-read`;
-
-                const res = await fetch(url, {
-                    method: "PATCH",
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-
-                if (res.ok) {
-                    notif.read = !notif.read;
-                    renderNotifications([]);
-                    updateNotificationBadge();
-                }
-            } catch (err) {
-                console.error("Failed to toggle read state:", err);
-            }
-        }
-
-        async function deleteNotification(id) {
-            if (!confirm("Are you sure you want to delete this notification?")) {
-                return;
-            }
-
-            const token = localStorage.getItem("accessToken");
-            try {
-                const res = await fetch(`http://localhost:8000/notifications/${id}`, {
-                    method: "DELETE",
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-
-                if (res.ok) {
-                    const index = notifications.findIndex(n => n.id === id);
-                    if (index !== -1) {
-                        notifications.splice(index, 1);
-                        renderNotifications();
-                        updateNotificationBadge();
-                    }
-                }
-            } catch (err) {
-                console.error("Failed to delete notification:", err);
-            }
-        }
-
-        function updateToggleButtonText() {
-            const toggleReadBtn = document.getElementById("toggleReadSelected");
-            const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
-
-            if (selectedCheckboxes.length === 0) {
-                toggleReadBtn.textContent = "Mark Selected";
-                return;
-            }
-
-            let anyUnread = false;
-            selectedCheckboxes.forEach(cb => {
-                const notif = notifications.find(n => n.id === parseInt(cb.getAttribute("data-id")));
-                if (notif && !notif.read) anyUnread = true;
-            });
-
-            toggleReadBtn.textContent = anyUnread ? "Mark Selected as Read" : "Mark Selected as Unread";
-        }
-
-        function syncSelectAllCheckbox() {
-            const selectAllCheckbox = document.getElementById("selectAll");
-            const checkboxes = document.querySelectorAll(".notif-checkbox");
-            const checked = document.querySelectorAll(".notif-checkbox:checked");
-
-            if (checkboxes.length > 0 && checkboxes.length === checked.length) {
-                selectAllCheckbox.checked = true;
-            } else {
-                selectAllCheckbox.checked = false;
-            }
-        }
-    </script>
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

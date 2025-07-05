@@ -124,7 +124,7 @@
     </footer>
   <script src="../auth.js"></script>
   <script src="../script.js"></script>      
-    <script>
+<script>
 (async () => {
   await autoEnforceRoleFromPath();
 
@@ -132,44 +132,43 @@
   const params    = new URLSearchParams(window.location.search);
   const partnerId = params.get("partnerId");
   if (!partnerId) {
-    alert("No conversation selected.");
+    showInAppAlert("❗ No conversation selected.");
     return;
   }
 
-async function loadPartnerInfo(partnerId) {
-  const token = localStorage.getItem("accessToken");
-  try {
-    const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error("Failed to fetch user info");
-    const user = await res.json();
-    document.querySelector(".consultant-name").textContent =
-      user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || `User #${partnerId}`;
-    document.querySelector(".avatar").src =
-      user.profile_picture
-        ? "http://localhost:8000" + user.profile_picture
-        : "../images/avatar.png";
-  } catch (e) {
-    document.querySelector(".consultant-name").textContent = `User #${partnerId}`;
-    document.querySelector(".avatar").src = "../images/avatar.png";
+  async function loadPartnerInfo(partnerId) {
+    try {
+      const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Failed to fetch user info");
+      const user = await res.json();
+      document.querySelector(".consultant-name").textContent =
+        user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || `User #${partnerId}`;
+      document.querySelector(".avatar").src =
+        user.profile_picture
+          ? "http://localhost:8000" + user.profile_picture
+          : "../images/avatar.png";
+    } catch (e) {
+      document.querySelector(".consultant-name").textContent = `User #${partnerId}`;
+      document.querySelector(".avatar").src = "../images/avatar.png";
+    }
   }
-}
 
-await loadPartnerInfo(partnerId);
+  await loadPartnerInfo(partnerId);
 
-
-  
   async function loadThread() {
     const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
       headers: { "Authorization": `Bearer ${token}` }
     });
-    if (!res.ok) return console.error("Failed to load thread", res.status);
+    if (!res.ok) {
+      console.error("Failed to load thread", res.status);
+      return;
+    }
     const msgs = await res.json();
     renderChat(msgs);
   }
 
-  
   function renderChat(messages) {
     const container = document.getElementById("chatMessages");
     container.innerHTML = "";
@@ -180,7 +179,7 @@ await loadPartnerInfo(partnerId);
         <div class="bubble-content">
           <p>${m.message}</p>
           <span class="timestamp">
-            ${new Date(m.sent_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+            ${new Date(m.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>`;
       container.appendChild(bubble);
@@ -188,7 +187,6 @@ await loadPartnerInfo(partnerId);
     container.scrollTop = container.scrollHeight;
   }
 
-  
   async function sendMessage() {
     const input = document.getElementById("messageInput");
     const text  = input.value.trim();
@@ -209,14 +207,14 @@ await loadPartnerInfo(partnerId);
       body: JSON.stringify(payload)
     });
     if (!res.ok) {
-      return alert("Failed to send message: " + res.status);
+      showInAppAlert("❌ Failed to send message: " + res.status);
+      return;
     }
 
     input.value = "";
     await loadThread();
   }
 
-  
   document.getElementById("sendBtn")
           .addEventListener("click", sendMessage);
   document.getElementById("messageInput")
@@ -227,14 +225,21 @@ await loadPartnerInfo(partnerId);
     }
   });
 
-  
   window.goBackToInbox = () => window.location.href = "messages.html";
 
-  
   await loadThread();
 })();
+</script>
 
-    </script>
-    
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

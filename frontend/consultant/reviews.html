@@ -95,20 +95,19 @@
     </footer>
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
-    <script>
+<script>
 (async () => {
   await autoEnforceRoleFromPath();
 
   const token = localStorage.getItem("accessToken");
 
   try {
-    
     const reviewsRes = await fetch("http://localhost:8000/appointment/consultant/reviews/me", {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     if (!reviewsRes.ok) {
-      alert("Failed to fetch reviews.");
+      showInAppAlert("❌ Failed to fetch reviews.");
       return;
     }
 
@@ -120,7 +119,6 @@
       return;
     }
 
-    
     let total = 0;
     const ratingCounts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
     reviews.forEach(review => {
@@ -140,7 +138,6 @@
       </div>
     `;
 
-    
     reviews.forEach(review => {
       const div = document.createElement("div");
       div.classList.add("review-item", "review-box");
@@ -158,9 +155,20 @@
     });
 
   } catch (err) {
-    alert("Error loading reviews: " + err.message);
+    showInAppAlert("❌ Error loading reviews: " + err.message);
   }
 })();
 </script>
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

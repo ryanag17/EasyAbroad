@@ -85,110 +85,124 @@
 
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
-  <script>
-    (async () => {
-      await autoEnforceRoleFromPath();
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
 
-      const token = localStorage.getItem("accessToken");
-      const params = new URLSearchParams(window.location.search);
-      const partnerId = params.get("partnerId");
-      if (!partnerId) {
-        alert("No conversation selected.");
-        return;
-      }
+  const token = localStorage.getItem("accessToken");
+  const params = new URLSearchParams(window.location.search);
+  const partnerId = params.get("partnerId");
+  if (!partnerId) {
+    showInAppAlert("❗ No conversation selected.");
+    return;
+  }
 
-      async function loadConsultantInfo(consultantId) {
-        try {
-          const res = await fetch(`http://localhost:8000/users/${consultantId}`, {
-            headers: { "Authorization": `Bearer ${token}` }
-          });
-          if (!res.ok) throw new Error("Failed to fetch user info");
-          const user = await res.json();
-          document.querySelector(".consultant-name").textContent =
-            user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || "Consultant";
-          document.querySelector(".avatar").src =
-            user.profile_picture
-              ? "http://localhost:8000" + user.profile_picture
-              : "../images/avatar.png";
-        } catch (e) {
-          document.querySelector(".consultant-name").textContent = "User #" + partnerId;
-          document.querySelector(".avatar").src = "../images/avatar.png";
-        }
-      }
-
-      await loadConsultantInfo(partnerId);
-
-      async function loadThread() {
-        const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (!res.ok) return console.error("Failed to load thread", res.status);
-        const msgs = await res.json();
-        renderChat(msgs);
-      }
-
-      function renderChat(messages) {
-        const container = document.getElementById("chatMessages");
-        container.innerHTML = "";
-        messages.forEach(m => {
-          const bubble = document.createElement("div");
-          bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
-          bubble.innerHTML = `
-            <div class="bubble-content">
-              <p>${m.message}</p>
-              <span class="timestamp">
-                ${new Date(m.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
-            </div>`;
-          container.appendChild(bubble);
-        });
-        container.scrollTop = container.scrollHeight;
-      }
-
-      async function sendMessage() {
-        const input = document.getElementById("messageInput");
-        const text = input.value.trim();
-        if (!text) return;
-
-        if (text.length > 500) {
-          alert("Message cannot exceed 500 characters.");
-          return;
-        }
-
-        const payload = {
-          receiver_id: +partnerId,
-          message: text,
-          booking_id: null
-        };
-
-        const res = await fetch("http://localhost:8000/messages/send", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) {
-          return alert("Failed to send message: " + res.status);
-        }
-
-        input.value = "";
-        await loadThread();
-      }
-
-      document.getElementById("sendBtn").addEventListener("click", sendMessage);
-      document.getElementById("messageInput").addEventListener("keydown", e => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
+  async function loadConsultantInfo(consultantId) {
+    try {
+      const res = await fetch(`http://localhost:8000/users/${consultantId}`, {
+        headers: { "Authorization": `Bearer ${token}` }
       });
+      if (!res.ok) throw new Error("Failed to fetch user info");
+      const user = await res.json();
+      document.querySelector(".consultant-name").textContent =
+        user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || "Consultant";
+      document.querySelector(".avatar").src =
+        user.profile_picture
+          ? "http://localhost:8000" + user.profile_picture
+          : "../images/avatar.png";
+    } catch (e) {
+      document.querySelector(".consultant-name").textContent = "User #" + partnerId;
+      document.querySelector(".avatar").src = "../images/avatar.png";
+    }
+  }
 
-      window.goBackToInbox = () => window.location.href = "messages.html";
+  await loadConsultantInfo(partnerId);
 
+  async function loadThread() {
+    const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) return console.error("Failed to load thread", res.status);
+    const msgs = await res.json();
+    renderChat(msgs);
+  }
+
+  function renderChat(messages) {
+    const container = document.getElementById("chatMessages");
+    container.innerHTML = "";
+    messages.forEach(m => {
+      const bubble = document.createElement("div");
+      bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
+      bubble.innerHTML = `
+        <div class="bubble-content">
+          <p>${m.message}</p>
+          <span class="timestamp">
+            ${new Date(m.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        </div>`;
+      container.appendChild(bubble);
+    });
+    container.scrollTop = container.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById("messageInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    if (text.length > 500) {
+      showInAppAlert("❗ Message cannot exceed 500 characters.");
+      return;
+    }
+
+    showInAppConfirm("Are you sure you want to send this message?", async () => {
+      const payload = {
+        receiver_id: +partnerId,
+        message: text,
+        booking_id: null
+      };
+
+      const res = await fetch("http://localhost:8000/messages/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        return showInAppAlert("❌ Failed to send message: " + res.status);
+      }
+
+      input.value = "";
       await loadThread();
-    })();
-  </script>
+    });
+  }
+
+  document.getElementById("sendBtn").addEventListener("click", sendMessage);
+  document.getElementById("messageInput").addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  window.goBackToInbox = () => window.location.href = "messages.html";
+
+  await loadThread();
+})();
+</script>
+
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

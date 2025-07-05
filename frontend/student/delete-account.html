@@ -94,31 +94,28 @@
 
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
-  <script>
-    (async () => {
-      await autoEnforceRoleFromPath();
-    })();
+<script>
+  (async () => {
+    await autoEnforceRoleFromPath();
+  })();
 
-    const deleteForm = document.getElementById("deleteAccountForm");
-    const deleteEmail = document.getElementById("email");
-    const deletePassword = document.getElementById("deletePassword");
-    const deleteError = document.getElementById("deleteError");
-    let deleteFormDirty = false;
+  const deleteForm = document.getElementById("deleteAccountForm");
+  const deleteEmail = document.getElementById("email");
+  const deletePassword = document.getElementById("deletePassword");
+  const deleteError = document.getElementById("deleteError");
+  let deleteFormDirty = false;
 
-    deleteForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      deleteError.style.display = "none";
+  deleteForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    deleteError.style.display = "none";
 
-      const email = deleteEmail.value.trim();
-      const password = deletePassword.value;
+    const email = deleteEmail.value.trim();
+    const password = deletePassword.value;
 
-      if (!confirm("Are you sure you want to delete your account? This cannot be undone.")) {
-        return;
-      }
-
+    showInAppConfirm("Are you sure you want to delete your account? This cannot be undone.", async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        if (!token) throw new Error("Not authenticated");
+        if (!token) throw new Error("Not authenticated.");
 
         const resp = await fetch("http://localhost:8000/profile", {
           method: "DELETE",
@@ -134,14 +131,29 @@
           throw new Error(body.detail || body.message || resp.statusText);
         }
 
-        alert(body.message);
-        localStorage.clear();
-        window.location.href = "/";
+        showInAppAlert("✅ " + body.message, () => {
+          localStorage.clear();
+          window.location.href = "/";
+        });
+
       } catch (err) {
         deleteError.textContent = err.message;
         deleteError.style.display = "block";
       }
     });
-  </script>
+  });
+</script>
+
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

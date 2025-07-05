@@ -4158,3 +4158,41 @@ textarea#reviewText {
   background-color: #000;
 }
 /* consultant and student/ticket-create.html */
+
+
+
+/* ======= In-app pop up integration (for alerts & confirms) ======= */
+
+#inAppModal.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 100000;
+}
+
+#inAppModal .modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+#inAppModal .modal-buttons button {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #d62d81;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#inAppModal .modal-buttons button:hover {
+  background-color: #b81d6b;
+}
