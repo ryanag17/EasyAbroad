@@ -210,37 +210,50 @@ async def login(db: AsyncSession, creds: UserLogin):
 
 
 async def forgot_password(db: AsyncSession, data: ForgotPasswordRequest):
-    # Generate a one-time token for password reset
+    # 1. Check if the email exists
+    result = await db.execute(
+        text("SELECT first_name, last_name FROM users WHERE email=:em"),
+        {"em": data.email}
+    )
+    row = result.first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Email not registered")
+
+    # 2. Generate a one-time token for password reset
     token  = secrets.token_hex(16)
     expiry = datetime.utcnow() + timedelta(hours=1)
 
-    # Save it into the users table (raw text).  We now have reset_token + token_expiry columns.
+    # 3. Save it into the users table
     await db.execute(
         text("UPDATE users SET reset_token=:t, token_expiry=:e WHERE email=:em"),
         {"t": token, "e": expiry, "em": data.email}
     )
     await db.commit()
 
-    result = await db.execute(
-    text("SELECT first_name, last_name FROM users WHERE email=:em"),
-    {"em": data.email}
-)
-    row = result.first()
-    user_name = f"{row.first_name} {row.last_name}" if row else None
+    user_name = f"{row.first_name} {row.last_name}"
 
+    # 4. Send the reset link by email
     send_reset_email(data.email, token, user_name)
     return {"message": "Reset email sent if the address exists."}
-
 
 async def reset_password(db: AsyncSession, data: ResetPasswordRequest):
     # Find the user by reset_token
     result = await db.execute(
-        text("SELECT id, token_expiry FROM users WHERE reset_token=:t"),
+        text("SELECT id, token_expiry, password_hash FROM users WHERE reset_token=:t"),
         {"t": data.token}
     )
     row = result.first()
     if not row or row.token_expiry < datetime.utcnow():
         raise HTTPException(status_code=400, detail="Invalid or expired token")
+
+    # 1. Enforce password length
+    if len(data.password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters long.")
+
+    # 2. Prevent reusing the same password
+    import bcrypt
+    if bcrypt.checkpw(data.password.encode(), row.password_hash.encode()):
+        raise HTTPException(status_code=400, detail="New password cannot be the same as the old password.")
 
     # Hash the new password
     hashed_pw = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt()).decode()

@@ -39,7 +39,7 @@ def send_reset_email(recipient_email: str, reset_token: str, user_name: str = No
     <hr style="margin: 40px 0;">
     <p style="font-size: 12px; color: #999; text-align: center;">
       &copy; 2025 Easy Abroad. All rights reserved.<br>
-      <a href="https://easyabroad.com" style="color: #999;">www.easyabroad.com</a>
+      <a href="http://www.easy-abroad.de" style="color: #999;">www.easyabroad.com</a>
     </p>
   </div>
 </body>
