@@ -233,7 +233,7 @@ CREATE TABLE IF NOT EXISTS users (
   profile_picture VARCHAR(255),
   reset_token     VARCHAR(255),
   token_expiry    DATETIME,
-  is_active       BOOLEAN DEFAULT TRUE,
+  is_active       ENUM('active', 'inactive', 'deleted') DEFAULT 'active',
   created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -576,7 +576,7 @@ CREATE TABLE IF NOT EXISTS support_ticket_messages (
   message TEXT NOT NULL,
   sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (ticket_id) REFERENCES support_tickets(id) ON DELETE CASCADE,
-  FOREIGN KEY (sender_id) REFERENCES users(id),
+  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
   INDEX (ticket_id),
   INDEX (sender_id)
 );
@@ -601,7 +601,7 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
   expires_at  DATETIME NOT NULL,
   revoked     BOOLEAN NOT NULL DEFAULT FALSE,
 
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- 15) Appointments table

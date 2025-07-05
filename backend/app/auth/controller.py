@@ -36,22 +36,18 @@ async def upload_profile_picture(
 ):
     user_id = current_user["user_id"]
 
-    # File extension check
     ext = file.filename.split(".")[-1].lower()
     if ext not in {"jpg", "jpeg", "png", "gif"}:
         raise HTTPException(status_code=400, detail="Unsupported file format")
 
-    # Save file
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     file_path = UPLOAD_DIR / f"user_{user_id}.{ext}"
 
     with file_path.open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # Save relative path to DB (for HTML <img src>)
     relative_path = f"/static/uploads/profile_pictures/{file_path.name}"
 
-    # Update DB
     await db.execute(
         text("UPDATE users SET profile_picture=:pic WHERE id=:uid"),
         {"pic": relative_path, "uid": user_id}
@@ -60,7 +56,7 @@ async def upload_profile_picture(
 
     return {"message": "Profile picture updated", "url": relative_path}
 
-# new endpoint for changing the password / IK 13.06
+
 @router.put("/password", summary="Change your password")
 async def change_password(
     payload: ChangePasswordRequest,
@@ -69,19 +65,15 @@ async def change_password(
 ):
     user_id = current_user["user_id"]
 
-
-    # Fetching current hash
     stmt = select(User.password_hash).where(User.id == user_id)
     result = await db.execute(stmt)
     row = result.first()
     if not row:
         raise HTTPException(404, "User not found")
 
-    # Verifying the old password
     if not bcrypt.checkpw(payload.old_password.encode(), row.password_hash.encode()):
         raise HTTPException(400, "Old password is incorrect")
 
-    # Hashing & updating
     new_hash = bcrypt.hashpw(payload.new_password.encode(), bcrypt.gensalt()).decode()
     await db.execute(
         update(User).
@@ -92,13 +84,8 @@ async def change_password(
 
     return {"message": "Password changed successfully"}
 
-# new endpoint for fetching countries / IK 06.06
-@router.get(
-    "/student",
-    response_model=dict,
-    summary="Get the logged-in student’s profile"
-)
 
+@router.get("/student", response_model=dict, summary="Get the logged-in student’s profile")
 async def get_student_profile(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user),
@@ -106,7 +93,7 @@ async def get_student_profile(
     user_id = current_user["user_id"]
     if current_user.get("role") != "student":
         raise HTTPException(status_code=403, detail="Not a student")
-    # Only return if role == student
+
     stmt = select(
         User.first_name, User.last_name, User.email,
         User.city, User.country_name, User.birthday, User.gender,
@@ -117,7 +104,6 @@ async def get_student_profile(
     if not row:
         raise HTTPException(status_code=404, detail="Profile not found")
 
-    # Fetch that user’s language names
     lang_stmt = (
         select(Language.language_name)
         .join(UserLanguage, UserLanguage.language_id == Language.id)
@@ -127,112 +113,100 @@ async def get_student_profile(
     languages = list(lang_result.scalars().all())
 
     return {
-        "first_name"      : row.first_name,
-        "last_name"       : row.last_name,
-        "email"           : row.email,
-        "city"            : row.city,
-        "country"         : row.country_name,
-        # serializing the date as an ISO-formatted string / IK 07.06
-        "birthday"        : row.birthday.isoformat() if row.birthday else None,
-        "gender"          : row.gender,
-        "profile_picture" : row.profile_picture,
-        "languages"       : languages
+        "first_name": row.first_name,
+        "last_name": row.last_name,
+        "email": row.email,
+        "city": row.city,
+        "country": row.country_name,
+        "birthday": row.birthday.isoformat() if row.birthday else None,
+        "gender": row.gender,
+        "profile_picture": row.profile_picture,
+        "languages": languages
     }
 
-# GET /profile/languages (fetch languages)
-@router.get(
-    "/languages",
-    response_model=list[dict],
-    summary="Return all available languages (id + name) for the multi-select"
-)
+
+@router.get("/languages", response_model=list[dict], summary="Return all available languages (id + name) for the multi-select")
 async def list_all_languages(db: AsyncSession = Depends(get_db)):
     stmt = select(Language.id, Language.language_name)
     result = await db.execute(stmt)
-    rows = result.all()  # each row is a tuple (id, language_name)
+    rows = result.all()
     return [{"id": r[0], "language_name": r[1]} for r in rows]
 
 
-@router.get(
-    "/countries",
-    response_model=list[str],
-    summary="Get all countries"
-)
-async def list_countries(
-    db: AsyncSession = Depends(get_db)
-):
-    stmt   = select(Country.country_name).order_by(Country.country_name)
+@router.get("/countries", response_model=list[str], summary="Get all countries")
+async def list_countries(db: AsyncSession = Depends(get_db)):
+    stmt = select(Country.country_name).order_by(Country.country_name)
     result = await db.execute(stmt)
     return result.scalars().all()
 
 
 async def register(db: AsyncSession, user_in: UserCreate):
-    # 1) Make sure nobody already signed up with that email
     result = await db.execute(select(User).where(User.email == user_in.email))
     if result.scalars().first():
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    # 2) Hash the plain-text password
     hashed_pw = bcrypt.hashpw(user_in.password.encode(), bcrypt.gensalt()).decode()
 
-    # 3) Create the new User row: note field names must match the ORM (country_name, not country)
     new_user = User(
-        first_name      = user_in.first_name,
-        last_name       = user_in.last_name,
-        email           = user_in.email,
-        password_hash   = hashed_pw,
-        role            = user_in.role.lower(),
-        city            = user_in.city,
-        country_name    = user_in.country_name,       # <— now always non-NULL
-        birthday        = user_in.birthday,
-        gender          = user_in.gender,
-        profile_picture = user_in.profile_picture,
-        access_level    = (user_in.access_level if user_in.role.lower() == "admin" else None)
+        first_name=user_in.first_name,
+        last_name=user_in.last_name,
+        email=user_in.email,
+        password_hash=hashed_pw,
+        role=user_in.role.lower(),
+        city=user_in.city,
+        country_name=user_in.country_name,
+        birthday=user_in.birthday,
+        gender=user_in.gender,
+        profile_picture=user_in.profile_picture,
+        access_level=(user_in.access_level if user_in.role.lower() == "admin" else None)
     )
 
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
 
-    # 4) If any languages were provided, insert into user_languages join table
     if user_in.languages:
         for lang_id in user_in.languages:
             assoc = UserLanguage(user_id=new_user.id, language_id=lang_id)
             db.add(assoc)
         await db.commit()
 
-    # 5) Issue JWT access + refresh tokens
-    access_token  = create_access_token({"sub": str(new_user.id), "role": new_user.role})
+    access_token = create_access_token({"sub": str(new_user.id), "role": new_user.role})
     refresh_token = await create_refresh_token(db, new_user.id)
 
     return {
-        "access_token" : access_token,
+        "access_token": access_token,
         "refresh_token": refresh_token,
-        "role"         : new_user.role,
+        "role": new_user.role,
     }
 
 
 async def login(db: AsyncSession, creds: UserLogin):
-    # 1) Look up the user by e-mail
     result = await db.execute(select(User).where(User.email == creds.email))
     user = result.scalars().first()
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    if not user.is_active:
-        raise HTTPException(status_code=403, detail="Account deactivated")
 
-    # 2) Check bcrypt-hash
+    if user.is_active == "deleted":
+        raise HTTPException(
+            status_code=403,
+            detail="Your account has been deleted by an administrator and can no longer be accessed. Please contact support if you believe this is a mistake."
+        )
+
+    if user.is_active != "active":
+        raise HTTPException(status_code=403, detail="Account is not active")
+
     if not bcrypt.checkpw(creds.password.encode(), user.password_hash.encode()):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # 3) Issue new tokens
-    access_token  = create_access_token({"sub": str(user.id), "role": user.role})
+    access_token = create_access_token({"sub": str(user.id), "role": user.role})
     refresh_token = await create_refresh_token(db, user.id)
     return {
-        "access_token" : access_token,
+        "access_token": access_token,
         "refresh_token": refresh_token,
-        "role"         : user.role,
+        "role": user.role,
     }
+
 
 
 async def forgot_password(db: AsyncSession, data: ForgotPasswordRequest):

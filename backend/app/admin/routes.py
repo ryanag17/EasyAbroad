@@ -1,31 +1,26 @@
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, status, HTTPException, Query, Body, Path
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import update, select
+from sqlalchemy import update, select, text
 from app.db import get_db
 from app.auth.token_verification import get_current_user
 from app.admin.controller import fetch_all_users, create_user_by_admin
 from app.admin.schemas import UserOut, AdminCreateUser
 from app.auth.models import User
 
-
-# FastAPI router for all admin endpoints.
 router = APIRouter(
     prefix="/admin",
     tags=["Admin"]
 )
 
-
-# Dependency ensuring that current user is an admin:
 def require_admin(user=Depends(get_current_user)):
     if not user or user.get("role") != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access only"
         )
-    return user 
+    return user
 
-
-# Retrieve users with optional filters.
 @router.get("/users", response_model=list[UserOut], summary="Admin: Get all users with optional filters")
 async def get_all_users(
     search: str = Query(None),
@@ -33,12 +28,10 @@ async def get_all_users(
     role: str = Query(None),
     status: str = Query(None),
     db: AsyncSession = Depends(get_db),
-    current_user=Depends(require_admin), 
+    current_user=Depends(require_admin),
 ):
     return await fetch_all_users(db, search=search, role=role, status=status, column=column)
 
-
-# Allows admin to create new user account - sends JSON data in request & passes data to create_user_by_admin
 @router.post("/users", status_code=201, summary="Admin: Create new user account")
 async def admin_create_user(
     user_data: AdminCreateUser = Body(...),
@@ -47,8 +40,6 @@ async def admin_create_user(
 ):
     return await create_user_by_admin(user_data, db)
 
-
-# Fetch a specific user by user_id -> returns detailed user info.
 @router.get("/users/{user_id}", summary="Admin: Get full user info by ID")
 async def get_user_by_id(
     user_id: int,
@@ -69,14 +60,12 @@ async def get_user_by_id(
         "gender": user.gender,
         "country": user.country_name,
         "city": user.city,
-        "status": "active" if user.is_active else "inactive",
+        "status": user.is_active,  # 'active', 'inactive', or 'deleted'
         "registered": user.created_at.strftime("%Y-%m-%d") if user.created_at else "-",
         "profile_picture": user.profile_picture or ""
     }
 
-
-# Toggles is_active status of user -> deactivate/activate function under view-user.html.
-@router.patch("/users/{user_id}/status", status_code=200, summary="Admin: Toggle user is_active status (deactivate/activate account)")
+@router.patch("/users/{user_id}/status", status_code=200)
 async def update_user_status(
     user_id: int = Path(..., gt=0),
     db: AsyncSession = Depends(get_db),
@@ -87,19 +76,20 @@ async def update_user_status(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    user.is_active = not user.is_active  # Flip the current value
+    if user.is_active == "deleted":
+        raise HTTPException(status_code=400, detail="Cannot change status of a deleted account.")
+
+    user.is_active = "inactive" if user.is_active == "active" else "active"
     await db.commit()
     await db.refresh(user)
 
     return {
         "status": "success",
         "user_id": user.id,
-        "new_status": "active" if user.is_active else "inactive"
+        "new_status": user.is_active
     }
 
-
-# Deletes user from database -> delete account function under view-user.html.
-@router.delete("/users/{user_id}", status_code=204, summary="Admin: Delete user account by ID")
+@router.delete("/users/{user_id}", status_code=204)
 async def delete_user_by_admin(
     user_id: int = Path(..., gt=0),
     db: AsyncSession = Depends(get_db),
@@ -109,5 +99,31 @@ async def delete_user_by_admin(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    await db.delete(user)
+    if user.is_active == "deleted":
+        raise HTTPException(status_code=400, detail="User already deleted.")
+
+    user.is_active = "deleted"
+
+    # Manually delete linked data (these must match your schema)
+    await db.execute(text("DELETE FROM Education WHERE user_id = :uid"), {"uid": user_id})
+    await db.execute(text("DELETE FROM Internship WHERE user_id = :uid"), {"uid": user_id})
+    await db.execute(text("DELETE FROM consultant_availability WHERE consultant_id = :uid"), {"uid": user_id})
+    await db.execute(text("DELETE FROM bookings WHERE student_id = :uid OR consultant_id = :uid"), {"uid": user_id})
+    await db.execute(text("""
+        DELETE FROM support_tickets WHERE user_id = :uid;
+        DELETE FROM support_ticket_messages WHERE sender_id = :uid;
+    """), {"uid": user_id})
+    await db.execute(text("DELETE FROM appointments WHERE student_id = :uid OR consultant_id = :uid"), {"uid": user_id})
+    await db.execute(text("DELETE FROM consultant_reviews WHERE student_id = :uid OR consultant_id = :uid"), {"uid": user_id})
+    await db.execute(text("DELETE FROM notifications WHERE user_id = :uid"), {"uid": user_id})
+    await db.execute(text("DELETE FROM refresh_tokens WHERE user_id = :uid"), {"uid": user_id})
+    await db.execute(text("DELETE FROM user_languages WHERE user_id = :uid"), {"uid": user_id})
+
+    # Delete old messages only
+    await db.execute(text("""
+        DELETE FROM messages
+        WHERE (sender_id = :uid OR receiver_id = :uid)
+        AND sent_at < DATE_SUB(NOW(), INTERVAL 3 YEAR)
+    """), {"uid": user_id})
+
     await db.commit()

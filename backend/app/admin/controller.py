@@ -23,7 +23,7 @@ async def fetch_all_users(db: AsyncSession, search=None, role=None, status=None,
         stmt = stmt.where(User.role == role)
 
     if status:
-        stmt = stmt.where(User.is_active == (status.lower() == "active"))
+        stmt = stmt.where(User.is_active == status.lower())
 
     if search:
         search = f"%{search.lower()}%"
@@ -70,7 +70,7 @@ async def create_user_by_admin(user_data: AdminCreateUser, db: AsyncSession):
         country_name=user_data.country_name,
         city=user_data.city,
         role=user_data.role,
-        is_active=True
+        is_active="active"
     )
 
     db.add(db_user)

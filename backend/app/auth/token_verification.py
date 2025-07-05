@@ -11,15 +11,12 @@ from app.config import settings
 from app.db import get_db
 from app.auth.models import RefreshToken, User
 
-security = HTTPBearer()  # for reading "Authorization: Bearer <token>" header
+security = HTTPBearer()
 
 async def get_current_user(
     creds: HTTPAuthorizationCredentials = Depends(security),
-    db: AsyncSession = Depends(get_db),            # ← inject a DB session
+    db: AsyncSession = Depends(get_db),
 ) -> User:
-    """
-    Verify an access JWT from the Authorization header and return the full User instance.
-    """
     raw_token = creds.credentials
     try:
         payload = jwt.decode(
@@ -31,29 +28,27 @@ async def get_current_user(
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired access token")
 
-    # load the User record
     user = await db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 
-    return {
-    "user_id": user.id,
-    "role": user.role,
-    "email": user.email,
-    "first_name": user.first_name,
-    "last_name": user.last_name,
-}
+    # 🔐 Block deleted users
+    if user.is_active == "deleted":
+        raise HTTPException(status_code=403, detail="This account has been deleted and cannot access the system.")
 
+    return {
+        "user_id": user.id,
+        "role": user.role,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+    }
 
 
 async def get_current_user_from_refresh(
     refresh_token: str = Cookie(None),
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Verify a refresh token from an HttpOnly cookie, check the DB, and return
-    {user_id, token, role}.
-    """
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Missing refresh token")
 
@@ -64,7 +59,8 @@ async def get_current_user_from_refresh(
                 RefreshToken.token,
                 RefreshToken.revoked,
                 RefreshToken.expires_at,
-                User.role
+                User.role,
+                User.is_active
             )
             .join(User, RefreshToken.user_id == User.id)
             .where(RefreshToken.token == refresh_token)
@@ -82,4 +78,12 @@ async def get_current_user_from_refresh(
     ):
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
 
-    return {"user_id": row.user_id, "token": row.token, "role": row.role}
+    # 🔐 Block deleted users
+    if row.is_active == "deleted":
+        raise HTTPException(status_code=403, detail="This account has been deleted and cannot access the system.")
+
+    return {
+        "user_id": row.user_id,
+        "token": row.token,
+        "role": row.role
+    }

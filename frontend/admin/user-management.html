@@ -80,6 +80,7 @@
     <option value="all">All Statuses</option>
     <option value="active">Active</option>
     <option value="inactive">Inactive</option>
+    <option value="deleted">Deleted</option>
   </select>
 
   <button class="user_management-btn" onclick="location.href='add-user.html'">Add New User</button>
@@ -233,7 +234,13 @@ function renderPagination(totalItems) {
         firstName: user.first_name,
         lastName: user.last_name,
         registered: user.created_at,
-        status: user.is_active ? 'Active' : 'Inactive',
+        status: typeof user.is_active === "string"
+          ? user.is_active.charAt(0).toUpperCase() + user.is_active.slice(1)
+          : user.is_active === true
+            ? "Active"
+            : user.is_active === false
+              ? "Inactive"
+              : "Unknown",
       }));
 
       renderTable(users);
