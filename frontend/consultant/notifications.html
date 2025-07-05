@@ -229,7 +229,7 @@ function setupEventListeners() {
   toggleReadBtn.addEventListener("click", async () => {
     const selectedCheckboxes = document.querySelectorAll(".notif-checkbox:checked");
     if (selectedCheckboxes.length === 0) {
-      showInAppAlert("Please select at least one notification.");
+      await showInAppAlert("Please select at least one notification.");
       return;
     }
 
@@ -263,35 +263,36 @@ function setupEventListeners() {
     renderNotifications(selectedIds);
   });
 
-  document.getElementById("deleteSelected").addEventListener("click", () => {
+  document.getElementById("deleteSelected").addEventListener("click", async () => {
     const selected = document.querySelectorAll(".notif-checkbox:checked");
     if (selected.length === 0) {
-      showInAppAlert("Please select at least one notification.");
+      await showInAppAlert("Please select at least one notification.");
       return;
     }
-    showInAppConfirm("Are you sure you want to delete the selected notifications?", async (confirmed) => {
-      if (!confirmed) return;
 
-      const token = localStorage.getItem("accessToken");
-      const idsToDelete = Array.from(selected).map(cb => parseInt(cb.getAttribute("data-id")));
+    const confirmed = await showInAppConfirm("Are you sure you want to delete the selected notifications?");
+    if (!confirmed) return;
 
-      for (const id of idsToDelete) {
-        try {
-          const res = await fetch(`http://localhost:8000/notifications/${id}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (res.ok) {
-            const index = notifications.findIndex(n => n.id === id);
-            if (index !== -1) notifications.splice(index, 1);
-          }
-        } catch (err) {
-          console.error("Failed to delete notification:", err);
+    const token = localStorage.getItem("accessToken");
+    const idsToDelete = Array.from(selected).map(cb => parseInt(cb.getAttribute("data-id")));
+
+    for (const id of idsToDelete) {
+      try {
+        const res = await fetch(`http://localhost:8000/notifications/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const index = notifications.findIndex(n => n.id === id);
+          if (index !== -1) notifications.splice(index, 1);
         }
+      } catch (err) {
+        console.error("Failed to delete notification:", err);
       }
+    }
 
-      renderNotifications();
-    });
+    renderNotifications();
+    await showInAppAlert("Selected notifications deleted!");
   });
 }
 
@@ -321,28 +322,31 @@ async function toggleRead(id) {
 }
 
 async function deleteNotification(id) {
-  showInAppConfirm("Are you sure you want to delete this notification?", async (confirmed) => {
-    if (!confirmed) return;
+  const confirmed = await showInAppConfirm("Are you sure you want to delete this notification?");
+  if (!confirmed) return;
 
-    const token = localStorage.getItem("accessToken");
-    try {
-      const res = await fetch(`http://localhost:8000/notifications/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  const token = localStorage.getItem("accessToken");
+  try {
+    const res = await fetch(`http://localhost:8000/notifications/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-      if (res.ok) {
-        const index = notifications.findIndex(n => n.id === id);
-        if (index !== -1) {
-          notifications.splice(index, 1);
-          renderNotifications();
-          updateNotificationBadge();
-        }
+    if (res.ok) {
+      const index = notifications.findIndex(n => n.id === id);
+      if (index !== -1) {
+        notifications.splice(index, 1);
+        renderNotifications();
+        updateNotificationBadge();
       }
-    } catch (err) {
-      console.error("Failed to delete notification:", err);
+      await showInAppAlert("Notification deleted successfully!");
+    } else {
+      const err = await res.json();
+      showInAppAlert("Failed to delete notification: " + (err.detail || res.status));
     }
-  });
+  } catch (err) {
+    showInAppAlert("Failed to delete notification: " + err.message);
+  }
 }
 
 function updateToggleButtonText() {

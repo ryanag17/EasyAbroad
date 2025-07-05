@@ -99,17 +99,24 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
 <script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();
+  (async () => {
+    await autoEnforceRoleFromPath();
+  })();    
 
 document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem("accessToken");
-  if (!token) return window.location.href = "../log-in.html";
+  if (!token) {
+    await showInAppAlert("You are not logged in. Please log in first.", () => {
+      window.location.href = "../log-in.html";
+    });
+    return;
+  }
 
   const userId = new URLSearchParams(window.location.search).get("id");
   if (!userId) {
-    showInAppAlert("❗ Missing consultant ID in URL.");
+    await showInAppAlert("Missing consultant ID in URL.", () => {
+      window.location.href = "find-consultants.html";
+    });
     return;
   }
 
@@ -144,15 +151,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       languages = []
     } = data;
 
+    // Avatar
     document.querySelector(".avatar").src = profile_picture?.startsWith("/static/")
       ? `http://localhost:8000${profile_picture}`
       : "../images/avatar.png";
 
+    // Name
     const avgRating = await fetchAverageRating(userId);
     const ratingText = avgRating ? `(${avgRating.toFixed(1)}/5 ★)` : "(currently has no reviews)";
     document.getElementById("consultantNameHeader").innerHTML =
       `${first_name} ${last_name} <a href="reviews.html?id=${userId}&name=${encodeURIComponent(first_name + ' ' + last_name)}" class="review">${ratingText}</a>`;
 
+    // Info fields
     document.querySelectorAll(".info-row")[1].innerHTML =
       `<strong>University name:</strong> ${university_name}`;
     document.querySelectorAll(".info-row")[2].innerHTML =
@@ -166,9 +176,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll(".info-row")[6].innerHTML =
       `<strong>Languages:</strong> ${languages.length ? languages.join(", ") : "–"}`;
 
+    // Dynamic section titles
     document.querySelector(".help-list h3").textContent = `${first_name} can help you with:`;
     document.querySelector(".call-list h3").textContent = `${first_name} can call you via:`;
 
+    // Help topics
     const helpMap = {
       accommodation: "Finding accommodation",
       social_life: "Social life and making friends",
@@ -180,6 +192,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       .map(([, label]) => `<li>${label}</li>`)
       .join("");
 
+    // Contact platforms
     const callMap = {
       zoom: "Zoom",
       microsoft_teams: "Microsoft Teams",
@@ -193,16 +206,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   } catch (err) {
     console.error("Error loading consultant profile:", err);
-    showInAppAlert("❌ Failed to load consultant profile.");
-  }
-
-  document.getElementById("bookBtn").addEventListener("click", function(e) {
-    e.preventDefault();
-    showInAppConfirm("Do you want to book a consultation meeting with this consultant?", () => {
-      window.location.href = `make-appointment.html?id=${userId}&type=study`;
+    await showInAppAlert("Failed to load consultant profile.", () => {
+      window.location.href = "find-consultants.html";
     });
-  });
-
+    return;
+  }
+  
+  document.getElementById("bookBtn").href = `make-appointment.html?id=${userId}&type=study`;
+  
   function formatDate(dateStr) {
     const d = new Date(dateStr);
     if (isNaN(d)) return "–";
@@ -210,6 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
+
 
 
 

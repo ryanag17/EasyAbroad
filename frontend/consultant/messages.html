@@ -103,21 +103,16 @@ const MESSAGES_API_BASE = "http://localhost:8000/messages";
 const token = localStorage.getItem("accessToken");
 
 async function fetchThreads() {
-  try {
-    const res = await fetch(MESSAGES_API_BASE, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!res.ok) {
-      console.error("Failed to load threads", res.status);
-      showInAppAlert("❌ Failed to load threads.");
-      return;
-    }
-    const threads = await res.json();
-    renderThreads(threads);
-  } catch (err) {
-    console.error("Error fetching threads:", err);
-    showInAppAlert("❌ Error fetching threads.");
+  const res = await fetch(MESSAGES_API_BASE, {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  if (!res.ok) {
+    console.error("Failed to load threads", res.status);
+    showInAppAlert("❌ Failed to load threads.");
+    return;
   }
+  const threads = await res.json();
+  renderThreads(threads);
 }
 
 window.addEventListener("DOMContentLoaded", fetchThreads);
@@ -132,25 +127,23 @@ function renderThreads(threads) {
   }
 
   threads.forEach(async t => {
-    const consultantId = JSON.parse(atob(token.split('.')[1])).sub;
-    const partnerId = (t.sender_id === consultantId) ? t.receiver_id : t.sender_id;
+    const loggedInUserId = JSON.parse(atob(token.split('.')[1])).sub;
+    const partnerId = t.sender_id === loggedInUserId ? t.receiver_id : t.sender_id;
+    const partnerName = `${t.first_name ?? ""} ${t.last_name ?? ""}`.trim();
 
     let profilePic = "../images/avatar.png";
-    let partnerName = "User";
-
     try {
       const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) {
         const user = await res.json();
-        partnerName = user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || "User";
         if (user.profile_picture) {
           profilePic = "http://localhost:8000" + user.profile_picture;
         }
       }
     } catch (e) {
-      console.error("Failed to fetch user info for thread:", e);
+      console.error("Failed to fetch user picture", e);
     }
 
     const card = document.createElement('div');
@@ -161,11 +154,11 @@ function renderThreads(threads) {
       </div>
       <div class="chat-content">
         <h3>${partnerName}</h3>
-        <p class="message-preview">${t.message}</p>
+        <p class="message-preview">${t.message.length > 50 ? t.message.substring(0, 50) + "..." : t.message}</p>
         <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
       </div>
       <div class="chat-actions">
-        <button onclick="confirmDelete(event, ${partnerId})">🗑️</button>
+        <button onclick="confirmDelete(event, ${partnerId})"><i class="fas fa-trash-alt delete-icon"></i></button>
       </div>
     `;
 
@@ -177,26 +170,29 @@ function renderThreads(threads) {
   });
 }
 
-async function confirmDelete(e, partnerId) {
-  e.stopPropagation();
+async function confirmDelete(event, partnerId) {
+  event.stopPropagation();
 
-  showInAppConfirm("Are you sure you want to delete this conversation?", async () => {
-    try {
-      const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (res.ok) {
-        showInAppAlert("✅ Conversation deleted.");
-        fetchThreads();
-      } else {
-        const data = await res.json().catch(() => ({}));
-        showInAppAlert("❌ Failed to delete conversation: " + (data.detail || res.status));
-      }
-    } catch (err) {
-      showInAppAlert("❌ Error deleting conversation: " + err.message);
+  const confirmed = await showInAppConfirm("Are you sure you want to delete this conversation?");
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+      method: "DELETE",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+
+    if (res.ok) {
+      showInAppAlert("✅ Conversation deleted.");
+      fetchThreads();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      showInAppAlert("❌ Failed to delete: " + (data.detail || res.status));
     }
-  });
+  } catch (err) {
+    console.error("Error deleting conversation:", err);
+    showInAppAlert("❌ Error deleting conversation.");
+  }
 }
 </script>
 

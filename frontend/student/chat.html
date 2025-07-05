@@ -89,14 +89,17 @@
 (async () => {
   await autoEnforceRoleFromPath();
 
-  const token = localStorage.getItem("accessToken");
-  const params = new URLSearchParams(window.location.search);
+  const token     = localStorage.getItem("accessToken");
+  const params    = new URLSearchParams(window.location.search);
   const partnerId = params.get("partnerId");
   if (!partnerId) {
-    showInAppAlert("❗ No conversation selected.");
+    await showInAppAlert("No conversation selected.", () => {
+      window.location.href = "messages.html";
+    });
     return;
   }
 
+  // Load consultant info
   async function loadConsultantInfo(consultantId) {
     try {
       const res = await fetch(`http://localhost:8000/users/${consultantId}`, {
@@ -111,6 +114,8 @@
           ? "http://localhost:8000" + user.profile_picture
           : "../images/avatar.png";
     } catch (e) {
+      console.error("Error loading consultant info:", e);
+      await showInAppAlert("Failed to load consultant information.");
       document.querySelector(".consultant-name").textContent = "User #" + partnerId;
       document.querySelector(".avatar").src = "../images/avatar.png";
     }
@@ -118,13 +123,19 @@
 
   await loadConsultantInfo(partnerId);
 
+  // Load thread
   async function loadThread() {
-    const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!res.ok) return console.error("Failed to load thread", res.status);
-    const msgs = await res.json();
-    renderChat(msgs);
+    try {
+      const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Failed to load thread");
+      const msgs = await res.json();
+      renderChat(msgs);
+    } catch (e) {
+      console.error("Error loading thread:", e);
+      await showInAppAlert("Failed to load messages.");
+    }
   }
 
   function renderChat(messages) {
@@ -137,7 +148,7 @@
         <div class="bubble-content">
           <p>${m.message}</p>
           <span class="timestamp">
-            ${new Date(m.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            ${new Date(m.sent_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
           </span>
         </div>`;
       container.appendChild(bubble);
@@ -147,40 +158,47 @@
 
   async function sendMessage() {
     const input = document.getElementById("messageInput");
-    const text = input.value.trim();
+    const text  = input.value.trim();
     if (!text) return;
 
     if (text.length > 500) {
-      showInAppAlert("❗ Message cannot exceed 500 characters.");
+      await showInAppAlert("Message cannot exceed 500 characters.");
       return;
     }
 
-    showInAppConfirm("Are you sure you want to send this message?", async () => {
-      const payload = {
-        receiver_id: +partnerId,
-        message: text,
-        booking_id: null
-      };
+    const payload = {
+      receiver_id: +partnerId,
+      message:     text,
+      booking_id:  null
+    };
 
+    try {
       const res = await fetch("http://localhost:8000/messages/send", {
-        method: "POST",
+        method:  "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type":  "application/json",
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
       if (!res.ok) {
-        return showInAppAlert("❌ Failed to send message: " + res.status);
+        const errorText = await res.text();
+        await showInAppAlert("Failed to send message: " + errorText);
+        return;
       }
 
       input.value = "";
       await loadThread();
-    });
+    } catch (e) {
+      console.error("Error sending message:", e);
+      await showInAppAlert("Failed to send message due to network error.");
+    }
   }
 
-  document.getElementById("sendBtn").addEventListener("click", sendMessage);
-  document.getElementById("messageInput").addEventListener("keydown", e => {
+  document.getElementById("sendBtn")
+          .addEventListener("click", sendMessage);
+  document.getElementById("messageInput")
+          .addEventListener("keydown", e => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -192,6 +210,7 @@
   await loadThread();
 })();
 </script>
+
 
 
 

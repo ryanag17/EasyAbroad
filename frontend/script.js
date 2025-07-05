@@ -421,36 +421,33 @@ function showInAppAlert(message, callback) {
   modal.style.display = "flex";
 }
 
-function showInAppConfirm(message, callback) {
-  const modal = document.getElementById("inAppModal");
-  const msg = document.getElementById("modalMessage");
-  const confirmBtn = document.getElementById("modalConfirmButton");
-  const cancelBtn = document.getElementById("modalCancelButton");
+function showInAppConfirm(message) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("inAppModal");
+    const msg = document.getElementById("modalMessage");
+    const confirmBtn = document.getElementById("modalConfirmButton");
+    const cancelBtn = document.getElementById("modalCancelButton");
 
-  if (!modal || !msg || !confirmBtn || !cancelBtn) {
-    console.error("Modal elements not found");
-    return;
-  }
+    msg.textContent = message;
+    confirmBtn.style.display = "inline-block";
+    cancelBtn.style.display = "inline-block";
+    modal.style.display = "flex";
 
-  msg.textContent = message;
-  confirmBtn.style.display = "inline-block";
-  cancelBtn.style.display = "inline-block";
-  modal.style.display = "flex";
+    // Remove old listeners
+    const newConfirm = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
 
-  // Remove old listeners
-  const newConfirm = confirmBtn.cloneNode(true);
-  confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+    const newCancel = cancelBtn.cloneNode(true);
+    cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
 
-  const newCancel = cancelBtn.cloneNode(true);
-  cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+    newConfirm.addEventListener("click", () => {
+      modal.style.display = "none";
+      resolve(true);
+    });
 
-  newConfirm.addEventListener("click", () => {
-    modal.style.display = "none";
-    callback(true);
-  });
-
-  newCancel.addEventListener("click", () => {
-    modal.style.display = "none";
-    callback(false);
+    newCancel.addEventListener("click", () => {
+      modal.style.display = "none";
+      resolve(false);
+    });
   });
 }

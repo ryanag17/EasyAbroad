@@ -132,7 +132,9 @@
   const params    = new URLSearchParams(window.location.search);
   const partnerId = params.get("partnerId");
   if (!partnerId) {
-    showInAppAlert("❗ No conversation selected.");
+    await showInAppAlert("No conversation selected.", () => {
+      window.location.href = "messages.html";
+    });
     return;
   }
 
@@ -150,6 +152,8 @@
           ? "http://localhost:8000" + user.profile_picture
           : "../images/avatar.png";
     } catch (e) {
+      console.error("Error loading partner info:", e);
+      await showInAppAlert("Failed to load user info. Displaying fallback name and image.");
       document.querySelector(".consultant-name").textContent = `User #${partnerId}`;
       document.querySelector(".avatar").src = "../images/avatar.png";
     }
@@ -158,15 +162,17 @@
   await loadPartnerInfo(partnerId);
 
   async function loadThread() {
-    const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!res.ok) {
-      console.error("Failed to load thread", res.status);
-      return;
+    try {
+      const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Failed to load thread");
+      const msgs = await res.json();
+      renderChat(msgs);
+    } catch (e) {
+      console.error("Error loading thread:", e);
+      await showInAppAlert("Failed to load chat messages.");
     }
-    const msgs = await res.json();
-    renderChat(msgs);
   }
 
   function renderChat(messages) {
@@ -179,7 +185,7 @@
         <div class="bubble-content">
           <p>${m.message}</p>
           <span class="timestamp">
-            ${new Date(m.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            ${new Date(m.sent_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
           </span>
         </div>`;
       container.appendChild(bubble);
@@ -192,27 +198,38 @@
     const text  = input.value.trim();
     if (!text) return;
 
+    if (text.length > 500) {
+      await showInAppAlert("Message cannot exceed 500 characters.");
+      return;
+    }
+
     const payload = {
       receiver_id: +partnerId,
       message:     text,
       booking_id:  null
     };
 
-    const res = await fetch("http://localhost:8000/messages/send", {
-      method:  "POST",
-      headers: {
-        "Content-Type":  "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) {
-      showInAppAlert("❌ Failed to send message: " + res.status);
-      return;
-    }
+    try {
+      const res = await fetch("http://localhost:8000/messages/send", {
+        method:  "POST",
+        headers: {
+          "Content-Type":  "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        await showInAppAlert("Failed to send message: " + errorText);
+        return;
+      }
 
-    input.value = "";
-    await loadThread();
+      input.value = "";
+      await loadThread();
+    } catch (e) {
+      console.error("Error sending message:", e);
+      await showInAppAlert("Failed to send message due to network error.");
+    }
   }
 
   document.getElementById("sendBtn")
@@ -230,6 +247,7 @@
   await loadThread();
 })();
 </script>
+
 
 
 <div id="inAppModal" class="modal-overlay">
