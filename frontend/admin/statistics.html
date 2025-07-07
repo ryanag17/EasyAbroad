@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Statistics</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+.stats-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+  text-align: center;
+}
+
+.statistics-section {
+  background: white;
+  padding: 30px;
+  margin: 30px auto;
+  width: 1000px; 
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.stats-cards {
+  display: flex;
+  flex-wrap: nowrap; 
+  gap: 20px;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .statistics-section {
+    width: 95%; 
+  }
+
+  .stats-cards {
+    flex-wrap: wrap; 
+  }
+}
+
+
+  .statistics-section h2 {
+    margin-bottom: 25px; 
+  }
+
+  .stats-filter-select {
+    margin: 15px 0;
+    text-align: center;
+  }
+
+  .stats-filter-select select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+
+.stat-card {
+  flex: 1 1 200px;
+  max-width: 250px;
+  background-color: white;
+  border: 2px solid black; 
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.stat-card h4 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  color: #d62d81; 
+}
+
+
+
+
+.stat-card p {
+  font-size: 1.1em;
+  color: #000; 
+}
+
+
+.stat-card.overall {
+  background-color: white;
+  border: 3px solid #d62d81;
+  border-radius: 30px;
+  color: #000;
+  transition: all 0.3s ease;
+}
+.stat-card.overall h4 {
+  color: #000; 
+}
+
+  .big-card {
+    max-width: 300px;
+    margin: 0 auto 20px auto;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+
+</head>
+
+<body>
+    <header class="user-header">
+            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
+            
+            <div class="bell-menu">
+              <a href="notifications.html" class="bell-div notif-bell-wrapper">
+                  <i class="far fa-bell bell-icon">
+                    <span id="notifBadge" class="notification-badge"></span>
+                  </i>
+              </a>
+            
+            <div id="menuHamToggle">
+                
+                <input type="checkbox">
+
+                <span></span>
+                <span></span>
+                <span></span>
+    
+                
+                <ul id="mainMenu">
+                    <a href="profile.html"> <li> Profile </li></a>
+                    <a href="user-management.html"> <li> User Management </li></a>
+                    <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
+                    <a href="support-tickets.html"> <li> Support Tickets </li></a>
+                    <a href="statistics.html"> <li> Platform Statistics </li></a>
+                    <a href="settings.html"> <li> Settings</li></a>
+                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
+                </ul>
+            </div>
+            
+            </div>
+ 
+    </header>
+    
+    
+
+<div id="signOutModal" class="modal-overlay">
+  <div class="modal-content">
+    <p>Are you sure you want to sign out?</p>
+    <div class="modal-buttons">
+      <button onclick="confirmSignOut()">Yes</button>
+      <button onclick="closeModal()">No</button>
+    </div>
+  </div>
+</div>
+
+
+<main class="stats-container">
+  <h2>Platform Statistics</h2>
+  
+<div class="statistics-section" id="userStatsSection">
+  <h2>User Statistics</h2>
+
+  <div class="stat-card overall big-card" id="totalUsersCard">
+    <h4>Total Active Users</h4>
+    <p id="totalUsersCount">0</p>
+  </div>
+
+  <div class="stats-filter-select">
+    <label for="userFilterSelect">View breakdown:</label>
+    <select id="userFilterSelect">
+      <option value="">Select</option>
+      <option value="role">By Role</option>
+      <option value="status">By Status</option>
+      <option value="roleStatus">By Role & Status</option>
+    </select>
+  </div>
+
+  <div class="stats-cards" id="userDetailsCards"></div>
+</div>
+
+
+  
+<div class="statistics-section" id="consultancyStatsSection">
+  <h2>Consultancy Statistics</h2>
+
+  <div class="stat-card overall big-card" id="totalConsultanciesCard">
+    <h4>Total Accepted Profiles</h4>
+    <p id="totalConsultanciesCount">0</p>
+  </div>
+
+  <div class="stats-filter-select">
+    <label for="consultancyFilterSelect">View breakdown:</label>
+    <select id="consultancyFilterSelect">
+      <option value="">Select</option>
+      <option value="status">By Status</option>
+      <option value="type">By Type</option>
+    </select>
+  </div>
+
+  <div class="stats-cards" id="consultancyDetailsCards"></div>
+</div>
+
+  
+<div class="statistics-section" id="ticketStatsSection">
+  <h2>Support Ticket Statistics</h2>
+
+  <div class="stat-card overall big-card" id="totalTicketsCard">
+    <h4>Total Tickets</h4>
+    <p id="totalTicketsCount">0</p>
+  </div>
+
+  <div class="stats-filter-select">
+    <label for="ticketFilterSelect">View breakdown:</label>
+    <select id="ticketFilterSelect">
+      <option value="">Select</option>
+      <option value="status">By Status</option>
+      <option value="role">By Submitter Role</option>
+    </select>
+  </div>
+
+  <div class="stats-cards" id="ticketCards"></div>
+</div>
+
+
+</main>
+    
+    
+  
+
+    
+    <footer>
+        <div class="logo_icons">
+            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+            <div class="social-icons">
+                <a href="" class="twitter_link">
+                    <img src="../images/instagram.png" alt="Instagram">
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4 class="h4_service">Service & Contacts</h4>
+            <a href="../faq.html" class="class_footer">
+                <p>FAQ</p> 
+            </a>
+            <a href="../contact-us.html" class="class_footer">
+                <p>Contact Us</p> 
+            </a>
+            <a href="../privacy-policy.html" class="class_footer">
+                <p>Privacy Policy</p> 
+            </a>
+            <a href="../about-us.html" class="class_footer">
+                <p>About Us</p>
+            </a>
+            <a href="../terms-conditions.html" class="class_footer">
+              <p>Terms and Conditions</p>
+          </a>
+        </div>
+    </footer>
+<script src="../auth.js"></script>
+<script src="../script.js"></script>
+<script>
+(async () => {
+  await autoEnforceRoleFromPath();
+})();
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const API_BASE = "http://localhost:8000/statistics";
+  const token = localStorage.getItem("accessToken");
+  if (!token) return;
+
+  const headers = { "Authorization": `Bearer ${token}` };
+
+  try {
+const resUsers = await fetch(`${API_BASE}/users`, { headers });
+const users = await resUsers.json();
+
+const totalActiveUsers = Object.entries(users.role_status_details).reduce((sum, [, statuses]) => {
+  return sum + (statuses["active"] || 0);
+}, 0);
+
+document.getElementById("totalUsersCount").textContent = totalActiveUsers;
+
+
+// Get elements
+const userDetailsCards = document.getElementById("userDetailsCards");
+const userFilterSelect = document.getElementById("userFilterSelect");
+
+userFilterSelect.addEventListener("change", () => {
+  userDetailsCards.innerHTML = ""; // Clear old cards
+  const value = userFilterSelect.value;
+
+  if (value === "role") {
+    for (const [role, statuses] of Object.entries(users.role_status_details)) {
+      const activeCount = statuses["active"] || 0;
+      const userLabel = activeCount === 1 ? "user" : "users";
+      userDetailsCards.innerHTML += `<div class="stat-card"><h4>${role.charAt(0).toUpperCase() + role.slice(1)}</h4><p>${activeCount} active ${userLabel}</p></div>`;
+    }
+  } else if (value === "status") {
+    for (const [status, count] of Object.entries(users.status_count)) {
+      const userLabel = count === 1 ? "user" : "users";
+      userDetailsCards.innerHTML += `<div class="stat-card"><h4>${status.charAt(0).toUpperCase() + status.slice(1)}</h4><p>${count} ${userLabel}</p></div>`;
+    }
+  } else if (value === "roleStatus") {
+    for (const [role, statuses] of Object.entries(users.role_status_details)) {
+      const totalForRole = Object.values(statuses).reduce((a, b) => a + b, 0);
+      const totalLabel = totalForRole === 1 ? "user" : "users";
+      let statusList = "";
+      for (const [status, count] of Object.entries(statuses)) {
+        const label = count === 1 ? "user" : "users";
+        statusList += `<p style="margin: 2px 0;">${status.charAt(0).toUpperCase() + status.slice(1)}: ${count} ${label}</p>`;
+      }
+      userDetailsCards.innerHTML += `
+        <div class="stat-card">
+          <h4>${role.charAt(0).toUpperCase() + role.slice(1)}</h4>
+          <p>Total: ${totalForRole} ${totalLabel}</p>
+          ${statusList}
+        </div>
+      `;
+    }
+  }
+});
+
+
+
+
+
+    // Consultancy stats
+const resConsult = await fetch(`${API_BASE}/consultancies`, { headers });
+const consult = await resConsult.json();
+
+// Show total accepted profiles
+const totalAccepted = consult.overall_accepted_total || 0;
+document.getElementById("totalConsultanciesCount").textContent = totalAccepted;
+
+// Elements
+const consultancyDetailsCards = document.getElementById("consultancyDetailsCards");
+const consultancyFilterSelect = document.getElementById("consultancyFilterSelect");
+
+consultancyFilterSelect.addEventListener("change", () => {
+  consultancyDetailsCards.innerHTML = ""; // Clear
+
+  const value = consultancyFilterSelect.value;
+
+  if (value === "status") {
+    for (const [status, count] of Object.entries(consult.overall_status_counts)) {
+      const profileWord = count === 1 ? "profile" : (count === 0 ? "profile" : "profiles");
+      consultancyDetailsCards.innerHTML += `<div class="stat-card"><h4>${status.charAt(0).toUpperCase() + status.slice(1)}</h4><p>${count} ${profileWord}</p></div>`;
+    }
+  } else if (value === "type") {
+    const studyCount = consult.study_consultancies.accepted || 0;
+    const internshipCount = consult.internship_consultancies.accepted || 0;
+
+    const studyWord = studyCount === 1 ? "profile" : (studyCount === 0 ? "profile" : "profiles");
+    const internshipWord = internshipCount === 1 ? "profile" : (internshipCount === 0 ? "profile" : "profiles");
+
+    consultancyDetailsCards.innerHTML += `<div class="stat-card"><h4>Study Abroad</h4><p>${studyCount} accepted ${studyWord}</p></div>`;
+    consultancyDetailsCards.innerHTML += `<div class="stat-card"><h4>Internship Abroad</h4><p>${internshipCount} accepted ${internshipWord}</p></div>`;
+  }
+});
+
+
+
+// Support ticket stats
+const resTickets = await fetch(`${API_BASE}/support-tickets`, { headers });
+const tickets = await resTickets.json();
+const totalTickets = tickets.total_tickets || 0;
+document.getElementById("totalTicketsCount").textContent = totalTickets;
+
+const ticketCards = document.getElementById("ticketCards");
+const ticketFilterSelect = document.getElementById("ticketFilterSelect");
+
+ticketFilterSelect.addEventListener("change", () => {
+  ticketCards.innerHTML = ""; // Clear old cards
+  const value = ticketFilterSelect.value;
+
+  if (value === "status") {
+    for (const [status, count] of Object.entries(tickets.status_counts)) {
+      const formattedStatus = status
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, l => l.toUpperCase());
+      const ticketWord = count === 1 ? "ticket" : (count === 0 ? "ticket" : "tickets");
+      ticketCards.innerHTML += `
+        <div class="stat-card">
+          <h4>${formattedStatus}</h4>
+          <p>${count} ${ticketWord}</p>
+        </div>
+      `;
+    }
+  } else if (value === "role") {
+    for (const [role, count] of Object.entries(tickets.submitter_role_counts)) {
+      const formattedRole = role.charAt(0).toUpperCase() + role.slice(1);
+      const ticketWord = count === 1 ? "ticket" : (count === 0 ? "ticket" : "tickets");
+      ticketCards.innerHTML += `
+        <div class="stat-card">
+          <h4>${formattedRole}</h4>
+          <p>${count} ${ticketWord}</p>
+        </div>
+      `;
+    }
+  }
+}); }
+
+  
+  catch (error) {
+    console.error("Error loading stats:", error);
+  }
+});
+
+
+</script>
+
+
+
+<div id="inAppModal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modalMessage">Message here</p>
+    <div id="modalButtons" class="modal-buttons">
+      <button id="modalConfirmButton" style="display: none;">OK</button>
+      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    </div>
+  </div>
+</div>  
+</body>
+</html>

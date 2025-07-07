@@ -66,35 +66,39 @@ async def get_consultancy_statistics(
     db: AsyncSession = Depends(get_db),
     current_user=Depends(require_admin)
 ):
-    # Total study consultancy profiles
-    stmt_study_total = select(func.count(Education.user_id))
-    study_total = await db.scalar(stmt_study_total)
-
-    # Study by status
+    # Study consultancies by status
     stmt_study_status = select(Education.status, func.count(Education.user_id)).group_by(Education.status)
     res_study_status = await db.execute(stmt_study_status)
     study_status_counts = {status: count for status, count in res_study_status.all()}
 
-    # Total internship consultancy profiles
-    stmt_internship_total = select(func.count(Internship.user_id))
-    internship_total = await db.scalar(stmt_internship_total)
-
-    # Internship by status
+    # Internship consultancies by status
     stmt_internship_status = select(Internship.status, func.count(Internship.user_id)).group_by(Internship.status)
     res_internship_status = await db.execute(stmt_internship_status)
     internship_status_counts = {status: count for status, count in res_internship_status.all()}
 
+    # Total accepted profiles
+    total_accepted = study_status_counts.get("accepted", 0) + internship_status_counts.get("accepted", 0)
+
     return {
         "study_consultancies": {
-            "total": study_total,
+            "total": sum(study_status_counts.values()),
+            "accepted": study_status_counts.get("accepted", 0),
             "status_breakdown": study_status_counts
         },
         "internship_consultancies": {
-            "total": internship_total,
+            "total": sum(internship_status_counts.values()),
+            "accepted": internship_status_counts.get("accepted", 0),
             "status_breakdown": internship_status_counts
         },
-        "overall_total": study_total + internship_total
+        "overall_total": sum(study_status_counts.values()) + sum(internship_status_counts.values()),
+        "overall_status_counts": {
+            "accepted": total_accepted,
+            "pending": study_status_counts.get("pending", 0) + internship_status_counts.get("pending", 0),
+            "rejected": study_status_counts.get("rejected", 0) + internship_status_counts.get("rejected", 0),
+        },
+        "overall_accepted_total": total_accepted
     }
+
 
 @router.get("/support-tickets", summary="Admin: Get support ticket statistics")
 async def get_support_ticket_statistics(
@@ -110,13 +114,13 @@ async def get_support_ticket_statistics(
     res_status = await db.execute(stmt_status)
     status_counts = {status: count for status, count in res_status.all()}
 
-    # Tickets by user role
+    # Tickets by submitter role
     stmt_roles = select(User.role, func.count(SupportTicket.id)).join(User, SupportTicket.user_id == User.id).group_by(User.role)
     res_roles = await db.execute(stmt_roles)
-    role_counts = {role: count for role, count in res_roles.all()}
+    submitter_role_counts = {role: count for role, count in res_roles.all()}
 
     return {
         "total_tickets": total_tickets,
         "status_counts": status_counts,
-        "submitter_role_counts": role_counts
+        "submitter_role_counts": submitter_role_counts
     }
