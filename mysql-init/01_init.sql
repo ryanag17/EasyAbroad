@@ -527,7 +527,7 @@ CREATE TABLE IF NOT EXISTS messages (
   sender_id         INT NOT NULL,
   receiver_id       INT NOT NULL,
   booking_id        INT,
-  encrypted_message VARBINARY(512) NOT NULL,
+  encrypted_message BLOB NOT NULL,
   encryption_iv     VARBINARY(16)  NOT NULL,
   is_reported       BOOLEAN DEFAULT FALSE,
   reported_at       DATETIME,
