@@ -581,18 +581,7 @@ CREATE TABLE IF NOT EXISTS support_ticket_messages (
   INDEX (sender_id)
 );
 
-
--- 13) CONTACT_MESSAGES table (for “Contact Us” form submissions)
-CREATE TABLE IF NOT EXISTS contact_messages (
-  id           INT PRIMARY KEY AUTO_INCREMENT,
-  name         VARCHAR(255) NOT NULL,
-  email        VARCHAR(255) NOT NULL,
-  message      TEXT NOT NULL,
-  submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-
--- 14) REFRESH_TOKENS table
+-- 13) REFRESH_TOKENS table
 CREATE TABLE IF NOT EXISTS refresh_tokens (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   token       VARCHAR(64) NOT NULL UNIQUE,
@@ -604,7 +593,7 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 15) Appointments table
+-- 14) Appointments table
 CREATE TABLE IF NOT EXISTS appointments (
   id INT AUTO_INCREMENT PRIMARY KEY,
   consultant_id INT NOT NULL,
@@ -624,7 +613,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   info VARCHAR(255) NULL
 );
 
--- 16) Consultant_Reviews table
+-- 15) Consultant_Reviews table
 CREATE TABLE IF NOT EXISTS consultant_reviews (
   id              INT PRIMARY KEY AUTO_INCREMENT,
   booking_id      INT NOT NULL UNIQUE,
@@ -651,7 +640,6 @@ CREATE TABLE notifications (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
 -- ─────────────────────────────────────────────────────────────────────────────
 -- END OF 01_init.sql
 -- ─────────────────────────────────────────────────────────────────────────────
