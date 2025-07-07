@@ -173,7 +173,11 @@
       message:     text,
       booking_id:  null
     };
-
+        const userId = JSON.parse(atob(token.split('.')[1])).sub;
+if (+partnerId === userId) {
+  await showInAppAlert("🚫 You cannot message yourself.");
+  return;
+}
     try {
       const res = await fetch("http://localhost:8000/messages/send", {
         method:  "POST",
@@ -210,6 +214,7 @@
   window.goBackToInbox = () => window.location.href = "messages.html";
 
   await loadThread();
+  setInterval(loadThread, 3000); 
 })();
 </script>
 

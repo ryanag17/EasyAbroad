@@ -34,6 +34,9 @@ async def send_message(
     recipient = await db.get(User, data.receiver_id)
     if not recipient:
         raise HTTPException(status_code=404, detail="Recipient not found")
+    if recipient.id == user["user_id"]:
+        raise HTTPException(status_code=400, detail="You cannot send messages to yourself.")
+
 
     token = fernet.encrypt(data.message.encode())
     raw = base64.urlsafe_b64decode(token)

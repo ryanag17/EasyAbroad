@@ -74,6 +74,14 @@ async def change_password(
     if not bcrypt.checkpw(payload.old_password.encode(), row.password_hash.encode()):
         raise HTTPException(400, "Old password is incorrect")
 
+    # ← Prevent reuse of the old password
+    if bcrypt.checkpw(payload.new_password.encode(), row.password_hash.encode()):
+        raise HTTPException(
+            status_code=400,
+            detail="New password cannot be the same as the old password."
+        )
+
+    
     new_hash = bcrypt.hashpw(payload.new_password.encode(), bcrypt.gensalt()).decode()
     await db.execute(
         update(User).

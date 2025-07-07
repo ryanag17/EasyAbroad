@@ -32,7 +32,7 @@ class Settings(BaseSettings):
         description="JWT signing algorithm (default HS256)"
     )
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
-        15,
+        1440,
         description="Access token lifetime in minutes (default 15)"
     )
     REFRESH_TOKEN_EXPIRE_DAYS:   int = Field(

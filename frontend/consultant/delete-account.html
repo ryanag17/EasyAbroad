@@ -119,59 +119,60 @@
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
-})();  
+})();
 
-const deleteForm = document.getElementById("deleteAccountForm");
-const deleteEmail = document.getElementById("email");
+// grab form & fields
+const deleteForm     = document.getElementById("deleteAccountForm");
+const deleteEmail    = document.getElementById("email");
 const deletePassword = document.getElementById("deletePassword");
-const deleteError = document.getElementById("deleteError");
-let deleteFormDirty = false;
+const deleteError    = document.getElementById("deleteError");
 
-// Dummy credentials for demo
-const dummyEmail = "user@example.com";
-const dummyPassword = "123456";
-
-// Reset error on input
-deleteForm.addEventListener("input", () => {
-  deleteFormDirty = true;
-  deleteError.style.display = "none";
-});
-
-deleteForm.addEventListener("submit", (e) => {
+deleteForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+  deleteError.style.display = "none";
 
-  const email = deleteEmail.value.trim();
+  const email    = deleteEmail.value.trim();
   const password = deletePassword.value;
 
-  if (email !== dummyEmail || password !== dummyPassword) {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    deleteError.textContent = "You must be logged in.";
     deleteError.style.display = "block";
     return;
   }
 
-  if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-    deleteFormDirty = false;
-    showInAppAlert("✅ Your account has been deleted.");
-    setTimeout(() => {
-      window.location.href = "../../";
-    }, 1500);
+  try {
+    const res = await fetch("http://localhost:8000/profile", {
+      method: "DELETE",
+      headers: {
+        "Content-Type":  "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (res.ok) {
+      // HTTP 200 OK or 204 No Content
+      showInAppAlert("✅ Your account has been deleted.");
+      setTimeout(() => window.location.href = "/", 1500);
+    } else {
+      const err = await res.json().catch(() => ({}));
+      deleteError.textContent = err.detail || "Failed to delete account.";
+      deleteError.style.display = "block";
+    }
+  } catch (err) {
+    console.error("Error calling delete profile:", err);
+    deleteError.textContent = "Network error while deleting account.";
+    deleteError.style.display = "block";
   }
 });
 
-// Warn before leaving if form dirty
-window.addEventListener("beforeunload", (e) => {
-  if (deleteFormDirty) {
-    e.preventDefault();
-    e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-  }
-});
-
-// Toggle password visibility
+// toggle password visibility (unchanged)
 document.querySelectorAll(".toggle-password").forEach(button => {
   button.addEventListener("click", () => {
     const target = button.getAttribute("toggle");
     const input = document.querySelector(target);
     if (!input) return;
-
     if (input.type === "password") {
       input.type = "text";
       button.classList.add("visible");
@@ -181,7 +182,18 @@ document.querySelectorAll(".toggle-password").forEach(button => {
     }
   });
 });
+
+// warn before leaving if unsaved
+let dirty = false;
+deleteForm.addEventListener("input", () => { dirty = true; deleteError.style.display = "none"; });
+window.addEventListener("beforeunload", e => {
+  if (dirty) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
 </script>
+
 
 
 

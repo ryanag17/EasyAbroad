@@ -1,265 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 </head>
+
 <body>
-    <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
-    
+  <header class="user-header">
+    <a href="home.html" class="to_the_main">
+      <div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+    </a>
 
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
-    </header>
+    <div class="bell-menu">
+      <a href="notifications.html" class="bell-div notif-bell-wrapper">
+        <i class="far fa-bell bell-icon">
+          <span id="notifBadge" class="notification-badge"></span>
+        </i>
+      </a>
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+      <div id="menuHamToggle">
+
+        <input type="checkbox">
+
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+
+        <ul id="mainMenu">
+          <a href="profile.html">
+            <li> Profile </li>
+          </a>
+          <a href="appointments.html">
+            <li> Appointments </li>
+          </a>
+          <a href="messages.html">
+            <li> Messages </li>
+          </a>
+          <a href="consultancy-areas.html">
+            <li> Consultancy Areas </li>
+          </a>
+          <a href="timetable.html">
+            <li> Timetable </li>
+          </a>
+          <a href="support-tickets.html">
+            <li> Support Tickets </li>
+          </a>
+          <a href="settings.html">
+            <li> Settings </li>
+          </a>
+          <a href="#" onclick="showSignOutModal()">
+            <li> Sign Out </li>
+          </a>
+        </ul>
+      </div>
+
+    </div>
+
+  </header>
+
+  <div id="signOutModal" class="modal-overlay">
+    <div class="modal-content">
+      <p>Are you sure you want to sign out?</p>
+      <div class="modal-buttons">
+        <button onclick="confirmSignOut()">Yes</button>
+        <button onclick="closeModal()">No</button>
+      </div>
     </div>
   </div>
-</div>
-    
-    
-    <section class="chat-conversation-section">
 
-        
-        <div class="chat-header">
-          <button class="back-button" onclick="goBackToInbox()">← Back to Messages</button>
-          <div class="consultant-info">
-            <img src="../images/avatar.png" alt="Consultant" class="avatar">
-            <a href="#" class="consultant-name">AMIDOVICH</a>
-          </div>
 
-        </div>
-      
-        
-        <div class="chat-messages" id="chatMessages">
-          
-        </div>
-      
-        
-        <div class="chat-input">
-          <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500">
-          <button  id="sendBtn">Send</button>
-        </div>
-      
-      </section>
-      
-      
-<div id="reportModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-button" onclick="closeReportModal()">&times;</span>
-    <h2>Why would you like to report this person?</h2>
-    <textarea id="reportReason" rows="8" maxlength="2500" placeholder="Please explain the reason for your report (max 500 words)..."></textarea>
-    <button onclick="submitReport()">Submit Report</button>
+  <section class="chat-conversation-section">
+
+
+    <div class="chat-header">
+      <button class="back-button" onclick="goBackToInbox()">← Back to Messages</button>
+      <div class="consultant-info">
+        <img src="../images/avatar.png" alt="User" class="avatar">
+        <a href="#" class="partner-name">User</a>
+      </div>
+
+    </div>
+
+
+    <div class="chat-messages" id="chatMessages">
+
+    </div>
+
+
+    <div class="chat-input">
+      <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500">
+      <button id="sendBtn">Send</button>
+    </div>
+
+  </section>
+
+
+  <div id="reportModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeReportModal()">&times;</span>
+      <h2>Why would you like to report this person?</h2>
+      <textarea id="reportReason" rows="8" maxlength="2500"
+        placeholder="Please explain the reason for your report (max 500 words)..."></textarea>
+      <button onclick="submitReport()">Submit Report</button>
+    </div>
   </div>
-</div>
 
-    
-      <footer>
-        <div class="logo_icons">
-            <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
-            <div class="social-icons">
-                <a href="" class="twitter_link">
-                    <img src="../images/instagram.png" alt="Instagram">
-                </a>
-            </div>
-        </div>
-        <div class="footer-links">
-            <h4 class="h4_service">Service & Contacts</h4>
-            <a href="../faq.html" class="class_footer">
-                <p>FAQ</p> 
-            </a>
-            <a href="../contact-us.html" class="class_footer">
-                <p>Contact Us</p> 
-            </a>
-            <a href="../privacy-policy.html" class="class_footer">
-                <p>Privacy Policy</p> 
-            </a>
-            <a href="../about-us.html" class="class_footer">
-                <p>About Us</p>
-            </a>
-            <a href="../terms-conditions.html" class="class_footer">
-              <p>Terms and Conditions</p>
-          </a>
-        </div>
-    </footer>
+
+  <footer>
+    <div class="logo_icons">
+      <div class="footer-logo"><img src="../images/logo.png" alt="" class="pic_logo"></div>
+      <div class="social-icons">
+        <a href="" class="twitter_link">
+          <img src="../images/instagram.png" alt="Instagram">
+        </a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4 class="h4_service">Service & Contacts</h4>
+      <a href="../faq.html" class="class_footer">
+        <p>FAQ</p>
+      </a>
+      <a href="../contact-us.html" class="class_footer">
+        <p>Contact Us</p>
+      </a>
+      <a href="../privacy-policy.html" class="class_footer">
+        <p>Privacy Policy</p>
+      </a>
+      <a href="../about-us.html" class="class_footer">
+        <p>About Us</p>
+      </a>
+      <a href="../terms-conditions.html" class="class_footer">
+        <p>Terms and Conditions</p>
+      </a>
+    </div>
+  </footer>
   <script src="../auth.js"></script>
-  <script src="../script.js"></script>      
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
+  <script src="../script.js"></script>
+  <script>
+    (async () => {
+      await autoEnforceRoleFromPath();
 
-  const token     = localStorage.getItem("accessToken");
-  const params    = new URLSearchParams(window.location.search);
-  const partnerId = params.get("partnerId");
-  if (!partnerId) {
-    await showInAppAlert("No conversation selected.", () => {
-      window.location.href = "messages.html";
-    });
-    return;
-  }
-
-  async function loadPartnerInfo(partnerId) {
-    try {
-      const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Failed to fetch user info");
-      const user = await res.json();
-      document.querySelector(".consultant-name").textContent =
-        user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || `User #${partnerId}`;
-      document.querySelector(".avatar").src =
-        user.profile_picture
-          ? "http://localhost:8000" + user.profile_picture
-          : "../images/avatar.png";
-    } catch (e) {
-      console.error("Error loading partner info:", e);
-      await showInAppAlert("Failed to load user info. Displaying fallback name and image.");
-      document.querySelector(".consultant-name").textContent = `User #${partnerId}`;
-      document.querySelector(".avatar").src = "../images/avatar.png";
-    }
-  }
-
-  await loadPartnerInfo(partnerId);
-
-  async function loadThread() {
-    try {
-      const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Failed to load thread");
-      const msgs = await res.json();
-      renderChat(msgs);
-    } catch (e) {
-      console.error("Error loading thread:", e);
-      await showInAppAlert("Failed to load chat messages.");
-    }
-  }
-
-    setInterval(loadThread, 3000);    <textarea id="messageInput" placeholder="Type a message..."></textarea>
-
-  function renderChat(messages) {
-    const container = document.getElementById("chatMessages");
-    container.innerHTML = "";
-    messages.forEach(m => {
-      const bubble = document.createElement("div");
-      bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
-      bubble.innerHTML = `
-        <div class="bubble-content">
-          <p>${m.message}</p>
-          <span class="timestamp">
-            ${new Date(m.sent_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
-          </span>
-        </div>`;
-      container.appendChild(bubble);
-    });
-    container.scrollTop = container.scrollHeight;
-  }
-
-  async function sendMessage() {
-    const input = document.getElementById("messageInput");
-    const text  = input.value.trim();
-    if (!text) return;
-
-    if (text.length > 500) {
-      await showInAppAlert("Message cannot exceed 500 characters.");
-      return;
-    }
-
-    const payload = {
-      receiver_id: +partnerId,
-      message:     text,
-      booking_id:  null
-    };
-
-    try {
-      const res = await fetch("http://localhost:8000/messages/send", {
-        method:  "POST",
-        headers: {
-          "Content-Type":  "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) {
-        const errorText = await res.text();
-        await showInAppAlert("Failed to send message: " + errorText);
+      const token = localStorage.getItem("accessToken");
+      const params = new URLSearchParams(window.location.search);
+      const partnerId = params.get("partnerId");
+      if (!partnerId) {
+        await showInAppAlert("No conversation selected.", () => {
+          window.location.href = "messages.html";
+        });
         return;
       }
 
-      input.value = "";
-      await loadThread();
-    } catch (e) {
-      console.error("Error sending message:", e);
-      await showInAppAlert("Failed to send message due to network error.");
-    }
+async function loadPartnerInfo(partnerId) {
+  try {
+    const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("Failed to fetch user info");
+
+    // parse as YOUR PARTNER
+    const partnerUser = await res.json();
+
+    // set partner’s name
+    const name =
+      ((partnerUser.first_name || "") + " " + (partnerUser.last_name || "")).trim() ||
+      partnerUser.full_name ||
+      `User #${partnerId}`;
+    document.querySelector(".partner-name").textContent = name;
+
+    // set partner’s avatar
+    document.querySelector(".avatar").src =
+      partnerUser.profile_picture
+        ? "http://localhost:8000" + partnerUser.profile_picture
+        : "../images/avatar.png";
+
+  } catch (e) {
+    console.error("Error loading partner info:", e);
+    await showInAppAlert("Failed to load user info. Displaying fallback.");
+    document.querySelector(".partner-name").textContent = `User #${partnerId}`;
+    document.querySelector(".avatar").src = "../images/avatar.png";
   }
+}
 
-  document.getElementById("sendBtn")
-          .addEventListener("click", sendMessage);
-  document.getElementById("messageInput")
-          .addEventListener("keydown", e => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
+      await loadPartnerInfo(partnerId);
 
-  window.goBackToInbox = () => window.location.href = "messages.html";
+      async function loadThread() {
+        try {
+          const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+          if (!res.ok) throw new Error("Failed to load thread");
+          const msgs = await res.json();
+          renderChat(msgs);
+        } catch (e) {
+          console.error("Error loading thread:", e);
+          await showInAppAlert("Failed to load chat messages.");
+        }
+      }
 
-  await loadThread();
-})();
-</script>
+
+
+      function renderChat(messages) {
+        const container = document.getElementById("chatMessages");
+        container.innerHTML = "";
+        messages.forEach(m => {
+          const bubble = document.createElement("div");
+          bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
+          bubble.innerHTML = `
+        <div class="bubble-content">
+          <p>${m.message}</p>
+          <span class="timestamp">
+            ${new Date(m.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        </div>`;
+          container.appendChild(bubble);
+        });
+        container.scrollTop = container.scrollHeight;
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const text = input.value.trim();
+        if (!text) return;
+
+        if (text.length > 500) {
+          await showInAppAlert("Message cannot exceed 500 characters.");
+          return;
+        }
+
+        const payload = {
+          receiver_id: +partnerId,
+          message: text,
+          booking_id: null
+        };
+
+        const userId = JSON.parse(atob(token.split('.')[1])).sub;
+if (+partnerId === userId) {
+  await showInAppAlert("🚫 You cannot message yourself.");
+  return;
+}
+
+
+        try {
+          const res = await fetch("http://localhost:8000/messages/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const errorText = await res.text();
+            await showInAppAlert("Failed to send message: " + errorText);
+            return;
+          }
+
+          input.value = "";
+          await loadThread();
+        } catch (e) {
+          console.error("Error sending message:", e);
+          await showInAppAlert("Failed to send message due to network error.");
+        }
+      }
+
+      document.getElementById("sendBtn")
+        .addEventListener("click", sendMessage);
+      document.getElementById("messageInput")
+        .addEventListener("keydown", e => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+
+      window.goBackToInbox = () => window.location.href = "messages.html";
+
+      await loadThread();
+      setInterval(loadThread, 3000); // refresh chat every 3 seconds
+
+    })();
+  </script>
 
 
 
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+  <div id="inAppModal" class="modal-overlay">
+    <div class="modal-content">
+      <p id="modalMessage">Message here</p>
+      <div id="modalButtons" class="modal-buttons">
+        <button id="modalConfirmButton" style="display: none;">OK</button>
+        <button id="modalCancelButton" style="display: none;">Cancel</button>
+      </div>
     </div>
   </div>
-</div>
 </body>
+
 </html>
