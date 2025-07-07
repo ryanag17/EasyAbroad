@@ -270,8 +270,8 @@ function validateRegisterForm() {
     isValid = false;
   }
 
-  if (pwVal.length < 6) {
-    showError("password-error", "Password must be at least 6 characters.");
+  if (pwVal.length < 8) {
+    showError("password-error", "Password must be at least 8 characters.");
     isValid = false;
   }
 
@@ -280,21 +280,26 @@ function validateRegisterForm() {
     isValid = false;
   }
 
-  if (birthdayVal) {
-    const birthdayDate = new Date(birthdayVal);
-    const today = new Date();
-
-    if (birthdayDate > today) {
-      showError("birthday-error", "Birthday cannot be in the future.");
+if (!birthdayVal) {
+  showError('birthday-error', 'Please enter your date of birth.');
+  isValid = false;
+} else {
+  const bday = new Date(birthdayVal);
+  const today = new Date();
+  if (bday > today) {
+    showError('birthday-error', 'Birthday cannot be in the future.');
+    isValid = false;
+  } else {
+    const age = new Date(today - bday).getUTCFullYear() - 1970;
+    if (age < 18) {
+      showError('birthday-error', 'User must be at least 18 years old.');
       isValid = false;
-    } else {
-      const age = new Date(today - birthdayDate).getUTCFullYear() - 1970;
-      if (age < 18) {
-        showError("birthday-error", "You must be at least 18 years old.");
-        isValid = false;
-      }
+    } else if (age > 100) {
+      showError('birthday-error', 'User must be younger than 100 years old.');
+      isValid = false;
     }
   }
+}
 
   return isValid;
 }
