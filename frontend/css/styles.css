@@ -3193,7 +3193,7 @@ textarea#reviewText {
 }
 
 #linkModal .modal-content {
-  background-color: #fff0f5;
+  background-color: #fff;
   padding: 20px;
   border-radius: 12px;
   width: 95%;
@@ -3233,7 +3233,7 @@ textarea#reviewText {
 }
 
 #rejectModal .modal-content {
-  background: #fff0f5;
+  background: #fff;
   padding: 30px;
   border-radius: 12px;
   text-align: center;
