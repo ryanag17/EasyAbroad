@@ -4227,3 +4227,94 @@ textarea#reviewText {
 #inAppModal .modal-buttons button:hover {
   background-color: #b81d6b;
 }
+
+
+/* consultant and student/reviews.html */
+.reviews-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.reviews-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.reviews-summary {
+  text-align: left;
+  margin-bottom: 25px;
+}
+
+#ratingDistribution p {
+  margin: 4px 0;
+}
+
+#reviewsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reviews-item {
+  background-color: #f9f9f9;
+  border: 2px solid #d62d81;
+  border-radius: 15px;
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reviews-header h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #333333;
+}
+
+.reviews-header p {
+  margin: 0;
+  font-size: 1.2em;
+  color: #d62d81;
+}
+
+.reviews-item p {
+  margin: 10px 0;
+  color: #555555;
+  line-height: 1.4;
+}
+
+.reviews-item small {
+  display: block;
+  margin-top: 10px;
+  color: #888888;
+  font-size: 0.9em;
+}
+
+@media (max-width: 768px) {
+  .reviews-container {
+    padding: 20px;
+  }
+
+  .reviews-item {
+    padding: 15px;
+  }
+
+  .reviews-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reviews-header p {
+    margin-top: 5px;
+  }
+}
+/* consultant and student/reviews.html */

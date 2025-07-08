@@ -60,8 +60,8 @@
     <h2 class="reviews-title">Your Reviews:</h2>
     <div class="reviews-summary" id="reviewsSummary">
     </div>
-
     <section id="reviewsContainer"></section>
+    <div id="pagination" class="pagination"></div>
     </main>
 
     
@@ -101,6 +101,10 @@
 
   const token = localStorage.getItem("accessToken");
 
+  let currentPage = 1;
+  const itemsPerPage = 5;
+  let reviews = [];
+
   try {
     const reviewsRes = await fetch("http://localhost:8000/appointment/consultant/reviews/me", {
       headers: { Authorization: `Bearer ${token}` }
@@ -111,8 +115,7 @@
       return;
     }
 
-    const reviews = await reviewsRes.json();
-    const container = document.getElementById("reviewsContainer");
+    reviews = await reviewsRes.json();
 
     if (reviews.length === 0) {
       document.getElementById("reviewsSummary").innerHTML = "<p>You have not received any reviews yet.</p>";
@@ -138,13 +141,30 @@
       </div>
     `;
 
-    reviews.forEach(review => {
+    renderReviews();
+    renderPagination(reviews.length);
+
+  } catch (err) {
+    showInAppAlert("❌ Error loading reviews: " + err.message);
+  }
+
+  function paginate(data) {
+    const start = (currentPage - 1) * itemsPerPage;
+    return data.slice(start, start + itemsPerPage);
+  }
+
+  function renderReviews() {
+    const container = document.getElementById("reviewsContainer");
+    const paginated = paginate(reviews);
+    container.innerHTML = '';
+
+    paginated.forEach(review => {
       const div = document.createElement("div");
-      div.classList.add("review-item", "review-box");
+      div.classList.add("reviews-item", "reviews-box");
 
       const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
       div.innerHTML = `
-        <div class="review-header">
+        <div class="reviews-header">
           <h3>${review.student_name || "Anonymous"}</h3>
           <p>${stars}</p>
         </div>
@@ -153,12 +173,59 @@
       `;
       container.appendChild(div);
     });
+  }
 
-  } catch (err) {
-    showInAppAlert("❌ Error loading reviews: " + err.message);
+  function renderPagination(totalItems) {
+    const pagination = document.getElementById("pagination");
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    pagination.innerHTML = "";
+
+    if (totalPages <= 1) {
+      pagination.style.display = "none";
+      return;
+    }
+
+    pagination.style.display = "flex";
+
+    if (currentPage > 1) {
+      const prev = document.createElement("button");
+      prev.textContent = "Previous";
+      prev.onclick = () => {
+        currentPage--;
+        renderReviews();
+        renderPagination(totalItems);
+      };
+      pagination.appendChild(prev);
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      if (i === currentPage) {
+        btn.disabled = true;
+      }
+      btn.onclick = () => {
+        currentPage = i;
+        renderReviews();
+        renderPagination(totalItems);
+      };
+      pagination.appendChild(btn);
+    }
+
+    if (currentPage < totalPages) {
+      const next = document.createElement("button");
+      next.textContent = "Next";
+      next.onclick = () => {
+        currentPage++;
+        renderReviews();
+        renderPagination(totalItems);
+      };
+      pagination.appendChild(next);
+    }
   }
 })();
 </script>
+
 
 
 <div id="inAppModal" class="modal-overlay">

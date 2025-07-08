@@ -210,38 +210,37 @@
         return;
       }
 
-      showInAppConfirm("Are you sure you want to submit your review?", async (confirmed) => {
-        if (!confirmed) return;
+      const confirmed = await showInAppConfirm("Are you sure you want to submit your review?");
+      if (!confirmed) return;
 
-        try {
-          const res = await fetch("http://localhost:8000/appointment/review", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              booking_id: parseInt(appointmentId),
-              rating: selectedRating,
-              review_text: text,
-            }),
+      try {
+        const res = await fetch("http://localhost:8000/appointment/review", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            booking_id: parseInt(appointmentId),
+            rating: selectedRating,
+            review_text: text,
+          }),
+        });
+
+        if (res.ok) {
+          showInAppAlert("✅ Your review has been submitted.", () => {
+            isDirty = false;
+            window.location.href = "appointments.html#previous";
           });
-
-          if (res.ok) {
-            showInAppAlert("✅ Your review has been submitted.", () => {
-              isDirty = false;
-              window.location.href = "appointments.html#previous";
-            });
-          } else {
-            const data = await res.json().catch(() => ({}));
-            reviewError.textContent = data.detail || "Failed to submit review.";
-            reviewError.style.display = "block";
-          }
-        } catch (error) {
-          reviewError.textContent = error.message;
+        } else {
+          const data = await res.json().catch(() => ({}));
+          reviewError.textContent = data.detail || "Failed to submit review.";
           reviewError.style.display = "block";
         }
-      });
+      } catch (error) {
+        reviewError.textContent = error.message;
+        reviewError.style.display = "block";
+      }
     });
 
     window.addEventListener("beforeunload", (e) => {
@@ -274,6 +273,7 @@
     }
   })();
 </script>
+
 
 
 
