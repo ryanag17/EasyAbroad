@@ -90,6 +90,9 @@ app.include_router(notification_router)
 from app.statistics.routes import router as statistics_router
 app.include_router(statistics_router)
 
+from app.payment import routes as payment_routes
+app.include_router(payment_routes.router)
+
 
 # 7) Health check
 @app.get("/", status_code=200)
