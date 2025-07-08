@@ -238,20 +238,31 @@ async function fetchAndRenderCalendar(startDate) {
                 const key = `${dateStr}|${slot.start_time}|${slot.end_time}`;
                 const isBooked = booked.has(key);
 
-                events.push({
-                    title: isBooked ? 'Booked' : 'Available',
-                    start: `${dateStr}T${slot.start_time}`,
-                    end: `${dateStr}T${slot.end_time}`,
-                    color: isBooked ? '#ccc' : '#28a745',
-                    editable: false,
-                    display: 'block',
-                    extendedProps: {
-                        dayOfWeek: day,
-                        startTime: slot.start_time,
-                        endTime: slot.end_time,
-                        isBooked: isBooked
-                    }
-                });
+const slotStart = new Date(`${dateStr}T${slot.start_time}`);
+const now = new Date();
+let eventColor = '#28a745'; 
+
+if (isBooked) {
+    eventColor = '#000'; 
+} else if (slotStart < now) {
+    eventColor = '#bbb'; 
+}
+
+events.push({
+    title: isBooked ? 'Booked' : 'Available',
+    start: `${dateStr}T${slot.start_time}`,
+    end: `${dateStr}T${slot.end_time}`,
+    color: eventColor,
+    editable: false,
+    display: 'block',
+    extendedProps: {
+        dayOfWeek: day,
+        startTime: slot.start_time,
+        endTime: slot.end_time,
+        isBooked: isBooked
+    }
+});
+
             }
         });
     });
@@ -291,7 +302,7 @@ function renderCalendar(startDate, events) {
             }
             if (selectedEvent) selectedEvent.setProp('color', '#28a745');
             selectedEvent = info.event;
-            selectedEvent.setProp('color', '#1e7e34');
+            selectedEvent.setProp('color', '#b02678');
             selectedSlotInfo = info.event;
         }
     });

@@ -231,10 +231,10 @@ async function loadPartnerInfo(partnerId) {
         const text = input.value.trim();
         if (!text) return;
         
-        if (text.includes("data:image") || text.includes("<img")) {
+        /* if (text.includes("data:image") || text.includes("<img")) {
           await showInAppAlert("🚫 Sending images is not allowed.");
           return;
-        }
+        } */
 
 
         if (text.length > 500) {
