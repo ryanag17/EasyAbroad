@@ -276,7 +276,25 @@ footer {
     font-size: 12px;
     padding: 2px;
   }
+  /* consultant-timetable END */
+  /* admin */
+  .modal-content_add{
+    max-width: 96% !important;
+  }
+  .preview-container{
+    width: 96% !important;
+  }
+  .user-card{
+    width: 96% !important;
+  }
+  /* admin END */
 }
+@media (max-width: 800px) {
+  .user-card{
+    width: 96% !important;
+  }
+}
+
 
 /* Media CSS END */
 
@@ -2688,11 +2706,11 @@ textarea#reviewText {
   
   .filter-container {
     display: flex;
+    justify-content: space-evenly;
     flex-wrap: wrap;
     gap: 10px;
     margin: 20px auto;
     padding: 10px 20px;
-    justify-content: center;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
@@ -3316,6 +3334,11 @@ textarea#reviewText {
   
 }
 
+.add-user_column{
+  display: column;
+  flex: 2;
+}
+
 .modal-content_add {
   background-color: #fefefe;
   margin: 0 auto;
@@ -3377,7 +3400,6 @@ textarea#reviewText {
   display: flex;
   align-items: center;
   width: 100%;
-  gap: 10px;
 }
 
 .password-wrapper_add-user input {
@@ -3400,6 +3422,14 @@ textarea#reviewText {
   display: none;
   margin-bottom: 5px;
   margin-top: -10px;
+}
+
+.action-buttons{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  margin-top: 20px;
 }
 
 /* add-user END */

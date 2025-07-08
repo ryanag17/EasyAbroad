@@ -77,83 +77,102 @@
 
       <div class="form-row">
         <label for="name">Name:</label>
-        <input type="text" class="name_input" id="name" placeholder="Enter your name" />
-        <p class="error-message" id="name-error"></p>
+        <div class="add-user_column">
+          <input type="text" class="name_input" id="name" placeholder="Enter your name" />
+          <p class="error-message" id="name-error"></p>
+        </div>
       </div>
 
       <div class="form-row">
         <label for="surname">Surname:</label>
-        <input type="text" id="surname" class="name_input" placeholder="Enter your surname" />
-        <p class="error-message" id="surname-error"></p>
+        <div class="add-user_column">
+          <input type="text" id="surname" class="name_input" placeholder="Enter your surname" />
+          <p class="error-message" id="surname-error"></p>
+        </div>
       </div>
 
       <div class="form-row">
         <label for="email-id">Email:</label>
-        <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" />
-        <div id="icon"></div>
-        <p id="error-msg">Please Enter A Valid Email</p>
-        <p class="error-message" id="email-error"></p>
+        <div class="add-user_column">
+          <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" />
+          <div id="icon"></div>
+          <p id="error-msg">Please Enter A Valid Email</p>
+        </div>
       </div>
 
       <div class="form-row">
         <label class="label_repeat_add-user" for="password-id">Password:</label>
-        <div class="password-wrapper_add-user">
-          <input type="password" class="password_class" id="password-id" placeholder="Enter Password" />
-          <i class="fas fa-eye toggle-password" toggle="#password-id"></i>
+        <div class="add-user_column">
+          <div class="password-wrapper_add-user">
+            <input type="password" class="password_class" id="password-id" placeholder="Enter Password" style="height: 36px;" />
+            <i class="fas fa-eye toggle-password" toggle="#password-id"></i>
+          </div>
+          <p class="error-message" id="password-error"></p>
         </div>
-        <p class="error-message" id="password-error"></p>
       </div>
 
       <div class="form-row">
         <label class="label_repeat_add-user" for="repeat">Repeat:</label>
-        <div class="password-wrapper_add-user">
-          <input type="password" id="repeat" class="password_class" placeholder="Repeat your password" />
-          <i class="fas fa-eye toggle-password" toggle="#repeat"></i>
+        <div class="add-user_column">
+          <div class="password-wrapper_add-user">
+            <input type="password" id="repeat" class="password_class" placeholder="Repeat your password" style="height: 36px;" />
+            <i class="fas fa-eye toggle-password" toggle="#repeat"></i>
+          </div>
+          <p class="error-message" id="repeat-error"></p>
         </div>
-        <p class="error-message" id="repeat-error"></p>
       </div>
 
 
       <div class="form-row">
         <label for="birthday">Date of Birth:</label>
-        <input type="date" class="name_input" name="birthday" id="birthday" />
-        <p class="error-message" id="birthday-error"></p>
+        <div class="add-user_column">
+          <input type="date" class="name_input" name="birthday" id="birthday" />
+          <p class="error-message" id="birthday-error"></p>
+        </div>
       </div>
 
       <div class="form-row">
         <label>Gender:</label>
-        <select class="select_add-user" id="gender">
-          <option>Select</option>
-          <option>Male</option>
-          <option>Female</option>
-          <option>Other</option>
-        </select>
-        <p class="error-message" id="gender-error"></p>
+        <div class="add-user_column">
+          <select class="select_add-user" id="gender">
+            <option>Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+          <p class="error-message" id="gender-error"></p>
+        </div>
       </div>
 
       <div class="form-row">
         <label>Country:</label>
-        <select class="select_add-user" id="country">
-          <option value="">Select</option>
-        </select>
-        <p class="error-message" id="country-error"></p>
+        <div class="add-user_column">
+          <select class="select_add-user" id="country">
+            <option value="">Select</option>
+          </select>
+          <p class="error-message" id="country-error"></p>
+        </div>
       </div>
 
       <div class="form-row">
         <label for="city">City:</label>
-        <input type="text" id="city" class="name_input" placeholder="Enter city" />
-        <p class="error-message" id="city-error"></p>
+        <div class="add-user_column">
+          <input type="text" id="city" class="name_input" placeholder="Enter city" />
+          <p class="error-message" id="city-error"></p>
+        </div>
       </div>
 
       <div class="form-row">
         <label>Role:</label>
-        <select class="select_add-user" id="role">
-          <option>Select</option>
-          <option>Student</option>
-          <option>Consultant</option>
-          <option>Admin</option>
-        </select>
-        <p class="error-message" id="role-error"></p>
+        <div class="add-user_column">
+          <select class="select_add-user" id="role">
+            <option>Select</option>
+            <option>Student</option>
+            <option>Consultant</option>
+            <option>Admin</option>
+          </select>
+          <p class="error-message" id="role-error"></p>
+        </div>
       </div>
 
       <input type="hidden" id="status" value="active" />
