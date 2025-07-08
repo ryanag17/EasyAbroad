@@ -97,7 +97,7 @@
 
 
     <div class="chat-input">
-      <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500">
+      <textarea id="messageInput" placeholder="Type a message..."></textarea>
       <button id="sendBtn">Send</button>
     </div>
 
@@ -230,6 +230,12 @@ async function loadPartnerInfo(partnerId) {
         const input = document.getElementById("messageInput");
         const text = input.value.trim();
         if (!text) return;
+        
+        if (text.includes("data:image") || text.includes("<img")) {
+          await showInAppAlert("🚫 Sending images is not allowed.");
+          return;
+        }
+
 
         if (text.length > 500) {
           await showInAppAlert("Message cannot exceed 500 characters.");

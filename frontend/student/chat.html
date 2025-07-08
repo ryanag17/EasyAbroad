@@ -62,6 +62,7 @@
       <textarea id="messageInput" placeholder="Type a message..."></textarea>
       <button id="sendBtn">Send</button>
     </div>
+    
   </section>
 
   <footer>
@@ -162,6 +163,12 @@
     const input = document.getElementById("messageInput");
     const text  = input.value.trim();
     if (!text) return;
+    
+    if (text.includes("data:image") || text.includes("<img")) {
+  await showInAppAlert("🚫 Sending images is not allowed.");
+  return;
+}
+
 
     if (text.length > 500) {
       await showInAppAlert("Message cannot exceed 500 characters.");
