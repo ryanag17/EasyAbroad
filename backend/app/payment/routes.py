@@ -1,9 +1,15 @@
 from fastapi import APIRouter, Request
 import stripe
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get Stripe secret key from environment
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 router = APIRouter()
-
-stripe.api_key = "***REMOVED***51RihYQQKocCiGQPZa5BdlzfskhW6hNJ40lVu5v6Sl5jwp3WeLKYizArkMwSDwCtiUKxvg2dmZQxvSlu44AnSoYTJ00HErlduUp"
 
 @router.post("/create-payment-intent")
 async def create_payment_intent(request: Request):

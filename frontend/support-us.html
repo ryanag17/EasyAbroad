@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Us</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="body_contact">
+  <header id="dynamic-header"></header>
+
+  <div class="reviews-container">
+    <h2 class="contact_us_h2">Support Us</h2>
+    <p class="contact_p_out">
+If you appreciate what we do and want to help us continue connecting students planning to study or intern abroad with experienced peers, you can contribute directly below. Every contribution helps us keep this supportive community thriving!    </p>
+    <br>
+
+    <form id="payment-form">
+      <label for="name">Name (optional)</label>
+      <input id="name" type="text" placeholder="Your name (optional)" class="payment_input">
+
+      <label for="email">Email (optional)</label>
+      <input id="email" type="email" placeholder="Your email (optional)" class="payment_input">
+
+      <label>Choose amount</label>
+      <div class="donation-options">
+        <button type="button" class="donation-btn" data-amount="5">€5</button>
+        <button type="button" class="donation-btn" data-amount="10">€10</button>
+        <button type="button" class="donation-btn" data-amount="20">€20</button>
+      </div>
+        <input id="amount" type="number" step="any" placeholder="Or enter custom amount" class="payment_input">
+
+
+      <label for="card-element">Card Details</label>
+      <div id="card-element" class="StripeElement"></div>
+
+      <button id="submit" class="support-btn">Support Us Now</button>
+    </form>
+<br><br>
+    <p class="contact_p_end">Thank you so much for your support! ❤️</p>
+  </div>
+
+      
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="images/logo.png" alt="" class="pic_logo">
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="images/instagram.png" alt="Instagram">
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+          <h4 class="h4_service">Service & Contacts</h4>
+          <a href="faq.html" class="class_footer"><p>FAQ</p></a>
+          <a href="contact-us.html" class="class_footer"><p>Contact Us</p></a>
+          <a href="support-us.html" class="class_footer"><p>Support Us</p></a>
+          <a href="about-us.html" class="class_footer"><p>About Us</p></a>
+          <a href="privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
+          <a href="terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
+      </div>
+    </footer>
+    
+    <script src="auth.js"></script>
+    <script src="script.js"></script>    
+<script>
+  injectHeader();
+
+  const stripe = Stripe('pk_test_51RihYQQKocCiGQPZmwJqNItbWznCoWLN9Wuscb9Enk9KWQmFRAoTyRvO0MknOf1xcgs9jdh3aoiTuVGTA4m8dP7m00IRXZgmrB');
+  const elements = stripe.elements();
+  const style = {
+    base: {
+      fontSize: '16px',
+      color: '#32325d',
+      '::placeholder': { color: '#aab7c4' }
+    },
+    invalid: {
+      color: '#fa755a'
+    }
+  };
+  const card = elements.create('card', { style });
+  card.mount('#card-element');
+
+  const form = document.getElementById('payment-form');
+  const buttons = document.querySelectorAll('.donation-btn');
+  const amountInput = document.getElementById('amount');
+
+  let selectedButtonAmount = null;
+
+  // Button click handlers
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedButtonAmount = btn.dataset.amount;
+      amountInput.value = ""; // Clear custom amount field
+    });
+  });
+
+  amountInput.addEventListener('input', () => {
+    if (amountInput.value) {
+      buttons.forEach(b => b.classList.remove('selected'));
+      selectedButtonAmount = null;
+    }
+  });
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    let amountValue = amountInput.value;
+    if (!amountValue && selectedButtonAmount) {
+      amountValue = selectedButtonAmount;
+    }
+
+    if (!amountValue || amountValue <= 0) {
+      showInAppAlert("⚠️ Please enter or select a valid amount.");
+      return;
+    }
+
+    // Try to validate card first
+    const { error: cardError } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: card,
+    });
+
+    if (cardError) {
+      showInAppAlert("❌ Please enter valid card details before continuing.");
+      return;
+    }
+
+    // Only show confirm after card is filled and valid
+    const confirmed = await showInAppConfirm(`Are you sure you want to support us with €${amountValue}?`);
+    if (!confirmed) return;
+
+    // Create payment method with billing details now
+    const { paymentMethod, error } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: card,
+      billing_details: {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+      },
+    });
+
+    if (error) {
+      showInAppAlert("❌ " + error.message);
+    } else {
+      try {
+        const response = await fetch("http://localhost:8000/create-payment-intent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            payment_method: paymentMethod.id,
+            amount: parseInt(amountValue * 100), // amount in cents
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.error) {
+          showInAppAlert("❌ Payment failed: " + result.error);
+        } else {
+          showInAppAlert("✅ Thank you for your support! 🎉 Payment successful!");
+
+          // Clear fields after success
+          document.getElementById('name').value = "";
+          document.getElementById('email').value = "";
+          amountInput.value = "";
+          buttons.forEach(b => b.classList.remove('selected'));
+          selectedButtonAmount = null;
+
+          // Reset Stripe card element
+          card.clear();
+        }
+      } catch (err) {
+        console.error(err);
+        showInAppAlert("❌ An error occurred while processing your payment.");
+      }
+    }
+  });
+</script>
+
+
+
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none;">OK</button>
+          <button id="modalCancelButton" style="display: none;">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+</body>
+</html>

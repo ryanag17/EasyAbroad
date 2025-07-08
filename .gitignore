@@ -23,3 +23,5 @@ backend/static/uploads/proof_documents/internship/*
 !backend/static/uploads/proof_documents/internship/.keep
 backend/static/uploads/proof_documents/study/*
 !backend/static/uploads/proof_documents/study/.keep
+
+.env

@@ -189,6 +189,7 @@ function injectHeader() {
             <a href="${base}user-management.html"><li>User Management</li></a>
             <a href="${base}consultant-verification.html"><li>Consultant Verification</li></a>
             <a href="${base}support-tickets.html"><li>Support Tickets</li></a>
+            <a href="${base}statistics.html"><li>Platform Statistics</li></a>
             <a href="${base}settings.html"><li>Settings</li></a>
             <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
           </ul>
