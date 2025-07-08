@@ -479,45 +479,6 @@ CREATE TABLE IF NOT EXISTS consultant_availability (
 );
 
 
--- 9) BOOKINGS table
---    References users(id) for both student_id and consultant_id.
-CREATE TABLE IF NOT EXISTS bookings (
-  id                INT PRIMARY KEY AUTO_INCREMENT,
-  student_id        INT NOT NULL,
-  consultant_id     INT NOT NULL,
-  status            ENUM('pending','confirmed','cancelled','completed') DEFAULT 'pending',
-  booked_at         DATETIME DEFAULT CURRENT_TIMESTAMP,
-  scheduled_start   DATETIME,
-  scheduled_end     DATETIME,
-  reason            ENUM('accommodation','social_life','uni_info','travel_info','company_info'),
-  platform          ENUM('zoom','microsoft_teams','google_meet','apple_facetime'),
-
-  FOREIGN KEY (student_id)    REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (consultant_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- Automatically mark past confirmed bookings as completed.
-UPDATE bookings
-SET status = 'completed'
-WHERE status = 'confirmed'
-  AND scheduled_end < NOW();
-
-
--- 10) SESSIONS table
---     One session per booking_id.
-CREATE TABLE IF NOT EXISTS sessions (
-  id                 INT PRIMARY KEY AUTO_INCREMENT,
-  booking_id         INT UNIQUE,   -- each booking only has one session
-  video_link         VARCHAR(255),
-  started_at         DATETIME,
-  ended_at           DATETIME,
-  pre_session_notes  TEXT,
-  post_session_notes TEXT,
-  created_at         DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at         DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-  FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
-);
 
 
 -- 11) MESSAGES table
