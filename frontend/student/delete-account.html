@@ -93,55 +93,73 @@
   </footer>
 
   <script src="../auth.js"></script>
-  <script src="../script.js"></script>
+  <script src="../script.js"></script>     
 <script>
-  (async () => {
-    await autoEnforceRoleFromPath();
-  })();
+(async () => {
+  await autoEnforceRoleFromPath();
+})();
 
-  const deleteForm = document.getElementById("deleteAccountForm");
-  const deleteEmail = document.getElementById("email");
-  const deletePassword = document.getElementById("deletePassword");
-  const deleteError = document.getElementById("deleteError");
-  let deleteFormDirty = false;
+const deleteForm   = document.getElementById("deleteAccountForm");
+const deleteEmail  = document.getElementById("email");
+const deletePass   = document.getElementById("deletePassword");
+const deleteError  = document.getElementById("deleteError");
 
-  deleteForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    deleteError.style.display = "none";
+deleteForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  deleteError.style.display = "none";
 
-    const email = deleteEmail.value.trim();
-    const password = deletePassword.value;
+  // Show confirm first
+  const confirmed = await showInAppConfirm("⚠️ This action cannot be undone. You will not be able to use this email address to register again. Are you sure you want to proceed?");
+  if (!confirmed) return;
 
-    showInAppConfirm("Are you sure you want to delete your account? This cannot be undone.", async () => {
-      try {
-        const token = localStorage.getItem("accessToken");
-        if (!token) throw new Error("Not authenticated.");
+  const email    = deleteEmail.value.trim();
+  const password = deletePass.value;
 
-        const resp = await fetch("http://localhost:8000/profile", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ email, password })
-        });
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    deleteError.textContent = "You must be logged in.";
+    deleteError.style.display = "block";
+    return;
+  }
 
-        const body = await resp.json();
-        if (!resp.ok) {
-          throw new Error(body.detail || body.message || resp.statusText);
-        }
-
-        showInAppAlert("✅ " + body.message, () => {
-          localStorage.clear();
-          window.location.href = "/";
-        });
-
-      } catch (err) {
-        deleteError.textContent = err.message;
-        deleteError.style.display = "block";
-      }
+  try {
+    const res = await fetch("http://localhost:8000/profile", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ email, password })
     });
+
+    if (res.ok) {
+      showInAppAlert("✅ Your account has been deleted.");
+      setTimeout(() => {
+        localStorage.clear();
+        window.location.href = "/";
+      }, 1500);
+    } else {
+      const err = await res.json().catch(() => ({}));
+      deleteError.textContent = err.detail || "Failed to delete account.";
+      deleteError.style.display = "block";
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    deleteError.textContent = "Network error while deleting account.";
+    deleteError.style.display = "block";
+  }
+});
+
+// Toggle password visibility
+document.querySelectorAll(".toggle-password").forEach(button => {
+  button.addEventListener("click", () => {
+    const target = button.getAttribute("toggle");
+    const input = document.querySelector(target);
+    if (!input) return;
+    input.type = input.type === "password" ? "text" : "password";
+    button.classList.toggle("visible");
   });
+});
 </script>
 
 

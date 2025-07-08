@@ -121,18 +121,21 @@
   await autoEnforceRoleFromPath();
 })();
 
-// grab form & fields
-const deleteForm     = document.getElementById("deleteAccountForm");
-const deleteEmail    = document.getElementById("email");
-const deletePassword = document.getElementById("deletePassword");
-const deleteError    = document.getElementById("deleteError");
+const deleteForm   = document.getElementById("deleteAccountForm");
+const deleteEmail  = document.getElementById("email");
+const deletePass   = document.getElementById("deletePassword");
+const deleteError  = document.getElementById("deleteError");
 
 deleteForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   deleteError.style.display = "none";
 
+  // Show confirm first
+  const confirmed = await showInAppConfirm("⚠️ This action cannot be undone. You will not be able to use this email address to register again. Are you sure you want to proceed?");
+  if (!confirmed) return;
+
   const email    = deleteEmail.value.trim();
-  const password = deletePassword.value;
+  const password = deletePass.value;
 
   const token = localStorage.getItem("accessToken");
   if (!token) {
@@ -145,54 +148,42 @@ deleteForm.addEventListener("submit", async (e) => {
     const res = await fetch("http://localhost:8000/profile", {
       method: "DELETE",
       headers: {
-        "Content-Type":  "application/json",
+        "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({ email, password })
     });
 
     if (res.ok) {
-      // HTTP 200 OK or 204 No Content
       showInAppAlert("✅ Your account has been deleted.");
-      setTimeout(() => window.location.href = "/", 1500);
+      setTimeout(() => {
+        localStorage.clear();
+        window.location.href = "/";
+      }, 1500);
     } else {
       const err = await res.json().catch(() => ({}));
       deleteError.textContent = err.detail || "Failed to delete account.";
       deleteError.style.display = "block";
     }
   } catch (err) {
-    console.error("Error calling delete profile:", err);
+    console.error("Error:", err);
     deleteError.textContent = "Network error while deleting account.";
     deleteError.style.display = "block";
   }
 });
 
-// toggle password visibility (unchanged)
+// Toggle password visibility
 document.querySelectorAll(".toggle-password").forEach(button => {
   button.addEventListener("click", () => {
     const target = button.getAttribute("toggle");
     const input = document.querySelector(target);
     if (!input) return;
-    if (input.type === "password") {
-      input.type = "text";
-      button.classList.add("visible");
-    } else {
-      input.type = "password";
-      button.classList.remove("visible");
-    }
+    input.type = input.type === "password" ? "text" : "password";
+    button.classList.toggle("visible");
   });
 });
-
-// warn before leaving if unsaved
-let dirty = false;
-deleteForm.addEventListener("input", () => { dirty = true; deleteError.style.display = "none"; });
-window.addEventListener("beforeunload", e => {
-  if (dirty) {
-    e.preventDefault();
-    e.returnValue = "";
-  }
-});
 </script>
+
 
 
 
