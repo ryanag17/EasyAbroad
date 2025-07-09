@@ -181,7 +181,6 @@ fileInput.addEventListener('change', async function () {
       const data = await res.json();
       const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
       profilePic.src = timestampedUrl;
-
       setTimeout(() => window.location.reload(), 1);
     } else {
       const err = await res.json();
@@ -195,7 +194,7 @@ fileInput.addEventListener('change', async function () {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const API_BASE = "http://localhost:8000";
-  const token    = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   if (!token) {
     showInAppAlert("Please log in.", () => window.location.href = "../log-in.html");
     return;
@@ -203,21 +202,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const headers = {
     "Authorization": `Bearer ${token}`,
-    "Content-Type" : "application/json"
+    "Content-Type": "application/json"
   };
 
   const editBtn = document.querySelector(".edit-btn");
-  const fields  = Array.from(
-    document.querySelectorAll(
-      'input:not([name="birthday"]):not([name="email"]), select'
-    )
+  const fields = Array.from(
+    document.querySelectorAll('input:not([name="birthday"]):not([name="email"]), select')
   );
 
   try {
     const profRes = await fetch(`${API_BASE}/profile/admin`, { headers });
     if (!profRes.ok) {
       console.error(await profRes.text());
-      showInAppAlert("Not authenticated – please log in again.", () => {
+      showInAppAlert("Not authenticated — please log in again.", () => {
         localStorage.clear();
         window.location.href = "../log-in.html";
       });
@@ -225,17 +222,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     const profile = await profRes.json();
 
-    document.getElementById("name").value     = profile.first_name || "";
-    document.getElementById("surname").value  = profile.last_name  || "";
+    document.getElementById("name").value = profile.first_name || "";
+    document.getElementById("surname").value = profile.last_name || "";
     document.querySelector('input[name="birthday"]').value = profile.birthday || "";
-    document.getElementById("city").value     = profile.city       || "";
-    document.getElementById("country").value  = profile.country    || "";
-    document.getElementById("gender").value   = profile.gender     || "";
-    document.getElementById("email-id").value = profile.email      || "";
+    document.getElementById("city").value = profile.city || "";
+    document.getElementById("country").value = profile.country || "";
+    document.getElementById("gender").value = profile.gender || "";
+    document.getElementById("email-id").value = profile.email || "";
     document.getElementById("profilePic").src =
       profile.profile_picture && profile.profile_picture.startsWith("/static/")
-      ? `http://localhost:8000${profile.profile_picture}`
-      : "../images/avatar.png";
+        ? `http://localhost:8000${profile.profile_picture}`
+        : "../images/avatar.png";
 
     const countrySel = document.getElementById("country");
     countrySel.innerHTML = `<option value="">Select</option>`;
@@ -255,14 +252,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
+      // Separate checks with clear messages
+      const name = document.getElementById("name").value.trim();
+      const surname = document.getElementById("surname").value.trim();
+      const city = document.getElementById("city").value.trim();
+      const gender = document.getElementById("gender").value;
+
+      if (!name) {
+        showInAppAlert("❌ Name cannot be empty.");
+        return;
+      }
+      if (!surname) {
+        showInAppAlert("❌ Surname cannot be empty.");
+        return;
+      }
+      if (!city) {
+        showInAppAlert("❌ City cannot be empty.");
+        return;
+      }
+      if (!gender) {
+        showInAppAlert("❌ Gender cannot be empty.");
+        return;
+      }
+
       const rawCountry = document.getElementById("country").value;
+
       const payload = {
-        first_name: document.getElementById("name").value,
-        last_name:  document.getElementById("surname").value,
+        first_name: name,
+        last_name: surname,
         ...(rawCountry && { country_name: rawCountry }),
-        city:       document.getElementById("city").value,
-        gender:     document.getElementById("gender").value || null,
+        city: city,
+        gender: gender
       };
+
+      const confirm = await showInAppConfirm("Are you sure you want to save your changes?");
+      if (!confirm) return;
 
       try {
         const res = await fetch(`${API_BASE}/profile/admin`, {
@@ -272,7 +296,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!res.ok) {
           const err = await res.json();
           console.error("Save error:", err);
-          return showInAppAlert("Save failed: " + JSON.stringify(err.detail || err));
+          return showInAppAlert("❌ Save failed: " + JSON.stringify(err.detail || err));
         }
 
         fields.forEach(f => f.disabled = true);

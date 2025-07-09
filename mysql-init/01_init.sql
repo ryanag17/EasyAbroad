@@ -532,6 +532,7 @@ WHERE expires_at < NOW();
 -- 11a) SUPPORT_TICKETS table
 CREATE TABLE IF NOT EXISTS support_tickets (
   id          INT PRIMARY KEY AUTO_INCREMENT,
+  public_id   VARCHAR(36) UNIQUE DEFAULT NULL,
   user_id     INT NOT NULL,
   subject     VARCHAR(100) NOT NULL,
   description VARCHAR(500) NOT NULL,
@@ -545,7 +546,8 @@ CREATE TABLE IF NOT EXISTS support_tickets (
   FOREIGN KEY (resolved_by) REFERENCES users(id) ON DELETE SET NULL,
 
   INDEX (user_id),
-  INDEX (status)
+  INDEX (status),
+  INDEX (public_id)
 );
 
 -- 11b) SUPPORT_TICKET_MESSAGES table

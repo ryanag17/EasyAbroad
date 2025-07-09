@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       last_name,
       profile_picture,
       company_name,
-      position,
+      department_name,
       internship_start,
       internship_finish,
       city_of_internship,
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll(".info-row")[1].innerHTML =
       `<strong>Company name:</strong> ${company_name}`;
     document.querySelectorAll(".info-row")[2].innerHTML =
-      `<strong>Position:</strong> ${position}`;
+      `<strong>Department name:</strong> ${department_name}`;
     document.querySelectorAll(".info-row")[3].innerHTML =
       `<strong>Internship period:</strong> From ${formatDate(internship_start)} to ${formatDate(internship_finish)}`;
     document.querySelectorAll(".info-row")[4].innerHTML =

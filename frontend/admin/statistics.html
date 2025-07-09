@@ -224,6 +224,27 @@
   <div class="stats-cards" id="ticketCards"></div>
 </div>
 
+<div class="statistics-section" id="appointmentStatsSection">
+  <h2>Appointment Statistics</h2>
+
+  <div class="stat-card overall big-card" id="totalAppointmentsCard">
+    <h4>Total Appointments</h4>
+    <p id="totalAppointmentsCount">0</p>
+  </div>
+
+  <div class="stats-filter-select">
+    <label for="appointmentFilterSelect">View breakdown:</label>
+    <select id="appointmentFilterSelect">
+      <option value="">Select</option>
+      <option value="status">By Status</option>
+      <option value="type">By Type</option>
+    </select>
+  </div>
+
+  <div class="stats-cards" id="appointmentCards"></div>
+</div>
+
+
 
 </main>
     
@@ -394,9 +415,54 @@ ticketFilterSelect.addEventListener("change", () => {
       `;
     }
   }
-}); }
+}); 
 
-  
+// Appointments stats
+const resAppointments = await fetch(`${API_BASE}/appointments/summary`, { headers });
+const appointments = await resAppointments.json();
+document.getElementById("totalAppointmentsCount").textContent = appointments.total_appointments || 0;
+
+const appointmentCards = document.getElementById("appointmentCards");
+const appointmentFilterSelect = document.getElementById("appointmentFilterSelect");
+
+appointmentFilterSelect.addEventListener("change", () => {
+  appointmentCards.innerHTML = ""; // Clear old
+
+  const value = appointmentFilterSelect.value;
+
+  if (value === "status") {
+    for (const [status, count] of Object.entries(appointments.status_counts)) {
+      const formattedStatus = status.charAt(0).toUpperCase() + status.slice(1);
+      const label = count === 1 ? "appointment" : "appointments";
+      appointmentCards.innerHTML += `
+        <div class="stat-card">
+          <h4>${formattedStatus}</h4>
+          <p>${count} ${label}</p>
+        </div>
+      `;
+    }
+  } else if (value === "type") {
+    for (const [type, count] of Object.entries(appointments.type_counts)) {
+      const formattedType = type
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, l => l.toUpperCase());
+      const label = count === 1 ? "appointment" : "appointments";
+      appointmentCards.innerHTML += `
+        <div class="stat-card">
+          <h4>${formattedType}</h4>
+          <p>${count} ${label}</p>
+        </div>
+      `;
+    }
+  }
+});
+
+
+
+
+
+}
+
   catch (error) {
     console.error("Error loading stats:", error);
   }

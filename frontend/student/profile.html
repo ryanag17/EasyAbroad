@@ -214,15 +214,36 @@
         return;
       }
 
+      // Check each field separately
+      const name = document.getElementById("name").value.trim();
+      const surname = document.getElementById("surname").value.trim();
+      const city = document.getElementById("city").value.trim();
       const rawGender = document.getElementById("gender").value;
       const rawCountry = document.getElementById("country").value;
 
+      if (!name) {
+        showInAppAlert("❌ Name cannot be empty.");
+        return;
+      }
+      if (!surname) {
+        showInAppAlert("❌ Surname cannot be empty.");
+        return;
+      }
+      if (!city) {
+        showInAppAlert("❌ City cannot be empty.");
+        return;
+      }
+      if (!rawGender) {
+        showInAppAlert("❌ Gender cannot be empty.");
+        return;
+      }
+
       const payload = {
-        first_name: document.getElementById("name").value,
-        last_name: document.getElementById("surname").value,
-        city: document.getElementById("city").value,
+        first_name: name,
+        last_name: surname,
+        city: city,
         ...(rawCountry && { country_name: rawCountry }),
-        gender: rawGender || null,
+        gender: rawGender,
       };
 
       try {

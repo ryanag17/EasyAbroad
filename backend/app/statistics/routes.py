@@ -6,6 +6,7 @@ from app.auth.models import User
 from app.consultancy.models import Education, Internship
 from app.auth.token_verification import get_current_user
 from app.support.models import SupportTicket
+from app.appointment.models import Appointment
 
 router = APIRouter(
     prefix="/statistics",
@@ -123,4 +124,29 @@ async def get_support_ticket_statistics(
         "total_tickets": total_tickets,
         "status_counts": status_counts,
         "submitter_role_counts": submitter_role_counts
+    }
+
+
+@router.get("/appointments/summary", summary="Get global appointment statistics")
+async def get_appointment_summary(db: AsyncSession = Depends(get_db)):
+    # Total count
+    total = await db.execute(select(func.count(Appointment.id)))
+    total_count = total.scalar()
+
+    # By status
+    status_result = await db.execute(
+        select(Appointment.status, func.count(Appointment.id)).group_by(Appointment.status)
+    )
+    status_counts = dict(status_result.all())
+
+    # By type
+    type_result = await db.execute(
+        select(Appointment.type, func.count(Appointment.id)).group_by(Appointment.type)
+    )
+    type_counts = dict(type_result.all())
+
+    return {
+        "total_appointments": total_count,
+        "status_counts": status_counts,
+        "type_counts": type_counts,
     }

@@ -186,9 +186,7 @@ fileInput.addEventListener('change', async function () {
 
   const res = await fetch("http://localhost:8000/profile/upload-picture", {
     method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    },
+    headers: { "Authorization": `Bearer ${token}` },
     body: formData
   });
 
@@ -196,10 +194,7 @@ fileInput.addEventListener('change', async function () {
     const data = await res.json();
     const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
     profilePic.src = timestampedUrl;
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 1);
+    setTimeout(() => window.location.reload(), 1);
   } else {
     const err = await res.json();
     showInAppAlert("❌ Upload failed: " + (err.detail || err.message));
@@ -220,11 +215,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const editBtn = document.querySelector(".edit-btn");
-  const fields = Array.from(
-    document.querySelectorAll(
-      'input:not([name="birthday"]):not([name="email"]), select'
-    )
-  );
+  const fields = Array.from(document.querySelectorAll('input:not([name="birthday"]):not([name="email"]), select'));
 
   const profRes = await fetch(`${API_BASE}/profile/consultant`, { headers });
   if (!profRes.ok) {
@@ -256,7 +247,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const langSel = document.getElementById("languages");
   const allLangs = await (await fetch(`${API_BASE}/profile/languages`, { headers })).json();
-
   langSel.innerHTML = "";
   allLangs.forEach(l => {
     const opt = document.createElement("option");
@@ -275,7 +265,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   langSel.addEventListener('addItem', function (event) {
     const selected = langChoices.getValue(true);
-
     if (selected.length > 5) {
       langChoices.removeActiveItemsByValue(event.detail.value);
       showInAppAlert("⚠️ You can select a maximum of 5 languages.");
@@ -293,18 +282,47 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const confirm = await showInAppConfirm("Are you sure you want to save your changes?");
-    if (!confirm) return;
+    // Separate checks with specific messages
+    const name = document.getElementById("name").value.trim();
+    const surname = document.getElementById("surname").value.trim();
+    const city = document.getElementById("city").value.trim();
+    const rawGender = document.getElementById("gender").value;
+    const selectedLanguages = langChoices.getValue(true);
+
+    if (!name) {
+      showInAppAlert("❌ Name cannot be empty.");
+      return;
+    }
+    if (!surname) {
+      showInAppAlert("❌ Surname cannot be empty.");
+      return;
+    }
+    if (!city) {
+      showInAppAlert("❌ City cannot be empty.");
+      return;
+    }
+    if (!rawGender) {
+      showInAppAlert("❌ Gender cannot be empty.");
+      return;
+    }
+    if (!selectedLanguages.length) {
+      showInAppAlert("❌ Please select at least one language.");
+      return;
+    }
 
     const rawCountry = document.getElementById("country").value;
+
     const payload = {
-      first_name: document.getElementById("name").value,
-      last_name: document.getElementById("surname").value,
+      first_name: name,
+      last_name: surname,
       ...(rawCountry && { country_name: rawCountry }),
-      city: document.getElementById("city").value,
-      gender: document.getElementById("gender").value || null,
-      languages: langChoices.getValue(true).map(id => Number(id))
+      city: city,
+      gender: rawGender,
+      languages: selectedLanguages.map(id => Number(id))
     };
+
+    const confirm = await showInAppConfirm("Are you sure you want to save your changes?");
+    if (!confirm) return;
 
     const res = await fetch(`${API_BASE}/profile/consultant`, {
       method: "PUT",

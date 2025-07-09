@@ -159,26 +159,27 @@ function renderPage() {
     return map[status] || status;
   }
 
-  list.innerHTML = paginated.map(t => {
-    const formattedDate = new Date(t.created_at + 'Z').toLocaleString('en-GB', {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      dateStyle: "short",
-      timeStyle: "short",
-      hour12: false
-    });
+list.innerHTML = paginated.map(t => {
+  const formattedDate = new Date(t.created_at + 'Z').toLocaleString('en-GB', {
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    dateStyle: "short",
+    timeStyle: "short",
+    hour12: false
+  });
 
-    return `
-      <div class="ticket-item">
-        <h3>${t.subject}</h3>
-        <p class="description">${t.description.length > 150 ? t.description.substring(0, 150) + "..." : t.description}</p>
-        <p><span class="status">Status:</span> ${formatStatus(t.status)}</p>
-        <p><small>Submitted: ${formattedDate}</small></p>
-        <div style="margin-top: 20px; margin-bottom: 10px;">
-          <a href="ticket-detail.html?id=${t.id}" class="save-button_ticket">View</a>
-        </div>
+  return `
+    <div class="ticket-item">
+      <h3>${t.subject}</h3>
+      <p class="description">${t.description.length > 150 ? t.description.substring(0, 150) + "..." : t.description}</p>
+      <p><span class="status">Status:</span> ${formatStatus(t.status)}</p>
+      <p><small>Submitted: ${formattedDate}</small></p>
+      <div style="margin-top: 20px; margin-bottom: 10px;">
+        <a href="ticket-detail.html?id=${t.public_id}" class="save-button_ticket">View</a>
       </div>
-    `;
-  }).join("");
+    </div>
+  `;
+}).join("");
+
 
   renderPagination(allTickets.length);
 }
