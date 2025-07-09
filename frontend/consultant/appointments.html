@@ -74,6 +74,7 @@
         
        
         <div class="appointments-container"></div>
+        <div id="pagination" class="pagination"></div>
 
       
     </section>
@@ -148,6 +149,9 @@ let tempAcceptedData = null;
 let tempRejectData = null;
 let tempCancelId = null;
 
+let currentPage = 1;
+const itemsPerPage = 4; // Adjust this number to control how many appointments per page
+
 async function loadAppointments() {
   const token = localStorage.getItem("accessToken");
   const res = await fetch("http://localhost:8000/appointment/consultant/appointments", {
@@ -161,17 +165,78 @@ async function loadAppointments() {
   renderAppointments(getCurrentTab());
 }
 
-function renderAppointments(status) {
-  const container = document.querySelector('.appointments-container');
-  container.innerHTML = '';
-  const filteredAppointments = appointments.filter(app => app.status === status);
+function paginate(data) {
+  const start = (currentPage - 1) * itemsPerPage;
+  return data.slice(start, start + itemsPerPage);
+}
 
-  if (!filteredAppointments.length) {
-    container.innerHTML = '<p>No appointments found in this category.</p>';
+function renderPagination(totalItems, status) {
+  const pagination = document.getElementById("pagination");
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  pagination.innerHTML = "";
+
+  if (totalPages <= 1) {
+    pagination.style.display = "none";
     return;
   }
 
-  filteredAppointments.forEach(app => {
+  pagination.style.display = "flex";
+
+  if (currentPage > 1) {
+    const prev = document.createElement("button");
+    prev.textContent = "Previous";
+    prev.onclick = () => {
+      currentPage--;
+      renderAppointments(status);
+    };
+    pagination.appendChild(prev);
+  }
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === currentPage) {
+      btn.disabled = true;
+    }
+    btn.onclick = () => {
+      currentPage = i;
+      renderAppointments(status);
+    };
+    pagination.appendChild(btn);
+  }
+
+  if (currentPage < totalPages) {
+    const next = document.createElement("button");
+    next.textContent = "Next";
+    next.onclick = () => {
+      currentPage++;
+      renderAppointments(status);
+    };
+    pagination.appendChild(next);
+  }
+}
+
+function renderAppointments(status) {
+  const container = document.querySelector('.appointments-container');
+  container.innerHTML = '';
+
+  const filteredAppointments = appointments
+    .filter(app => app.status === status)
+    .sort((a, b) => {
+      const dateA = new Date(`${a.date}T${a.start_time || '00:00'}`);
+      const dateB = new Date(`${b.date}T${b.start_time || '00:00'}`);
+      return dateA - dateB;
+    });
+
+  const paginated = paginate(filteredAppointments);
+
+  if (!paginated.length) {
+    container.innerHTML = '<p>No appointments found in this category.</p>';
+    renderPagination(filteredAppointments.length, status);
+    return;
+  }
+
+  paginated.forEach(app => {
     const card = document.createElement('div');
     card.className = 'appointment-card';
 
@@ -232,6 +297,8 @@ function renderAppointments(status) {
     `;
     container.appendChild(card);
   });
+
+  renderPagination(filteredAppointments.length, status);
 }
 
 const tabs = document.querySelectorAll('.tab');
@@ -239,6 +306,7 @@ tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     tabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
+    currentPage = 1; // Reset to first page when tab changes
     renderAppointments(tab.getAttribute('data-status'));
   });
 });

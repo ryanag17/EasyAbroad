@@ -260,6 +260,8 @@ async def approve_appointment(
     appt = await db.get(Appointment, appointment_id)
     if not appt or appt.consultant_id != current_user["user_id"]:
         raise HTTPException(403, "Not allowed")
+    if not meeting_link.startswith("http://") and not meeting_link.startswith("https://"):
+        meeting_link = "https://" + meeting_link    
     appt.status = "upcoming"
     appt.meeting_link = meeting_link
 

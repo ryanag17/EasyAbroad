@@ -65,6 +65,9 @@
       
        
 <div class="appointments-container"></div>
+        <div id="pagination" class="pagination"></div>
+
+
 
       
       </section>
@@ -115,6 +118,8 @@
 })();
 
 let appointments = [];
+let currentPage = 1;
+const itemsPerPage = 4; // Adjust this number as needed
 
 async function fetchAppointments() {
   const token = localStorage.getItem("accessToken");
@@ -132,6 +137,57 @@ async function fetchAppointments() {
   return await res.json();
 }
 
+function paginate(data) {
+  const start = (currentPage - 1) * itemsPerPage;
+  return data.slice(start, start + itemsPerPage);
+}
+
+function renderPagination(totalItems, status) {
+  const pagination = document.getElementById("pagination");
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  pagination.innerHTML = "";
+
+  if (totalPages <= 1) {
+    pagination.style.display = "none";
+    return;
+  }
+
+  pagination.style.display = "flex";
+
+  if (currentPage > 1) {
+    const prev = document.createElement("button");
+    prev.textContent = "Previous";
+    prev.onclick = () => {
+      currentPage--;
+      renderAppointments(status);
+    };
+    pagination.appendChild(prev);
+  }
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === currentPage) {
+      btn.disabled = true;
+    }
+    btn.onclick = () => {
+      currentPage = i;
+      renderAppointments(status);
+    };
+    pagination.appendChild(btn);
+  }
+
+  if (currentPage < totalPages) {
+    const next = document.createElement("button");
+    next.textContent = "Next";
+    next.onclick = () => {
+      currentPage++;
+      renderAppointments(status);
+    };
+    pagination.appendChild(next);
+  }
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
@@ -145,35 +201,27 @@ function canCancel(app) {
   return app.status === "upcoming" && (meetingDateTime - now > 24 * 60 * 60 * 1000);
 }
 
-async function cancelAppointment(appointmentId) {
-  showInAppConfirm("Are you sure you want to cancel this appointment?", async () => {
-    const token = localStorage.getItem("accessToken");
-    const res = await fetch(`http://localhost:8000/appointment/${appointmentId}/cancel`, {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (res.ok) {
-      showInAppAlert("✅ Appointment cancelled.");
-      window.location.reload();
-    } else {
-      const data = await res.json().catch(() => ({}));
-      showInAppAlert(data.detail || "❌ Failed to cancel appointment.");
-    }
-  });
-}
-
 function renderAppointments(status) {
   const container = document.querySelector('.appointments-container');
   container.innerHTML = '';
 
-  const filtered = appointments.filter(app => app.status === status);
+  const filtered = appointments
+    .filter(app => app.status === status)
+    .sort((a, b) => {
+      const dateA = new Date(`${a.date}T${a.start_time || '00:00'}`);
+      const dateB = new Date(`${b.date}T${b.start_time || '00:00'}`);
+      return dateA - dateB;
+    });
 
-  if (filtered.length === 0) {
+  const paginated = paginate(filtered);
+
+  if (paginated.length === 0) {
     container.innerHTML = '<p>No appointments found.</p>';
+    renderPagination(filtered.length, status);
     return;
   }
 
-  filtered.forEach(app => {
+  paginated.forEach(app => {
     const card = document.createElement('div');
     card.className = 'appointment-card';
 
@@ -200,11 +248,11 @@ function renderAppointments(status) {
 
     card.innerHTML = `
       <div class="appointment-info">
-      <p class="appointment-date">${formatDate(app.date)}, ${app.start_time || app.time} - ${app.end_time || ""}</p>
-      <p class="consultant-name"><b>${app.consultant_name || "Consultant"}</b></p>
-      <p class="appointment-type" style="margin-bottom:8px; color:#d62d81; font-weight:bold;">
-      ${app.type === "study" ? "Consultation for Study" : app.type === "internship" ? "Consultation for Internship" : ""}
-      </p>
+        <p class="appointment-date">${formatDate(app.date)}, ${app.start_time || app.time} - ${app.end_time || ""}</p>
+        <p class="consultant-name"><b>${app.consultant_name || "Consultant"}</b></p>
+        <p class="appointment-type" style="margin-bottom:8px; color:#d62d81; font-weight:bold;">
+          ${app.type === "study" ? "Consultation for Study" : app.type === "internship" ? "Consultation for Internship" : ""}
+        </p>
         <label class="meeting_label">Meeting Topic:</label>
         <select disabled>
           <option selected>${app.reason || ""}</option>
@@ -215,16 +263,18 @@ function renderAppointments(status) {
       </div>
       <div class="appointment-actions">
         ${meetingLinkBlock}
-       <a class="message-btn" href="chat.html?partnerId=${app.consultant_id}">Send a message</a>
-       ${status === 'upcoming' && canCancel(app) ? `
-         <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
-       ` : ''}
-       ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?appointment_id=${app.id}">Review</a>` : ''}
+        <a class="message-btn" href="chat.html?partnerId=${app.consultant_id}">Send a message</a>
+        ${status === 'upcoming' && canCancel(app) ? `
+          <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
+        ` : ''}
+        ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?appointment_id=${app.id}">Review</a>` : ''}
       </div>
     `;
 
     container.appendChild(card);
   });
+
+  renderPagination(filtered.length, status);
 }
 
 const tabs = document.querySelectorAll('.tab');
@@ -232,6 +282,7 @@ tabs.forEach(tab => {
   tab.addEventListener('click', function() {
     tabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
+    currentPage = 1; // Reset to first page when changing tab
     renderAppointments(tab.getAttribute('data-status'));
   });
 });
