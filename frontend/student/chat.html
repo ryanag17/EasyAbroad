@@ -90,142 +90,134 @@
   <script src="../auth.js"></script>
   <script src="../script.js"></script>
 <script>
-(async () => {
-  await autoEnforceRoleFromPath();
+ (async () => {
+      await autoEnforceRoleFromPath();  // from auth.js
 
-  const token     = localStorage.getItem("accessToken");
-  const params    = new URLSearchParams(window.location.search);
-  const partnerId = params.get("partnerId");
-  if (!partnerId) {
-    await showInAppAlert("No conversation selected.", () => {
-      window.location.href = "messages.html";
-    });
-    return;
-  }
-
-  // Load consultant info
-  async function loadConsultantInfo(consultantId) {
-    try {
-      const res = await fetch(`http://localhost:8000/users/${consultantId}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Failed to fetch user info");
-      const user = await res.json();
-      document.querySelector(".consultant-name").textContent =
-        user.full_name || ((user.first_name || "") + " " + (user.last_name || "")).trim() || "Consultant";
-      document.querySelector(".avatar").src =
-        user.profile_picture
-          ? "http://localhost:8000" + user.profile_picture
-          : "../images/avatar.png";
-    } catch (e) {
-      console.error("Error loading consultant info:", e);
-      await showInAppAlert("Failed to load consultant information.");
-      document.querySelector(".consultant-name").textContent = "User #" + partnerId;
-      document.querySelector(".avatar").src = "../images/avatar.png";
-    }
-  }
-
-  await loadConsultantInfo(partnerId);
-
-  // Load thread
-  async function loadThread() {
-    try {
-      const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Failed to load thread");
-      const msgs = await res.json();
-      renderChat(msgs);
-    } catch (e) {
-      console.error("Error loading thread:", e);
-      await showInAppAlert("Failed to load messages.");
-    }
-  }
-
-  setInterval(loadThread, 3000);
-
-  function renderChat(messages) {
-    const container = document.getElementById("chatMessages");
-    container.innerHTML = "";
-    messages.forEach(m => {
-      const bubble = document.createElement("div");
-      bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
-      bubble.innerHTML = `
-        <div class="bubble-content">
-          <p>${m.message}</p>
-          <span class="timestamp">
-            ${new Date(m.sent_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
-          </span>
-        </div>`;
-      container.appendChild(bubble);
-    });
-    container.scrollTop = container.scrollHeight;
-  }
-
-  async function sendMessage() {
-    const input = document.getElementById("messageInput");
-    const text  = input.value.trim();
-    if (!text) return;
-    
-    /* if (text.includes("data:image") || text.includes("<img")) {
-      await showInAppAlert("🚫 Sending images is not allowed.");
-      return;
-    } */
-
-
-    if (text.length > 500) {
-      await showInAppAlert("Message cannot exceed 500 characters.");
-      return;
-    }
-
-    const payload = {
-      receiver_id: +partnerId,
-      message:     text,
-      booking_id:  null
-    };
-        const userId = JSON.parse(atob(token.split('.')[1])).sub;
-if (+partnerId === userId) {
-  await showInAppAlert("🚫 You cannot message yourself.");
-  return;
-}
-    try {
-      const res = await fetch("http://localhost:8000/messages/send", {
-        method:  "POST",
-        headers: {
-          "Content-Type":  "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) {
-        const errorText = await res.text();
-        await showInAppAlert("Failed to send message: " + errorText);
+      const token = localStorage.getItem("accessToken");
+      const params = new URLSearchParams(window.location.search);
+      const partnerHash = params.get("partnerId");
+      if (!partnerHash) {
+        await showInAppAlert("No conversation selected.", 
+                             () => window.location.href = "messages.html");
         return;
       }
 
-      input.value = "";
+      let partnerIdNumeric;
+
+      // 1) Load partner info (name/avatar) + numeric ID
+      async function loadPartnerInfo() {
+        try {
+          const res = await fetch(
+            `http://localhost:8000/users/by-hash/${partnerHash}`, {
+              headers: { "Authorization": `Bearer ${token}` }
+            }
+          );
+          if (!res.ok) throw new Error();
+          const u = await res.json();
+          partnerIdNumeric = u.id;
+          document.querySelector(".consultant-name").textContent =
+            `${u.first_name} ${u.last_name}`.trim() || u.full_name;
+          document.querySelector(".avatar").src =
+            u.profile_picture 
+              ? "http://localhost:8000" + u.profile_picture 
+              : "../images/avatar.png";
+        } catch {
+          document.querySelector(".consultant-name").textContent =
+            `User #${partnerHash}`;
+        }
+      }
+      await loadPartnerInfo();
+
+      // 2) Load and render thread
+      async function loadThread() {
+        try {
+          const res = await fetch(
+            `http://localhost:8000/messages/with/${partnerHash}`, {
+              headers: { "Authorization": `Bearer ${token}` }
+            }
+          );
+          if (!res.ok) throw new Error();
+          const msgs = await res.json();
+          renderChat(msgs);
+        } catch {
+          await showInAppAlert("Failed to load chat messages.");
+        }
+      }
+
+      function renderChat(messages) {
+        const c = document.getElementById("chatMessages");
+        c.innerHTML = "";
+        messages.forEach(m => {
+          const bubble = document.createElement("div");
+          bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
+          bubble.innerHTML = `
+            <div class="bubble-content">
+              <p>${m.message}</p>
+              <span class="timestamp">
+                ${new Date(m.sent_at).toLocaleTimeString([], {
+                  hour: '2-digit', minute: '2-digit'
+                })}
+              </span>
+            </div>`;
+          c.appendChild(bubble);
+        });
+        c.scrollTop = c.scrollHeight;
+      }
+
+      // 3) Send a new message
+      async function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const text = input.value.trim();
+        if (!text) return;
+        if (text.length > 500) {
+          await showInAppAlert("Message cannot exceed 500 characters.");
+          return;
+        }
+        const userId = JSON.parse(atob(token.split(".")[1])).sub;
+        if (partnerIdNumeric === userId) {
+          await showInAppAlert("🚫 You cannot message yourself.");
+          return;
+        }
+
+        const payload = {
+          receiver_id: partnerIdNumeric,
+          message: text,
+          booking_id: null
+        };
+
+        try {
+          const res = await fetch("http://localhost:8000/messages/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const err = await res.text();
+            await showInAppAlert("Failed to send message: " + err);
+            return;
+          }
+          input.value = "";
+          await loadThread();
+        } catch {
+          await showInAppAlert("Network error sending message.");
+        }
+      }
+
+      document.getElementById("sendBtn").onclick = sendMessage;
+      document.getElementById("messageInput").onkeydown = e => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      };
+
+      window.goBackToInbox = () => window.location.href = "messages.html";
       await loadThread();
-    } catch (e) {
-      console.error("Error sending message:", e);
-      await showInAppAlert("Failed to send message due to network error.");
-    }
-  }
-
-  document.getElementById("sendBtn")
-          .addEventListener("click", sendMessage);
-  document.getElementById("messageInput")
-          .addEventListener("keydown", e => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-
-  window.goBackToInbox = () => window.location.href = "messages.html";
-
-  await loadThread();
-  setInterval(loadThread, 3000); 
-})();
+      setInterval(loadThread, 3000);
+    })();
 </script>
 
 

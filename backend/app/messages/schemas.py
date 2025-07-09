@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
 
-
 class SendMessageSchema(BaseModel):
     receiver_id: int
     message: str
@@ -17,3 +16,8 @@ class MessageOut(BaseModel):
     sent_at: datetime
     first_name: str
     last_name: str
+    partner_hash: str
+
+    model_config = {
+        "from_attributes": True
+    }
