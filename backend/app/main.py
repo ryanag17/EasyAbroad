@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 import asyncio
 
 from app.auth.routes import router as auth_router
-from app.auth.controller import router as profile_router
+from app.profile.routes import router as profile_router
 from app.consultancy.routes import consultancy_router
 from app.config import settings
 from app.db import get_db_session

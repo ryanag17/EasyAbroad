@@ -8,7 +8,7 @@ from app.auth.models import User
 from app.auth.schemas import (
     UserCreate, UserLogin, TokenOut, ForgotPasswordRequest, ResetPasswordRequest
 )
-from app.auth.controller import (
+from app.profile.routes import (
     register, login, get_student_profile, get_consultant_profile,
     forgot_password, reset_password
 )
@@ -190,49 +190,3 @@ async def require_admin_user(user=Depends(get_current_user)):
             detail="You must be an admin to access this resource"
         )
     return user
-
-
-@router.delete("/profile", summary="Delete your own account")
-async def delete_account(
-    data: dict,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    from app.auth.models import User as UserModel
-    from sqlalchemy import delete as sa_delete
-
-    # Validate email and password
-    user = await db.get(UserModel, current_user.id)
-    if not user or user.email.lower() != data.get("email", "").lower():
-        raise HTTPException(400, "Email or password is incorrect")
-    import bcrypt
-    if not bcrypt.checkpw(data.get("password", "").encode(), user.password_hash.encode()):
-        raise HTTPException(400, "Email or password is incorrect")
-
-    # Delete user
-    await db.delete(user)
-    await db.commit()
-    return {"message": "Account deleted successfully"}
-
-# ─── Remove or comment out all legacy /messages handlers below ────────────
-# from .models import Message, User
-# from .schemas.message import SendMessageSchema, MessageOut
-# from .token_verification import get_current_user
-# from cryptography.fernet import Fernet
-# import os
-#
-# router = APIRouter()
-# fernet = Fernet(os.getenv("MESSAGE_ENCRYPTION_KEY").encode())
-#
-# @router.post("/messages/send", ...)
-# async def send_message(...):
-#     ...
-#
-# @router.get("/messages", ...)
-# async def get_conversation_summaries(...):
-#     ...
-#
-# @router.get("/messages/with/{partner_id}", ...)
-# async def get_full_thread(...):
-#     ...
-# ────────────────────────────────────────────────────────────────────────────

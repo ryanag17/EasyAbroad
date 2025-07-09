@@ -26,7 +26,7 @@ def send_reset_email(recipient_email: str, reset_token: str, user_name: str = No
 <body style="font-family: Arial, sans-serif; background-color: #f6f6f6; padding: 20px;">
   <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
     <div style="text-align: center; margin-bottom: 30px;">
-      <img src="https://easyabroad.com/frontend/images/favicon.png" alt="Easy Abroad Logo" style="max-height: 50px;">
+      <img src="https://easy-abroad.de/frontend/images/favicon.png" alt="Easy Abroad Logo" style="max-height: 50px;">
     </div>
     <h2 style="color: #333;">Reset Your Password</h2>
     <p>{greeting}</p>
@@ -39,7 +39,7 @@ def send_reset_email(recipient_email: str, reset_token: str, user_name: str = No
     <hr style="margin: 40px 0;">
     <p style="font-size: 12px; color: #999; text-align: center;">
       &copy; 2025 Easy Abroad. All rights reserved.<br>
-      <a href="http://www.easy-abroad.de" style="color: #999;">www.easyabroad.com</a>
+      <a href="http://www.easy-abroad.de" style="color: #999;">www.easy-abroad.de</a>
     </p>
   </div>
 </body>

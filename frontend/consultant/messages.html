@@ -120,8 +120,7 @@ function renderThreads(threads) {
   }
 
   threads.forEach(async t => {
-    const loggedInUserId = JSON.parse(atob(token.split('.')[1])).sub;
-    const partnerId = t.sender_id === loggedInUserId ? t.receiver_id : t.sender_id;
+    const partnerId = t.from_me ? t.receiver_id : t.sender_id;
     const partnerName = `${t.first_name ?? ""} ${t.last_name ?? ""}`.trim();
 
     let profilePic = "../images/avatar.png";

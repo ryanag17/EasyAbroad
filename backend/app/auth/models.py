@@ -8,18 +8,10 @@ from app.db import Base
 
 import enum
 
-# =========================
-# ENUMS
-# =========================
-
 class UserStatusEnum(str, enum.Enum):
     active = "active"
     inactive = "inactive"
     deleted = "deleted"
-
-# =========================
-# SQLAlchemy ORM Models
-# =========================
 
 class User(Base):
     __tablename__ = "users"
