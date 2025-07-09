@@ -2844,6 +2844,11 @@ textarea#reviewText {
   background-color: #218838;
 }
 
+.disabled-btn {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 
 
 /* make-appointment END */

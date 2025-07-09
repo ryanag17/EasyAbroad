@@ -196,6 +196,7 @@
 
 let calendar;
 let currentDate = new Date();
+let today = new Date();
 let selectedEvent = null;
 let selectedSlotInfo = null;
 let consultantId = new URLSearchParams(window.location.search).get("id");
@@ -239,31 +240,30 @@ async function fetchAndRenderCalendar(startDate) {
                 const key = `${dateStr}|${slot.start_time}|${slot.end_time}`;
                 const isBooked = booked.has(key);
 
-const slotStart = new Date(`${dateStr}T${slot.start_time}`);
-const now = new Date();
-let eventColor = '#28a745'; 
+                const slotStart = new Date(`${dateStr}T${slot.start_time}`);
+                const now = new Date();
+                let eventColor = '#28a745'; 
 
-if (isBooked) {
-    eventColor = '#000'; 
-} else if (slotStart < now) {
-    eventColor = '#bbb'; 
-}
+                if (isBooked) {
+                    eventColor = '#000'; 
+                } else if (slotStart < now) {
+                    eventColor = '#bbb'; 
+                }
 
-events.push({
-    title: isBooked ? 'Booked' : 'Available',
-    start: `${dateStr}T${slot.start_time}`,
-    end: `${dateStr}T${slot.end_time}`,
-    color: eventColor,
-    editable: false,
-    display: 'block',
-    extendedProps: {
-        dayOfWeek: day,
-        startTime: slot.start_time,
-        endTime: slot.end_time,
-        isBooked: isBooked
-    }
-});
-
+                events.push({
+                    title: isBooked ? 'Booked' : 'Available',
+                    start: `${dateStr}T${slot.start_time}`,
+                    end: `${dateStr}T${slot.end_time}`,
+                    color: eventColor,
+                    editable: false,
+                    display: 'block',
+                    extendedProps: {
+                        dayOfWeek: day,
+                        startTime: slot.start_time,
+                        endTime: slot.end_time,
+                        isBooked: isBooked
+                    }
+                });
             }
         });
     });
@@ -388,17 +388,40 @@ async function confirmBooking() {
 function changeWeek(offset) {
     currentDate.setDate(currentDate.getDate() + (offset * 7));
     fetchAndRenderCalendar(currentDate);
+    updateButtonStates();
 }
+
+function goToCurrentWeek() {
+    currentDate = new Date(today);
+    currentDate.setDate(currentDate.getDate() - ((currentDate.getDay() + 6) % 7));
+    fetchAndRenderCalendar(currentDate);
+    updateButtonStates();
+}
+
+function updateButtonStates() {
+    const prevBtn = document.querySelector(".previous_week");
+
+    const todayStartOfWeek = new Date(today);
+    todayStartOfWeek.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+
+    const currentStartOfWeek = new Date(currentDate);
+    currentStartOfWeek.setDate(currentDate.getDate() - ((currentDate.getDay() + 6) % 7));
+
+    if (currentStartOfWeek <= todayStartOfWeek) {
+        prevBtn.disabled = true;
+        prevBtn.classList.add("disabled-btn");
+    } else {
+        prevBtn.disabled = false;
+        prevBtn.classList.remove("disabled-btn");
+    }
+}
+
 
 window.onload = () => {
     fetchConsultantName();
     fetchAndRenderCalendar(currentDate);
+    updateButtonStates();
 };
-
-function goToCurrentWeek() {
-    currentDate = new Date();
-    fetchAndRenderCalendar(currentDate);
-}
 
 async function populateSpecialtiesDropdown() {
     const urlParams = new URLSearchParams(window.location.search);
