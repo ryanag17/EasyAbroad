@@ -119,8 +119,8 @@ function previewProfile(type) {
 }
 
 async function deleteProfile(type) {
-  const confirmDelete = confirm("This action cannot be undone. Do you want to continue?");
-  if (!confirmDelete) return;
+  const confirmed = await showInAppConfirm("This action cannot be undone. Do you want to continue?");
+  if (!confirmed) return;
 
   const token = localStorage.getItem("accessToken");
   const endpoint = type === "study"

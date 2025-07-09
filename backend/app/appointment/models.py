@@ -34,6 +34,7 @@ class AppointmentStatus(str, enum.Enum):
 class Appointment(Base):
     __tablename__ = "appointments"
     id = Column(Integer, primary_key=True, index=True)
+    public_id = Column(String(36), unique=True, nullable=False)
     consultant_id = Column(Integer, ForeignKey("users.id"))
     student_id = Column(Integer, ForeignKey("users.id"))
     date = Column(Date)
@@ -54,6 +55,7 @@ class ConsultantReview(Base):
     __tablename__ = "consultant_reviews"
 
     id = Column(Integer, primary_key=True, index=True)
+    public_id = Column(String(36), unique=True, nullable=False)
     booking_id = Column(Integer, ForeignKey("appointments.id", ondelete="CASCADE"), unique=True, nullable=False)
     student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     consultant_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)

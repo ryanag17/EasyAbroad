@@ -1,13 +1,13 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date, datetime
+from pydantic import BaseModel
+from typing import Optional
+
 class ConsultantAvailabilityOut(BaseModel):
     days_of_week: List[int]
     start_time: str
     end_time: str
-
-from pydantic import BaseModel
-from typing import Optional
 
 class AppointmentCreate(BaseModel):
     consultant_id: int
@@ -22,6 +22,7 @@ class AppointmentCreate(BaseModel):
 
 class AppointmentOut(BaseModel):
     id: int
+    public_id: str    
     consultant_id: int
     student_id: int
     date: date 
@@ -42,13 +43,14 @@ class AppointmentOut(BaseModel):
         orm_mode = True
 
 class ReviewCreate(BaseModel):
-    booking_id: int
+    public_id: str
     rating: int
     review_text: Optional[str]
 
 
 class ReviewOut(BaseModel):
     id: int
+    public_id: str
     booking_id: int
     student_id: int
     consultant_id: int

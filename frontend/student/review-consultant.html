@@ -101,9 +101,9 @@
 
     const token = localStorage.getItem("accessToken");
     const urlParams = new URLSearchParams(window.location.search);
-    const appointmentId = urlParams.get("appointment_id");
+    const publicId = urlParams.get("appointment_id");
 
-    if (!appointmentId) {
+    if (!publicId) {
       showInAppAlert("Missing appointment ID.", () => {
         window.location.href = "appointments.html";
       });
@@ -122,28 +122,24 @@
     let isDirty = false;
 
     async function fetchConsultant() {
-      try {
-        const res = await fetch(`http://localhost:8000/appointment/booking/${appointmentId}/consultant`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const res = await fetch(`http://localhost:8000/appointment/booking/${publicId}/consultant`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch consultant info.");
-        }
-
-        const data = await res.json();
-        consultantNameElement.textContent = ` ${data.first_name} ${data.last_name}`;
-        title.textContent = `Time to review ${data.first_name} ${data.last_name}`;
-        return data;
-      } catch (error) {
-        showInAppAlert(error.message, () => {
+      if (!res.ok) {
+        showInAppAlert("Failed to fetch consultant info.", () => {
           window.location.href = "appointments.html";
         });
+        return;
       }
+
+      const data = await res.json();
+      consultantNameElement.textContent = ` ${data.first_name} ${data.last_name}`;
+      title.textContent = `Time to review ${data.first_name} ${data.last_name}`;
     }
 
     async function checkExistingReview() {
-      const res = await fetch(`http://localhost:8000/appointment/review/${appointmentId}`, {
+      const res = await fetch(`http://localhost:8000/appointment/review/${publicId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.status === 404) {
@@ -179,6 +175,7 @@
       if (e.target.classList.contains("star")) {
         selectedRating = parseInt(e.target.dataset.value);
         updateStars(selectedRating);
+        reviewError.style.display = "none";
         isDirty = true;
       }
     });
@@ -222,7 +219,7 @@
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            booking_id: parseInt(appointmentId),
+            public_id: publicId, // ✅ use publicId directly
             rating: selectedRating,
             review_text: text,
           }),
@@ -251,7 +248,7 @@
       }
     });
 
-    const consultantData = await fetchConsultant();
+    await fetchConsultant();
     const existingReview = await checkExistingReview();
 
     if (existingReview) {
@@ -274,9 +271,6 @@
     }
   })();
 </script>
-
-
-
 
 <div id="inAppModal" class="modal-overlay">
   <div class="modal-content">

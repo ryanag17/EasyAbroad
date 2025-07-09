@@ -481,6 +481,7 @@ CREATE TABLE IF NOT EXISTS consultant_availability (
 -- 9) Appointments table
 CREATE TABLE IF NOT EXISTS appointments (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  public_id   VARCHAR(36) UNIQUE DEFAULT NULL,
   consultant_id INT NOT NULL,
   student_id INT NOT NULL,
   date DATE NOT NULL,
@@ -583,6 +584,7 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 -- 13) Consultant_Reviews table
 CREATE TABLE IF NOT EXISTS consultant_reviews (
   id              INT PRIMARY KEY AUTO_INCREMENT,
+  public_id   VARCHAR(36) UNIQUE DEFAULT NULL,
   booking_id      INT NOT NULL UNIQUE,
   student_id      INT NOT NULL,
   consultant_id   INT NOT NULL,

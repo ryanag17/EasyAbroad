@@ -10,6 +10,7 @@ from fastapi import Body
 from sqlalchemy.orm import Session, selectinload
 from app.auth.models import User
 from app.notification.models import Notification
+import uuid
 
 router = APIRouter(
     prefix="/appointment",
@@ -112,6 +113,7 @@ async def book_appointment(
         raise HTTPException(409, "This slot is already booked or pending approval.")
 
     appt = Appointment(
+        public_id=str(uuid.uuid4()),
         consultant_id=data.consultant_id,
         student_id=current_user["user_id"],
         date=data.date,
@@ -177,16 +179,19 @@ async def get_my_appointments(
     return appointments
 
 # Consultant: reject appointment request (with notification)
-@router.post("/reject/{appointment_id}", response_model=AppointmentOut, summary="Consultant: reject appointment request (with notification)")
+@router.post("/reject/{public_id}", response_model=AppointmentOut, summary="Consultant: reject appointment request (with notification)")
 async def reject_appointment(
-    appointment_id: int,
+    public_id: str,
     reason: str = Body(..., embed=True),
     db: AsyncSession = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
-    appt = await db.get(Appointment, appointment_id)
+    # Find by public_id
+    result = await db.execute(select(Appointment).where(Appointment.public_id == public_id))
+    appt = result.scalar_one_or_none()
     if not appt or appt.consultant_id != current_user["user_id"]:
         raise HTTPException(403, "Not allowed")
+    
     appt.status = AppointmentStatus.rejected
     appt.rejection_reason = reason
 
@@ -250,26 +255,26 @@ async def get_consultant_appointments(
 from fastapi import Body
 
 # Consultant: approve the appointment request (with notification)
-@router.post("/approve/{appointment_id}", response_model=AppointmentOut, summary="Consultant: approve the appointment request (with notification)")
+@router.post("/approve/{public_id}", response_model=AppointmentOut, summary="Consultant: approve appointment")
 async def approve_appointment(
-    appointment_id: int,
+    public_id: str,
     meeting_link: str = Body(..., embed=True),
     db: AsyncSession = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
-    appt = await db.get(Appointment, appointment_id)
+    result = await db.execute(select(Appointment).where(Appointment.public_id == public_id))
+    appt = result.scalar_one_or_none()
     if not appt or appt.consultant_id != current_user["user_id"]:
         raise HTTPException(403, "Not allowed")
+
     if not meeting_link.startswith("http://") and not meeting_link.startswith("https://"):
         meeting_link = "https://" + meeting_link    
     appt.status = "upcoming"
     appt.meeting_link = meeting_link
 
-    # Get consultant's name
     consultant = await db.get(User, appt.consultant_id)
     consultant_name = f"{consultant.first_name} {consultant.last_name}" if consultant else "the consultant"
 
-    # Create notification text
     notif_content = f"Your appointment request for {consultant_name} has been approved."
     new_notif = Notification(
         user_id=appt.student_id,
@@ -284,19 +289,21 @@ async def approve_appointment(
     await db.refresh(new_notif)
     return appt
 
+
 from datetime import datetime, timedelta
 from sqlalchemy.future import select
 
 # Cancel appointment (with notification)
-@router.post("/{appointment_id}/cancel", summary="Cancel appointment (with notification)")
+@router.post("/{public_id}/cancel", summary="Cancel appointment (with notification)")
 async def cancel_appointment(
-    appointment_id: int,
+    public_id: str,
     db: AsyncSession = Depends(get_db),
     current_user=Depends(get_current_user),
     reason: str = Body(..., embed=True)
 ):
-    result = await db.execute(select(Appointment).where(Appointment.id == appointment_id))
-    appt = result.scalars().first()
+    # Use public_id to find the appointment
+    result = await db.execute(select(Appointment).where(Appointment.public_id == public_id))
+    appt = result.scalar_one_or_none()
     if not appt:
         raise HTTPException(status_code=404, detail="Appointment not found")
     if current_user["user_id"] not in [appt.student_id, appt.consultant_id]:
@@ -329,6 +336,7 @@ async def cancel_appointment(
     await db.refresh(new_notif)
     return {"detail": "Appointment cancelled"}
 
+
 # Allows only students to submit reviews after appointment is done and doesn't allow multiple reviews (with notification)
 @router.post("/review", response_model=ReviewOut, summary="Student: Submit Review (with notification)")
 async def submit_review(
@@ -336,19 +344,23 @@ async def submit_review(
     db: AsyncSession = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
-    booking = await db.get(Appointment, data.booking_id)
+    result = await db.execute(select(Appointment).where(Appointment.public_id == data.public_id))
+    booking = result.scalar_one_or_none()
+
     if not booking or booking.student_id != current_user["user_id"]:
         raise HTTPException(403, "Unauthorized to review this appointment.")
 
+    # Check for existing review
     result = await db.execute(
-        select(ConsultantReview).where(ConsultantReview.booking_id == data.booking_id)
+        select(ConsultantReview).where(ConsultantReview.booking_id == booking.id)
     )
     existing_review = result.scalar()
     if existing_review:
         raise HTTPException(400, "Review already submitted for this appointment.")
 
     review = ConsultantReview(
-        booking_id=data.booking_id,
+        public_id=str(uuid.uuid4()),
+        booking_id=booking.id,
         student_id=current_user["user_id"],
         consultant_id=booking.consultant_id,
         rating=data.rating,
@@ -356,11 +368,10 @@ async def submit_review(
     )
     db.add(review)
 
-    # Fetch student name
+    # Notification
     student = await db.get(User, current_user["user_id"])
     student_name = f"{student.first_name} {student.last_name}" if student else "A student"
 
-    # Create notification for consultant
     notif_content = f"You have received a new review from {student_name}."
     new_notif = Notification(
         user_id=booking.consultant_id,
@@ -370,14 +381,12 @@ async def submit_review(
     )
     db.add(new_notif)
 
-    # Commit both together
     await db.commit()
-
-    # Refresh both
     await db.refresh(review)
     await db.refresh(new_notif)
 
     return review
+
 
 # Calculates average rating and number of reviews per consultant.
 @router.get("/consultant/{consultant_id}/average-rating", summary="Student: Calculate and show average rating and number of reviews of consultant.")
@@ -416,6 +425,7 @@ async def get_consultant_reviews(
         output.append(
             ReviewOut(
                 id=r.id,
+                public_id=r.public_id,
                 booking_id=r.booking_id,
                 student_id=r.student_id,
                 consultant_id=r.consultant_id,
@@ -428,13 +438,14 @@ async def get_consultant_reviews(
     return output
 
 # Basic consultant info is gathered from the student's appointment.
-@router.get("/booking/{booking_id}/consultant", summary="Student: Fetch basic consultant info from appointment.")
+@router.get("/booking/{public_id}/consultant", summary="Student: Fetch basic consultant info from appointment.")
 async def get_consultant_info_from_booking(
-    booking_id: int,
+    public_id: str,
     db: AsyncSession = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
-    booking = await db.get(Appointment, booking_id)
+    result = await db.execute(select(Appointment).where(Appointment.public_id == public_id))
+    booking = result.scalar_one_or_none()
     if not booking:
         raise HTTPException(404, "Booking not found")
     if booking.student_id != current_user["user_id"]:
@@ -451,19 +462,22 @@ async def get_consultant_info_from_booking(
     }
 
 # Shows student the review and rating they had already given to consultant after appointment.
-@router.get("/review/{booking_id}", summary="Student: Show already written review.")
+@router.get("/review/{public_id}", summary="Student: Show already written review.")
 async def get_review_by_booking(
-    booking_id: int,
+    public_id: str,
     db: AsyncSession = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
     result = await db.execute(
-        select(ConsultantReview).where(
-            (ConsultantReview.booking_id == booking_id) &
+        select(ConsultantReview)
+        .join(Appointment, ConsultantReview.booking_id == Appointment.id)
+        .where(
+            (Appointment.public_id == public_id) &
             (ConsultantReview.student_id == current_user["user_id"])
         )
     )
     review = result.scalar_one_or_none()
+    
     if not review:
         raise HTTPException(status_code=404, detail="Review not found")
 
@@ -473,6 +487,7 @@ async def get_review_by_booking(
         "review_text": review.review_text,
         "submitted_at": review.submitted_at.isoformat()
     }
+
 
 # Shows average rating of consultant.
 @router.get("/consultant/{consultant_id}/average-rating", summary="Consultant/Student: Average rating of consultant.")
@@ -511,6 +526,7 @@ async def get_my_consultant_reviews(
         output.append(
             ReviewOut(
                 id=r.id,
+                public_id=r.public_id,                
                 booking_id=r.booking_id,
                 student_id=r.student_id,
                 consultant_id=r.consultant_id,
@@ -521,3 +537,12 @@ async def get_my_consultant_reviews(
             )
         )
     return output
+
+
+@router.get("/by-public-id/{public_id}")
+async def get_appointment_by_public_id(public_id: str, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Appointment).where(Appointment.public_id == public_id))
+    appt = result.scalar_one_or_none()
+    if not appt:
+        raise HTTPException(404, "Appointment not found")
+    return {"id": appt.id}

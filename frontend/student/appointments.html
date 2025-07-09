@@ -265,9 +265,9 @@ function renderAppointments(status) {
         ${meetingLinkBlock}
         <a class="message-btn" href="chat.html?partnerId=${app.consultant_id}">Send a message</a>
         ${status === 'upcoming' && canCancel(app) ? `
-          <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
+          <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.public_id})">Cancel</a>
         ` : ''}
-        ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?appointment_id=${app.id}">Review</a>` : ''}
+      ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?appointment_id=${app.public_id}">Review</a>` : ''}
       </div>
     `;
 
@@ -305,8 +305,8 @@ window.onload = async () => {
 
 let tempCancelId = null;
 
-function openCancelModal(appId) {
-  tempCancelId = appId;
+function openCancelModal(publicId) {
+  tempCancelId = publicId;
   document.getElementById('cancelReasonInput').value = '';
   document.getElementById('cancelModal').style.display = 'flex';
 }
