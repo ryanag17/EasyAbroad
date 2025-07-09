@@ -277,6 +277,7 @@ async def reset_password(db: AsyncSession, data: ResetPasswordRequest):
 
 
 
+# new update profile endpoint / IK 06.06
 @router.put("/student", response_model=dict)
 async def update_student_profile(
     payload: UserUpdateProfile,
@@ -337,6 +338,7 @@ async def update_student_profile(
         "languages" : language_names
     }
 
+# GET /profile/consultant to update the consultant profile / IK 07.06
 @router.get(
     "/consultant",
     response_model=dict,
@@ -548,6 +550,7 @@ from app.auth.models import RefreshToken
 from pathlib import Path
 from sqlalchemy import delete
 
+# New endpoint for account deletion / IK 13.06
 @router.delete("", summary="Delete your account")
 async def delete_account(
     payload: DeleteAccountRequest,
@@ -556,51 +559,29 @@ async def delete_account(
 ):
     user_id = current_user["user_id"]
 
-    # Load the user
+    # 1) Load the user
     user = await db.get(User, user_id)
     if not user:
         raise HTTPException(404, "User not found")
 
-    # Verify email & password
+    # 2) Verify email & password
     if payload.email.lower() != user.email.lower() \
        or not bcrypt.checkpw(payload.password.encode(), user.password_hash.encode()):
         raise HTTPException(400, "Email or password is incorrect")
 
-    # Delete linked data
-    await db.execute(text("DELETE FROM Education WHERE user_id = :uid"), {"uid": user_id})
-    await db.execute(text("DELETE FROM Internship WHERE user_id = :uid"), {"uid": user_id})
-    await db.execute(text("DELETE FROM consultant_availability WHERE consultant_id = :uid"), {"uid": user_id})
-    await db.execute(text("DELETE FROM bookings WHERE student_id = :uid OR consultant_id = :uid"), {"uid": user_id})
-    await db.execute(text("""
-        DELETE FROM support_tickets WHERE user_id = :uid;
-        DELETE FROM support_ticket_messages WHERE sender_id = :uid;
-    """), {"uid": user_id})
-    await db.execute(text("DELETE FROM appointments WHERE student_id = :uid OR consultant_id = :uid"), {"uid": user_id})
-    await db.execute(text("DELETE FROM consultant_reviews WHERE student_id = :uid OR consultant_id = :uid"), {"uid": user_id})
-    await db.execute(text("DELETE FROM notifications WHERE user_id = :uid"), {"uid": user_id})
-    await db.execute(text("DELETE FROM refresh_tokens WHERE user_id = :uid"), {"uid": user_id})
-    await db.execute(text("DELETE FROM user_languages WHERE user_id = :uid"), {"uid": user_id})
+    # 3) **Delete all refresh tokens** for this user
+    await db.execute(
+        delete(RefreshToken).where(RefreshToken.user_id == user_id)
+    )
 
-    # Delete old messages only
-    await db.execute(text("""
-        DELETE FROM messages
-        WHERE (sender_id = :uid OR receiver_id = :uid)
-        AND sent_at < DATE_SUB(NOW(), INTERVAL 3 YEAR)
-    """), {"uid": user_id})
-
-    # Delete profile picture file
+    # 4) Delete profile picture file
     if user.profile_picture:
         pic = Path(".") / user.profile_picture.lstrip("/")
         if pic.exists():
             pic.unlink()
 
-    # Soft delete
-    await db.execute(
-        update(User)
-        .where(User.id == user_id)
-        .values(is_active="deleted")
-    )
+    # 5) Now delete the user (this will cascade your SQLAlchemy relationships)
+    await db.delete(user)
     await db.commit()
 
-
-    return {"message": "Account deleted successfully"}
+    return {"message": "Account deleted successfully"} 
