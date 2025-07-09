@@ -7,6 +7,7 @@ class SupportTicketCreate(BaseModel):
 
 class SupportTicketResponse(BaseModel):
     id: int
+    public_id: str
     user_id: int
     subject: str
     description: str

@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.db import Base
+from datetime import datetime
 from enum import Enum as PyEnum
 
 class TicketStatus(str, PyEnum):
@@ -14,17 +15,20 @@ class SupportTicket(Base):
     __tablename__ = "support_tickets"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    subject = Column(String(255), nullable=False)
-    description = Column(Text, nullable=False)
-    status = Column(Enum(TicketStatus, name="status_enum"), default=TicketStatus.open)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
-    resolved_by = Column(Integer, ForeignKey("users.id"), nullable=True)
-    resolved_at = Column(DateTime, nullable=True)
+    public_id = Column(String(36), unique=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    subject = Column(String(100), nullable=False)
+    description = Column(String(500), nullable=False)
+    status = Column(Enum("open", "in_progress", "resolved", "closed", name="ticket_status"), default="open")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    resolved_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"))
+    resolved_at = Column(DateTime)
 
-    messages = relationship("SupportTicketMessage", back_populates="ticket", cascade="all, delete")
+    user = relationship("User", foreign_keys=[user_id])
+    resolver = relationship("User", foreign_keys=[resolved_by])
 
+    messages = relationship("SupportTicketMessage", back_populates="ticket", cascade="all, delete-orphan")
 
 class SupportTicketMessage(Base):
     __tablename__ = "support_ticket_messages"
@@ -36,4 +40,3 @@ class SupportTicketMessage(Base):
     sent_at = Column(DateTime, server_default=func.now())
 
     ticket = relationship("SupportTicket", back_populates="messages")
-
