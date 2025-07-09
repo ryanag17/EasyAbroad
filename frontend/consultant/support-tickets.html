@@ -124,7 +124,10 @@ async function loadTickets() {
     });
 
     if (!res.ok) throw new Error("❌ Failed to fetch tickets.");
-    allTickets = await res.json();
+    const data = await res.json();
+
+    // Sort tickets by created_at descending (newest first)
+    allTickets = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     if (!allTickets.length) {
       list.innerHTML = "<p>You haven't submitted any support tickets yet.</p>";
@@ -146,6 +149,16 @@ function paginate(data) {
 function renderPage() {
   const paginated = paginate(allTickets);
 
+  function formatStatus(status) {
+    const map = {
+      open: "Open",
+      in_progress: "In Progress",
+      resolved: "Resolved",
+      closed: "Closed"
+    };
+    return map[status] || status;
+  }
+
   list.innerHTML = paginated.map(t => {
     const formattedDate = new Date(t.created_at + 'Z').toLocaleString('en-GB', {
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -156,13 +169,13 @@ function renderPage() {
 
     return `
       <div class="ticket-item">
-          <h3>${t.subject}</h3>
-          <p class="description">${t.description.length > 150 ? t.description.substring(0, 150) + "..." : t.description}</p>
-          <p><span class="status">Status:</span> ${t.status}</p>
-          <p><small>Submitted: ${formattedDate}</small></p>
-          <div style="margin-top: 20px; margin-bottom: 10px;">
-            <a href="ticket-detail.html?id=${t.id}" class="save-button_ticket">View</a>
-          </div>
+        <h3>${t.subject}</h3>
+        <p class="description">${t.description.length > 150 ? t.description.substring(0, 150) + "..." : t.description}</p>
+        <p><span class="status">Status:</span> ${formatStatus(t.status)}</p>
+        <p><small>Submitted: ${formattedDate}</small></p>
+        <div style="margin-top: 20px; margin-bottom: 10px;">
+          <a href="ticket-detail.html?id=${t.id}" class="save-button_ticket">View</a>
+        </div>
       </div>
     `;
   }).join("");
@@ -218,6 +231,7 @@ function renderPagination(totalItems) {
 
 window.onload = loadTickets;
 </script>
+
 
 <div id="inAppModal" class="modal-overlay">
   <div class="modal-content">

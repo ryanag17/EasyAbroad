@@ -119,6 +119,16 @@
     hour12: false,
   };
 
+  function formatStatus(status) {
+    const map = {
+      open: "Open",
+      in_progress: "In Progress",
+      resolved: "Resolved",
+      closed: "Closed"
+    };
+    return map[status] || status;
+  }
+
   async function loadTicket() {
     try {
       const res = await fetch(`http://localhost:8000/support/${ticketId}`, {
@@ -133,7 +143,7 @@
       const data = await res.json();
 
       document.getElementById("ticketSubject").textContent = data.subject;
-      document.getElementById("ticketStatus").textContent = data.status;
+      document.getElementById("ticketStatus").textContent = formatStatus(data.status);
       document.getElementById("ticketMeta").innerHTML = `Submitted: <span id="submittedDate">${new Date(
         data.created_at + "Z"
       ).toLocaleString("en-GB", localFormat)}</span>`;
@@ -167,9 +177,10 @@
       await showInAppAlert("Message cannot be empty.");
       return;
     }
-
-    const confirmed = await showInAppConfirm("Are you sure you want to send this reply?");
-    if (!confirmed) return;
+    if (message.length > 500) {
+      await showInAppAlert("Message cannot exceed 500 characters.");
+      return;
+    }
 
     const res = await fetch(`http://localhost:8000/support/${ticketId}/reply`, {
       method: "POST",
@@ -185,13 +196,14 @@
       return;
     }
 
-    await showInAppAlert("Reply sent successfully!");
     document.getElementById("replyInput").value = "";
     loadTicket();
   }
 
   window.onload = loadTicket;
 </script>
+
+
 
 
 <div id="inAppModal" class="modal-overlay">

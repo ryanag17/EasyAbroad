@@ -533,8 +533,8 @@ WHERE expires_at < NOW();
 CREATE TABLE IF NOT EXISTS support_tickets (
   id          INT PRIMARY KEY AUTO_INCREMENT,
   user_id     INT NOT NULL,
-  subject     VARCHAR(255) NOT NULL,
-  description TEXT NOT NULL,
+  subject     VARCHAR(100) NOT NULL,
+  description VARCHAR(500) NOT NULL,
   status      ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
   created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -553,13 +553,16 @@ CREATE TABLE IF NOT EXISTS support_ticket_messages (
   id INT PRIMARY KEY AUTO_INCREMENT,
   ticket_id INT NOT NULL,
   sender_id INT NOT NULL,
-  message TEXT NOT NULL,
+  message VARCHAR(500) NOT NULL,
   sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
   FOREIGN KEY (ticket_id) REFERENCES support_tickets(id) ON DELETE CASCADE,
   FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+
   INDEX (ticket_id),
   INDEX (sender_id)
 );
+
 
 -- 12) REFRESH_TOKENS table
 CREATE TABLE IF NOT EXISTS refresh_tokens (

@@ -140,7 +140,7 @@ async def get_ticket_by_id(
         "message": ticket_dict["description"],
         "created_at": ticket_dict["created_at"],
         "sender_role": "user",
-        "sender_name": "You" if current_user["user_id"] == ticket_dict["user_id"] else f"{ticket_dict['user_first_name']} {ticket_dict['user_last_name']}"
+        "sender_name": f"{ticket_dict['user_first_name']} {ticket_dict['user_last_name']}"
     }
 
     formatted_messages = [
@@ -151,10 +151,11 @@ async def get_ticket_by_id(
             "message": m.message,
             "created_at": m.sent_at,
             "sender_role": "admin" if m.sender_id != ticket_dict["user_id"] else "user",
-            "sender_name": "Admin" if m.sender_id != ticket_dict["user_id"] else "You"
+            "sender_name": "Admin" if m.sender_id != ticket_dict["user_id"] else f"{ticket_dict['user_first_name']} {ticket_dict['user_last_name']}"
         }
         for m in messages
     ]
+
 
     return {
         "id": ticket_dict["id"],

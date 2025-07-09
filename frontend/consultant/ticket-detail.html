@@ -121,6 +121,16 @@ const localFormat = {
   hour12: false
 };
 
+function formatStatus(status) {
+  const map = {
+    open: "Open",
+    in_progress: "In Progress",
+    resolved: "Resolved",
+    closed: "Closed"
+  };
+  return map[status] || status;
+}
+
 async function loadTicket() {
   try {
     const res = await fetch(`http://localhost:8000/support/${ticketId}`, {
@@ -130,7 +140,7 @@ async function loadTicket() {
     const data = await res.json();
 
     document.getElementById("ticketSubject").textContent = data.subject;
-    document.getElementById("ticketStatus").textContent = data.status;
+    document.getElementById("ticketStatus").textContent = formatStatus(data.status);
     document.getElementById("ticketMeta").innerHTML =
       `Submitted: <span id="submittedDate">${new Date(data.created_at + 'Z').toLocaleString('en-GB', localFormat)}</span>`;
 
@@ -156,7 +166,14 @@ async function loadTicket() {
 
 async function submitReply() {
   const message = document.getElementById("replyInput").value.trim();
-  if (!message) return showInAppAlert("Message cannot be empty.");
+  if (!message) {
+    showInAppAlert("Message cannot be empty.");
+    return;
+  }
+  if (message.length > 500) {
+    showInAppAlert("Message cannot exceed 500 characters.");
+    return;
+  }
 
   const res = await fetch(`http://localhost:8000/support/${ticketId}/reply`, {
     method: "POST",
@@ -178,6 +195,7 @@ async function submitReply() {
 
 window.onload = loadTicket;
 </script>
+
 
 
 

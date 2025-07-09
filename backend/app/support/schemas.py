@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 class SupportTicketCreate(BaseModel):
-    subject: str
-    description: str
+    subject: str = Field(..., max_length=100)
+    description: str = Field(..., max_length=500)
 
 class SupportTicketResponse(BaseModel):
     id: int
@@ -18,8 +18,6 @@ class SupportTicketResponse(BaseModel):
 
     class Config:
         orm_mode = True
-
-
 
 class SupportTicketReplyResponse(BaseModel):
     id: int
@@ -37,4 +35,4 @@ class SupportTicketDetailResponse(SupportTicketResponse):
     replies: list[SupportTicketReplyResponse] = []
 
 class TicketReplyCreate(BaseModel):
-    message: str
+    message: str = Field(..., max_length=500)
