@@ -478,83 +478,7 @@ CREATE TABLE IF NOT EXISTS consultant_availability (
     ON UPDATE CASCADE
 );
 
-
-
-
--- 11) MESSAGES table
---     Encrypted messages between users, linked to a booking.
-CREATE TABLE IF NOT EXISTS messages (
-  id                INT PRIMARY KEY AUTO_INCREMENT,
-  sender_id         INT NOT NULL,
-  receiver_id       INT NOT NULL,
-  booking_id        INT,
-  encrypted_message BLOB NOT NULL,
-  encryption_iv     VARBINARY(16)  NOT NULL,
-  is_reported       BOOLEAN DEFAULT FALSE,
-  reported_at       DATETIME,
-  sent_at           DATETIME DEFAULT CURRENT_TIMESTAMP,
-  expires_at        DATETIME DEFAULT (CURRENT_TIMESTAMP + INTERVAL 3 YEAR),
-
-  FOREIGN KEY (sender_id)   REFERENCES users(id)    ON DELETE CASCADE,
-  FOREIGN KEY (receiver_id) REFERENCES users(id)    ON DELETE CASCADE,
-  FOREIGN KEY (booking_id)  REFERENCES bookings(id) ON DELETE SET NULL,
-
-  INDEX (booking_id),
-  INDEX (sender_id, receiver_id),
-  INDEX (sent_at),
-  INDEX (expires_at)
-);
-
--- Remove expired messages immediately after creating the table.
-DELETE FROM messages
-WHERE expires_at < NOW();
-
-
--- 12a) SUPPORT_TICKETS table
-CREATE TABLE IF NOT EXISTS support_tickets (
-  id          INT PRIMARY KEY AUTO_INCREMENT,
-  user_id     INT NOT NULL,
-  subject     VARCHAR(255) NOT NULL,
-  description TEXT NOT NULL,
-  status      ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
-  created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  resolved_by INT,
-  resolved_at DATETIME,
-
-  FOREIGN KEY (user_id)     REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (resolved_by) REFERENCES users(id) ON DELETE SET NULL,
-
-  INDEX (user_id),
-  INDEX (status)
-);
-
--- 12b) SUPPORT_TICKET_MESSAGES table
-CREATE TABLE IF NOT EXISTS support_ticket_messages (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  ticket_id INT NOT NULL,
-  sender_id INT NOT NULL,
-  message TEXT NOT NULL,
-  sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (ticket_id) REFERENCES support_tickets(id) ON DELETE CASCADE,
-  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-  INDEX (ticket_id),
-  INDEX (sender_id)
-);
-
--- 13) REFRESH_TOKENS table
-CREATE TABLE IF NOT EXISTS refresh_tokens (
-  id          INT AUTO_INCREMENT PRIMARY KEY,
-  token       VARCHAR(64) NOT NULL UNIQUE,
-  user_id     INT NOT NULL,
-  issued_at   DATETIME NOT NULL,
-  expires_at  DATETIME NOT NULL,
-  revoked     BOOLEAN NOT NULL DEFAULT FALSE,
-
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- 14) Appointments table
+-- 9) Appointments table
 CREATE TABLE IF NOT EXISTS appointments (
   id INT AUTO_INCREMENT PRIMARY KEY,
   consultant_id INT NOT NULL,
@@ -574,7 +498,84 @@ CREATE TABLE IF NOT EXISTS appointments (
   info VARCHAR(255) NULL
 );
 
--- 15) Consultant_Reviews table
+
+
+-- 10) MESSAGES table
+--     Encrypted messages between users, linked to a booking.
+CREATE TABLE IF NOT EXISTS messages (
+  id                INT PRIMARY KEY AUTO_INCREMENT,
+  sender_id         INT NOT NULL,
+  receiver_id       INT NOT NULL,
+  booking_id        INT,
+  encrypted_message BLOB NOT NULL,
+  encryption_iv     VARBINARY(16)  NOT NULL,
+  is_reported       BOOLEAN DEFAULT FALSE,
+  reported_at       DATETIME,
+  sent_at           DATETIME DEFAULT CURRENT_TIMESTAMP,
+  expires_at        DATETIME DEFAULT (CURRENT_TIMESTAMP + INTERVAL 3 YEAR),
+
+  FOREIGN KEY (booking_id) REFERENCES appointments(id) ON DELETE CASCADE,
+  FOREIGN KEY (sender_id)   REFERENCES users(id)    ON DELETE CASCADE,
+  FOREIGN KEY (receiver_id) REFERENCES users(id)    ON DELETE CASCADE,
+
+  INDEX (booking_id),
+  INDEX (sender_id, receiver_id),
+  INDEX (sent_at),
+  INDEX (expires_at)
+);
+
+-- Remove expired messages immediately after creating the table.
+DELETE FROM messages
+WHERE expires_at < NOW();
+
+
+-- 11a) SUPPORT_TICKETS table
+CREATE TABLE IF NOT EXISTS support_tickets (
+  id          INT PRIMARY KEY AUTO_INCREMENT,
+  user_id     INT NOT NULL,
+  subject     VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  status      ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
+  created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  resolved_by INT,
+  resolved_at DATETIME,
+
+  FOREIGN KEY (user_id)     REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (resolved_by) REFERENCES users(id) ON DELETE SET NULL,
+
+  INDEX (user_id),
+  INDEX (status)
+);
+
+-- 11b) SUPPORT_TICKET_MESSAGES table
+CREATE TABLE IF NOT EXISTS support_ticket_messages (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  ticket_id INT NOT NULL,
+  sender_id INT NOT NULL,
+  message TEXT NOT NULL,
+  sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ticket_id) REFERENCES support_tickets(id) ON DELETE CASCADE,
+  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX (ticket_id),
+  INDEX (sender_id)
+);
+
+-- 12) REFRESH_TOKENS table
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  token       VARCHAR(64) NOT NULL UNIQUE,
+  user_id     INT NOT NULL,
+  issued_at   DATETIME NOT NULL,
+  expires_at  DATETIME NOT NULL,
+  revoked     BOOLEAN NOT NULL DEFAULT FALSE,
+
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+
+-- 13) Consultant_Reviews table
 CREATE TABLE IF NOT EXISTS consultant_reviews (
   id              INT PRIMARY KEY AUTO_INCREMENT,
   booking_id      INT NOT NULL UNIQUE,
@@ -590,7 +591,7 @@ CREATE TABLE IF NOT EXISTS consultant_reviews (
 );
 
 
--- 16) notifications table
+-- 14) notifications table
 CREATE TABLE notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
