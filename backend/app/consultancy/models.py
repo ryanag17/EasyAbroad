@@ -1,10 +1,13 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text
+from sqlalchemy.orm import relationship
 from app.db import Base
+import uuid
 
 class Education(Base):
     __tablename__ = "Education"
 
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True)
+    public_id = Column(String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
     city_of_study = Column(String(255))
     country_of_study = Column(String(100), ForeignKey("countries.country_name", ondelete="RESTRICT", onupdate="CASCADE"))
     university_name = Column(String(255))
@@ -29,14 +32,20 @@ class Education(Base):
     status = Column(String(20), nullable=False, default="pending")  # Options: 'pending', 'accepted', 'rejected'
     short_note = Column(Text, nullable=True)
 
+    user = relationship("User", back_populates="education", foreign_keys=[user_id])
+    verifier = relationship("User", foreign_keys=[verified_by])
+
 
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text
+from sqlalchemy.orm import relationship
 from app.db import Base
+import uuid
 
 class Internship(Base):
     __tablename__ = "Internship"
 
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True)
+    public_id = Column(String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
     city_of_internship = Column(String(255))
     country_of_internship = Column(String(100), ForeignKey("countries.country_name", ondelete="RESTRICT", onupdate="CASCADE"))
     company_name = Column(String(255))
@@ -60,3 +69,6 @@ class Internship(Base):
 
     status = Column(String(20), nullable=False, default="pending")
     short_note = Column(Text, nullable=True)
+
+    user = relationship("User", back_populates="internship", foreign_keys=[user_id])
+    verifier = relationship("User", foreign_keys=[verified_by])

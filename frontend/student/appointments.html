@@ -70,23 +70,7 @@
 
 
       
-      </section>
-  
-      <div id="cancelModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <span class="close-button" onclick="closeCancelModal()">&times;</span>
-    <p>Please enter a reason for cancellation:</p>
-    <textarea id="cancelReasonInput" rows="3" style="width:100%;"></textarea>
-    <div class="modal-buttons">
-      <button onclick="confirmCancellation()">Confirm Cancel</button>
-      <button onclick="closeCancelModal()">Cancel</button>
-    </div>
-  </div>
-</div>
-    
-      
-        
-      
+      </section>      
       
     <footer>
 <div class="logo_icons">
@@ -119,7 +103,7 @@
 
 let appointments = [];
 let currentPage = 1;
-const itemsPerPage = 4; // Adjust this number as needed
+const itemsPerPage = 4;
 
 async function fetchAppointments() {
   const token = localStorage.getItem("accessToken");
@@ -265,9 +249,9 @@ function renderAppointments(status) {
         ${meetingLinkBlock}
         <a class="message-btn" href="chat.html?partnerId=${app.consultant_id}">Send a message</a>
         ${status === 'upcoming' && canCancel(app) ? `
-          <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.public_id})">Cancel</a>
+          <a class="message-btn" style="margin-left:10px;" onclick="openLinkModal('${app.public_id}', 'cancel')">Cancel</a>
         ` : ''}
-      ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?appointment_id=${app.public_id}">Review</a>` : ''}
+        ${status === 'previous' ? `<a class="review-btn" href="review-consultant.html?appointment_id=${app.public_id}">Review</a>` : ''}
       </div>
     `;
 
@@ -282,7 +266,7 @@ tabs.forEach(tab => {
   tab.addEventListener('click', function() {
     tabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    currentPage = 1; // Reset to first page when changing tab
+    currentPage = 1;
     renderAppointments(tab.getAttribute('data-status'));
   });
 });
@@ -305,25 +289,30 @@ window.onload = async () => {
 
 let tempCancelId = null;
 
-function openCancelModal(publicId) {
+function openLinkModal(publicId, mode = "cancel") {
   tempCancelId = publicId;
-  document.getElementById('cancelReasonInput').value = '';
-  document.getElementById('cancelModal').style.display = 'flex';
+  document.getElementById('linkModal').style.display = 'flex';
+  const input = document.getElementById('meetingLinkInput');
+  const title = document.querySelector('#linkModal h3');
+  const button = document.querySelector('#linkModal button');
+
+  title.textContent = "Reason for cancellation:";
+  input.placeholder = "Enter reason for cancellation...";
+  button.textContent = "Cancel Appointment";
+  input.type = "text";
+  input.value = "";
+
+  document.getElementById('linkModal').dataset.mode = mode;
 }
 
-function closeCancelModal() {
-  document.getElementById('cancelModal').style.display = 'none';
+function closeLinkModal() {
+  document.getElementById('linkModal').style.display = 'none';
   tempCancelId = null;
 }
 
-window.addEventListener("click", function(e) {
-  const modal = document.getElementById('cancelModal');
-  if (e.target === modal) closeCancelModal();
-});
-
-async function confirmCancellation() {
-  const reason = document.getElementById('cancelReasonInput').value.trim();
-  if (!reason) {
+async function sendMeetingLink() {
+  const input = document.getElementById('meetingLinkInput').value.trim();
+  if (!input) {
     showInAppAlert("⚠️ Please enter a reason for cancellation.");
     return;
   }
@@ -331,9 +320,11 @@ async function confirmCancellation() {
   const res = await fetch(`http://localhost:8000/appointment/${tempCancelId}/cancel`, {
     method: "POST",
     headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ reason })
+    body: JSON.stringify({ reason: input })
   });
-  closeCancelModal();
+
+  closeLinkModal();
+
   if (res.ok) {
     showInAppAlert("✅ Appointment cancelled.");
     window.location.reload();
@@ -342,10 +333,22 @@ async function confirmCancellation() {
     showInAppAlert(data.detail || "❌ Failed to cancel appointment.");
   }
 }
+
+window.addEventListener("click", function(e) {
+  const modal = document.getElementById('linkModal');
+  if (e.target === modal) closeLinkModal();
+});
 </script>
 
+<div id="linkModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeLinkModal()">&times;</span>
+    <h3>Reason for cancellation:</h3>
+    <input type="text" id="meetingLinkInput" placeholder="Enter reason for cancellation...">
+    <button onclick="sendMeetingLink()">Cancel Appointment</button>
+  </div>
+</div>
 
-   
 
 <div id="inAppModal" class="modal-overlay">
   <div class="modal-content">

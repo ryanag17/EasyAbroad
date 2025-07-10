@@ -38,6 +38,8 @@ class User(Base):
 
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
     languages = relationship("UserLanguage", back_populates="user")
+    education = relationship("Education", back_populates="user", uselist=False, foreign_keys="[Education.user_id]")
+    internship = relationship("Internship", back_populates="user", uselist=False, foreign_keys="[Internship.user_id]")
 
 
 class Language(Base):

@@ -108,7 +108,6 @@ async def delete_user_by_admin(
     await db.execute(text("DELETE FROM Education WHERE user_id = :uid"), {"uid": user_id})
     await db.execute(text("DELETE FROM Internship WHERE user_id = :uid"), {"uid": user_id})
     await db.execute(text("DELETE FROM consultant_availability WHERE consultant_id = :uid"), {"uid": user_id})
-    await db.execute(text("DELETE FROM bookings WHERE student_id = :uid OR consultant_id = :uid"), {"uid": user_id})
     await db.execute(text("""
         DELETE FROM support_tickets WHERE user_id = :uid;
         DELETE FROM support_ticket_messages WHERE sender_id = :uid;

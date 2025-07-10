@@ -78,107 +78,109 @@
 <script src="../auth.js"></script>
 <script src="../script.js"></script>
 <script>
+(async () => {
+  await autoEnforceRoleFromPath();
+})();
 
-    (async () => {
-      // 1) enforce student role
-      await autoEnforceRoleFromPath();
+const MESSAGES_API_BASE = "http://localhost:8000/messages";
+const token = localStorage.getItem("accessToken");
 
-      const API   = "http://localhost:8000/messages";
-      const token = localStorage.getItem("accessToken");
+async function fetchThreads() {
+  const res = await fetch(MESSAGES_API_BASE, {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  if (!res.ok) {
+    console.error("Failed to load threads", res.status);
+    showInAppAlert("❌ Failed to load threads.");
+    return;
+  }
+  const threads = await res.json();
+  renderThreads(threads);
+}
 
-      // 2) Fetch all conversation threads
-      async function fetchThreads() {
-        const res = await fetch(API, {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (!res.ok) {
-          return showInAppAlert("❌ Failed to load threads.");
+window.addEventListener("DOMContentLoaded", fetchThreads);
+
+function renderThreads(threads) {
+  const container = document.querySelector('.chat-list-container');
+  container.innerHTML = '';
+
+  if (threads.length === 0) {
+    container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
+    return;
+  }
+
+  threads.forEach(async t => {
+    const partnerId = t.from_me ? t.receiver_id : t.sender_id;
+    const partnerName = `${t.first_name ?? ""} ${t.last_name ?? ""}`.trim();
+
+    let profilePic = "../images/avatar.png";
+    try {
+      const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const user = await res.json();
+        if (user.profile_picture) {
+          profilePic = "http://localhost:8000" + user.profile_picture;
         }
-        const threads = await res.json();
-        renderThreads(threads);
       }
-      // run on load
-      await fetchThreads();
+    } catch (e) {
+      console.error("Failed to fetch user picture", e);
+    }
 
-      // 3) Render the thread cards
-      function renderThreads(threads) {
-        const c = document.querySelector('.chat-list-container');
-        c.innerHTML = "";
-        if (!threads.length) {
-          c.innerHTML = "<p class='no-messages'>You have no messages.</p>";
-          return;
-        }
+    const card = document.createElement('div');
+    card.className = 'message-card';
+    card.innerHTML = `
+      <div class="chat-avatar">
+        <img src="${profilePic}" alt="Avatar">
+      </div>
+      <div class="chat-content">
+        <h3>${partnerName}</h3>
+        <p class="message-preview">${t.message.length > 50 ? t.message.substring(0, 50) + "..." : t.message}</p>
+        <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
+      </div>
+      <div class="chat-actions">
+        <button onclick="confirmDelete(event, ${partnerId})"><i class="fas fa-trash-alt delete-icon"></i></button>
+      </div>
+    `;
 
-        threads.forEach(t => {
-          const hash = t.partner_hash;
-          const name = `${t.first_name} ${t.last_name}`.trim();
-          let pic = "../images/avatar.png";
+    card.addEventListener('click', () => {
+      window.location.href = `chat.html?partnerId=${partnerId}`;
+    });
 
-          const card = document.createElement('div');
-          card.className = 'message-card';
-          card.innerHTML = `
-            <div class="chat-avatar">
-              <img src="${pic}" alt="Avatar"/>
-            </div>
-            <div class="chat-content">
-              <h3>${name}</h3>
-              <p class="message-preview">${
-                t.message.length > 50
-                  ? t.message.slice(0,50) + "…"
-                  : t.message
-              }</p>
-              <span class="message-date">${
-                new Date(t.sent_at).toLocaleDateString()
-              }</span>
-            </div>
-            <div class="chat-actions">
-              <button class="del-btn"><i class="fas fa-trash-alt"></i></button>
-            </div>`;
+    container.appendChild(card);
+  });
+}
 
-          // A) open the chat with the partner’s hash
-          card.onclick = () => {
-            window.location.href = `chat.html?partnerId=${hash}`;
-          };
+async function confirmDelete(event, partnerId) {
+  event.stopPropagation();
 
-          // B) delete this conversation
-          card.querySelector('.del-btn').onclick = async e => {
-            e.stopPropagation();
-            if (!(await showInAppConfirm("Delete this conversation?"))) return;
-            const r = await fetch(`http://localhost:8000/messages/with/${hash}`, {
-              method: "DELETE",
-              headers: { "Authorization": `Bearer ${token}` }
-            });
-            if (r.ok) {
-              showInAppAlert("✅ Conversation deleted.");
-              fetchThreads();
-            } else {
-              const d = await r.json().catch(() => ({}));
-              showInAppAlert("❌ Failed: " + (d.detail||r.status));
-            }
-          };
+  const confirmed = await showInAppConfirm("Are you sure you want to delete this conversation?");
+  if (!confirmed) return;
 
-          // C) fetch and display the partner’s avatar
-          (async () => {
-            try {
-              const ru = await fetch(
-                `http://localhost:8000/users/by-hash/${hash}`, {
-                  headers: { "Authorization": `Bearer ${token}` }
-                }
-              );
-              if (!ru.ok) throw 0;
-              const u = await ru.json();
-              if (u.profile_picture) {
-                card.querySelector("img").src =
-                  "http://localhost:8000" + u.profile_picture;
-              }
-            } catch {}
-          })();
+  try {
+    const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+      method: "DELETE",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
 
-          c.appendChild(card);
-        });
-      }
-    })();
+    if (res.ok) {
+      showInAppAlert("✅ Conversation deleted.");
+      fetchThreads();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      showInAppAlert("❌ Failed to delete: " + (data.detail || res.status));
+    }
+  } catch (err) {
+    console.error("Error deleting conversation:", err);
+    showInAppAlert("❌ Error deleting conversation.");
+  }
+}
 </script>
+
+
+
+
 
 
 

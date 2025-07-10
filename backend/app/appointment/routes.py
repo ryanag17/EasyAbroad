@@ -4,6 +4,7 @@ from sqlalchemy import select, delete, and_, func
 from typing import List
 from app.db import get_db
 from app.auth.token_verification import get_current_user
+from app.consultancy.models import Education, Internship
 from app.appointment.models import ConsultantAvailability, Appointment, AppointmentStatus, ConsultantReview
 from app.appointment.schemas import ConsultantAvailabilityOut as Slot, AppointmentCreate, AppointmentOut, ReviewCreate, ReviewOut
 from fastapi import Body
@@ -70,23 +71,44 @@ async def update_timetable(
     return slots
 
 # Student fetches a consultant's timetable
-@router.get(
-    "/consultant/timetable/{consultant_id}",
-    response_model=List[Slot],
-    summary="Fetch a consultant's availability"
-)
+@router.get("/consultant/timetable/{consultant_public_id}", response_model=List[Slot], summary="Fetch a consultant's availability")
 async def get_consultant_timetable(
-    consultant_id: int,
+    consultant_public_id: str,
     db: AsyncSession = Depends(get_db)
 ):
+    # Resolve consultant_id from Education
+    result = await db.execute(
+        select(User.id)
+        .join(Education, Education.user_id == User.id)
+        .where(Education.public_id == consultant_public_id)
+    )
+    row = result.first()
+
+    # If not found, try Internship
+    if row is None:
+        result = await db.execute(
+            select(User.id)
+            .join(Internship, Internship.user_id == User.id)
+            .where(Internship.public_id == consultant_public_id)
+        )
+        row = result.first()
+
+    if row is None:
+        raise HTTPException(404, "Consultant not found")
+
+    consultant_id = row[0]
+
     rows = (await db.execute(
         select(ConsultantAvailability)
         .where(ConsultantAvailability.consultant_id == consultant_id)
     )).scalars().all()
+
     return [
         {"days_of_week": r.days_of_week, "start_time": r.start_time, "end_time": r.end_time}
         for r in rows
     ]
+
+
 
 # Student books an appointment (with overlap check) (with notification)
 @router.post("/book", response_model=AppointmentOut, summary="Student: book appointment (with notification)")
@@ -98,9 +120,33 @@ async def book_appointment(
     if current_user["role"] != "student":
         raise HTTPException(403, "Only students can book appointments")
 
-    # Check for overlapping appointment for this consultant, date, and time
+    # Lookup consultant_id using public_id
+    # First try Education
+    result = await db.execute(
+        select(User.id)
+        .join(User.education)
+        .where(Education.public_id == data.consultant_public_id)
+    )
+    row = result.first()
+
+    if row is None:
+        # Try Internship
+        result = await db.execute(
+            select(User.id)
+            .join(User.internship)
+            .where(Internship.public_id == data.consultant_public_id)
+        )
+        row = result.first()
+
+    if row is None:
+        raise HTTPException(404, "Consultant not found")
+
+    consultant_id = row[0]
+
+
+    # Check for overlapping appointment
     q = select(Appointment).where(
-        Appointment.consultant_id == data.consultant_id,
+        Appointment.consultant_id == consultant_id,
         Appointment.date == data.date,
         Appointment.status.in_(["pending", "upcoming"]),
         and_(
@@ -112,9 +158,11 @@ async def book_appointment(
     if result.scalars().first():
         raise HTTPException(409, "This slot is already booked or pending approval.")
 
+    # Create appointment
     appt = Appointment(
         public_id=str(uuid.uuid4()),
-        consultant_id=data.consultant_id,
+        consultant_id=consultant_id,
+        consultant_public_id=data.consultant_public_id,
         student_id=current_user["user_id"],
         date=data.date,
         start_time=data.start_time,
@@ -129,26 +177,26 @@ async def book_appointment(
     await db.commit()
     await db.refresh(appt)
 
-    # Fetch student name
+    # Create notification
     student = await db.get(User, current_user["user_id"])
     student_name = f"{student.first_name} {student.last_name}" if student else "the student"
 
-    # Create notification for consultant
     notif_content = (
         f"You have received a new appointment request from {student_name} "
         f"for {data.date}, {data.start_time}-{data.end_time}."
     )
     new_notif = Notification(
-        user_id=data.consultant_id,
+        user_id=consultant_id,
         content=notif_content,
         type="info",
-        redirect_url=f"/consultant/appointments.html"
+        redirect_url="/consultant/appointments.html"
     )
     db.add(new_notif)
     await db.commit()
     await db.refresh(new_notif)
 
     return appt
+
 
 
 # Student fetches their own appointments
@@ -215,11 +263,33 @@ async def reject_appointment(
     return appt
 
 
-@router.get("/consultant/{consultant_id}/appointments", response_model=List[AppointmentOut])
+@router.get("/consultant/{consultant_public_id}/appointments", response_model=List[AppointmentOut])
 async def get_public_consultant_appointments(
-    consultant_id: int,
+    consultant_public_id: str,
     db: AsyncSession = Depends(get_db)
 ):
+    # Resolve consultant_id using Education first
+    result = await db.execute(
+        select(User.id)
+        .join(Education, Education.user_id == User.id)
+        .where(Education.public_id == consultant_public_id)
+    )
+    row = result.first()
+
+    # If not found, try Internship
+    if row is None:
+        result = await db.execute(
+            select(User.id)
+            .join(Internship, Internship.user_id == User.id)
+            .where(Internship.public_id == consultant_public_id)
+        )
+        row = result.first()
+
+    if row is None:
+        raise HTTPException(404, "Consultant not found")
+
+    consultant_id = row[0]
+
     q = select(Appointment).where(
         Appointment.consultant_id == consultant_id,
         Appointment.status.in_(["pending", "upcoming"])
@@ -389,11 +459,31 @@ async def submit_review(
 
 
 # Calculates average rating and number of reviews per consultant.
-@router.get("/consultant/{consultant_id}/average-rating", summary="Student: Calculate and show average rating and number of reviews of consultant.")
+@router.get("/consultant/public/{consultant_public_id}/consultant-average-rating", summary="Student: Calculate and show average rating and number of reviews of consultant.")
 async def get_consultant_average_rating(
-    consultant_id: int,
+    consultant_public_id: str,
     db: AsyncSession = Depends(get_db)
 ):
+    # Resolve consultant_id from public_id
+    result = await db.execute(
+        select(User.id)
+        .join(Education, Education.user_id == User.id)
+        .where(Education.public_id == consultant_public_id)
+    )
+    row = result.first()
+
+    if row is None:
+        result = await db.execute(
+            select(User.id)
+            .join(Internship, Internship.user_id == User.id)
+            .where(Internship.public_id == consultant_public_id)
+        )
+        row = result.first()
+
+    if row is None:
+        raise HTTPException(404, "Consultant not found")
+
+    consultant_id = row[0]
     result = await db.execute(
         select(func.avg(ConsultantReview.rating), func.count(ConsultantReview.id))
         .where(ConsultantReview.consultant_id == consultant_id)
@@ -404,15 +494,39 @@ async def get_consultant_average_rating(
         "total_reviews": count
     }
 
+
+
 # On the student view, shows the ratings/reviews for the consultant being viewed.
-@router.get("/consultant/{consultant_id}/reviews", response_model=List[ReviewOut], summary="Student: Get reviews/ratings for consultant and display them.")
-async def get_consultant_reviews(
-    consultant_id: int,
+@router.get("/consultant/public/{consultant_public_id}/reviews", response_model=List[ReviewOut], summary="Student: Get reviews by consultant public ID")
+async def get_consultant_reviews_by_public_id(
+    consultant_public_id: str,
     db: AsyncSession = Depends(get_db)
 ):
+    # Try Education first
+    result = await db.execute(
+        select(User.id)
+        .join(Education, Education.user_id == User.id)
+        .where(Education.public_id == consultant_public_id)
+    )
+    row = result.first()
+
+    if row is None:
+        # Try Internship
+        result = await db.execute(
+            select(User.id)
+            .join(Internship, Internship.user_id == User.id)
+            .where(Internship.public_id == consultant_public_id)
+        )
+        row = result.first()
+
+    if row is None:
+        raise HTTPException(404, "Consultant not found")
+
+    consultant_id = row[0]
+
     result = await db.execute(
         select(ConsultantReview)
-        .options(selectinload(ConsultantReview.student))  # Now works because 'student' is defined in the model
+        .options(selectinload(ConsultantReview.student))
         .where(ConsultantReview.consultant_id == consultant_id)
     )
     reviews = result.scalars().all()
@@ -436,6 +550,7 @@ async def get_consultant_reviews(
             )
         )
     return output
+
 
 # Basic consultant info is gathered from the student's appointment.
 @router.get("/booking/{public_id}/consultant", summary="Student: Fetch basic consultant info from appointment.")
@@ -490,17 +605,45 @@ async def get_review_by_booking(
 
 
 # Shows average rating of consultant.
-@router.get("/consultant/{consultant_id}/average-rating", summary="Consultant/Student: Average rating of consultant.")
+@router.get("/consultant/public/{consultant_public_id}/average-rating", summary="Consultant/Student: Average rating of consultant.")
 async def get_average_rating(
-    consultant_id: int,
+    consultant_public_id: str,
     db: AsyncSession = Depends(get_db)
 ):
+    # Try Education first
     result = await db.execute(
-        select(func.avg(ConsultantReview.rating))
+        select(User.id)
+        .join(Education, Education.user_id == User.id)
+        .where(Education.public_id == consultant_public_id)
+    )
+    row = result.first()
+
+    if row is None:
+        # Try Internship
+        result = await db.execute(
+            select(User.id)
+            .join(Internship, Internship.user_id == User.id)
+            .where(Internship.public_id == consultant_public_id)
+        )
+        row = result.first()
+
+    if row is None:
+        raise HTTPException(404, "Consultant not found")
+
+    consultant_id = row[0]
+
+    # Calculate average and total reviews
+    result = await db.execute(
+        select(func.avg(ConsultantReview.rating), func.count(ConsultantReview.id))
         .where(ConsultantReview.consultant_id == consultant_id)
     )
-    avg = result.scalar()
-    return {"average_rating": round(avg, 2) if avg is not None else None}
+    avg, count = result.first()
+    return {
+        "average_rating": round(avg, 2) if avg is not None else None,
+        "total_reviews": count
+    }
+
+
 
 # Allows consultants to view reviews written about them.
 @router.get("/consultant/reviews/me", response_model=List[ReviewOut], summary="Consultant: view my reviews.")

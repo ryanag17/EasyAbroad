@@ -189,7 +189,7 @@ async function loadPreview() {
     };
     const helpItems = Object.entries(helpMap).filter(([key]) => study[key]);
     document.querySelector(".help-list ul").innerHTML = helpItems.length
-      ? helpItems.map(([, label]) => `<li>✔ ${label}</li>`).join("")
+      ? helpItems.map(([, label]) => `<li>${label}</li>`).join("")
       : "<li>–</li>";
 
     const callMap = {
@@ -200,7 +200,7 @@ async function loadPreview() {
     };
     const callItems = Object.entries(callMap).filter(([key]) => study[key]);
     document.querySelector(".call-list ul").innerHTML = callItems.length
-      ? callItems.map(([, label]) => `<li>✔ ${label}</li>`).join("")
+      ? callItems.map(([, label]) => `<li>${label}</li>`).join("")
       : "<li>–</li>";
 
   } catch (err) {

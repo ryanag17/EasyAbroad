@@ -35,8 +35,11 @@ class Appointment(Base):
     __tablename__ = "appointments"
     id = Column(Integer, primary_key=True, index=True)
     public_id = Column(String(36), unique=True, nullable=False)
+
     consultant_id = Column(Integer, ForeignKey("users.id"))
+    consultant_public_id = Column(String(36), nullable=True)  
     student_id = Column(Integer, ForeignKey("users.id"))
+
     date = Column(Date)
     start_time = Column(String)
     end_time = Column(String)
@@ -47,9 +50,11 @@ class Appointment(Base):
     meeting_link = Column(String, nullable=True)
     rejection_reason = Column(String, nullable=True)
     cancellation_reason = Column(String, nullable=True) 
+    type = Column(String, nullable=False)
+
     student = relationship("User", foreign_keys=[student_id])
     consultant = relationship("User", foreign_keys=[consultant_id])
-    type = Column(String, nullable=False)
+
 
 class ConsultantReview(Base):
     __tablename__ = "consultant_reviews"

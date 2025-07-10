@@ -294,26 +294,46 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return;
 
-    const countrySel = document.getElementById("country");
-    try {
-      const res = await fetch("http://localhost:8000/profile/countries", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch countries");
+  try {
+    // Check if consultant already has an internship profile
+    const profileRes = await fetch("http://localhost:8000/consultancy/internship/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-      const countries = await res.json();
-      countries.forEach((c) => {
-        const o = new Option(c, c);
-        countrySel.appendChild(o);
-      });
-    } catch (err) {
-      console.error("Could not load countries:", err);
+    if (profileRes.ok) {
+      // Profile exists — redirect to preview page
+      window.location.href = "preview-internship.html";
+      return; // Stop further execution
     }
-  });
+    // If 404, continue to load form as normal
+
+  } catch (err) {
+    console.error("Failed to check internship consultancy profile:", err);
+  }
+
+  // -------- Load country list if no existing profile --------
+  const countrySel = document.getElementById("country");
+  if (!countrySel) return;
+
+  try {
+    const res = await fetch("http://localhost:8000/profile/countries", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("Failed to fetch countries");
+
+    const countries = await res.json();
+    countries.forEach(c => {
+      const o = new Option(c, c);
+      countrySel.appendChild(o);
+    });
+  } catch (err) {
+    console.error("Could not load countries:", err);
+  }
+});
 </script>
 
 

@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function fetchAverageRating(consultantId) {
     try {
-      const res = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`);
+      const res = await fetch(`http://localhost:8000/appointment/consultant/public/${consultantId}/average-rating`);
       const data = await res.json();
       return data.average_rating ?? null;
     } catch (e) {

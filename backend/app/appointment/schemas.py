@@ -10,7 +10,7 @@ class ConsultantAvailabilityOut(BaseModel):
     end_time: str
 
 class AppointmentCreate(BaseModel):
-    consultant_id: int
+    consultant_public_id: str    
     date: str
     start_time: str
     end_time: str
@@ -24,6 +24,7 @@ class AppointmentOut(BaseModel):
     id: int
     public_id: str    
     consultant_id: int
+    consultant_public_id: Optional[str] = None
     student_id: int
     date: date 
     start_time: str

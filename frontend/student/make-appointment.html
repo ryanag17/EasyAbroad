@@ -202,10 +202,17 @@ let selectedSlotInfo = null;
 let consultantId = new URLSearchParams(window.location.search).get("id");
 
 async function fetchConsultantName() {
-    let res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
-    if (!res.ok) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get("type");
+    let res;
+
+    if (type === "internship") {
         res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
+    } else {
+        // Default to study if type is missing or explicitly "study"
+        res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
     }
+
     if (res.ok) {
         const data = await res.json();
         document.getElementById('consultant-name').textContent = `${data.first_name} ${data.last_name}`;
@@ -213,6 +220,7 @@ async function fetchConsultantName() {
         document.getElementById('consultant-name').textContent = "[consultant name]";
     }
 }
+
 
 async function fetchAndRenderCalendar(startDate) {
     const res = await fetch(`http://localhost:8000/appointment/consultant/timetable/${consultantId}`);
@@ -361,7 +369,7 @@ async function confirmBooking() {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                consultant_id: consultantId,
+                consultant_public_id: consultantId,
                 date: date,
                 start_time: start_time,
                 end_time: end_time,
@@ -424,29 +432,28 @@ window.onload = () => {
 };
 
 async function populateSpecialtiesDropdown() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const type = urlParams.get('type');
-    const consultantId = urlParams.get("id");
-    const consultantType = urlParams.get("type");
+const urlParams = new URLSearchParams(window.location.search);
+const type = urlParams.get('type');
 
-    let helpMap, res, data, specialties = [];
-    if (consultantType === "internship") {
-        helpMap = {
-            accommodation: "Finding accommodation",
-            social_life: "Social life and making friends",
-            company_info: "Company information",
-            travel_info: "Best and worst city spots"
-        };
-        res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
-    } else {
-        helpMap = {
-            accommodation: "Finding accommodation",
-            social_life: "Social life and making friends",
-            uni_info: "University information",
-            travel_info: "Best/worst city spots, weekend plans"
-        };
-        res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
-    }
+let helpMap, res, data, specialties = [];
+if (type === "internship") {
+    helpMap = {
+        accommodation: "Finding accommodation",
+        social_life: "Social life and making friends",
+        company_info: "Company information",
+        travel_info: "Best and worst city spots"
+    };
+    res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
+} else {
+    helpMap = {
+        accommodation: "Finding accommodation",
+        social_life: "Social life and making friends",
+        uni_info: "University information",
+        travel_info: "Best/worst city spots, weekend plans"
+    };
+    res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
+}
+
 
     if (res.ok) {
         data = await res.json();

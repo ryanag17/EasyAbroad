@@ -7,6 +7,10 @@ from app.consultancy.models import Education, Internship
 from app.consultancy.schemas import EducationCreate, InternshipCreate
 
 
+from app.consultancy.models import Education
+from datetime import datetime
+from fastapi import HTTPException
+
 async def save_study_entry(db: AsyncSession, user_id: int, data: EducationCreate):
     try:
         from_dt = datetime.strptime(data.fromDate + "-01", "%Y-%m-%d")
@@ -31,7 +35,7 @@ async def save_study_entry(db: AsyncSession, user_id: int, data: EducationCreate
         "apple_facetime": "FaceTime" in data.call
     }
 
-    stmt = insert(Education).values(
+    new_entry = Education(
         user_id=user_id,
         city_of_study=data.city,
         country_of_study=data.country,
@@ -46,10 +50,16 @@ async def save_study_entry(db: AsyncSession, user_id: int, data: EducationCreate
         **call_flags
     )
 
-    await db.execute(stmt)
+    db.add(new_entry)
     await db.commit()
+    await db.refresh(new_entry)
 
-    return {"message": "Study consultancy profile submitted successfully"}
+    return {"message": "Study consultancy profile submitted successfully", "public_id": new_entry.public_id}
+
+
+from app.consultancy.models import Internship
+from datetime import datetime
+from fastapi import HTTPException
 
 async def save_internship_entry(db: AsyncSession, user_id: int, data: InternshipCreate):
     try:
@@ -75,7 +85,7 @@ async def save_internship_entry(db: AsyncSession, user_id: int, data: Internship
         "apple_facetime": "FaceTime" in data.call
     }
 
-    stmt = insert(Internship).values(
+    new_entry = Internship(
         user_id=user_id,
         city_of_internship=data.city,
         country_of_internship=data.country,
@@ -90,10 +100,11 @@ async def save_internship_entry(db: AsyncSession, user_id: int, data: Internship
         **call_flags
     )
 
-    await db.execute(stmt)
+    db.add(new_entry)
     await db.commit()
+    await db.refresh(new_entry)
 
-    return {"message": "Internship consultancy profile submitted successfully"}
+    return {"message": "Internship consultancy profile submitted successfully", "public_id": new_entry.public_id}
 
 
 from sqlalchemy import delete, select

@@ -90,10 +90,10 @@
 
     const token = localStorage.getItem("accessToken");
     const urlParams = new URLSearchParams(window.location.search);
-    const consultantId = urlParams.get("id");
+    const consultantPublicId = urlParams.get("id");
     const consultantName = urlParams.get("name");
 
-    if (!consultantId) {
+    if (!consultantPublicId) {
       const errorContainer = document.createElement("div");
       errorContainer.innerHTML = "<p style='color: red;'>Error: Missing consultant ID. Please check the URL and try again.</p>";
       document.body.prepend(errorContainer);
@@ -108,7 +108,8 @@
       const nameElement = document.getElementById("consultantName");
       nameElement.innerText = ` ${consultantName || "Consultant"}`;
 
-      const avgRatingRes = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`, {
+      // ✅ Use correct public ID endpoint
+      const avgRatingRes = await fetch(`http://localhost:8000/appointment/consultant/public/${consultantPublicId}/consultant-average-rating`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -120,7 +121,7 @@
       const avgRating = await avgRatingRes.json();
       const reviewsSummary = document.getElementById("reviewsSummary");
 
-      if (avgRating.average_rating === null) {
+      if (!avgRating || avgRating.total_reviews === 0) {
         reviewsSummary.innerHTML = "<p>This consultant has no reviews yet.</p>";
         return;
       }
@@ -130,7 +131,8 @@
         <div id="ratingDistribution"></div>
       `;
 
-      const reviewsRes = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/reviews`, {
+      // ✅ Fetch reviews using correct public ID endpoint
+      const reviewsRes = await fetch(`http://localhost:8000/appointment/consultant/public/${consultantPublicId}/reviews`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -244,6 +246,7 @@
     }
   })();
 </script>
+
 
 
 

@@ -324,11 +324,11 @@
     await autoEnforceRoleFromPath();
   })();  
 
-  function goToConsultantProfile(userId, focus) {
+  function goToConsultantProfile(publicId, focus) {
     const page = focus === 'internship'
       ? 'consultant-profile-internship.html'
       : 'consultant-profile-study.html';
-    window.location.href = `${page}?id=${userId}`;
+    window.location.href = `${page}?id=${publicId}`;
   }
 
   window.onload = async function () {
@@ -353,9 +353,9 @@
 
     let allConsultants = [];
 
-    async function fetchAverageRating(consultantId) {
+    async function fetchAverageRating(consultantPublicId) {
       try {
-        const res = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/average-rating`);
+        const res = await fetch(`http://localhost:8000/appointment/consultant/public/${consultantPublicId}/average-rating`);
         const data = await res.json();
         return data.average_rating ?? null;
       } catch (e) {
@@ -363,6 +363,8 @@
         return null;
       }
     }
+
+
 
     async function fetchConsultants() {
       try {
@@ -375,7 +377,7 @@
         const internshipData = await internshipRes.json();
 
         const studyMapped = await Promise.all(studyData.map(async s => ({
-          user_id: s.user_id,
+          public_id: s.public_id,
           name: s.first_name + " " + s.last_name,
           profilePic: s.profile_picture ? `http://localhost:8000${s.profile_picture}` : "../images/avatar.png",
           city: s.city_of_study,
@@ -383,12 +385,12 @@
           focus: "study",
           institution: s.university_name,
           period: { from: formatDate(s.education_start), to: formatDate(s.education_finish) },
-          rating: await fetchAverageRating(s.user_id),
+          rating: await fetchAverageRating(s.public_id),
           location: await geocode(s.city_of_study, s.country_of_study)
         })));
 
         const internshipMapped = await Promise.all(internshipData.map(async i => ({
-          user_id: i.user_id,
+          public_id: i.public_id,
           name: i.first_name + " " + i.last_name,
           profilePic: i.profile_picture ? `http://localhost:8000${i.profile_picture}` : "../images/avatar.png",
           city: i.city_of_internship,
@@ -396,7 +398,7 @@
           focus: "internship",
           institution: i.company_name,
           period: { from: formatDate(i.internship_start), to: formatDate(i.internship_finish) },
-          rating: await fetchAverageRating(i.user_id),
+          rating: await fetchAverageRating(i.public_id),
           location: await geocode(i.city_of_internship, i.country_of_internship)
         })));
 
@@ -468,7 +470,7 @@
             <div><strong>Date of Mobility:</strong> ${consultant.period.from} – ${consultant.period.to}</div>
             <div style="margin-top: 4px;"><strong>${consultant.rating ? `Currently Rated ${consultant.rating}/5` : 'Currently Have No Reviews'}</strong></div>
           </div>
-          <button class="profile-btn" onclick="goToConsultantProfile('${consultant.user_id}', '${consultant.focus}')">View Profile</button>
+          <button class="profile-btn" onclick="goToConsultantProfile('${consultant.public_id}', '${consultant.focus}')">View Profile</button>
         </div>
       `;
 
@@ -509,7 +511,7 @@
             <p>${c.institution}</p>
             <p><small>${c.period.from} – ${c.period.to}</small></p>
             <p style="margin: 6px 0;"><strong>${c.rating ? `${c.rating.toFixed(1)}/5 ★` : 'No Reviews Yet'}</strong></p>
-            <button class="profile-btn" onclick="goToConsultantProfile('${c.user_id}', '${c.focus}')">View Profile</button>
+            <button class="profile-btn" onclick="goToConsultantProfile('${c.public_id}', '${c.focus}')">View Profile</button>
           `;
           listContainer.appendChild(div);
         });
@@ -531,6 +533,7 @@
     }, 300);
   };
 </script>
+
 
 <div id="inAppModal" class="modal-overlay">
   <div class="modal-content">

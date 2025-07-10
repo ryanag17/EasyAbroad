@@ -248,6 +248,7 @@ CREATE TABLE IF NOT EXISTS users (
 --    References users(id) and countries(country_name).
 CREATE TABLE IF NOT EXISTS Education (
   user_id           INT PRIMARY KEY,
+  public_id   VARCHAR(36) UNIQUE DEFAULT NULL,
   city_of_study     VARCHAR(255),
   country_of_study  VARCHAR(100),  -- must match countries(country_name)
   university_name   VARCHAR(255),
@@ -293,6 +294,7 @@ CREATE TABLE IF NOT EXISTS Education (
 --    References users(id) and countries(country_name).
 CREATE TABLE IF NOT EXISTS Internship (
   user_id               INT PRIMARY KEY,
+  public_id   VARCHAR(36) UNIQUE DEFAULT NULL,
   city_of_internship    VARCHAR(255),
   country_of_internship VARCHAR(100),  -- must match countries(country_name)
   company_name          VARCHAR(255),
@@ -483,6 +485,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   id INT AUTO_INCREMENT PRIMARY KEY,
   public_id   VARCHAR(36) UNIQUE DEFAULT NULL,
   consultant_id INT NOT NULL,
+  consultant_public_id VARCHAR(36) DEFAULT NULL,
   student_id INT NOT NULL,
   date DATE NOT NULL,
   start_time VARCHAR(5) NOT NULL,
@@ -498,6 +501,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
   info VARCHAR(255) NULL
 );
+
 
 
 

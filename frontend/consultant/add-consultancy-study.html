@@ -298,6 +298,24 @@ document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem("accessToken");
   if (!token) return;
 
+  try {
+    // Check if consultant already has a study profile
+    const profileRes = await fetch("http://localhost:8000/consultancy/study/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (profileRes.ok) {
+      // Profile exists — redirect to preview page
+      window.location.href = "preview-study.html";
+      return; // Stop further execution
+    }
+    // If 404, continue to load form as normal
+
+  } catch (err) {
+    console.error("Failed to check study consultancy profile:", err);
+  }
+
+  // -------- Load country list if no existing profile --------
   const countrySel = document.getElementById("country");
   if (!countrySel) return;
 

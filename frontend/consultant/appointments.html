@@ -146,11 +146,9 @@
 
 let appointments = [];
 let tempAcceptedData = null;
-let tempRejectData = null;
-let tempCancelId = null;
 
 let currentPage = 1;
-const itemsPerPage = 4; // Adjust this number to control how many appointments per page
+const itemsPerPage = 4;
 
 async function loadAppointments() {
   const token = localStorage.getItem("accessToken");
@@ -281,8 +279,8 @@ function renderAppointments(status) {
       <div class="appointment-actions">
         ${status === 'pending' ? `
           <div class="pending-actions">
-            <button class="accept-btn" onclick="openLinkModal(${app.id})">Approve & Send Link</button>
-            <button class="reject-btn" onclick="openRejectModal(${app.id})">Reject</button>
+            <button class="accept-btn" onclick="openLinkModal('${app.public_id}', 'accept')">Approve & Send Link</button>
+            <button class="reject-btn" onclick="openLinkModal('${app.public_id}', 'reject')">Reject</button>
           </div>
         ` : `
           ${status === 'upcoming' ? meetingLinkBlock : ''}
@@ -290,7 +288,7 @@ function renderAppointments(status) {
             <button class="message-btn" onclick="window.location.href='chat.html?partnerId=${app.student_id}'">Send message</button>
           ` : ''}
           ${status === 'upcoming' && canCancel(app) ? `
-            <a class="message-btn" style="margin-left:10px;" onclick="openCancelModal(${app.id})">Cancel</a>
+            <a class="message-btn" style="margin-left:10px;" onclick="openLinkModal('${app.public_id}', 'cancel')">Cancel</a>
           ` : ''}
         `}
       </div>
@@ -306,7 +304,7 @@ tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     tabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    currentPage = 1; // Reset to first page when tab changes
+    currentPage = 1;
     renderAppointments(tab.getAttribute('data-status'));
   });
 });
@@ -316,61 +314,83 @@ function getCurrentTab() {
   return active ? active.getAttribute('data-status') : 'upcoming';
 }
 
-function openLinkModal(appId) {
+function openLinkModal(appId, mode = "accept") {
   tempAcceptedData = appId;
   document.getElementById('linkModal').style.display = 'flex';
-  document.getElementById('meetingLinkInput').value = '';
+  const input = document.getElementById('meetingLinkInput');
+  const title = document.querySelector('#linkModal h3');
+  const button = document.querySelector('#linkModal button');
+
+  if (mode === "accept") {
+    title.textContent = "Meeting link:";
+    input.placeholder = "Paste your meeting link here...";
+    button.textContent = "Send";
+    input.type = "text";
+    input.value = "";
+  } else if (mode === "reject") {
+    title.textContent = "Reason for rejection:";
+    input.placeholder = "Enter reason for rejection...";
+    button.textContent = "Reject";
+    input.type = "text";
+    input.value = "";
+  } else if (mode === "cancel") {
+    title.textContent = "Reason for cancellation:";
+    input.placeholder = "Enter reason for cancellation...";
+    button.textContent = "Cancel Appointment";
+    input.type = "text";
+    input.value = "";
+  }
+
+  document.getElementById('linkModal').dataset.mode = mode;
 }
+
 function closeLinkModal() {
   document.getElementById('linkModal').style.display = 'none';
   tempAcceptedData = null;
 }
 
 async function sendMeetingLink() {
-  const link = document.getElementById('meetingLinkInput').value.trim();
-  if (!link) {
-    showInAppAlert("Please enter a valid meeting link.");
+  const input = document.getElementById('meetingLinkInput').value.trim();
+  const mode = document.getElementById('linkModal').dataset.mode;
+  const token = localStorage.getItem("accessToken");
+
+  if (!input) {
+    showInAppAlert("Please fill in the field.");
     return;
   }
-  const token = localStorage.getItem("accessToken");
-  const res = await fetch(`http://localhost:8000/appointment/approve/${tempAcceptedData}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ meeting_link: link })
-  });
-  closeLinkModal();
-  if (res.ok) {
-    showInAppAlert("Appointment approved and link sent!");
-    loadAppointments();
-  } else {
-    showInAppAlert("Failed to approve appointment.");
+
+  let url = "";
+  let body = {};
+  let successMsg = "";
+
+  if (mode === "accept") {
+    url = `http://localhost:8000/appointment/approve/${tempAcceptedData}`;
+    body = { meeting_link: input };
+    successMsg = "Appointment approved and link sent!";
+  } else if (mode === "reject") {
+    url = `http://localhost:8000/appointment/reject/${tempAcceptedData}`;
+    body = { reason: input };
+    successMsg = "Appointment rejected.";
+  } else if (mode === "cancel") {
+    url = `http://localhost:8000/appointment/${tempAcceptedData}/cancel`;
+    body = { reason: input };
+    successMsg = "Appointment cancelled.";
   }
-}
 
-function openRejectModal(appId) {
-  tempRejectData = appId;
-  document.getElementById('rejectModal').style.display = 'flex';
-}
-function closeRejectModal() {
-  document.getElementById('rejectModal').style.display = 'none';
-  tempRejectData = null;
-}
-
-async function confirmRejection() {
-  const reason = prompt("Please enter a reason for rejection:");
-  if (!reason) return;
-  const token = localStorage.getItem("accessToken");
-  const res = await fetch(`http://localhost:8000/appointment/reject/${tempRejectData}`, {
+  const res = await fetch(url, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ reason })
+    body: JSON.stringify(body)
   });
-  closeRejectModal();
+
+  closeLinkModal();
+
   if (res.ok) {
-    showInAppAlert("Appointment rejected.");
+    showInAppAlert(successMsg);
     loadAppointments();
   } else {
-    showInAppAlert("Failed to reject appointment.");
+    const data = await res.json().catch(() => ({}));
+    showInAppAlert(data.detail || "Failed to process request.");
   }
 }
 
@@ -403,42 +423,9 @@ function canCancel(app) {
   return app.status === "upcoming" && (meetingDateTime - now > 24 * 60 * 60 * 1000);
 }
 
-function openCancelModal(appId) {
-  tempCancelId = appId;
-  document.getElementById('cancelReasonInput').value = '';
-  document.getElementById('cancelModal').style.display = 'flex';
-}
-function closeCancelModal() {
-  document.getElementById('cancelModal').style.display = 'none';
-  tempCancelId = null;
-}
-
-async function confirmCancellation() {
-  const reason = document.getElementById('cancelReasonInput').value.trim();
-  if (!reason) {
-    showInAppAlert("Please enter a reason for cancellation.");
-    return;
-  }
-  const res = await fetch(`http://localhost:8000/appointment/${tempCancelId}/cancel`, {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${localStorage.getItem("accessToken")}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ reason })
-  });
-  closeCancelModal();
-  if (res.ok) {
-    showInAppAlert("Appointment cancelled.");
-    window.location.reload();
-  } else {
-    const data = await res.json().catch(() => ({}));
-    showInAppAlert(data.detail || "Failed to cancel appointment.");
-  }
-}
-
 window.addEventListener("click", function(e) {
-  ["linkModal", "rejectModal", "cancelModal"].forEach(id => {
-    const modal = document.getElementById(id);
-    if (e.target === modal) modal.style.display = 'none';
-  });
+  const modal = document.getElementById('linkModal');
+  if (e.target === modal) closeLinkModal();
 });
 </script>
 
