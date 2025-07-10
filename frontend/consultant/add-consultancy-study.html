@@ -73,26 +73,28 @@
         <div class="form-group">
           <label for="university">University Name:</label>
           <input type="text" id="university" name="university_name" required>
+          <p id="university-warning" class="warning-text" style="display:none;">Please enter the university name.</p>
         </div>
 
         <div class="form-group">
           <label for="course">Course Name:</label>
           <input type="text" id="course" name="course_name" required>
+          <p id="course-warning" class="warning-text" style="display:none;">Please enter the course name.</p>
         </div>
 
         <div class="form-group education-period">
           <label>Education Period:</label>
           <div class="period-inputs">
-            <label for="fromDate">From:</label>
+            <label for="education_start">From:</label>
             <input type="month" id="education_start" name="education_start" required>
-            <label for="toDate">To:</label>
+            <label for="education_finish">To:</label>
             <input type="month" id="education_finish" name="education_finish" required>
           </div>
           <p id="date-warning" class="warning-text" style="display:none;">
             You cannot offer consultancy if your graduation is older than 5 years based on our Terms and Conditions.
           </p>
+          <p id="period-warning" class="warning-text" style="display:none;">Please enter a valid start and end period.</p>
         </div>
-
 
         <div class="form-group">
           <label>Location of Study:</label>
@@ -102,20 +104,23 @@
               <select id="country" name="country_of_study" required>
                 <option value="">Select Country</option>
               </select>
+              <p id="country-warning" class="warning-text" style="display:none;">Please select a country.</p>
             </div>
 
             <div class="half-width">
               <label for="city">City:</label>
               <input type="text" id="city" name="city_of_study" required>
+              <p id="city-warning" class="warning-text" style="display:none;">Please enter the city.</p>
             </div>
           </div>
         </div>
 
-
         <div class="form-group">
           <label for="proof">Proof of Study:</label>
           <input type="file" id="proof" name="proof_of_education" accept=".pdf,.jpg,.jpeg,.png" required>
+          <p id="proof-warning" class="warning-text" style="display:none;">Please upload proof of study.</p>
         </div>
+
 
         <div class="options-section">
           <div class="options-box">
@@ -217,6 +222,55 @@ function validateThenSubmit() {
     document.getElementById("date-warning").style.display = "none";
   }
 
+  const start = document.getElementById("education_start").value;
+  const finish = document.getElementById("education_finish").value;
+  if (!start || !finish) {
+    document.getElementById("period-warning").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("period-warning").style.display = "none";
+  }
+
+  const university = document.getElementById("university");
+  if (!university.value.trim()) {
+    document.getElementById("university-warning").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("university-warning").style.display = "none";
+  }
+
+  const course = document.getElementById("course");
+  if (!course.value.trim()) {
+    document.getElementById("course-warning").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("course-warning").style.display = "none";
+  }
+
+  const country = document.getElementById("country");
+  if (!country.value) {
+    document.getElementById("country-warning").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("country-warning").style.display = "none";
+  }
+
+  const city = document.getElementById("city");
+  if (!city.value.trim()) {
+    document.getElementById("city-warning").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("city-warning").style.display = "none";
+  }
+
+  const proof = document.getElementById("proof");
+  if (!proof.value) {
+    document.getElementById("proof-warning").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("proof-warning").style.display = "none";
+  }
+
   if (helpOptions < 2) {
     document.getElementById("help-warning").style.display = "block";
     valid = false;
@@ -229,17 +283,6 @@ function validateThenSubmit() {
     valid = false;
   } else {
     document.getElementById("call-warning").style.display = "none";
-  }
-
-  const requiredFields = ["university_name", "course_name", "education_start", "education_finish", "country_of_study", "city_of_study", "proof_of_education"];
-  for (const id of requiredFields) {
-    const el = document.getElementsByName(id)[0];
-    if (!el || !el.value) {
-      valid = false;
-      el?.classList.add("input-error");  
-    } else {
-      el?.classList.remove("input-error");
-    }
   }
 
   if (valid) {

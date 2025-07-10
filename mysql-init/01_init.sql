@@ -502,31 +502,43 @@ CREATE TABLE IF NOT EXISTS appointments (
   info VARCHAR(255) NULL
 );
 
+-- 10a) CONVERSATIONS table
+CREATE TABLE conversations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    public_id VARCHAR(36) UNIQUE,
+    user_a_id INT NOT NULL,
+    user_b_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_a_id) REFERENCES users(id),
+    FOREIGN KEY (user_b_id) REFERENCES users(id)
+);
 
-
-
--- 10) MESSAGES table
---     Encrypted messages between users, linked to a booking.
+-- 10b) MESSAGES table
 CREATE TABLE IF NOT EXISTS messages (
-  id                INT PRIMARY KEY AUTO_INCREMENT,
-  sender_id         INT NOT NULL,
-  receiver_id       INT NOT NULL,
-  booking_id        INT,
-  encrypted_message BLOB NOT NULL,
-  encryption_iv     VARBINARY(16)  NOT NULL,
-  is_reported       BOOLEAN DEFAULT FALSE,
-  reported_at       DATETIME,
-  sent_at           DATETIME DEFAULT CURRENT_TIMESTAMP,
-  expires_at        DATETIME DEFAULT (CURRENT_TIMESTAMP + INTERVAL 3 YEAR),
+  id                  INT PRIMARY KEY AUTO_INCREMENT,
+  public_id           VARCHAR(36) UNIQUE DEFAULT NULL,
+  sender_id           INT NOT NULL,
+  receiver_id         INT NOT NULL,
+  conversation_id     INT DEFAULT NULL,
+  booking_id          INT,
+  encrypted_message   BLOB NOT NULL,
+  encryption_iv       VARBINARY(16) NOT NULL,
+  is_reported         BOOLEAN DEFAULT FALSE,
+  reported_at         DATETIME,
+  sent_at             DATETIME DEFAULT CURRENT_TIMESTAMP,
+  expires_at          DATETIME DEFAULT (CURRENT_TIMESTAMP + INTERVAL 3 YEAR),
+  hidden_for_user_ids TEXT DEFAULT NULL,
 
-  FOREIGN KEY (booking_id) REFERENCES appointments(id) ON DELETE CASCADE,
-  FOREIGN KEY (sender_id)   REFERENCES users(id)    ON DELETE CASCADE,
-  FOREIGN KEY (receiver_id) REFERENCES users(id)    ON DELETE CASCADE,
+  FOREIGN KEY (booking_id)      REFERENCES appointments(id) ON DELETE CASCADE,
+  FOREIGN KEY (sender_id)       REFERENCES users(id)        ON DELETE CASCADE,
+  FOREIGN KEY (receiver_id)     REFERENCES users(id)        ON DELETE CASCADE,
+  FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
 
   INDEX (booking_id),
   INDEX (sender_id, receiver_id),
   INDEX (sent_at),
-  INDEX (expires_at)
+  INDEX (expires_at),
+  INDEX (conversation_id)
 );
 
 -- Remove expired messages immediately after creating the table.

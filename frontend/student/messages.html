@@ -10,188 +10,184 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <header class="user-header">
-        <a href="home.html" class="to_the_main">
-            <div class="logo">
-                <img src="../images/logo.png" alt="" class="pic_logo">
-            </div>
-        </a>
-        <div class="bell-menu">
-            <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                </i>
-            </a>
-            <div id="menuHamToggle">
-                <input type="checkbox">
-                <span></span>
-                <span></span>
-                <span></span>
-                <ul id="mainMenu">
-                    <a href="profile.html"><li>Profile</li></a>
-                    <a href="appointments.html"><li>Appointments</li></a>
-                    <a href="messages.html"><li>Messages</li></a>
-                    <a href="support-tickets.html"><li>Support Tickets</li></a>
-                    <a href="settings.html"><li>Settings</li></a>
-                    <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
-                </ul>
-            </div>
+<header class="user-header">
+    <a href="home.html" class="to_the_main">
+        <div class="logo">
+            <img src="../images/logo.png" alt="" class="pic_logo">
         </div>
-    </header>
-
-    <section class="chat-overview-section">
-        <div class="chat-list-container"></div>
-    </section>
-
-    <div id="signOutModal" class="modal-overlay">
-        <div class="modal-content">
-            <p>Are you sure you want to sign out?</p>
-            <div class="modal-buttons">
-                <button onclick="confirmSignOut()">Yes</button>
-                <button onclick="closeModal()">No</button>
-            </div>
+    </a>
+    <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+            <i class="far fa-bell bell-icon">
+                <span id="notifBadge" class="notification-badge"></span>
+            </i>
+        </a>
+        <div id="menuHamToggle">
+            <input type="checkbox">
+            <span></span>
+            <span></span>
+            <span></span>
+            <ul id="mainMenu">
+                <a href="profile.html"><li>Profile</li></a>
+                <a href="appointments.html"><li>Appointments</li></a>
+                <a href="messages.html"><li>Messages</li></a>
+                <a href="support-tickets.html"><li>Support Tickets</li></a>
+                <a href="settings.html"><li>Settings</li></a>
+                <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
+            </ul>
         </div>
     </div>
+</header>
 
-    <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
+<section class="chat-overview-section">
+    <div class="chat-list-container"></div>
+</section>
+
+<div id="signOutModal" class="modal-overlay">
+    <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+            <button onclick="confirmSignOut()">Yes</button>
+            <button onclick="closeModal()">No</button>
+        </div>
+    </div>
 </div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
+
+<footer>
+    <div class="logo_icons">
+        <div class="footer-logo">
+            <img src="../images/logo.png" alt="" class="pic_logo">
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+            <a href="http://www.instagram.com/easyabroad_" target="_blank">
+                <img src="../images/instagram.png" alt="Instagram">
+            </a>
+        </div>
+    </div>
+    <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
+        <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
+    </div>
 </footer>
+
 <script src="../auth.js"></script>
 <script src="../script.js"></script>
 <script>
 (async () => {
-  await autoEnforceRoleFromPath();
+    await autoEnforceRoleFromPath();
 })();
 
 const MESSAGES_API_BASE = "http://localhost:8000/messages";
 const token = localStorage.getItem("accessToken");
 
 async function fetchThreads() {
-  const res = await fetch(MESSAGES_API_BASE, {
-    headers: { "Authorization": `Bearer ${token}` }
-  });
-  if (!res.ok) {
-    console.error("Failed to load threads", res.status);
-    showInAppAlert("❌ Failed to load threads.");
-    return;
-  }
-  const threads = await res.json();
-  renderThreads(threads);
+    const res = await fetch(MESSAGES_API_BASE, {
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) {
+        console.error("Failed to load threads", res.status);
+        showInAppAlert("❌ Failed to load threads.");
+        return;
+    }
+    const threads = await res.json();
+    renderThreads(threads);
 }
 
 window.addEventListener("DOMContentLoaded", fetchThreads);
 
 function renderThreads(threads) {
-  const container = document.querySelector('.chat-list-container');
-  container.innerHTML = '';
+    const container = document.querySelector('.chat-list-container');
+    container.innerHTML = '';
 
-  if (threads.length === 0) {
-    container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
-    return;
-  }
-
-  threads.forEach(async t => {
-    const partnerId = t.from_me ? t.receiver_id : t.sender_id;
-    const partnerName = `${t.first_name ?? ""} ${t.last_name ?? ""}`.trim();
-
-    let profilePic = "../images/avatar.png";
-    try {
-      const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const user = await res.json();
-        if (user.profile_picture) {
-          profilePic = "http://localhost:8000" + user.profile_picture;
-        }
-      }
-    } catch (e) {
-      console.error("Failed to fetch user picture", e);
+    if (threads.length === 0) {
+        container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
+        return;
     }
 
-    const card = document.createElement('div');
-    card.className = 'message-card';
-    card.innerHTML = `
-      <div class="chat-avatar">
-        <img src="${profilePic}" alt="Avatar">
-      </div>
-      <div class="chat-content">
-        <h3>${partnerName}</h3>
-        <p class="message-preview">${t.message.length > 50 ? t.message.substring(0, 50) + "..." : t.message}</p>
-        <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
-      </div>
-      <div class="chat-actions">
-        <button onclick="confirmDelete(event, ${partnerId})"><i class="fas fa-trash-alt delete-icon"></i></button>
-      </div>
-    `;
+    threads.forEach(async t => {
+        const partnerId = t.from_me ? t.receiver_id : t.sender_id;
+        const partnerName = `${t.first_name ?? ""} ${t.last_name ?? ""}`.trim();
+        const conversationPublicId = t.conversation_public_id;
 
-    card.addEventListener('click', () => {
-      window.location.href = `chat.html?partnerId=${partnerId}`;
+        let profilePic = "../images/avatar.png";
+        try {
+            const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const user = await res.json();
+                if (user.profile_picture) {
+                    profilePic = "http://localhost:8000" + user.profile_picture;
+                }
+            }
+        } catch (e) {
+            console.error("Failed to fetch user picture", e);
+        }
+
+        const card = document.createElement('div');
+        card.className = 'message-card';
+        card.innerHTML = `
+            <div class="chat-avatar">
+                <img src="${profilePic}" alt="Avatar">
+            </div>
+            <div class="chat-content">
+                <h3>${partnerName}</h3>
+                <p class="message-preview">${t.message.length > 50 ? t.message.substring(0, 50) + "..." : t.message}</p>
+                <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
+            </div>
+            <div class="chat-actions">
+                <button onclick="confirmDelete(event, '${conversationPublicId}')"><i class="fas fa-trash-alt delete-icon"></i></button>
+            </div>
+        `;
+
+        card.addEventListener('click', () => {
+            window.location.href = `chat.html?conversationId=${conversationPublicId}`;
+        });
+
+        container.appendChild(card);
     });
-
-    container.appendChild(card);
-  });
 }
 
-async function confirmDelete(event, partnerId) {
-  event.stopPropagation();
+async function confirmDelete(event, conversationPublicId) {
+    event.stopPropagation();
 
-  const confirmed = await showInAppConfirm("Are you sure you want to delete this conversation?");
-  if (!confirmed) return;
+    const confirmed = await showInAppConfirm("Are you sure you want to delete this conversation?");
+    if (!confirmed) return;
 
-  try {
-    const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
-      method: "DELETE",
-      headers: { "Authorization": `Bearer ${token}` }
-    });
+    try {
+        const res = await fetch(`http://localhost:8000/messages/with/${conversationPublicId}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
 
-    if (res.ok) {
-      showInAppAlert("✅ Conversation deleted.");
-      fetchThreads();
-    } else {
-      const data = await res.json().catch(() => ({}));
-      showInAppAlert("❌ Failed to delete: " + (data.detail || res.status));
+        if (res.ok) {
+            showInAppAlert("✅ Conversation deleted.");
+            fetchThreads();
+        } else {
+            const data = await res.json().catch(() => ({}));
+            showInAppAlert("❌ Failed to delete: " + (data.detail || res.status));
+        }
+    } catch (err) {
+        console.error("Error deleting conversation:", err);
+        showInAppAlert("❌ Error deleting conversation.");
     }
-  } catch (err) {
-    console.error("Error deleting conversation:", err);
-    showInAppAlert("❌ Error deleting conversation.");
-  }
 }
 </script>
 
-
-
-
-
-
-
 <div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+            <button id="modalConfirmButton" style="display: none;">OK</button>
+            <button id="modalCancelButton" style="display: none;">Cancel</button>
+        </div>
     </div>
-  </div>
 </div>
 </body>
 </html>

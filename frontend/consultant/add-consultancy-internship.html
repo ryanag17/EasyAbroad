@@ -70,11 +70,13 @@
       <div class="form-group">
         <label for="company">Company Name:</label>
         <input type="text" id="company" name="company_name" required />
+        <p id="company-warning" class="warning-text" style="display:none;">Please enter the company name.</p>
       </div>
 
       <div class="form-group">
         <label for="department">Department Name:</label>
         <input type="text" id="department" name="department_name" required />
+        <p id="department-warning" class="warning-text" style="display:none;">Please enter the department name.</p>
       </div>
 
       <div class="form-group education-period">
@@ -88,6 +90,7 @@
         <p id="date-warning" class="warning-text" style="display:none;">
           You cannot offer consultancy if your work experience is older than 5 years based on our Terms and Conditions.
         </p>
+        <p id="period-warning" class="warning-text" style="display:none;">Please enter a valid start and end period.</p>
       </div>
 
       <div class="form-group">
@@ -98,11 +101,13 @@
             <select id="country" name="country_of_internship" required>
               <option value="">Select country</option>
             </select>
+            <p id="country-warning" class="warning-text" style="display:none;">Please select a country.</p>
           </div>
 
           <div class="half-width">
             <label for="city">City:</label>
             <input type="text" id="city" name="city_of_internship" required />
+            <p id="city-warning" class="warning-text" style="display:none;">Please enter the city.</p>
           </div>
         </div>
       </div>
@@ -110,7 +115,9 @@
       <div class="form-group">
         <label for="proof">Proof of Employment:</label>
         <input type="file" id="proof" name="proof_of_internship" accept=".pdf,.jpg,.jpeg,.png" required />
+        <p id="proof-warning" class="warning-text" style="display:none;">Please upload proof of employment.</p>
       </div>
+
 
       
       <div class="options-section">
@@ -207,6 +214,56 @@
     const callOptions = document.querySelectorAll('input[name="call[]"]:checked').length;
 
     let valid = true;
+
+    const company = document.getElementById("company");
+    if (!company.value.trim()) {
+      document.getElementById("company-warning").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("company-warning").style.display = "none";
+    }
+
+    const department = document.getElementById("department");
+    if (!department.value.trim()) {
+      document.getElementById("department-warning").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("department-warning").style.display = "none";
+    }
+
+    const start = document.getElementById("internship_start");
+    const finish = document.getElementById("internship_finish");
+    if (!start.value || !finish.value) {
+      document.getElementById("period-warning").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("period-warning").style.display = "none";
+    }
+
+    const country = document.getElementById("country");
+    if (!country.value) {
+      document.getElementById("country-warning").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("country-warning").style.display = "none";
+    }
+
+    const city = document.getElementById("city");
+    if (!city.value.trim()) {
+      document.getElementById("city-warning").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("city-warning").style.display = "none";
+    }
+
+    const proof = document.getElementById("proof");
+    if (!proof.value) {
+      document.getElementById("proof-warning").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("proof-warning").style.display = "none";
+    }
+
 
     if (toDate < limitDate) {
       document.getElementById("date-warning").style.display = "block";

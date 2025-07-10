@@ -285,7 +285,7 @@ function renderAppointments(status) {
         ` : `
           ${status === 'upcoming' ? meetingLinkBlock : ''}
           ${['upcoming', 'rejected', 'previous'].includes(status) ? `
-            <button class="message-btn" onclick="window.location.href='chat.html?partnerId=${app.student_id}'">Send message</button>
+            <button class="message-btn" onclick="startMessage(event, ${app.student_id})">Send message</button>
           ` : ''}
           ${status === 'upcoming' && canCancel(app) ? `
             <a class="message-btn" style="margin-left:10px;" onclick="openLinkModal('${app.public_id}', 'cancel')">Cancel</a>
@@ -325,22 +325,18 @@ function openLinkModal(appId, mode = "accept") {
     title.textContent = "Meeting link:";
     input.placeholder = "Paste your meeting link here...";
     button.textContent = "Send";
-    input.type = "text";
-    input.value = "";
   } else if (mode === "reject") {
     title.textContent = "Reason for rejection:";
     input.placeholder = "Enter reason for rejection...";
     button.textContent = "Reject";
-    input.type = "text";
-    input.value = "";
   } else if (mode === "cancel") {
     title.textContent = "Reason for cancellation:";
     input.placeholder = "Enter reason for cancellation...";
     button.textContent = "Cancel Appointment";
-    input.type = "text";
-    input.value = "";
   }
 
+  input.type = "text";
+  input.value = "";
   document.getElementById('linkModal').dataset.mode = mode;
 }
 
@@ -421,6 +417,34 @@ function canCancel(app) {
   const meetingDateTime = new Date(`${app.date}T${app.start_time || app.time}:00`);
   const now = new Date();
   return app.status === "upcoming" && (meetingDateTime - now > 24 * 60 * 60 * 1000);
+}
+
+async function startMessage(e, studentId) {
+  e.preventDefault();
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    showInAppAlert("⚠️ Not authenticated");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:8000/messages/start-conversation", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ receiver_id: studentId })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      window.location.href = `chat.html?conversationId=${data.conversation_public_id}`;
+    } else {
+      const errorData = await res.json().catch(() => ({}));
+      showInAppAlert("❌ Failed to start chat: " + (errorData.detail || res.status));
+    }
+  } catch (err) {
+    console.error("Error starting conversation:", err);
+    showInAppAlert("❌ Error starting conversation");
+  }
 }
 
 window.addEventListener("click", function(e) {

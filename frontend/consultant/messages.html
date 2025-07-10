@@ -122,6 +122,7 @@ function renderThreads(threads) {
   threads.forEach(async t => {
     const partnerId = t.from_me ? t.receiver_id : t.sender_id;
     const partnerName = `${t.first_name ?? ""} ${t.last_name ?? ""}`.trim();
+    const conversationPublicId = t.conversation_public_id;
 
     let profilePic = "../images/avatar.png";
     try {
@@ -150,26 +151,26 @@ function renderThreads(threads) {
         <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
       </div>
       <div class="chat-actions">
-        <button onclick="confirmDelete(event, ${partnerId})"><i class="fas fa-trash-alt delete-icon"></i></button>
+        <button onclick="confirmDelete(event, '${conversationPublicId}')"><i class="fas fa-trash-alt delete-icon"></i></button>
       </div>
     `;
 
     card.addEventListener('click', () => {
-      window.location.href = `chat.html?partnerId=${partnerId}`;
+      window.location.href = `chat.html?conversationId=${conversationPublicId}`;
     });
 
     container.appendChild(card);
   });
 }
 
-async function confirmDelete(event, partnerId) {
+async function confirmDelete(event, conversationPublicId) {
   event.stopPropagation();
 
   const confirmed = await showInAppConfirm("Are you sure you want to delete this conversation?");
   if (!confirmed) return;
 
   try {
-    const res = await fetch(`http://localhost:8000/messages/with/${partnerId}`, {
+    const res = await fetch(`http://localhost:8000/messages/with/${conversationPublicId}`, {
       method: "DELETE",
       headers: { "Authorization": `Bearer ${token}` }
     });

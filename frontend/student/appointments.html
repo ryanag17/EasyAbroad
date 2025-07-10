@@ -247,7 +247,7 @@ function renderAppointments(status) {
       </div>
       <div class="appointment-actions">
         ${meetingLinkBlock}
-        <a class="message-btn" href="chat.html?partnerId=${app.consultant_id}">Send a message</a>
+          <a class="message-btn" href="#" onclick="startMessage(event, ${app.consultant_id}, ${app.id})">Send a message</a>
         ${status === 'upcoming' && canCancel(app) ? `
           <a class="message-btn" style="margin-left:10px;" onclick="openLinkModal('${app.public_id}', 'cancel')">Cancel</a>
         ` : ''}
@@ -333,6 +333,36 @@ async function sendMeetingLink() {
     showInAppAlert(data.detail || "❌ Failed to cancel appointment.");
   }
 }
+
+async function startMessage(e, consultantId, bookingId) {
+  e.preventDefault();
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    showInAppAlert("⚠️ Not authenticated");
+    return;
+  }
+
+  try {
+    // Use new endpoint to create or get conversation
+    const res = await fetch("http://localhost:8000/messages/start-conversation", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ receiver_id: consultantId })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      window.location.href = `chat.html?conversationId=${data.conversation_public_id}`;
+    } else {
+      const errorData = await res.json().catch(() => ({}));
+      showInAppAlert("❌ Failed to start chat: " + (errorData.detail || res.status));
+    }
+  } catch (err) {
+    console.error("Error starting conversation:", err);
+    showInAppAlert("❌ Error starting conversation");
+  }
+}
+
 
 window.addEventListener("click", function(e) {
   const modal = document.getElementById('linkModal');
