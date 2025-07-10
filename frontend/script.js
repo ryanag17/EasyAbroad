@@ -169,7 +169,7 @@ async function registerUser() {
     });
 
     if (res.ok) {
-      showInAppAlert("✅ Registration successful! Redirecting to login…", () => {
+      showInAppAlert("✅ Registration successful! Please check your email and verify your account in order to log in.", () => {
         window.location.href = "log-in.html";
       });
     } else {

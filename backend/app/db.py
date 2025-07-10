@@ -28,7 +28,7 @@ async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
 
-# 🔧 Direct session getter for background tasks
+# Direct session getter for background tasks
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         yield session

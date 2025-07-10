@@ -59,3 +59,47 @@ def send_reset_email(recipient_email: str, reset_token: str, user_name: str = No
             smtp.sendmail(EMAIL_FROM, recipient_email, msg.as_string())
     except Exception as e:
         print(f"⚠️ Failed to send reset email to {recipient_email}: {e}")
+
+
+def send_verification_email(recipient_email: str, verification_token: str, user_name: str = None):
+    verify_link = f"{FRONTEND_BASE_URL}/verify-email.html?token={verification_token}"
+    greeting = f"Hello {user_name}," if user_name else "Hello,"
+    subject = "Verify Your Easy Abroad Account"
+    html_body = f"""
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Easy Abroad - Verify Email</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f6f6f6; padding: 20px;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <img src="https://easy-abroad.de/frontend/images/favicon.png" alt="Easy Abroad Logo" style="max-height: 50px;">
+    </div>
+    <h2 style="color: #333;">Verify Your Email</h2>
+    <p>{greeting}</p>
+    <p>Thank you for registering on Easy Abroad! Please verify your email address to activate your account.</p>
+    <p style="text-align: center; margin: 30px 0;">
+      <a href="{verify_link}" style="background-color: #d62d81; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify Email</a>
+    </p>
+    <p>This link is valid for 24 hours.</p>
+    <p>Best regards,<br><strong>The Easy Abroad Team</strong></p>
+  </div>
+</body>
+</html>
+    """
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = EMAIL_FROM
+    msg["To"]      = recipient_email
+    msg.attach(MIMEText(html_body, "html"))
+
+    try:
+        with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as smtp:
+            smtp.starttls()
+            smtp.login(EMAIL_USER, EMAIL_PASSWORD)
+            smtp.sendmail(EMAIL_FROM, recipient_email, msg.as_string())
+    except Exception as e:
+        print(f"⚠️ Failed to send verification email to {recipient_email}: {e}")

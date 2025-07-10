@@ -7,10 +7,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      #mailhog:
-        #condition: service_started
     volumes:
-      - ./backend:/app            # mount your local code into the container
+      - ./backend:/app
 
     working_dir: /app
     command:
@@ -21,29 +19,25 @@ services:
       - --port
       - "8000"
     environment:
-      # Database settings — point at the DB service name
-      DB_HOST:        easyabroad-db
-      DB_USER:        user
-      DB_PASSWORD:    userpassword
-      DB_NAME:        easyabroad
+      DB_HOST:        ${DB_HOST}
+      DB_USER:        ${DB_USER}
+      DB_PASSWORD:    ${DB_PASSWORD}
+      DB_NAME:        ${DB_NAME}
 
-      # JWT settings
-      JWT_SECRET:     armani
-      JWT_ALGORITHM:  HS256
-      ACCESS_TOKEN_EXPIRE_MINUTES: 10080
-      REFRESH_TOKEN_EXPIRE_DAYS: 7
+      JWT_SECRET:     ${JWT_SECRET}
+      JWT_ALGORITHM:  ${JWT_ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS}
 
-      # Email settings
-      EMAIL_HOST:     smtp.ionos.de
-      EMAIL_PORT:     "587"
-      EMAIL_FROM:     noreply@easy-abroad.de
-      EMAIL_USER:     noreply@easy-abroad.de
-      EMAIL_PASSWORD: k9.Dy5CEaG4Q-hphahoha
-      # Frontend URL
-      FRONTEND_BASE_URL: http://localhost:8080
+      EMAIL_HOST:     ${EMAIL_HOST}
+      EMAIL_PORT:     ${EMAIL_PORT}
+      EMAIL_FROM:     ${EMAIL_FROM}
+      EMAIL_USER:     ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
 
-      MESSAGE_ENCRYPTION_KEY:        KG6ye-MBVb_mkSHfT5ip__NoXwR__G09-F8UdXZrqhE=
+      FRONTEND_BASE_URL: ${FRONTEND_BASE_URL}
 
+      MESSAGE_ENCRYPTION_KEY: ${MESSAGE_ENCRYPTION_KEY}
 
   frontend:
     build:
@@ -52,9 +46,6 @@ services:
     container_name: easyabroad-frontend
     ports:
       - "8080:80"
-    # Development phase live server function
-    volumes:
-    - ./frontend:/usr/share/nginx/html
 
   db:
     image: mysql:8.0
@@ -62,9 +53,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: armani
-      MYSQL_DATABASE:      easyabroad
-      MYSQL_USER:          user
-      MYSQL_PASSWORD:      userpassword
+      MYSQL_DATABASE:      ${DB_NAME}
+      MYSQL_USER:          ${DB_USER}
+      MYSQL_PASSWORD:      ${DB_PASSWORD}
       MYSQL_ROOT_HOST:     "%"
     ports:
       - "3306:3306"
@@ -76,13 +67,6 @@ services:
     volumes:
       - ./mysql-init:/docker-entrypoint-initdb.d:ro
       - db-data:/var/lib/mysql
-
-  #mailhog:
-    #image: mailhog/mailhog
-    #container_name: easyabroad-mailhog
-    #ports:
-      #- "8025:8025"  # Web UI
-      #- "1025:1025"  # SMTP
 
 volumes:
   db-data: {}

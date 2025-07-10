@@ -56,17 +56,11 @@
 </footer>
 
 
-
+    <script src="script.js"></script>
     <script src="auth.js"></script>
     <script>
     redirectIfAuthenticated(); // Prevent logged-in users from accessing this
-    </script>
-    
-    
-  <script src="script.js"></script>
 
-  
-  <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("loginBtn").addEventListener("click", () => {
         if (!validateLoginForm()) return;

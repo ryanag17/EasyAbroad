@@ -219,23 +219,29 @@ INSERT IGNORE INTO countries (country_name, country_code) VALUES
 -- 3) USERS table
 --    Note: “country_name” must match countries.country_name
 CREATE TABLE IF NOT EXISTS users (
-  id              INT AUTO_INCREMENT PRIMARY KEY,
-  first_name      VARCHAR(255)           NOT NULL,
-  last_name       VARCHAR(255)           NOT NULL,
-  email           VARCHAR(255) UNIQUE    NOT NULL,
-  password_hash   VARCHAR(255)           NOT NULL,
-  role            ENUM('student','consultant','admin') NOT NULL,
-  city            VARCHAR(255),
-  country_name    VARCHAR(100)            NULL,
-  birthday        DATE,
-  gender          ENUM('male','female','other'),
-  access_level    ENUM('standard','super') DEFAULT 'standard',
-  profile_picture VARCHAR(255),
-  reset_token     VARCHAR(255),
-  token_expiry    DATETIME,
-  is_active       ENUM('active', 'inactive', 'deleted') DEFAULT 'active',
-  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  id                          INT AUTO_INCREMENT PRIMARY KEY,
+  first_name                  VARCHAR(255)           NOT NULL,
+  last_name                   VARCHAR(255)           NOT NULL,
+  email                       VARCHAR(255) UNIQUE    NOT NULL,
+  password_hash               VARCHAR(255)           NOT NULL,
+  role                        ENUM('student','consultant','admin') NOT NULL,
+  city                        VARCHAR(255),
+  country_name                VARCHAR(100)           NULL,
+  birthday                    DATE,
+  gender                      ENUM('male','female','other'),
+  access_level                ENUM('standard','super') DEFAULT 'standard',
+  profile_picture             VARCHAR(255),
+
+  reset_token                 VARCHAR(255),
+  token_expiry                DATETIME,
+
+  is_verified                 BOOLEAN DEFAULT FALSE,
+  verification_token          VARCHAR(255),
+  verification_token_expiry   DATETIME,
+
+  is_active                   ENUM('active', 'inactive', 'deleted') DEFAULT 'active',
+  created_at                  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at                  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_users_countries
     FOREIGN KEY (country_name) REFERENCES countries(country_name)

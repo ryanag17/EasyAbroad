@@ -1,8 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import bcrypt, secrets, shutil
 from pathlib import Path
 
-from fastapi import HTTPException, Depends, APIRouter, UploadFile, File
+from fastapi import HTTPException, Depends, APIRouter, UploadFile, File, Query, status
 from sqlalchemy import select, delete, update, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,11 +10,9 @@ from app.auth.models import (
     User, UserLanguage, Language, Country, RefreshToken
 )
 from app.auth.schemas import (
-    UserCreate, UserLogin, ForgotPasswordRequest, ResetPasswordRequest,
-    UserUpdateProfile, ChangePasswordRequest, DeleteAccountRequest
+    UserCreate, UserLogin, UserUpdateProfile, ChangePasswordRequest, DeleteAccountRequest
 )
 from app.auth.token_service import create_access_token, create_refresh_token
-from app.auth.email_service import send_reset_email
 from app.auth.token_verification import get_current_user
 from app.db import get_db
 
@@ -147,133 +145,7 @@ async def list_countries(db: AsyncSession = Depends(get_db)):
     return result.scalars().all()
 
 
-async def register(db: AsyncSession, user_in: UserCreate):
-    result = await db.execute(select(User).where(User.email == user_in.email))
-    if result.scalars().first():
-        raise HTTPException(status_code=400, detail="Email already registered")
 
-    hashed_pw = bcrypt.hashpw(user_in.password.encode(), bcrypt.gensalt()).decode()
-
-    new_user = User(
-        first_name=user_in.first_name,
-        last_name=user_in.last_name,
-        email=user_in.email,
-        password_hash=hashed_pw,
-        role=user_in.role.lower(),
-        city=user_in.city,
-        country_name=user_in.country_name,
-        birthday=user_in.birthday,
-        gender=user_in.gender,
-        profile_picture=user_in.profile_picture,
-        access_level=(user_in.access_level if user_in.role.lower() == "admin" else None)
-    )
-
-    db.add(new_user)
-    await db.commit()
-    await db.refresh(new_user)
-
-    if user_in.languages:
-        for lang_id in user_in.languages:
-            assoc = UserLanguage(user_id=new_user.id, language_id=lang_id)
-            db.add(assoc)
-        await db.commit()
-
-    access_token = create_access_token({"sub": str(new_user.id), "role": new_user.role})
-    refresh_token = await create_refresh_token(db, new_user.id)
-
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "role": new_user.role,
-    }
-
-
-async def login(db: AsyncSession, creds: UserLogin):
-    result = await db.execute(select(User).where(User.email == creds.email))
-    user = result.scalars().first()
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    if user.is_active == "deleted":
-        raise HTTPException(
-            status_code=403,
-            detail="Your account has been deleted by an administrator and can no longer be accessed. Please contact support if you believe this is a mistake."
-        )
-
-    if user.is_active != "active":
-        raise HTTPException(status_code=403, detail="Account is not active")
-
-    if not bcrypt.checkpw(creds.password.encode(), user.password_hash.encode()):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    access_token = create_access_token({"sub": str(user.id), "role": user.role})
-    refresh_token = await create_refresh_token(db, user.id)
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "role": user.role,
-    }
-
-
-
-async def forgot_password(db: AsyncSession, data: ForgotPasswordRequest):
-    # 1. Check if the email exists
-    result = await db.execute(
-        text("SELECT first_name, last_name FROM users WHERE email=:em"),
-        {"em": data.email}
-    )
-    row = result.first()
-    if not row:
-        raise HTTPException(status_code=404, detail="Email not registered")
-
-    # 2. Generate a one-time token for password reset
-    token  = secrets.token_hex(16)
-    expiry = datetime.utcnow() + timedelta(hours=1)
-
-    # 3. Save it into the users table
-    await db.execute(
-        text("UPDATE users SET reset_token=:t, token_expiry=:e WHERE email=:em"),
-        {"t": token, "e": expiry, "em": data.email}
-    )
-    await db.commit()
-
-    user_name = f"{row.first_name} {row.last_name}"
-
-    # 4. Send the reset link by email
-    send_reset_email(data.email, token, user_name)
-    return {"message": "Reset email sent if the address exists."}
-
-async def reset_password(db: AsyncSession, data: ResetPasswordRequest):
-    # Find the user by reset_token
-    result = await db.execute(
-        text("SELECT id, token_expiry, password_hash FROM users WHERE reset_token=:t"),
-        {"t": data.token}
-    )
-    row = result.first()
-    if not row or row.token_expiry < datetime.utcnow():
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
-
-    # 1. Enforce password length
-    if len(data.password) < 8:
-        raise HTTPException(status_code=400, detail="Password must be at least 8 characters long.")
-
-    # 2. Prevent reusing the same password
-    import bcrypt
-    if bcrypt.checkpw(data.password.encode(), row.password_hash.encode()):
-        raise HTTPException(status_code=400, detail="New password cannot be the same as the old password.")
-
-    # Hash the new password
-    hashed_pw = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt()).decode()
-    await db.execute(
-        text(
-            "UPDATE users "
-            "SET password_hash=:pw, reset_token=NULL, token_expiry=NULL "
-            "WHERE id=:uid"
-        ),
-        {"pw": hashed_pw, "uid": row.id}
-    )
-    await db.commit()
-    return {"message": "Password reset successfully"}
 
 
 

@@ -33,6 +33,10 @@ class User(Base):
     reset_token = Column(String(255), nullable=True)
     token_expiry = Column(DateTime, nullable=True)
 
+    is_verified = Column(Boolean, default=False, nullable=False)
+    verification_token = Column(String(255), nullable=True)
+    verification_token_expiry = Column(DateTime, nullable=True)
+    
     created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
     updated_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"), nullable=False)
 
