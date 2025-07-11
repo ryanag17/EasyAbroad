@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   async function checkAdminAccess() {
-    fetch(`${AppConfig.PROFILE}/admin`, { headers });
+    const res = await fetch(`${AppConfig.PROFILE}/admin`, { headers });
     if (!res.ok) {
       showInAppAlert("Admin access only. Please log in.", () => {
         localStorage.clear();

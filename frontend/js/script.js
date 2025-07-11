@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 let emailId = document.getElementById("email-id");
 let errorMsg = document.getElementById("error-msg");
 let icon = document.getElementById("icon");
-let mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
+let mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$/;
 
 function checker(){
     icon.style.display="none";
@@ -195,7 +195,7 @@ async function loginUser() {
     if (res.ok && data.access_token) {
       // 1) store the JWT + role
       localStorage.setItem("accessToken", data.access_token);
-      localStorage.setItem("userType", data.role); // ✅ this is the missing piece
+      localStorage.setItem("userType", data.role);
 
       // 2) redirect
       if (data.role === "student") {
@@ -260,7 +260,7 @@ function validateRegisterForm() {
     isValid = false;
   }
 
-  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
+  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$/;
   if (!emailVal.match(mailRegex)) {
     showError("email-error", "Please enter a valid email address.");
     isValid = false;
@@ -315,7 +315,7 @@ function validateLoginForm() {
   const pw    = document.getElementById("password-id").value;
 
   // 1) Basic email check
-  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-_\.]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}$/;
+  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$/;
   if (!email.match(mailRegex)) {
     showInAppAlert("Please enter a valid email address.");
     document.getElementById("email-id").focus();

@@ -111,7 +111,6 @@
 })();  
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const API_BASE = "http://localhost:8000";
   const token = localStorage.getItem("accessToken");
   if (!token) {
     showInAppAlert("Please log in first.", () => {
@@ -126,7 +125,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   try {
-    const res = await fetch(`${API_BASE}/profile/admin`, { headers });
+    const res = await fetch(`${AppConfig.PROFILE}/admin`, { headers });
     if (!res.ok) throw new Error("Unauthorized");
 
     const profile = await res.json();
@@ -135,7 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const avatarEl = document.getElementById("userAvatar");
     avatarEl.src = profile.profile_picture
-      ? `http://localhost:8000${profile.profile_picture}?t=${new Date().getTime()}`
+      ? `${AppConfig.API_BASE}${profile.profile_picture}?t=${new Date().getTime()}`
       : "../images/avatar.png";
   } catch (err) {
     console.error("Failed to load profile:", err);
