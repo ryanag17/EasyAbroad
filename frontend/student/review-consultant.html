@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Review your consultant</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
   </head>
   <body>
     <header class="user-header">
       <a href="home.html" class="to_the_main">
         <div class="logo">
-          <img src="../images/logo.png" alt="" class="pic_logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
         </div>
       </a>
 
@@ -25,7 +28,7 @@
         </a>
 
         <div id="menuHamToggle">
-          <input type="checkbox">
+          <input type="checkbox" >
           <span></span>
           <span></span>
           <span></span>
@@ -55,233 +58,254 @@
     <main>
       <section class="review-container">
         <h1>Time to review the consultant</h1>
-        <p id="reviewPrompt">How did you find your meeting with <span id="consultantName"></span>?</p>
+        <p id="reviewPrompt">
+          How did you find your meeting with <span id="consultantName"></span>?
+        </p>
 
         <div class="star-rating" id="starRating"></div>
 
         <div class="form-group">
           <label for="reviewText">Write a Review</label>
-          <textarea id="reviewText" placeholder="What is most important to know?" maxlength="500"></textarea>
+          <textarea
+            id="reviewText"
+            placeholder="What is most important to know?"
+            maxlength="500"
+          ></textarea>
           <div class="char-count"><span id="charCount">0</span>/500</div>
         </div>
 
-        <p id="reviewError" class="warning-text" style="display: none;"></p>
+        <p id="reviewError" class="warning-text" style="display: none"></p>
 
-        <button type="submit" id="submitReview" class="save-button_ticket">Submit</button>
+        <button type="submit" id="submitReview" class="save-button_ticket">
+          Submit
+        </button>
       </section>
     </main>
 
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-  (async () => {
-    await autoEnforceRoleFromPath();
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
 
-    const token = localStorage.getItem("accessToken");
-    const urlParams = new URLSearchParams(window.location.search);
-    const publicId = urlParams.get("appointment_id");
+        const token = localStorage.getItem("accessToken");
+        const urlParams = new URLSearchParams(window.location.search);
+        const publicId = urlParams.get("appointment_id");
 
-    if (!publicId) {
-      showInAppAlert("Missing appointment ID.", () => {
-        window.location.href = "appointments.html";
-      });
-      return;
-    }
-
-    const consultantNameElement = document.getElementById("consultantName");
-    const starRating = document.getElementById("starRating");
-    const reviewText = document.getElementById("reviewText");
-    const charCount = document.getElementById("charCount");
-    const submitBtn = document.getElementById("submitReview");
-    const reviewError = document.getElementById("reviewError");
-    const title = document.querySelector("h1");
-
-    let selectedRating = 0;
-    let isDirty = false;
-
-    async function fetchConsultant() {
-      const res = await fetch(`${AppConfig.APPOINTMENTS}/booking/${publicId}/consultant`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) {
-        showInAppAlert("Failed to fetch consultant info.", () => {
-          window.location.href = "appointments.html";
-        });
-        return;
-      }
-
-      const data = await res.json();
-      consultantNameElement.textContent = ` ${data.first_name} ${data.last_name}`;
-      title.textContent = `Time to review ${data.first_name} ${data.last_name}`;
-    }
-
-    async function checkExistingReview() {
-      const res = await fetch(`${AppConfig.APPOINTMENTS}/review/${publicId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.status === 404) {
-        return null;
-      }
-      if (!res.ok) {
-        showInAppAlert("Failed to check existing review.");
-        return null;
-      }
-      return await res.json();
-    }
-
-    for (let i = 1; i <= 5; i++) {
-      const star = document.createElement("span");
-      star.classList.add("star");
-      star.innerHTML = "★";
-      star.dataset.value = i;
-      starRating.appendChild(star);
-    }
-
-    starRating.addEventListener("mouseover", (e) => {
-      if (e.target.classList.contains("star")) {
-        const hoverValue = parseInt(e.target.dataset.value);
-        updateStars(hoverValue);
-      }
-    });
-
-    starRating.addEventListener("mouseout", () => {
-      updateStars(selectedRating);
-    });
-
-    starRating.addEventListener("click", (e) => {
-      if (e.target.classList.contains("star")) {
-        selectedRating = parseInt(e.target.dataset.value);
-        updateStars(selectedRating);
-        reviewError.style.display = "none";
-        isDirty = true;
-      }
-    });
-
-    function updateStars(value) {
-      document.querySelectorAll(".star").forEach((star, index) => {
-        star.classList.toggle("filled", index < value);
-      });
-    }
-
-    reviewText.addEventListener("input", () => {
-      const length = reviewText.value.length;
-      charCount.textContent = length;
-      reviewError.style.display = "none";
-      isDirty = true;
-    });
-
-    submitBtn.addEventListener("click", async () => {
-      const text = reviewText.value.trim();
-
-      if (selectedRating === 0) {
-        reviewError.textContent = "Please select a star rating.";
-        reviewError.style.display = "block";
-        return;
-      }
-
-      if (text.length < 10) {
-        reviewError.textContent = "Review must be at least 10 characters.";
-        reviewError.style.display = "block";
-        return;
-      }
-
-      const confirmed = await showInAppConfirm("Are you sure you want to submit your review?");
-      if (!confirmed) return;
-
-      try {
-        const res = await fetch(`${AppConfig.APPOINTMENTS}/review`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            public_id: publicId,
-            rating: selectedRating,
-            review_text: text,
-          }),
-        });
-
-        if (res.ok) {
-          showInAppAlert("✅ Your review has been submitted.", () => {
-            isDirty = false;
-            window.location.href = "appointments.html#previous";
+        if (!publicId) {
+          showInAppAlert("Missing appointment ID.", () => {
+            window.location.href = "appointments.html";
           });
-        } else {
-          const data = await res.json().catch(() => ({}));
-          reviewError.textContent = data.detail || "Failed to submit review.";
-          reviewError.style.display = "block";
+          return;
         }
-      } catch (error) {
-        reviewError.textContent = error.message;
-        reviewError.style.display = "block";
-      }
-    });
 
-    window.addEventListener("beforeunload", (e) => {
-      if (isDirty) {
-        e.preventDefault();
-        e.returnValue = "You have unsaved changes. Are you sure you want to leave this page?";
-      }
-    });
+        const consultantNameElement = document.getElementById("consultantName");
+        const starRating = document.getElementById("starRating");
+        const reviewText = document.getElementById("reviewText");
+        const charCount = document.getElementById("charCount");
+        const submitBtn = document.getElementById("submitReview");
+        const reviewError = document.getElementById("reviewError");
+        const title = document.querySelector("h1");
 
-    await fetchConsultant();
-    const existingReview = await checkExistingReview();
+        let selectedRating = 0;
+        let isDirty = false;
 
-    if (existingReview) {
-      selectedRating = existingReview.rating;
-      updateStars(selectedRating);
+        async function fetchConsultant() {
+          const res = await fetch(
+            `${AppConfig.APPOINTMENTS}/booking/${publicId}/consultant`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
 
-      document.querySelectorAll(".star").forEach((star) => {
-        star.style.pointerEvents = "none";
-        star.style.opacity = "0.7";
-      });
+          if (!res.ok) {
+            showInAppAlert("Failed to fetch consultant info.", () => {
+              window.location.href = "appointments.html";
+            });
+            return;
+          }
 
-      reviewText.value = existingReview.review_text;
-      reviewText.disabled = true;
-      charCount.textContent = existingReview.review_text.length;
+          const data = await res.json();
+          consultantNameElement.textContent = ` ${data.first_name} ${data.last_name}`;
+          title.textContent = `Time to review ${data.first_name} ${data.last_name}`;
+        }
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Review already submitted";
-      submitBtn.style.cursor = "not-allowed";
-      submitBtn.style.opacity = "0.7";
-    }
-  })();
-</script>
+        async function checkExistingReview() {
+          const res = await fetch(
+            `${AppConfig.APPOINTMENTS}/review/${publicId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          if (res.status === 404) {
+            return null;
+          }
+          if (!res.ok) {
+            showInAppAlert("Failed to check existing review.");
+            return null;
+          }
+          return await res.json();
+        }
 
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+        for (let i = 1; i <= 5; i++) {
+          const star = document.createElement("span");
+          star.classList.add("star");
+          star.innerHTML = "★";
+          star.dataset.value = i;
+          starRating.appendChild(star);
+        }
+
+        starRating.addEventListener("mouseover", (e) => {
+          if (e.target.classList.contains("star")) {
+            const hoverValue = parseInt(e.target.dataset.value);
+            updateStars(hoverValue);
+          }
+        });
+
+        starRating.addEventListener("mouseout", () => {
+          updateStars(selectedRating);
+        });
+
+        starRating.addEventListener("click", (e) => {
+          if (e.target.classList.contains("star")) {
+            selectedRating = parseInt(e.target.dataset.value);
+            updateStars(selectedRating);
+            reviewError.style.display = "none";
+            isDirty = true;
+          }
+        });
+
+        function updateStars(value) {
+          document.querySelectorAll(".star").forEach((star, index) => {
+            star.classList.toggle("filled", index < value);
+          });
+        }
+
+        reviewText.addEventListener("input", () => {
+          const length = reviewText.value.length;
+          charCount.textContent = length;
+          reviewError.style.display = "none";
+          isDirty = true;
+        });
+
+        submitBtn.addEventListener("click", async () => {
+          const text = reviewText.value.trim();
+
+          if (selectedRating === 0) {
+            reviewError.textContent = "Please select a star rating.";
+            reviewError.style.display = "block";
+            return;
+          }
+
+          if (text.length < 10) {
+            reviewError.textContent = "Review must be at least 10 characters.";
+            reviewError.style.display = "block";
+            return;
+          }
+
+          const confirmed = await showInAppConfirm(
+            "Are you sure you want to submit your review?"
+          );
+          if (!confirmed) return;
+
+          try {
+            const res = await fetch(`${AppConfig.APPOINTMENTS}/review`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                public_id: publicId,
+                rating: selectedRating,
+                review_text: text,
+              }),
+            });
+
+            if (res.ok) {
+              showInAppAlert("✅ Your review has been submitted.", () => {
+                isDirty = false;
+                window.location.href = "appointments.html#previous";
+              });
+            } else {
+              const data = await res.json().catch(() => ({}));
+              reviewError.textContent =
+                data.detail || "Failed to submit review.";
+              reviewError.style.display = "block";
+            }
+          } catch (error) {
+            reviewError.textContent = error.message;
+            reviewError.style.display = "block";
+          }
+        });
+
+        window.addEventListener("beforeunload", (e) => {
+          if (isDirty) {
+            e.preventDefault();
+            e.returnValue =
+              "You have unsaved changes. Are you sure you want to leave this page?";
+          }
+        });
+
+        await fetchConsultant();
+        const existingReview = await checkExistingReview();
+
+        if (existingReview) {
+          selectedRating = existingReview.rating;
+          updateStars(selectedRating);
+
+          document.querySelectorAll(".star").forEach((star) => {
+            star.style.pointerEvents = "none";
+            star.style.opacity = "0.7";
+          });
+
+          reviewText.value = existingReview.review_text;
+          reviewText.disabled = true;
+          charCount.textContent = existingReview.review_text.length;
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Review already submitted";
+          submitBtn.style.cursor = "not-allowed";
+          submitBtn.style.opacity = "0.7";
+        }
+      })();
+    </script>
+
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
   </body>
 </html>

@@ -24,6 +24,9 @@ router = APIRouter(
 
 UPLOAD_DIR = Path("static/uploads/profile_pictures")
 
+from PIL import Image
+import io
+
 @router.post("/upload-picture", summary="Upload profile picture")
 async def upload_profile_picture(
     file: UploadFile = File(...),
@@ -33,14 +36,44 @@ async def upload_profile_picture(
     user_id = current_user["user_id"]
 
     ext = file.filename.split(".")[-1].lower()
-    if ext not in {"jpg", "jpeg", "png", "gif"}:
+    if ext not in {"jpg", "jpeg", "png"}:
         raise HTTPException(status_code=400, detail="Unsupported file format")
 
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    file_path = UPLOAD_DIR / f"user_{user_id}.{ext}"
+    file_path = UPLOAD_DIR / f"user_{user_id}.jpg"  # Always save as JPEG
 
-    with file_path.open("wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    contents = await file.read()
+    try:
+        image = Image.open(io.BytesIO(contents))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid image file")
+
+    # Convert to RGB to remove alpha if necessary
+    if image.mode in ("RGBA", "LA"):
+        image = image.convert("RGB")
+
+    # Resize to max 800×800
+    image.thumbnail((800, 800))
+
+    # Prepare in-memory buffer
+    buffer = io.BytesIO()
+    quality = 85
+
+    # Try saving and check size
+    while True:
+        buffer.seek(0)
+        buffer.truncate(0)
+        image.save(buffer, format="JPEG", quality=quality)
+
+        size_in_mb = buffer.tell() / (1024 * 1024)
+        if size_in_mb <= 2 or quality <= 40:
+            break
+        # Reduce quality if still too big
+        quality -= 5
+
+    # Save final image to disk
+    with file_path.open("wb") as f:
+        f.write(buffer.getvalue())
 
     relative_path = f"/static/uploads/profile_pictures/{file_path.name}"
 
@@ -51,6 +84,7 @@ async def upload_profile_picture(
     await db.commit()
 
     return {"message": "Profile picture updated", "url": relative_path}
+
 
 
 @router.put("/password", summary="Change your password")

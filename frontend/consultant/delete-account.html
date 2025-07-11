@@ -1,195 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Delete account</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
 
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
-    
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
 
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="appointments.html"> <li>Appointments</li></a>
+            <a href="messages.html"> <li>Messages</li></a>
+            <a href="consultancy-areas.html"> <li>Consultancy Areas</li></a>
+            <a href="timetable.html"> <li>Timetable</li></a>
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
 
     <main>
-    <section class="delete-account-container">
+      <section class="delete-account-container">
         <h1>Delete Account</h1>
-        <p>Are you sure you want to delete your account? Once you delete your account, it cannot be undone.</p>
+        <p>
+          Are you sure you want to delete your account? Once you delete your
+          account, it cannot be undone.
+        </p>
 
         <form id="deleteAccountForm">
-        <div class="form-group">
+          <div class="form-group">
             <label for="email">Email Address:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
+            <input type="email" id="email" name="email" required >
+          </div>
 
-        <div class="form-group">
+          <div class="form-group">
             <label for="deletePassword">Password:</label>
             <div class="password-wrapper">
-            <input type="password" id="deletePassword" name="deletePassword" required>
-            <i class="fas fa-eye toggle-password" toggle="#deletePassword"></i>
+              <input
+                type="password"
+                id="deletePassword"
+                name="deletePassword"
+                required
+              />
+              <i
+                class="fas fa-eye toggle-password"
+                toggle="#deletePassword"
+              ></i>
             </div>
-        </div>
+          </div>
 
-        <p id="deleteError" class="warning-text" style="display: none;">Email or Password is Incorrect.</p>
+          <p id="deleteError" class="warning-text" style="display: none">
+            Email or Password is Incorrect.
+          </p>
 
-        <button type="submit" class="delete-button">Delete My Account</button>
+          <button type="submit" class="delete-button">Delete My Account</button>
         </form>
-    </section>
+      </section>
     </main>
 
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script> 
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-const deleteForm   = document.getElementById("deleteAccountForm");
-const deleteEmail  = document.getElementById("email");
-const deletePass   = document.getElementById("deletePassword");
-const deleteError  = document.getElementById("deleteError");
+      const deleteForm = document.getElementById("deleteAccountForm");
+      const deleteEmail = document.getElementById("email");
+      const deletePass = document.getElementById("deletePassword");
+      const deleteError = document.getElementById("deleteError");
 
-deleteForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  deleteError.style.display = "none";
+      deleteForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        deleteError.style.display = "none";
 
-  // Show confirm first
-  const confirmed = await showInAppConfirm("⚠️ This action cannot be undone. You will not be able to use this email address to register again. Are you sure you want to proceed?");
-  if (!confirmed) return;
+        // Show confirm first
+        const confirmed = await showInAppConfirm(
+          "⚠️ This action cannot be undone. You will not be able to use this email address to register again. Are you sure you want to proceed?"
+        );
+        if (!confirmed) return;
 
-  const email    = deleteEmail.value.trim();
-  const password = deletePass.value;
+        const email = deleteEmail.value.trim();
+        const password = deletePass.value;
 
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    deleteError.textContent = "You must be logged in.";
-    deleteError.style.display = "block";
-    return;
-  }
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          deleteError.textContent = "You must be logged in.";
+          deleteError.style.display = "block";
+          return;
+        }
 
-  try {
-    const res = await fetch(`${AppConfig.PROFILE}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ email, password })
-    });
+        try {
+          const res = await fetch(`${AppConfig.PROFILE}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ email, password }),
+          });
 
-    if (res.ok) {
-      showInAppAlert("✅ Your account has been deleted.");
-      setTimeout(() => {
-        localStorage.clear();
-        window.location.href = "/";
-      }, 1500);
-    } else {
-      const err = await res.json().catch(() => ({}));
-      deleteError.textContent = err.detail || "Failed to delete account.";
-      deleteError.style.display = "block";
-    }
-  } catch (err) {
-    console.error("Error:", err);
-    deleteError.textContent = "Network error while deleting account.";
-    deleteError.style.display = "block";
-  }
-});
+          if (res.ok) {
+            showInAppAlert("✅ Your account has been deleted.");
+            setTimeout(() => {
+              localStorage.clear();
+              window.location.href = "/";
+            }, 1500);
+          } else {
+            const err = await res.json().catch(() => ({}));
+            deleteError.textContent = err.detail || "Failed to delete account.";
+            deleteError.style.display = "block";
+          }
+        } catch (err) {
+          console.error("Error:", err);
+          deleteError.textContent = "Network error while deleting account.";
+          deleteError.style.display = "block";
+        }
+      });
 
-// Toggle password visibility
-document.querySelectorAll(".toggle-password").forEach(button => {
-  button.addEventListener("click", () => {
-    const target = button.getAttribute("toggle");
-    const input = document.querySelector(target);
-    if (!input) return;
-    input.type = input.type === "password" ? "text" : "password";
-    button.classList.toggle("visible");
-  });
-});
-</script>
+      // Toggle password visibility
+      document.querySelectorAll(".toggle-password").forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = button.getAttribute("toggle");
+          const input = document.querySelector(target);
+          if (!input) return;
+          input.type = input.type === "password" ? "text" : "password";
+          button.classList.toggle("visible");
+        });
+      });
+    </script>
 
-
-
-
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

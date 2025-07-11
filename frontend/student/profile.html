@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Profile</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
   </head>
 
   <body>
     <header class="user-header">
       <a href="home.html" class="to_the_main">
         <div class="logo">
-          <img src="../images/logo.png" alt="" class="pic_logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
         </div>
       </a>
 
@@ -26,7 +29,7 @@
         </a>
 
         <div id="menuHamToggle">
-          <input type="checkbox">
+          <input type="checkbox" >
           <span></span>
           <span></span>
           <span></span>
@@ -57,32 +60,70 @@
       <div class="profile-container">
         <div class="profile-picture">
           <div class="profile-pic-wrapper">
-            <img id="profilePic" src="../images/avatar.png" alt="Profile Picture" class="avatar">
-            <label for="fileInput" class="change-pic-link">Change profile picture</label>
-            <input type="file" id="fileInput" accept="image/*" style="display: none">
+            <img
+              id="profilePic"
+              src="../images/avatar.png"
+              alt="Profile Picture"
+              class="avatar"
+            />
+            <label for="fileInput" class="change-pic-link"
+              >Change profile picture</label
+            >
+            <input
+              type="file"
+              id="fileInput"
+              accept="image/*"
+              style="display: none"
+            />
           </div>
         </div>
 
         <form class="profile-form">
           <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" id="name" name="first_name" placeholder="Enter your name" disabled class="name_input">
+            <input
+              type="text"
+              id="name"
+              name="first_name"
+              placeholder="Enter your name"
+              disabled
+              class="name_input"
+            />
           </div>
 
           <div class="form-group">
             <label for="surname">Last Name:</label>
-            <input type="text" id="surname" name="last_name" placeholder="Enter your surname" disabled class="name_input">
+            <input
+              type="text"
+              id="surname"
+              name="last_name"
+              placeholder="Enter your surname"
+              disabled
+              class="name_input"
+            />
           </div>
 
           <div class="form-group">
             <label for="birthday">Birthday:</label>
-            <input type="date" id="birthday" name="birthday" disabled class="name_input">
+            <input
+              type="date"
+              id="birthday"
+              name="birthday"
+              disabled
+              class="name_input"
+            />
           </div>
 
           <div class="form-row-horizontal">
             <div class="form-group city-country-group">
               <label for="city">City:</label>
-              <input type="text" id="city" name="city" placeholder="Enter your city" disabled>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                placeholder="Enter your city"
+                disabled
+              />
             </div>
 
             <div class="form-group city-country-group">
@@ -107,7 +148,13 @@
 
           <div class="form-group">
             <label for="email-id">Email:</label>
-            <input type="email" id="email-id" name="email" placeholder="Enter email" disabled>
+            <input
+              type="email"
+              id="email-id"
+              name="email"
+              placeholder="Enter email"
+              disabled
+            />
           </div>
 
           <div class="form-buttons">
@@ -118,203 +165,213 @@
     </section>
 
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-  (async () => {
-    await autoEnforceRoleFromPath();
-  })();
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-  const fileInput = document.getElementById("fileInput");
-  const profilePic = document.getElementById("profilePic");
+      const fileInput = document.getElementById("fileInput");
+      const profilePic = document.getElementById("profilePic");
 
-  fileInput.addEventListener("change", async function () {
-    const file = fileInput.files[0];
-    if (!file || !file.type.startsWith("image/")) {
-      showInAppAlert("❌ Please select a valid image file.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const token = localStorage.getItem("accessToken");
-
-    try {
-      const res = await fetch(`${AppConfig.PROFILE}/upload-picture`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
-        profilePic.src = timestampedUrl;
-        setTimeout(() => {
-          window.location.reload();
-        }, 1);
-      } else {
-        const err = await res.json();
-        showInAppAlert("❌ Upload failed: " + (err.detail || err.message));
-      }
-    } catch (err) {
-      console.error("Upload error:", err);
-      showInAppAlert("❌ Upload failed.");
-    }
-  });
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      showInAppAlert("Please log in first.");
-      return (window.location.href = "../log-in.html");
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
-
-    const editBtn = document.querySelector(".edit-btn");
-    const fields = Array.from(document.querySelectorAll('input:not([name="birthday"]):not([name="email"]), select')).filter(
-      (el) => el.id !== "email-id"
-    );
-    let editing = false;
-
-    editBtn.addEventListener("click", async () => {
-      if (!editing) {
-        fields.forEach((f) => (f.disabled = false));
-        editBtn.textContent = "Save";
-        editing = true;
-        return;
-      }
-
-      // Check each field separately
-      const name = document.getElementById("name").value.trim();
-      const surname = document.getElementById("surname").value.trim();
-      const city = document.getElementById("city").value.trim();
-      const rawGender = document.getElementById("gender").value;
-      const rawCountry = document.getElementById("country").value;
-
-      if (!name) {
-        showInAppAlert("❌ Name cannot be empty.");
-        return;
-      }
-      if (!surname) {
-        showInAppAlert("❌ Surname cannot be empty.");
-        return;
-      }
-      if (!city) {
-        showInAppAlert("❌ City cannot be empty.");
-        return;
-      }
-      if (!rawGender) {
-        showInAppAlert("❌ Gender cannot be empty.");
-        return;
-      }
-
-      const payload = {
-        first_name: name,
-        last_name: surname,
-        city: city,
-        ...(rawCountry && { country_name: rawCountry }),
-        gender: rawGender,
-      };
-
-      try {
-        const res = await fetch(`${AppConfig.PROFILE}/student`, {
-          method: "PUT",
-          headers,
-          body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          console.error("Save error:", err);
-          showInAppAlert("❌ Save failed: " + (err.detail || JSON.stringify(err)));
+      fileInput.addEventListener("change", async function () {
+        const file = fileInput.files[0];
+        if (!file || !file.type.startsWith("image/")) {
+          showInAppAlert("❌ Please select a valid image file.");
           return;
         }
 
-        fields.forEach((f) => (f.disabled = true));
-        editBtn.textContent = "Edit";
-        editing = false;
-        showInAppAlert("✅ Your changes have been saved.");
-      } catch (err) {
-        console.error("Save request failed:", err);
-        showInAppAlert("❌ Save failed. Please try again.");
-      }
-    });
+        const formData = new FormData();
+        formData.append("file", file);
 
-    try {
-    const profRes = await fetch(`${AppConfig.PROFILE}/student`, { headers });
-      if (!profRes.ok) {
-        showInAppAlert("Not authenticated — please log in again.");
-        return (window.location.href = "../log-in.html");
-      }
-      const profile = await profRes.json();
+        const token = localStorage.getItem("accessToken");
 
-      document.getElementById("name").value = profile.first_name || "";
-      document.getElementById("surname").value = profile.last_name || "";
-      document.getElementById("birthday").value = profile.birthday || "";
-      document.getElementById("city").value = profile.city || "";
-      document.getElementById("gender").value = profile.gender || "";
-      document.getElementById("email-id").value = profile.email || "";
-      document.getElementById("profilePic").src = profile.profile_picture
-        ? `${AppConfig.API_BASE}${profile.profile_picture}`
-        : "../images/avatar.png";
+        try {
+          const res = await fetch(`${AppConfig.PROFILE}/upload-picture`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          });
 
-      const countrySel = document.getElementById("country");
-      countrySel.innerHTML = `<option value="">Select</option>`;
-      const countries = await (await fetch(`${AppConfig.PROFILE}/countries`, { headers })).json();
-      countries.forEach((c) => {
-        const opt = document.createElement("option");
-        opt.value = c;
-        opt.text = c;
-        if (c === profile.country) opt.selected = true;
-        countrySel.appendChild(opt);
+          if (res.ok) {
+            const data = await res.json();
+            const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
+            profilePic.src = timestampedUrl;
+            setTimeout(() => {
+              window.location.reload();
+            }, 1);
+          } else {
+            const err = await res.json();
+            showInAppAlert("❌ Upload failed: " + (err.detail || err.message));
+          }
+        } catch (err) {
+          console.error("Upload error:", err);
+          showInAppAlert("❌ Upload failed.");
+        }
       });
-    } catch (err) {
-      console.error("Profile load error:", err);
-      showInAppAlert("❌ Failed to load profile data.");
-    }
-  });
-</script>
 
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          showInAppAlert("Please log in first.");
+          return (window.location.href = "../log-in.html");
+        }
 
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
 
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+        const editBtn = document.querySelector(".edit-btn");
+        const fields = Array.from(
+          document.querySelectorAll(
+            'input:not([name="birthday"]):not([name="email"]), select'
+          )
+        ).filter((el) => el.id !== "email-id");
+        let editing = false;
+
+        editBtn.addEventListener("click", async () => {
+          if (!editing) {
+            fields.forEach((f) => (f.disabled = false));
+            editBtn.textContent = "Save";
+            editing = true;
+            return;
+          }
+
+          // Check each field separately
+          const name = document.getElementById("name").value.trim();
+          const surname = document.getElementById("surname").value.trim();
+          const city = document.getElementById("city").value.trim();
+          const rawGender = document.getElementById("gender").value;
+          const rawCountry = document.getElementById("country").value;
+
+          if (!name) {
+            showInAppAlert("❌ Name cannot be empty.");
+            return;
+          }
+          if (!surname) {
+            showInAppAlert("❌ Surname cannot be empty.");
+            return;
+          }
+          if (!city) {
+            showInAppAlert("❌ City cannot be empty.");
+            return;
+          }
+          if (!rawGender) {
+            showInAppAlert("❌ Gender cannot be empty.");
+            return;
+          }
+
+          const payload = {
+            first_name: name,
+            last_name: surname,
+            city: city,
+            ...(rawCountry && { country_name: rawCountry }),
+            gender: rawGender,
+          };
+
+          try {
+            const res = await fetch(`${AppConfig.PROFILE}/student`, {
+              method: "PUT",
+              headers,
+              body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+              const err = await res.json();
+              console.error("Save error:", err);
+              showInAppAlert(
+                "❌ Save failed: " + (err.detail || JSON.stringify(err))
+              );
+              return;
+            }
+
+            fields.forEach((f) => (f.disabled = true));
+            editBtn.textContent = "Edit";
+            editing = false;
+            showInAppAlert("✅ Your changes have been saved.");
+          } catch (err) {
+            console.error("Save request failed:", err);
+            showInAppAlert("❌ Save failed. Please try again.");
+          }
+        });
+
+        try {
+          const profRes = await fetch(`${AppConfig.PROFILE}/student`, {
+            headers,
+          });
+          if (!profRes.ok) {
+            showInAppAlert("Not authenticated — please log in again.");
+            return (window.location.href = "../log-in.html");
+          }
+          const profile = await profRes.json();
+
+          document.getElementById("name").value = profile.first_name || "";
+          document.getElementById("surname").value = profile.last_name || "";
+          document.getElementById("birthday").value = profile.birthday || "";
+          document.getElementById("city").value = profile.city || "";
+          document.getElementById("gender").value = profile.gender || "";
+          document.getElementById("email-id").value = profile.email || "";
+          document.getElementById("profilePic").src = profile.profile_picture
+            ? `${AppConfig.API_BASE}${profile.profile_picture}`
+            : "../images/avatar.png";
+
+          const countrySel = document.getElementById("country");
+          countrySel.innerHTML = `<option value="">Select</option>`;
+          const countries = await (
+            await fetch(`${AppConfig.PROFILE}/countries`, { headers })
+          ).json();
+          countries.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c;
+            opt.text = c;
+            if (c === profile.country) opt.selected = true;
+            countrySel.appendChild(opt);
+          });
+        } catch (err) {
+          console.error("Profile load error:", err);
+          showInAppAlert("❌ Failed to load profile data.");
+        }
+      });
+    </script>
+
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   </body>
 </html>

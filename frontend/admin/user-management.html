@@ -1,258 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>User Management</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
-    
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="user-management.html"> <li> User Management </li></a>
-                    <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>
-                    <a href="statistics.html"> <li> Platform Statistics </li></a>
-                    <a href="settings.html"> <li> Settings</li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
+
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="user-management.html"> <li>User Management</li></a>
+            <a href="consultant-verification.html">
+              <li>Consultant Verification</li></a
+            >
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="statistics.html"> <li>Platform Statistics</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
-    
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-      
-        <div class="user-management-header">
-  <select id="searchColumn">
-    <option value="id">User ID</option>
-    <option value="first_name">First Name</option>
-    <option value="last_name">Last Name</option>
-    <option value="email">Email</option>
-  </select>
 
-  <input type="text" id="searchInput" placeholder="Enter search term..." />
+    <div class="user-management-header">
+      <select id="searchColumn">
+        <option value="id">User ID</option>
+        <option value="first_name">First Name</option>
+        <option value="last_name">Last Name</option>
+        <option value="email">Email</option>
+      </select>
 
-  
-  <select id="roleFilter">
-    <option value="all">All Roles</option>
-    <option value="student">Student</option>
-    <option value="consultant">Consultant</option>
-    <option value="admin">Admin</option>
-  </select>
+      <input type="text" id="searchInput" placeholder="Enter search term..." >
 
-  <select id="statusFilter">
-    <option value="all">All Statuses</option>
-    <option value="active">Active</option>
-    <option value="inactive">Inactive</option>
-    <option value="deleted">Deleted</option>
-  </select>
+      <select id="roleFilter">
+        <option value="all">All Roles</option>
+        <option value="student">Student</option>
+        <option value="consultant">Consultant</option>
+        <option value="admin">Admin</option>
+      </select>
 
-  <button class="user_management-btn" onclick="location.href='add-user.html'">Add New User</button>
-</div>
-<div class="table-responsive">
-<table id="userTable">
-  <thead>
-    <tr>
-      <th onclick="sortTable(0)">User ID</th>
-      <th onclick="sortTable(1)">First Name</th>
-      <th onclick="sortTable(2)">Last Name</th>
-      <th onclick="sortTable(3)">Email</th>
-      <th onclick="sortTable(4)">Role</th>
-      <th onclick="sortTable(5)">Account Status</th>
-      <th onclick="sortTable(6)">Registered On</th>
-      <th>Profile</th>
-    </tr>
-  </thead>
-  <tbody id="userTableBody">
-    
-  </tbody>
-</table>
-</div>
-    
-  <div id="pagination" class="pagination"></div>
+      <select id="statusFilter">
+        <option value="all">All Statuses</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+        <option value="deleted">Deleted</option>
+      </select>
+
+      <button
+        class="user_management-btn"
+        onclick="location.href='add-user.html'"
+      >
+        Add New User
+      </button>
+    </div>
+    <div class="table-responsive">
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th onclick="sortTable(0)">User ID</th>
+            <th onclick="sortTable(1)">First Name</th>
+            <th onclick="sortTable(2)">Last Name</th>
+            <th onclick="sortTable(3)">Email</th>
+            <th onclick="sortTable(4)">Role</th>
+            <th onclick="sortTable(5)">Account Status</th>
+            <th onclick="sortTable(6)">Registered On</th>
+            <th>Profile</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+      </table>
+    </div>
+
+    <div id="pagination" class="pagination"></div>
 
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>  
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
 
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-  (async () => {
-    await autoEnforceRoleFromPath();
-  })();
+      let currentPage = 1;
+      const itemsPerPage = 10;
 
-let currentPage = 1;
-const itemsPerPage = 10;
-
-function paginate(data) {
-  const start = (currentPage - 1) * itemsPerPage;
-  return data.slice(start, start + itemsPerPage);
-}
-
-function renderPagination(totalItems) {
-  const pagination = document.getElementById("pagination");
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  pagination.innerHTML = "";
-
-  if (totalPages <= 1) {
-    pagination.style.display = "none";
-    return;
-  }
-
-  pagination.style.display = "flex";
-
-  if (currentPage > 1) {
-    const prev = document.createElement("button");
-    prev.textContent = "Previous";
-    prev.onclick = () => {
-      currentPage--;
-      renderTable(users);
-    };
-    pagination.appendChild(prev);
-  }
-
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = i;
-    if (i === currentPage) {
-      btn.disabled = true;
-    }
-    btn.onclick = () => {
-      currentPage = i;
-      renderTable(users);
-    };
-    pagination.appendChild(btn);
-  }
-
-  if (currentPage < totalPages) {
-    const next = document.createElement("button");
-    next.textContent = "Next";
-    next.onclick = () => {
-      currentPage++;
-      renderTable(users);
-    };
-    pagination.appendChild(next);
-  }
-}
-
-
-  let users = [];
-
-  const tbody = document.getElementById('userTableBody');
-  const searchInput = document.getElementById('searchInput');
-  const roleFilter = document.getElementById('roleFilter');
-  const statusFilter = document.getElementById('statusFilter');
-
-  async function fetchUsers() {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const searchQuery = searchInput.value.trim();
-      const searchColumn = document.getElementById('searchColumn').value;
-      const role = roleFilter.value !== 'all' ? roleFilter.value : '';
-      const status = statusFilter.value !== 'all' ? statusFilter.value : '';
-
-      const queryParams = new URLSearchParams();
-      if (searchQuery) {
-        queryParams.append('search', searchQuery);
-        queryParams.append('column', searchColumn);
+      function paginate(data) {
+        const start = (currentPage - 1) * itemsPerPage;
+        return data.slice(start, start + itemsPerPage);
       }
-      if (role) queryParams.append('role', role);
-      if (status) queryParams.append('status', status);
 
-      const response = await fetch(`${AppConfig.ADMIN}/users?${queryParams.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      function renderPagination(totalItems) {
+        const pagination = document.getElementById("pagination");
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        pagination.innerHTML = "";
 
-      if (!response.ok) throw new Error('Failed to fetch users');
+        if (totalPages <= 1) {
+          pagination.style.display = "none";
+          return;
+        }
 
-      const data = await response.json();
-      users = data.map(user => ({
-        ...user,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        registered: user.created_at,
-        status: typeof user.is_active === "string"
-          ? user.is_active.charAt(0).toUpperCase() + user.is_active.slice(1)
-          : user.is_active === true
-            ? "Active"
-            : user.is_active === false
-              ? "Inactive"
-              : "Unknown",
-      }));
+        pagination.style.display = "flex";
 
-      renderTable(users);
-    } catch (err) {
-      console.error(err);
-      showInAppAlert('Error fetching users. Make sure you are logged in and have access.');
-    }
-  }
+        if (currentPage > 1) {
+          const prev = document.createElement("button");
+          prev.textContent = "Previous";
+          prev.onclick = () => {
+            currentPage--;
+            renderTable(users);
+          };
+          pagination.appendChild(prev);
+        }
 
-function renderTable(data) {
-  const paginated = paginate(data);
-  tbody.innerHTML = '';
-  paginated.forEach(user => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.textContent = i;
+          if (i === currentPage) {
+            btn.disabled = true;
+          }
+          btn.onclick = () => {
+            currentPage = i;
+            renderTable(users);
+          };
+          pagination.appendChild(btn);
+        }
+
+        if (currentPage < totalPages) {
+          const next = document.createElement("button");
+          next.textContent = "Next";
+          next.onclick = () => {
+            currentPage++;
+            renderTable(users);
+          };
+          pagination.appendChild(next);
+        }
+      }
+
+      let users = [];
+
+      const tbody = document.getElementById("userTableBody");
+      const searchInput = document.getElementById("searchInput");
+      const roleFilter = document.getElementById("roleFilter");
+      const statusFilter = document.getElementById("statusFilter");
+
+      async function fetchUsers() {
+        try {
+          const token = localStorage.getItem("accessToken");
+          const searchQuery = searchInput.value.trim();
+          const searchColumn = document.getElementById("searchColumn").value;
+          const role = roleFilter.value !== "all" ? roleFilter.value : "";
+          const status = statusFilter.value !== "all" ? statusFilter.value : "";
+
+          const queryParams = new URLSearchParams();
+          if (searchQuery) {
+            queryParams.append("search", searchQuery);
+            queryParams.append("column", searchColumn);
+          }
+          if (role) queryParams.append("role", role);
+          if (status) queryParams.append("status", status);
+
+          const response = await fetch(
+            `${AppConfig.ADMIN}/users?${queryParams.toString()}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!response.ok) throw new Error("Failed to fetch users");
+
+          const data = await response.json();
+          users = data.map((user) => ({
+            ...user,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            registered: user.created_at,
+            status:
+              typeof user.is_active === "string"
+                ? user.is_active.charAt(0).toUpperCase() +
+                  user.is_active.slice(1)
+                : user.is_active === true
+                ? "Active"
+                : user.is_active === false
+                ? "Inactive"
+                : "Unknown",
+          }));
+
+          renderTable(users);
+        } catch (err) {
+          console.error(err);
+          showInAppAlert(
+            "Error fetching users. Make sure you are logged in and have access."
+          );
+        }
+      }
+
+      function renderTable(data) {
+        const paginated = paginate(data);
+        tbody.innerHTML = "";
+        paginated.forEach((user) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
       <td>${user.id}</td>
       <td>${user.firstName}</td>
       <td>${user.lastName}</td>
@@ -260,81 +272,85 @@ function renderTable(data) {
       <td>${user.role}</td>
       <td>${user.status}</td>
       <td>${new Date(user.registered).toLocaleDateString()}</td>
-      <td><button class="view-btn" onclick="viewUser('${user.id}')">View</button></td>
+      <td><button class="view-btn" onclick="viewUser('${
+        user.id
+      }')">View</button></td>
     `;
-    tbody.appendChild(row);
-  });
-  renderPagination(data.length);
-}
+          tbody.appendChild(row);
+        });
+        renderPagination(data.length);
+      }
 
-function viewUser(id) {
-  window.location.href = 'view-user.html?user=' + id;
-}
+      function viewUser(id) {
+        window.location.href = "view-user.html?user=" + id;
+      }
 
-function applyFilters() {
-  const search = searchInput.value.toLowerCase();
-  const selectedColumn = document.getElementById('searchColumn').value;
-  const role = roleFilter.value;
-  const status = statusFilter.value;
+      function applyFilters() {
+        const search = searchInput.value.toLowerCase();
+        const selectedColumn = document.getElementById("searchColumn").value;
+        const role = roleFilter.value;
+        const status = statusFilter.value;
 
-  renderTable(users.filter(user => {
-    let matchesSearch = true;
+        renderTable(
+          users.filter((user) => {
+            let matchesSearch = true;
 
-    if (search) {
-      const columnMap = {
-        first_name: user.firstName.toLowerCase(),
-        last_name: user.lastName.toLowerCase(),
-        email: user.email.toLowerCase(),
-        id: String(user.id).toLowerCase(),
-      };
+            if (search) {
+              const columnMap = {
+                first_name: user.firstName.toLowerCase(),
+                last_name: user.lastName.toLowerCase(),
+                email: user.email.toLowerCase(),
+                id: String(user.id).toLowerCase(),
+              };
 
-      matchesSearch = columnMap[selectedColumn]?.includes(search);
-    }
+              matchesSearch = columnMap[selectedColumn]?.includes(search);
+            }
 
-    const matchesRole = role === 'all' || user.role === role;
-    const matchesStatus = status === 'all' || user.status.toLowerCase() === status;
+            const matchesRole = role === "all" || user.role === role;
+            const matchesStatus =
+              status === "all" || user.status.toLowerCase() === status;
 
-    return matchesSearch && matchesRole && matchesStatus;
-  }));
-}
+            return matchesSearch && matchesRole && matchesStatus;
+          })
+        );
+      }
 
-function sortTable(colIndex) {
-  const rows = [...tbody.rows];
-  const asc = tbody.getAttribute('data-sort') !== 'asc';
-  rows.sort((a, b) => {
-    const A = a.cells[colIndex].innerText.toLowerCase();
-    const B = b.cells[colIndex].innerText.toLowerCase();
-    return asc ? A.localeCompare(B) : B.localeCompare(A);
-  });
-  tbody.innerHTML = '';
-  rows.forEach(row => tbody.appendChild(row));
-  tbody.setAttribute('data-sort', asc ? 'asc' : 'desc');
-}
+      function sortTable(colIndex) {
+        const rows = [...tbody.rows];
+        const asc = tbody.getAttribute("data-sort") !== "asc";
+        rows.sort((a, b) => {
+          const A = a.cells[colIndex].innerText.toLowerCase();
+          const B = b.cells[colIndex].innerText.toLowerCase();
+          return asc ? A.localeCompare(B) : B.localeCompare(A);
+        });
+        tbody.innerHTML = "";
+        rows.forEach((row) => tbody.appendChild(row));
+        tbody.setAttribute("data-sort", asc ? "asc" : "desc");
+      }
 
-searchInput.addEventListener('input', () => {
-  applyFilters();
-});
+      searchInput.addEventListener("input", () => {
+        applyFilters();
+      });
 
-roleFilter.addEventListener('change', () => {
-  applyFilters();
-});
+      roleFilter.addEventListener("change", () => {
+        applyFilters();
+      });
 
-statusFilter.addEventListener('change', () => {
-  applyFilters();
-});
+      statusFilter.addEventListener("change", () => {
+        applyFilters();
+      });
 
-fetchUsers();
-</script>
+      fetchUsers();
+    </script>
 
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

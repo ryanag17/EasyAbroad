@@ -1,450 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Add User</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
 
-  <style>
-    .error-message {
-      color: #e74c3c;
-      font-size: 0.9rem;
-      margin-top: 4px;
-      margin-bottom: 10px;
-      display: none;
-    }
-  </style>
-</head>
+    <style>
+      .error-message {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 4px;
+        margin-bottom: 10px;
+        display: none;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
 
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="user-management.html"> <li> User Management </li></a>
-                    <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>     
-                    <a href="statistics.html"> <li> Platform Statistics </li></a>        
-                    <a href="settings.html"> <li> Settings</li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="user-management.html"> <li>User Management</li></a>
+            <a href="consultant-verification.html">
+              <li>Consultant Verification</li></a
+            >
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="statistics.html"> <li>Platform Statistics</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
-    
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-    
-    
 
-
-
-<div class="add-user_modal">
-  <div class="modal-content_add">
-    <h2 class="form-title">Add User Form</h2>
-    <form class="user-form" id="addUserForm">
-
-      <div class="form-row">
-        <label for="name">Name:</label>
-        <div class="add-user_column">
-          <input type="text" class="name_input" id="name" placeholder="Enter your name" />
-          <p class="error-message" id="name-error"></p>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <label for="surname">Surname:</label>
-        <div class="add-user_column">
-          <input type="text" id="surname" class="name_input" placeholder="Enter your surname" />
-          <p class="error-message" id="surname-error"></p>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <label for="email-id">Email:</label>
-        <div class="add-user_column">
-          <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" />
-          <div id="icon"></div>
-          <p id="error-msg">Please Enter A Valid Email</p>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <label class="label_repeat_add-user" for="password-id">Password:</label>
-        <div class="add-user_column">
-          <div class="password-wrapper_add-user">
-            <input type="password" class="password_class" id="password-id" placeholder="Enter Password" style="height: 36px;" />
-            <i class="fas fa-eye toggle-password" toggle="#password-id"></i>
+    <div class="add-user_modal">
+      <div class="modal-content_add">
+        <h2 class="form-title">Add User Form</h2>
+        <form class="user-form" id="addUserForm">
+          <div class="form-row">
+            <label for="name">Name:</label>
+            <div class="add-user_column">
+              <input
+                type="text"
+                class="name_input"
+                id="name"
+                placeholder="Enter your name"
+              />
+              <p class="error-message" id="name-error"></p>
+            </div>
           </div>
-          <p class="error-message" id="password-error"></p>
-        </div>
-      </div>
 
-      <div class="form-row">
-        <label class="label_repeat_add-user" for="repeat">Repeat:</label>
-        <div class="add-user_column">
-          <div class="password-wrapper_add-user">
-            <input type="password" id="repeat" class="password_class" placeholder="Repeat your password" style="height: 36px;" />
-            <i class="fas fa-eye toggle-password" toggle="#repeat"></i>
+          <div class="form-row">
+            <label for="surname">Surname:</label>
+            <div class="add-user_column">
+              <input
+                type="text"
+                id="surname"
+                class="name_input"
+                placeholder="Enter your surname"
+              />
+              <p class="error-message" id="surname-error"></p>
+            </div>
           </div>
-          <p class="error-message" id="repeat-error"></p>
+
+          <div class="form-row">
+            <label for="email-id">Email:</label>
+            <div class="add-user_column">
+              <input
+                type="email"
+                id="email-id"
+                placeholder="Enter email"
+                oninput="checker()"
+              />
+              <div id="icon"></div>
+              <p id="error-msg">Please Enter A Valid Email</p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="label_repeat_add-user" for="password-id"
+              >Password:</label
+            >
+            <div class="add-user_column">
+              <div class="password-wrapper_add-user">
+                <input
+                  type="password"
+                  class="password_class"
+                  id="password-id"
+                  placeholder="Enter Password"
+                  style="height: 36px"
+                />
+                <i class="fas fa-eye toggle-password" toggle="#password-id"></i>
+              </div>
+              <p class="error-message" id="password-error"></p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="label_repeat_add-user" for="repeat">Repeat:</label>
+            <div class="add-user_column">
+              <div class="password-wrapper_add-user">
+                <input
+                  type="password"
+                  id="repeat"
+                  class="password_class"
+                  placeholder="Repeat your password"
+                  style="height: 36px"
+                />
+                <i class="fas fa-eye toggle-password" toggle="#repeat"></i>
+              </div>
+              <p class="error-message" id="repeat-error"></p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="birthday">Date of Birth:</label>
+            <div class="add-user_column">
+              <input
+                type="date"
+                class="name_input"
+                name="birthday"
+                id="birthday"
+              />
+              <p class="error-message" id="birthday-error"></p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label>Gender:</label>
+            <div class="add-user_column">
+              <select class="select_add-user" id="gender">
+                <option>Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+              <p class="error-message" id="gender-error"></p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label>Country:</label>
+            <div class="add-user_column">
+              <select class="select_add-user" id="country">
+                <option value="">Select</option>
+              </select>
+              <p class="error-message" id="country-error"></p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="city">City:</label>
+            <div class="add-user_column">
+              <input
+                type="text"
+                id="city"
+                class="name_input"
+                placeholder="Enter city"
+              />
+              <p class="error-message" id="city-error"></p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label>Role:</label>
+            <div class="add-user_column">
+              <select class="select_add-user" id="role">
+                <option>Select</option>
+                <option>Student</option>
+                <option>Consultant</option>
+                <option>Admin</option>
+              </select>
+              <p class="error-message" id="role-error"></p>
+            </div>
+          </div>
+
+          <input type="hidden" id="status" value="active" >
+
+          <div class="form-buttons">
+            <button type="submit" class="edit-btn" id="submitBtn">
+              + Create User
+            </button>
+            <button type="button" class="return_btn" onclick="goBack()">
+              ✖ Go Back
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
         </div>
       </div>
-
-
-      <div class="form-row">
-        <label for="birthday">Date of Birth:</label>
-        <div class="add-user_column">
-          <input type="date" class="name_input" name="birthday" id="birthday" />
-          <p class="error-message" id="birthday-error"></p>
-        </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
       </div>
+    </footer>
 
-      <div class="form-row">
-        <label>Gender:</label>
-        <div class="add-user_column">
-          <select class="select_add-user" id="gender">
-            <option>Select</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-          </select>
-          <p class="error-message" id="gender-error"></p>
-        </div>
-      </div>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
 
-      <div class="form-row">
-        <label>Country:</label>
-        <div class="add-user_column">
-          <select class="select_add-user" id="country">
-            <option value="">Select</option>
-          </select>
-          <p class="error-message" id="country-error"></p>
-        </div>
-      </div>
+    <script>
+      (async () => {
+        if (typeof autoEnforceRoleFromPath === "function") {
+          await autoEnforceRoleFromPath();
+        }
+      })();
 
-      <div class="form-row">
-        <label for="city">City:</label>
-        <div class="add-user_column">
-          <input type="text" id="city" class="name_input" placeholder="Enter city" />
-          <p class="error-message" id="city-error"></p>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <label>Role:</label>
-        <div class="add-user_column">
-          <select class="select_add-user" id="role">
-            <option>Select</option>
-            <option>Student</option>
-            <option>Consultant</option>
-            <option>Admin</option>
-          </select>
-          <p class="error-message" id="role-error"></p>
-        </div>
-      </div>
-
-      <input type="hidden" id="status" value="active" />
-
-      <div class="form-buttons">
-        <button type="submit" class="edit-btn" id="submitBtn">+ Create User</button>
-        <button type="button" class="return_btn" onclick="goBack()">✖ Go Back</button>
-      </div>
-    </form>
-  </div>
-</div>
+      function checker() {
+        const emailId = document.getElementById("email-id");
+        const errorMsg = document.getElementById("error-msg");
+        const icon = document.getElementById("icon");
+        const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}$/;
 
 
-      
-        
-    
-  
-<footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-    
-<script>
-  (async () => {
-    if (typeof autoEnforceRoleFromPath === 'function') {
-      await autoEnforceRoleFromPath();
-    }
-  })();
-
-  function checker() {
-    const emailId = document.getElementById("email-id");
-    const errorMsg = document.getElementById("error-msg");
-    const icon = document.getElementById("icon");
-    const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$/;
-
-    icon.style.display = "none";
-    if (emailId.value.match(mailRegex)) {
-      icon.innerHTML = '<i class="fas fa-check-circle"></i>';
-      icon.style.color = '#2ecc71';
-      errorMsg.style.display = 'none';
-      emailId.style.border = '2px solid #2ecc71';
-    } else if (emailId.value === "") {
-      icon.style.display = 'none';
-      errorMsg.style.display = 'none';
-      emailId.style.border = '2px solid #d1d3d4';
-    } else {
-      icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
-      icon.style.color = '#ff2851';
-      errorMsg.style.display = 'block';
-      emailId.style.border = '2px solid #ff2851';
-    }
-  }
-
-  function validateAddUserForm() {
-    let isValid = true;
-
-    document.querySelectorAll('.error-message').forEach(p => {
-      p.style.display = 'none';
-      p.textContent = '';
-    });
-
-    const name = document.getElementById('name').value.trim();
-    const surname = document.getElementById('surname').value.trim();
-    const email = document.getElementById('email-id').value.trim();
-    const password = document.getElementById('password-id').value;
-    const repeat = document.getElementById('repeat').value;
-    const birthday = document.getElementById('birthday').value;
-    const gender = document.getElementById('gender').value;
-    const country = document.getElementById('country').value;
-    const city = document.getElementById('city').value.trim();
-    const role = document.getElementById('role').value;
-    const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$/;
-
-    if (!name) {
-      showError('name-error', 'Please enter a name.');
-      isValid = false;
-    }
-
-    if (!surname) {
-      showError('surname-error', 'Please enter a surname.');
-      isValid = false;
-    }
-
-    if (!mailRegex.test(email)) {
-      showError('email-error', 'Please enter a valid email.');
-      isValid = false;
-    }
-
-    if (password.length < 8) {
-      showError('password-error', 'Password must be at least 8 characters.');
-      isValid = false;
-    }
-
-    if (password !== repeat) {
-      showError('repeat-error', 'Passwords do not match.');
-      isValid = false;
-    }
-
-    if (!birthday) {
-      showError('birthday-error', 'Please enter your date of birth.');
-      isValid = false;
-    } else {
-      const bday = new Date(birthday);
-      const today = new Date();
-      if (bday > today) {
-        showError('birthday-error', 'Birthday cannot be in the future.');
-        isValid = false;
-      } else {
-        const age = new Date(today - bday).getUTCFullYear() - 1970;
-        if (age < 18) {
-          showError('birthday-error', 'User must be at least 18 years old.');
-          isValid = false;
-        } else if (age > 100) {
-          showError('birthday-error', 'User must be younger than 100 years old.');
-          isValid = false;
+        icon.style.display = "none";
+        if (emailId.value.match(mailRegex)) {
+          icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+          icon.style.color = "#2ecc71";
+          errorMsg.style.display = "none";
+          emailId.style.border = "2px solid #2ecc71";
+        } else if (emailId.value === "") {
+          icon.style.display = "none";
+          errorMsg.style.display = "none";
+          emailId.style.border = "2px solid #d1d3d4";
+        } else {
+          icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+          icon.style.color = "#ff2851";
+          errorMsg.style.display = "block";
+          emailId.style.border = "2px solid #ff2851";
         }
       }
-    }
 
-    if (gender === 'Select') {
-      showError('gender-error', 'Please select a gender.');
-      isValid = false;
-    }
+      function validateAddUserForm() {
+        let isValid = true;
 
-    if (!country || country === 'Select') {
-      showError('country-error', 'Please select a country.');
-      isValid = false;
-    }
-
-    if (!city) {
-      showError('city-error', 'Please enter a city.');
-      isValid = false;
-    }
-
-    if (role === 'Select') {
-      showError('role-error', 'Please select a role.');
-      isValid = false;
-    }
-
-    return isValid;
-  }
-
-  function showError(id, message) {
-    const el = document.getElementById(id);
-    if (el) {
-      el.textContent = message;
-      el.style.display = 'block';
-    }
-  }
-
-  document.getElementById('addUserForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    if (!validateAddUserForm()) return;
-
-    const name = document.getElementById('name').value.trim();
-    const surname = document.getElementById('surname').value.trim();
-    const email = document.getElementById('email-id').value.trim();
-    const password = document.getElementById('password-id').value;
-    const birthday = document.getElementById('birthday').value;
-    const gender = document.getElementById('gender').value.toLowerCase();
-    const country = document.getElementById('country').value;
-    const city = document.getElementById('city').value.trim();
-    const role = document.getElementById('role').value.toLowerCase();
-    const access_level = role === "admin" ? "super" : "standard";
-
-    const userPayload = {
-      name,
-      surname,
-      email,
-      password,
-      birthday,
-      gender,
-      country_name: country,
-      city,
-      role,
-      access_level,
-      languages: [],
-      profile_picture: ""
-    };
-
-    try {
-      const token = localStorage.getItem("accessToken");
-      const response = await fetch(`${AppConfig.ADMIN}/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify(userPayload)
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("access_token", data.access_token);
-        showInAppAlert("User created successfully!", () => {
-          window.location.href = 'user-management.html';
+        document.querySelectorAll(".error-message").forEach((p) => {
+          p.style.display = "none";
+          p.textContent = "";
         });
-      } else {
-        const error = await response.json();
-        showInAppAlert("Error: " + (error.detail || "Something went wrong."));
+
+        const name = document.getElementById("name").value.trim();
+        const surname = document.getElementById("surname").value.trim();
+        const email = document.getElementById("email-id").value.trim();
+        const password = document.getElementById("password-id").value;
+        const repeat = document.getElementById("repeat").value;
+        const birthday = document.getElementById("birthday").value;
+        const gender = document.getElementById("gender").value;
+        const country = document.getElementById("country").value;
+        const city = document.getElementById("city").value.trim();
+        const role = document.getElementById("role").value;
+        const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}$/;
+
+
+        if (!name) {
+          showError("name-error", "Please enter a name.");
+          isValid = false;
+        }
+
+        if (!surname) {
+          showError("surname-error", "Please enter a surname.");
+          isValid = false;
+        }
+
+        if (!mailRegex.test(email)) {
+          showError("email-error", "Please enter a valid email.");
+          isValid = false;
+        }
+
+        if (password.length < 8) {
+          showError(
+            "password-error",
+            "Password must be at least 8 characters."
+          );
+          isValid = false;
+        }
+
+        if (password !== repeat) {
+          showError("repeat-error", "Passwords do not match.");
+          isValid = false;
+        }
+
+        if (!birthday) {
+          showError("birthday-error", "Please enter your date of birth.");
+          isValid = false;
+        } else {
+          const bday = new Date(birthday);
+          const today = new Date();
+          if (bday > today) {
+            showError("birthday-error", "Birthday cannot be in the future.");
+            isValid = false;
+          } else {
+            const age = new Date(today - bday).getUTCFullYear() - 1970;
+            if (age < 18) {
+              showError(
+                "birthday-error",
+                "User must be at least 18 years old."
+              );
+              isValid = false;
+            } else if (age > 100) {
+              showError(
+                "birthday-error",
+                "User must be younger than 100 years old."
+              );
+              isValid = false;
+            }
+          }
+        }
+
+        if (gender === "Select") {
+          showError("gender-error", "Please select a gender.");
+          isValid = false;
+        }
+
+        if (!country || country === "Select") {
+          showError("country-error", "Please select a country.");
+          isValid = false;
+        }
+
+        if (!city) {
+          showError("city-error", "Please enter a city.");
+          isValid = false;
+        }
+
+        if (role === "Select") {
+          showError("role-error", "Please select a role.");
+          isValid = false;
+        }
+
+        return isValid;
       }
-    } catch (err) {
-      showInAppAlert("Network error: " + err.message);
-    }
-  });
 
-  function goBack() {
-    window.history.back();
-  }
+      function showError(id, message) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = message;
+          el.style.display = "block";
+        }
+      }
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    const bdayInput = document.getElementById("birthday");
-    const today = new Date();
-    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-    const minDate = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate());
-    bdayInput.max = maxDate.toISOString().split("T")[0];
-    bdayInput.min = minDate.toISOString().split("T")[0];
+      document
+        .getElementById("addUserForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
+          if (!validateAddUserForm()) return;
 
-    try {
-      const res = await fetch(`${AppConfig.PROFILE}/countries`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
+          const name = document.getElementById("name").value.trim();
+          const surname = document.getElementById("surname").value.trim();
+          const email = document.getElementById("email-id").value.trim();
+          const password = document.getElementById("password-id").value;
+          const birthday = document.getElementById("birthday").value;
+          const gender = document.getElementById("gender").value.toLowerCase();
+          const country = document.getElementById("country").value;
+          const city = document.getElementById("city").value.trim();
+          const role = document.getElementById("role").value.toLowerCase();
+          const access_level = role === "admin" ? "super" : "standard";
+
+          const userPayload = {
+            name,
+            surname,
+            email,
+            password,
+            birthday,
+            gender,
+            country_name: country,
+            city,
+            role,
+            access_level,
+            languages: [],
+            profile_picture: "",
+          };
+
+          try {
+            const token = localStorage.getItem("accessToken");
+            const response = await fetch(`${AppConfig.ADMIN}/users`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+              body: JSON.stringify(userPayload),
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              localStorage.setItem("access_token", data.access_token);
+              showInAppAlert("User created successfully!", () => {
+                window.location.href = "user-management.html";
+              });
+            } else {
+              const error = await response.json();
+              showInAppAlert(
+                "Error: " + (error.detail || "Something went wrong.")
+              );
+            }
+          } catch (err) {
+            showInAppAlert("Network error: " + err.message);
+          }
+        });
+
+      function goBack() {
+        window.history.back();
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const bdayInput = document.getElementById("birthday");
+        const today = new Date();
+        const maxDate = new Date(
+          today.getFullYear() - 18,
+          today.getMonth(),
+          today.getDate()
+        );
+        const minDate = new Date(
+          today.getFullYear() - 100,
+          today.getMonth(),
+          today.getDate()
+        );
+        bdayInput.max = maxDate.toISOString().split("T")[0];
+        bdayInput.min = minDate.toISOString().split("T")[0];
+
+        const token = localStorage.getItem("accessToken");
+        if (!token) return;
+
+        try {
+          const res = await fetch(`${AppConfig.PROFILE}/countries`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const countries = await res.json();
+          const select = document.getElementById("country");
+          countries.forEach((country) => {
+            const option = new Option(country, country);
+            select.appendChild(option);
+          });
+        } catch (err) {
+          console.error("Failed to load countries:", err);
         }
       });
-      const countries = await res.json();
-      const select = document.getElementById("country");
-      countries.forEach(country => {
-        const option = new Option(country, country);
-        select.appendChild(option);
-      });
-    } catch (err) {
-      console.error("Failed to load countries:", err);
-    }
-  });
-</script>
+    </script>
 
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-    </body>
+  </body>
 </html>

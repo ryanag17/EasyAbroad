@@ -1,359 +1,412 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile</title>
-  <link rel="icon" type="image/png" href="../images/favicon.png">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/all.min.css">
-  
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-  
-  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Profile</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
 
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+    />
 
-<body>
-  <header class="user-header">
-    <a href="home.html" class="to_the_main">
-      <div class="logo">
-        <img src="../images/logo.png" alt="" class="pic_logo">
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <header class="user-header">
+      <a href="home.html" class="to_the_main">
+        <div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+      </a>
+
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="appointments.html"> <li>Appointments</li></a>
+            <a href="messages.html"> <li>Messages</li></a>
+            <a href="consultancy-areas.html"> <li>Consultancy Areas</li></a>
+            <a href="timetable.html"> <li>Timetable</li></a>
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
       </div>
-    </a>
+    </header>
 
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-
-      
-      <div id="menuHamToggle">
-        
-        <input type="checkbox">
-
-        <span></span>
-        <span></span>
-        <span></span>
-
-        
-        <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
-                    <a href="settings.html"> <li> Settings </li></a>     
-          <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-        </ul>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
       </div>
-      
     </div>
-  </header>
 
-
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
-    </div>
-  </div>
-</div>
-
-
-  <section class="profile-section">
-    <div class="profile-container">
-      <div class="profile-picture">
-        
-        <div class="profile-pic-wrapper">
-          <img id="profilePic" src="../images/avatar.png" alt="Profile Picture" class="avatar">
-          <label for="fileInput" class="change-pic-link">Change Profile Picture</label>
-          <input type="file" id="fileInput" accept="image/*" style="display: none;">
-        </div>
-
-        <div class="language-group">
-          <label>Languages:</label>
-          <select id="languages" name="languages" multiple disabled></select>
-        </div>
-      </div>
-
-      <form class="profile-form">
-        <div class="form-group">
-          <label for="name">Name:</label>
-          <input type="text" class="name_input" id="name" placeholder="Enter your name" disabled />
-        </div>
-
-        <div class="form-group">
-          <label for="surname">Last Name:</label>
-          <input type="text" id="surname" class="name_input" placeholder="Enter your surname" disabled />
-        </div>
-
-        <div class="form-group">
-          <label for="birthday">Birthday:</label>
-          <input type="date" class="name_input" name="birthday" disabled>
-        </div>
-
-        <div class="form-row-horizontal">
-          <div class="form-group city-country-group">
-            <label for="city">City:</label>
-            <input type="text" id="city" placeholder="Enter your city" disabled />
+    <section class="profile-section">
+      <div class="profile-container">
+        <div class="profile-picture">
+          <div class="profile-pic-wrapper">
+            <img
+              id="profilePic"
+              src="../images/avatar.png"
+              alt="Profile Picture"
+              class="avatar"
+            />
+            <label for="fileInput" class="change-pic-link"
+              >Change Profile Picture</label
+            >
+            <input
+              type="file"
+              id="fileInput"
+              accept="image/*"
+              style="display: none"
+            />
           </div>
 
-          <div class="form-group city-country-group">
-            <label for="country">Country:</label>
-            <select id="country" name="country_name" disabled>
-              <option value="">Select</option>
-            </select>
+          <div class="language-group">
+            <label>Languages:</label>
+            <select id="languages" name="languages" multiple disabled></select>
           </div>
         </div>
 
-        <div class="form-row-horizontal">
-          <div class="form-group city-country-group">
-            <label for="gender">Gender:</label>
-            <select name="gender" id="gender" disabled>
-              <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
+        <form class="profile-form">
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input
+              type="text"
+              class="name_input"
+              id="name"
+              placeholder="Enter your name"
+              disabled
+            />
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="email-id">Email:</label>
-          <input type="email" name="email" id="email-id" placeholder="Enter email" oninput="checker()" disabled>
-          <div id="icon"></div>
-          <p id="error-msg">Please Enter A Valid Email</p>
-        </div>
+          <div class="form-group">
+            <label for="surname">Last Name:</label>
+            <input
+              type="text"
+              id="surname"
+              class="name_input"
+              placeholder="Enter your surname"
+              disabled
+            />
+          </div>
 
-        <div class="form-buttons">
-          <button type="button" class="edit-btn">Edit</button>
+          <div class="form-group">
+            <label for="birthday">Birthday:</label>
+            <input type="date" class="name_input" name="birthday" disabled >
+          </div>
+
+          <div class="form-row-horizontal">
+            <div class="form-group city-country-group">
+              <label for="city">City:</label>
+              <input
+                type="text"
+                id="city"
+                placeholder="Enter your city"
+                disabled
+              />
+            </div>
+
+            <div class="form-group city-country-group">
+              <label for="country">Country:</label>
+              <select id="country" name="country_name" disabled>
+                <option value="">Select</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-horizontal">
+            <div class="form-group city-country-group">
+              <label for="gender">Gender:</label>
+              <select name="gender" id="gender" disabled>
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email-id">Email:</label>
+            <input
+              type="email"
+              name="email"
+              id="email-id"
+              placeholder="Enter email"
+              oninput="checker()"
+              disabled
+            />
+            <div id="icon"></div>
+            <p id="error-msg">Please Enter A Valid Email</p>
+          </div>
+
+          <div class="form-buttons">
+            <button type="button" class="edit-btn">Edit</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
         </div>
-      </form>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
+
+      const fileInput = document.getElementById("fileInput");
+      const profilePic = document.getElementById("profilePic");
+
+      fileInput.addEventListener("change", async function () {
+        const file = fileInput.files[0];
+        if (!file || !file.type.startsWith("image/")) {
+          showInAppAlert("❗ Please select a valid image file.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const token = localStorage.getItem("accessToken");
+
+        const res = await fetch(`${AppConfig.PROFILE}/upload-picture`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
+          profilePic.src = timestampedUrl;
+          setTimeout(() => window.location.reload(), 1);
+        } else {
+          const err = await res.json();
+          showInAppAlert("❌ Upload failed: " + (err.detail || err.message));
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          showInAppAlert("❗ Please log in");
+          return (window.location.href = "../log-in.html");
+        }
+
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
+
+        const editBtn = document.querySelector(".edit-btn");
+        const fields = Array.from(
+          document.querySelectorAll(
+            'input:not([name="birthday"]):not([name="email"]), select'
+          )
+        );
+
+        const profRes = await fetch(`${AppConfig.PROFILE}/consultant`, {
+          headers,
+        });
+        if (!profRes.ok) {
+          showInAppAlert("❗ Not authenticated — please log in again.");
+          return (window.location.href = "../log-in.html");
+        }
+        const profile = await profRes.json();
+
+        document.getElementById("name").value = profile.first_name || "";
+        document.getElementById("surname").value = profile.last_name || "";
+        document.querySelector('input[name="birthday"]').value =
+          profile.birthday || "";
+        document.getElementById("city").value = profile.city || "";
+        document.getElementById("country").value = profile.country || "";
+        document.getElementById("gender").value = profile.gender || "";
+        document.getElementById("email-id").value = profile.email || "";
+        document.getElementById("profilePic").src =
+          profile.profile_picture &&
+          profile.profile_picture.startsWith("/static/")
+            ? `${AppConfig.API_BASE}${profile.profile_picture}`
+            : "../images/avatar.png";
+
+        const countrySel = document.getElementById("country");
+        countrySel.innerHTML = `<option value="">Select</option>`;
+        const countries = await (
+          await fetch(`${AppConfig.PROFILE}/countries`, { headers })
+        ).json();
+        countries.forEach((c) => {
+          const o = new Option(c, c);
+          if (c === profile.country) o.selected = true;
+          countrySel.append(o);
+        });
+
+        const langSel = document.getElementById("languages");
+        const allLangs = await (
+          await fetch(`${AppConfig.PROFILE}/languages`, { headers })
+        ).json();
+        langSel.innerHTML = "";
+        allLangs.forEach((l) => {
+          const opt = document.createElement("option");
+          opt.value = l.id;
+          opt.text = l.language_name;
+          if (profile.languages.includes(l.language_name)) {
+            opt.selected = true;
+          }
+          langSel.appendChild(opt);
+        });
+
+        const langChoices = new Choices(langSel, {
+          removeItemButton: true,
+          shouldSort: false,
+        });
+
+        langSel.addEventListener("addItem", function (event) {
+          const selected = langChoices.getValue(true);
+          if (selected.length > 5) {
+            langChoices.removeActiveItemsByValue(event.detail.value);
+            showInAppAlert("⚠️ You can select a maximum of 5 languages.");
+          }
+        });
+        langChoices.disable();
+
+        let editing = false;
+        editBtn.addEventListener("click", async () => {
+          if (!editing) {
+            fields.forEach((f) => (f.disabled = false));
+            langChoices.enable();
+            editBtn.textContent = "Save";
+            editing = true;
+            return;
+          }
+
+          // Separate checks with specific messages
+          const name = document.getElementById("name").value.trim();
+          const surname = document.getElementById("surname").value.trim();
+          const city = document.getElementById("city").value.trim();
+          const rawGender = document.getElementById("gender").value;
+          const selectedLanguages = langChoices.getValue(true);
+
+          if (!name) {
+            showInAppAlert("❌ Name cannot be empty.");
+            return;
+          }
+          if (!surname) {
+            showInAppAlert("❌ Surname cannot be empty.");
+            return;
+          }
+          if (!city) {
+            showInAppAlert("❌ City cannot be empty.");
+            return;
+          }
+          if (!rawGender) {
+            showInAppAlert("❌ Gender cannot be empty.");
+            return;
+          }
+          if (!selectedLanguages.length) {
+            showInAppAlert("❌ Please select at least one language.");
+            return;
+          }
+
+          const rawCountry = document.getElementById("country").value;
+
+          const payload = {
+            first_name: name,
+            last_name: surname,
+            ...(rawCountry && { country_name: rawCountry }),
+            city: city,
+            gender: rawGender,
+            languages: selectedLanguages.map((id) => Number(id)),
+          };
+
+          const confirm = await showInAppConfirm(
+            "Are you sure you want to save your changes?"
+          );
+          if (!confirm) return;
+
+          const res = await fetch(`${AppConfig.PROFILE}/consultant`, {
+            method: "PUT",
+            headers,
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            const err = await res.json();
+            console.error("Save error:", err);
+            return showInAppAlert(
+              "❌ Save failed: " + JSON.stringify(err.detail || err)
+            );
+          }
+
+          fields.forEach((f) => (f.disabled = true));
+          langChoices.disable();
+          editBtn.textContent = "Edit";
+          editing = false;
+          showInAppAlert("✅ Your changes are saved.");
+        });
+      });
+    </script>
+
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </section>
-
-  <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();  
-
-const fileInput = document.getElementById('fileInput');
-const profilePic = document.getElementById('profilePic');
-
-fileInput.addEventListener('change', async function () {
-  const file = fileInput.files[0];
-  if (!file || !file.type.startsWith('image/')) {
-    showInAppAlert("❗ Please select a valid image file.");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const token = localStorage.getItem("accessToken");
-
-  const res = await fetch(`${AppConfig.PROFILE}/upload-picture`, {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${token}` },
-    body: formData
-  });
-
-  if (res.ok) {
-    const data = await res.json();
-    const timestampedUrl = `${data.url}?t=${new Date().getTime()}`;
-    profilePic.src = timestampedUrl;
-    setTimeout(() => window.location.reload(), 1);
-  } else {
-    const err = await res.json();
-    showInAppAlert("❌ Upload failed: " + (err.detail || err.message));
-  }
-});
-
-document.addEventListener("DOMContentLoaded", async () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    showInAppAlert("❗ Please log in");
-    return window.location.href = "../log-in.html";
-  }
-
-  const headers = {
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json"
-  };
-
-  const editBtn = document.querySelector(".edit-btn");
-  const fields = Array.from(document.querySelectorAll('input:not([name="birthday"]):not([name="email"]), select'));
-
-  const profRes = await fetch(`${AppConfig.PROFILE}/consultant`, { headers });
-  if (!profRes.ok) {
-    showInAppAlert("❗ Not authenticated — please log in again.");
-    return window.location.href = "../log-in.html";
-  }
-  const profile = await profRes.json();
-
-  document.getElementById("name").value = profile.first_name || "";
-  document.getElementById("surname").value = profile.last_name || "";
-  document.querySelector('input[name="birthday"]').value = profile.birthday || "";
-  document.getElementById("city").value = profile.city || "";
-  document.getElementById("country").value = profile.country || "";
-  document.getElementById("gender").value = profile.gender || "";
-  document.getElementById("email-id").value = profile.email || "";
-  document.getElementById("profilePic").src =
-    profile.profile_picture && profile.profile_picture.startsWith("/static/")
-      ? `${AppConfig.API_BASE}${profile.profile_picture}`
-      : "../images/avatar.png";
-
-  const countrySel = document.getElementById("country");
-  countrySel.innerHTML = `<option value="">Select</option>`;
-  const countries = await (await fetch(`${AppConfig.PROFILE}/countries`, { headers })).json();
-  countries.forEach(c => {
-    const o = new Option(c, c);
-    if (c === profile.country) o.selected = true;
-    countrySel.append(o);
-  });
-
-  const langSel = document.getElementById("languages");
-  const allLangs = await (await fetch(`${AppConfig.PROFILE}/languages`, { headers })).json();
-  langSel.innerHTML = "";
-  allLangs.forEach(l => {
-    const opt = document.createElement("option");
-    opt.value = l.id;
-    opt.text = l.language_name;
-    if (profile.languages.includes(l.language_name)) {
-      opt.selected = true;
-    }
-    langSel.appendChild(opt);
-  });
-
-  const langChoices = new Choices(langSel, {
-    removeItemButton: true,
-    shouldSort: false
-  });
-
-  langSel.addEventListener('addItem', function (event) {
-    const selected = langChoices.getValue(true);
-    if (selected.length > 5) {
-      langChoices.removeActiveItemsByValue(event.detail.value);
-      showInAppAlert("⚠️ You can select a maximum of 5 languages.");
-    }
-  });
-  langChoices.disable();
-
-  let editing = false;
-  editBtn.addEventListener("click", async () => {
-    if (!editing) {
-      fields.forEach(f => f.disabled = false);
-      langChoices.enable();
-      editBtn.textContent = "Save";
-      editing = true;
-      return;
-    }
-
-    // Separate checks with specific messages
-    const name = document.getElementById("name").value.trim();
-    const surname = document.getElementById("surname").value.trim();
-    const city = document.getElementById("city").value.trim();
-    const rawGender = document.getElementById("gender").value;
-    const selectedLanguages = langChoices.getValue(true);
-
-    if (!name) {
-      showInAppAlert("❌ Name cannot be empty.");
-      return;
-    }
-    if (!surname) {
-      showInAppAlert("❌ Surname cannot be empty.");
-      return;
-    }
-    if (!city) {
-      showInAppAlert("❌ City cannot be empty.");
-      return;
-    }
-    if (!rawGender) {
-      showInAppAlert("❌ Gender cannot be empty.");
-      return;
-    }
-    if (!selectedLanguages.length) {
-      showInAppAlert("❌ Please select at least one language.");
-      return;
-    }
-
-    const rawCountry = document.getElementById("country").value;
-
-    const payload = {
-      first_name: name,
-      last_name: surname,
-      ...(rawCountry && { country_name: rawCountry }),
-      city: city,
-      gender: rawGender,
-      languages: selectedLanguages.map(id => Number(id))
-    };
-
-    const confirm = await showInAppConfirm("Are you sure you want to save your changes?");
-    if (!confirm) return;
-
-    const res = await fetch(`${AppConfig.PROFILE}/consultant`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(payload)
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      console.error("Save error:", err);
-      return showInAppAlert("❌ Save failed: " + JSON.stringify(err.detail || err));
-    }
-
-    fields.forEach(f => f.disabled = true);
-    langChoices.disable();
-    editBtn.textContent = "Edit";
-    editing = false;
-    showInAppAlert("✅ Your changes are saved.");
-  });
-});
-</script>
-
-  
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
-    </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

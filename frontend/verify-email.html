@@ -1,107 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Verify Email - EasyAbroad</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <head>
+    <meta charset="UTF-8" >
+    <title>Verify Email - EasyAbroad</title>
+    <link rel="icon" type="image/png" href="images/favicon.png" >
+    <link rel="stylesheet" href="css/styles.css" >
+    <link rel="stylesheet" href="css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
 
-  <style>
-    .verify-container {
-      padding: 80px 16px;
-      text-align: center;
-      min-height: 400px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .verify-container p {
-      font-size: 20px;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
+    <style>
+      .verify-container {
+        padding: 80px 16px;
+        text-align: center;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .verify-container p {
+        font-size: 20px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <header id="dynamic-header"></header>
 
-<header id="dynamic-header"></header>
-
-<div class="verify-container" id="verifyMessage">
-  <p>Verifying your email, please wait...</p>
-</div>
-
-<footer>
-  <div class="logo_icons">
-    <div class="footer-logo">
-      <img src="images/logo.png" alt="" class="pic_logo" />
+    <div class="verify-container" id="verifyMessage">
+      <p>Verifying your email, please wait...</p>
     </div>
-    <p class="follow-text">Follow us!</p>
-    <div class="social-icons">
-      <a href="http://www.instagram.com/easyabroad_" target="_blank">
-        <img src="images/instagram.png" alt="Instagram" />
-      </a>
-    </div>
-  </div>
-  <div class="footer-links">
-    <h4 class="h4_service">Service & Contacts</h4>
-    <a href="faq.html" class="class_footer"><p>FAQ</p></a>
-    <a href="contact-us.html" class="class_footer"><p>Contact Us</p></a>
-    <a href="support-us.html" class="class_footer"><p>Support Us</p></a>
-    <a href="about-us.html" class="class_footer"><p>About Us</p></a>
-    <a href="privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-    <a href="terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
 
-<script src="js/config.js"></script>
-<script src="js/script.js"></script>
-<script src="js/auth.js"></script>
-<script>
-  injectHeader();
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get("token");
+    <script src="js/config.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+      injectHeader();
 
-  if (!token) {
-    showInAppAlert("❌ Invalid verification link.", () => {
-      window.location.href = "log-in.html";
-    });
-    return;
-  }
+      document.addEventListener("DOMContentLoaded", async () => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
 
-  try {
-  const res = await fetch(`${AppConfig.AUTH}/verify-email?token=${token}`);
+        if (!token) {
+          showInAppAlert("❌ Invalid verification link.", () => {
+            window.location.href = "log-in.html";
+          });
+          return;
+        }
 
-    if (res.ok) {
-      showInAppAlert("✅ Your email has been successfully verified!", () => {
-        window.location.href = "log-in.html";
+        try {
+          const res = await fetch(
+            `${AppConfig.AUTH}/verify-email?token=${token}`
+          );
+
+          if (res.ok) {
+            showInAppAlert(
+              "✅ Your email has been successfully verified!",
+              () => {
+                window.location.href = "log-in.html";
+              }
+            );
+          } else {
+            const data = await res.json();
+            showInAppAlert(
+              `❌ Verification failed: ${
+                data.detail || "Invalid or expired link."
+              }`,
+              () => {
+                window.location.href = "log-in.html";
+              }
+            );
+          }
+        } catch (err) {
+          showInAppAlert(
+            "❌ An error occurred while verifying your email. Please try again later.",
+            () => {
+              window.location.href = "log-in.html";
+            }
+          );
+        }
       });
-    } else {
-      const data = await res.json();
-      showInAppAlert(`❌ Verification failed: ${data.detail || "Invalid or expired link."}`, () => {
-        window.location.href = "log-in.html";
-      });
-    }
-  } catch (err) {
-    showInAppAlert("❌ An error occurred while verifying your email. Please try again later.", () => {
-      window.location.href = "log-in.html";
-    });
-  }
-});
-</script>
+    </script>
 
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-</body>
+  </body>
 </html>

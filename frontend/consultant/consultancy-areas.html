@@ -1,67 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Consultancy Areas</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
 
-
-
-
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
-    
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
 
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="appointments.html"> <li>Appointments</li></a>
+            <a href="messages.html"> <li>Messages</li></a>
+            <a href="consultancy-areas.html"> <li>Consultancy Areas</li></a>
+            <a href="timetable.html"> <li>Timetable</li></a>
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
-    
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
 
     <main class="consultant_main">
       <div class="consultancy-section" id="studySection">
@@ -77,163 +72,199 @@
       <div class="consultancy-section" id="reviewsSection">
         <h2>View My Reviews</h2>
         <div id="reviewsContent">
-          <p>Click the button below to view reviews written about you by students.</p>
-          <button class="action-button" onclick="location.href='reviews.html'">View My Reviews</button>
+          <p>
+            Click the button below to view reviews written about you by
+            students.
+          </p>
+          <button class="action-button" onclick="location.href='reviews.html'">
+            View My Reviews
+          </button>
         </div>
       </div>
     </main>
 
-
-
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>  
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-function previewProfile(type) {
-  const target = type === "study" ? "preview-study.html" : "preview-internship.html";
-  window.location.href = target;
-}
+      function previewProfile(type) {
+        const target =
+          type === "study" ? "preview-study.html" : "preview-internship.html";
+        window.location.href = target;
+      }
 
-async function deleteProfile(type) {
-  const confirmed = await showInAppConfirm("This action cannot be undone. Do you want to continue?");
-  if (!confirmed) return;
+      async function deleteProfile(type) {
+        const confirmed = await showInAppConfirm(
+          "This action cannot be undone. Do you want to continue?"
+        );
+        if (!confirmed) return;
 
-  const token = localStorage.getItem("accessToken");
-  const endpoint = type === "study"
-    ? `${AppConfig.CONSULTANCY}/study`
-    : `${AppConfig.CONSULTANCY}/internship`;
+        const token = localStorage.getItem("accessToken");
+        const endpoint =
+          type === "study"
+            ? `${AppConfig.CONSULTANCY}/study`
+            : `${AppConfig.CONSULTANCY}/internship`;
 
-  try {
-    const res = await fetch(endpoint, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
-    });
+        try {
+          const res = await fetch(endpoint, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-    if (res.ok) {
-      renderProfile(type === "study" ? "studyContent" : "internshipContent", null, type);
-      showInAppAlert("✅ Profile deleted successfully.");
-    } else {
-      const data = await res.json().catch(() => ({}));
-      showInAppAlert("❌ Failed to delete profile: " + (data.detail || res.status));
-    }
-  } catch (err) {
-    console.error("Deletion error:", err);
-    showInAppAlert("❌ Error deleting profile.");
-  }
-}
+          if (res.ok) {
+            renderProfile(
+              type === "study" ? "studyContent" : "internshipContent",
+              null,
+              type
+            );
+            showInAppAlert("✅ Profile deleted successfully.");
+          } else {
+            const data = await res.json().catch(() => ({}));
+            showInAppAlert(
+              "❌ Failed to delete profile: " + (data.detail || res.status)
+            );
+          }
+        } catch (err) {
+          console.error("Deletion error:", err);
+          showInAppAlert("❌ Error deleting profile.");
+        }
+      }
 
-function renderProfile(sectionId, profile, type) {
-  const container = document.getElementById(sectionId);
-  container.innerHTML = "";
+      function renderProfile(sectionId, profile, type) {
+        const container = document.getElementById(sectionId);
+        container.innerHTML = "";
 
-  if (profile) {
-    const status = profile.status || "pending";
-    let statusClass = "status-pending";
-    if (status === "accepted") statusClass = "status-accepted";
-    else if (status === "rejected") statusClass = "status-rejected";
+        if (profile) {
+          const status = profile.status || "pending";
+          let statusClass = "status-pending";
+          if (status === "accepted") statusClass = "status-accepted";
+          else if (status === "rejected") statusClass = "status-rejected";
 
-    container.innerHTML = `
+          container.innerHTML = `
       <div class="profile-card">
-        ${type === "study" ? `
+        ${
+          type === "study"
+            ? `
           <div class="preview-block">
             <strong>University name:</strong> ${profile.university_name}
-            <span class="status-badge ${statusClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+            <span class="status-badge ${statusClass}">${
+                status.charAt(0).toUpperCase() + status.slice(1)
+              }</span>
           </div>
           <div class="preview-block">
-            <strong>Education period:</strong> ${formatDate(profile.education_start)} - ${formatDate(profile.education_finish)}
+            <strong>Education period:</strong> ${formatDate(
+              profile.education_start
+            )} - ${formatDate(profile.education_finish)}
           </div>
-        ` : `
+        `
+            : `
           <div class="preview-block">
             <strong>Company name:</strong> ${profile.company_name}
-            <span class="status-badge ${statusClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+            <span class="status-badge ${statusClass}">${
+                status.charAt(0).toUpperCase() + status.slice(1)
+              }</span>
           </div>
           <div class="preview-block">
-            <strong>Employment period:</strong> ${formatDate(profile.internship_start)} - ${formatDate(profile.internship_finish)}
+            <strong>Employment period:</strong> ${formatDate(
+              profile.internship_start
+            )} - ${formatDate(profile.internship_finish)}
           </div>
-        `}
+        `
+        }
       </div>
       <div class="btn-group">
         <button class="preview-btn" onclick="previewProfile('${type}')">Preview</button>
         <button class="delete-btn" onclick="deleteProfile('${type}')">Delete</button>
       </div>
     `;
-  } else {
-    const target = type === "study" ? "add-consultancy-study.html" : "add-consultancy-internship.html";
-    container.innerHTML = `
+        } else {
+          const target =
+            type === "study"
+              ? "add-consultancy-study.html"
+              : "add-consultancy-internship.html";
+          container.innerHTML = `
       <p>Currently, there is no profile. Click Add to create your consultancy profile.</p>
       <button class="add-btn" onclick="location.href='${target}'">Add</button>
     `;
-  }
-}
+        }
+      }
 
-function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-}
+      function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return `${String(d.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}/${d.getFullYear()}`;
+      }
 
-async function fetchAndRenderProfiles() {
-  const token = localStorage.getItem("accessToken");
-  if (!token) return;
+      async function fetchAndRenderProfiles() {
+        const token = localStorage.getItem("accessToken");
+        if (!token) return;
 
-  try {
-    const [studyRes, internRes] = await Promise.all([
-      fetch(`${AppConfig.CONSULTANCY}/study/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }),
-      fetch(`${AppConfig.CONSULTANCY}/internship/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-    ]);
+        try {
+          const [studyRes, internRes] = await Promise.all([
+            fetch(`${AppConfig.CONSULTANCY}/study/me`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+            fetch(`${AppConfig.CONSULTANCY}/internship/me`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+          ]);
 
-    const studyProfile = studyRes.ok ? await studyRes.json() : null;
-    const internshipProfile = internRes.ok ? await internRes.json() : null;
+          const studyProfile = studyRes.ok ? await studyRes.json() : null;
+          const internshipProfile = internRes.ok
+            ? await internRes.json()
+            : null;
 
-    renderProfile("studyContent", studyProfile, "study");
-    renderProfile("internshipContent", internshipProfile, "internship");
-  } catch (err) {
-    console.error("Failed to load profiles:", err);
-    showInAppAlert("❌ Failed to load consultancy profiles.");
-  }
-}
+          renderProfile("studyContent", studyProfile, "study");
+          renderProfile("internshipContent", internshipProfile, "internship");
+        } catch (err) {
+          console.error("Failed to load profiles:", err);
+          showInAppAlert("❌ Failed to load consultancy profiles.");
+        }
+      }
 
-window.onload = fetchAndRenderProfiles;
-</script>
+      window.onload = fetchAndRenderProfiles;
+    </script>
 
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

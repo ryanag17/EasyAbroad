@@ -1,248 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Support Tickets</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>My Support Tickets</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
-    
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
+
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="appointments.html"> <li>Appointments</li></a>
+            <a href="messages.html"> <li>Messages</li></a>
+            <a href="consultancy-areas.html"> <li>Consultancy Areas</li></a>
+            <a href="timetable.html"> <li>Timetable</li></a>
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-  <main>
-<section class="support-ticket-list">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h1 style="margin: 0;">My Support Tickets</h1>
-    <button class="toggle-password" onclick="window.location.href='ticket-create.html'">
-      + Create New Ticket
-    </button>
-  </div>
-  <div id="ticketList"></div>
-  <div id="pagination" class="pagination" style="display:flex;justify-content:center;gap:6px;margin-top:20px;"></div>
-</section>
+    <main>
+      <section class="support-ticket-list">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          "
+        >
+          <h1 style="margin: 0">My Support Tickets</h1>
+          <button
+            class="toggle-password"
+            onclick="window.location.href='ticket-create.html'"
+          >
+            + Create New Ticket
+          </button>
+        </div>
+        <div id="ticketList"></div>
+        <div
+          id="pagination"
+          class="pagination"
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 20px;
+          "
+        ></div>
+      </section>
+    </main>
 
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
 
-  </main>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-<footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
+      const token = localStorage.getItem("accessToken");
+      const list = document.getElementById("ticketList");
+      const pagination = document.getElementById("pagination");
+      let allTickets = [],
+        currentPage = 1;
+      const itemsPerPage = 10;
+      const localFormat = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      };
 
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();  
+      async function loadTickets() {
+        try {
+          const res = await fetch(`${AppConfig.SUPPORT}/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-const token = localStorage.getItem("accessToken");
-const list = document.getElementById("ticketList");
-const pagination = document.getElementById("pagination");
-let allTickets = [], currentPage = 1;
-const itemsPerPage = 10;
-const localFormat = {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false
-};
+          if (!res.ok) throw new Error("❌ Failed to fetch tickets.");
+          const data = await res.json();
 
-async function loadTickets() {
-  try {
-    const res = await fetch(`${AppConfig.SUPPORT}/me`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+          // Sort tickets by created_at descending (newest first)
+          allTickets = data.sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+          );
 
-    if (!res.ok) throw new Error("❌ Failed to fetch tickets.");
-    const data = await res.json();
+          if (!allTickets.length) {
+            list.innerHTML =
+              "<p>You haven't submitted any support tickets yet.</p>";
+            pagination.style.display = "none";
+            return;
+          }
 
-    // Sort tickets by created_at descending (newest first)
-    allTickets = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+          renderPage();
+        } catch (err) {
+          showInAppAlert(
+            err.message || "❌ An error occurred while loading tickets."
+          );
+        }
+      }
 
-    if (!allTickets.length) {
-      list.innerHTML = "<p>You haven't submitted any support tickets yet.</p>";
-      pagination.style.display = "none";
-      return;
-    }
+      function paginate(data) {
+        const start = (currentPage - 1) * itemsPerPage;
+        return data.slice(start, start + itemsPerPage);
+      }
 
-    renderPage();
-  } catch (err) {
-    showInAppAlert(err.message || "❌ An error occurred while loading tickets.");
-  }
-}
+      function renderPage() {
+        const paginated = paginate(allTickets);
 
-function paginate(data) {
-  const start = (currentPage - 1) * itemsPerPage;
-  return data.slice(start, start + itemsPerPage);
-}
+        function formatStatus(status) {
+          const map = {
+            open: "Open",
+            in_progress: "In Progress",
+            resolved: "Resolved",
+            closed: "Closed",
+          };
+          return map[status] || status;
+        }
 
-function renderPage() {
-  const paginated = paginate(allTickets);
+        list.innerHTML = paginated
+          .map((t) => {
+            const formattedDate = new Date(t.created_at + "Z").toLocaleString(
+              "en-GB",
+              {
+                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                dateStyle: "short",
+                timeStyle: "short",
+                hour12: false,
+              }
+            );
 
-  function formatStatus(status) {
-    const map = {
-      open: "Open",
-      in_progress: "In Progress",
-      resolved: "Resolved",
-      closed: "Closed"
-    };
-    return map[status] || status;
-  }
-
-list.innerHTML = paginated.map(t => {
-  const formattedDate = new Date(t.created_at + 'Z').toLocaleString('en-GB', {
-    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    dateStyle: "short",
-    timeStyle: "short",
-    hour12: false
-  });
-
-  return `
+            return `
     <div class="ticket-item">
       <h3>${t.subject}</h3>
-      <p class="description">${t.description.length > 150 ? t.description.substring(0, 150) + "..." : t.description}</p>
+      <p class="description">${
+        t.description.length > 150
+          ? t.description.substring(0, 150) + "..."
+          : t.description
+      }</p>
       <p><span class="status">Status:</span> ${formatStatus(t.status)}</p>
       <p><small>Submitted: ${formattedDate}</small></p>
       <div style="margin-top: 20px; margin-bottom: 10px;">
-        <a href="ticket-detail.html?id=${t.public_id}" class="save-button_ticket">View</a>
+        <a href="ticket-detail.html?id=${
+          t.public_id
+        }" class="save-button_ticket">View</a>
       </div>
     </div>
   `;
-}).join("");
+          })
+          .join("");
 
+        renderPagination(allTickets.length);
+      }
 
-  renderPagination(allTickets.length);
-}
+      function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        pagination.innerHTML = "";
 
-function renderPagination(totalItems) {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  pagination.innerHTML = "";
+        if (totalPages <= 1) {
+          pagination.style.display = "none";
+          return;
+        }
 
-  if (totalPages <= 1) {
-    pagination.style.display = "none";
-    return;
-  }
+        pagination.style.display = "flex";
 
-  pagination.style.display = "flex";
+        if (currentPage > 1) {
+          const prev = document.createElement("button");
+          prev.textContent = "Previous";
+          prev.onclick = () => {
+            currentPage--;
+            renderPage();
+          };
+          pagination.appendChild(prev);
+        }
 
-  if (currentPage > 1) {
-    const prev = document.createElement("button");
-    prev.textContent = "Previous";
-    prev.onclick = () => {
-      currentPage--;
-      renderPage();
-    };
-    pagination.appendChild(prev);
-  }
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.textContent = i;
+          if (i === currentPage) {
+            btn.disabled = true;
+            btn.style.backgroundColor = "#a91f6e";
+          }
+          btn.onclick = () => {
+            currentPage = i;
+            renderPage();
+          };
+          pagination.appendChild(btn);
+        }
 
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = i;
-    if (i === currentPage) {
-      btn.disabled = true;
-      btn.style.backgroundColor = "#a91f6e";
-    }
-    btn.onclick = () => {
-      currentPage = i;
-      renderPage();
-    };
-    pagination.appendChild(btn);
-  }
+        if (currentPage < totalPages) {
+          const next = document.createElement("button");
+          next.textContent = "Next";
+          next.onclick = () => {
+            currentPage++;
+            renderPage();
+          };
+          pagination.appendChild(next);
+        }
+      }
 
-  if (currentPage < totalPages) {
-    const next = document.createElement("button");
-    next.textContent = "Next";
-    next.onclick = () => {
-      currentPage++;
-      renderPage();
-    };
-    pagination.appendChild(next);
-  }
-}
+      window.onload = loadTickets;
+    </script>
 
-window.onload = loadTickets;
-</script>
-
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

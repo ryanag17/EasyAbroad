@@ -1,207 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Consultant Verification</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
 
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="user-management.html"> <li> User Management </li></a>
-                    <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>
-                    <a href="statistics.html"> <li> Platform Statistics </li></a>
-                    <a href="settings.html"> <li> Settings</li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="user-management.html"> <li>User Management</li></a>
+            <a href="consultant-verification.html">
+              <li>Consultant Verification</li></a
+            >
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="statistics.html"> <li>Platform Statistics</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
-    
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-      
-  <div class="submission-tabs">
-    <button class="tab-button active" data-status="pending">Pending</button>
-    <button class="tab-button" data-status="accepted">Accepted</button>
-    <button class="tab-button" data-status="rejected">Rejected</button>
-  </div>
 
-  <div class="submission-filter">
-  <label for="typeFilter">Filter by Type:</label>
-  <select id="typeFilter">
-    <option value="all">All</option>
-    <option value="study">Study Abroad</option>
-    <option value="internship">Internship Abroad</option>
-  </select>
-</div>
+    <div class="submission-tabs">
+      <button class="tab-button active" data-status="pending">Pending</button>
+      <button class="tab-button" data-status="accepted">Accepted</button>
+      <button class="tab-button" data-status="rejected">Rejected</button>
+    </div>
 
+    <div class="submission-filter">
+      <label for="typeFilter">Filter by Type:</label>
+      <select id="typeFilter">
+        <option value="all">All</option>
+        <option value="study">Study Abroad</option>
+        <option value="internship">Internship Abroad</option>
+      </select>
+    </div>
 
     <div class="submission-table-container">
-    <table id="submissionTable" class="submission-table">
-      <thead class="submission-header">
-        <tr>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>University / Company Name</th>
-          <th>Type</th>
-          <th>Submitted On</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody class="submission-body" id="submissionBody">
-        
-      </tbody>
-    </table>
-  </div>
-  
+      <table id="submissionTable" class="submission-table">
+        <thead class="submission-header">
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>University / Company Name</th>
+            <th>Type</th>
+            <th>Submitted On</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody class="submission-body" id="submissionBody"></tbody>
+      </table>
+    </div>
 
-  
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>  
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
 
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
 
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();  
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-document.addEventListener("DOMContentLoaded", () => {
-  const tbody = document.getElementById('submissionBody');
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const typeFilter = document.getElementById('typeFilter'); 
-  const token = localStorage.getItem("accessToken");
+      document.addEventListener("DOMContentLoaded", () => {
+        const tbody = document.getElementById("submissionBody");
+        const tabButtons = document.querySelectorAll(".tab-button");
+        const typeFilter = document.getElementById("typeFilter");
+        const token = localStorage.getItem("accessToken");
 
-  let allSubmissions = [];  
+        let allSubmissions = [];
 
-  if (!token) {
-    showInAppAlert("Please log in.", () => {
-      window.location.href = "../log-in.html";
-    });
-    return;
-  }
+        if (!token) {
+          showInAppAlert("Please log in.", () => {
+            window.location.href = "../log-in.html";
+          });
+          return;
+        }
 
-  const headers = {
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json"
-  };
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
 
-  async function checkAdminAccess() {
-    const res = await fetch(`${AppConfig.PROFILE}/admin`, { headers });
-    if (!res.ok) {
-      showInAppAlert("Admin access only. Please log in.", () => {
-        localStorage.clear();
-        window.location.href = "../log-in.html";
-      });
-    }
-  }
+        async function checkAdminAccess() {
+          const res = await fetch(`${AppConfig.PROFILE}/admin`, { headers });
+          if (!res.ok) {
+            showInAppAlert("Admin access only. Please log in.", () => {
+              localStorage.clear();
+              window.location.href = "../log-in.html";
+            });
+          }
+        }
 
-  async function fetchSubmissions(status) {
-    try {
-      const [studyRes, internshipRes] = await Promise.all([
-        fetch(`${AppConfig.CONSULTANCY}/study?status=${status}`, { headers }),
-        fetch(`${AppConfig.CONSULTANCY}/internship?status=${status}`, { headers })
-      ]);
+        async function fetchSubmissions(status) {
+          try {
+            const [studyRes, internshipRes] = await Promise.all([
+              fetch(`${AppConfig.CONSULTANCY}/study?status=${status}`, {
+                headers,
+              }),
+              fetch(`${AppConfig.CONSULTANCY}/internship?status=${status}`, {
+                headers,
+              }),
+            ]);
 
-      const [studyData, internshipData] = await Promise.all([
-        studyRes.json(), internshipRes.json()
-      ]);
+            const [studyData, internshipData] = await Promise.all([
+              studyRes.json(),
+              internshipRes.json(),
+            ]);
 
-      allSubmissions = [
-        ...studyData.map(d => ({ ...d, type: "study" })),
-        ...internshipData.map(d => ({ ...d, type: "internship" }))
-      ];
+            allSubmissions = [
+              ...studyData.map((d) => ({ ...d, type: "study" })),
+              ...internshipData.map((d) => ({ ...d, type: "internship" })),
+            ];
 
-      filterAndRender(); 
-    } catch (error) {
-      console.error("Fetch error:", error);
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red">Error loading data</td></tr>`;
-    }
-  }
+            filterAndRender();
+          } catch (error) {
+            console.error("Fetch error:", error);
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red">Error loading data</td></tr>`;
+          }
+        }
 
-  function filterAndRender() {
-    const selectedType = typeFilter?.value || "all"; 
-    const filtered = selectedType === "all"
-      ? allSubmissions
-      : allSubmissions.filter(sub => sub.type === selectedType);
-    renderTable(filtered);
-  }
+        function filterAndRender() {
+          const selectedType = typeFilter?.value || "all";
+          const filtered =
+            selectedType === "all"
+              ? allSubmissions
+              : allSubmissions.filter((sub) => sub.type === selectedType);
+          renderTable(filtered);
+        }
 
-  function renderTable(data) {
-    tbody.innerHTML = "";
+        function renderTable(data) {
+          tbody.innerHTML = "";
 
-    if (data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">No submissions found</td></tr>`;
-      return;
-    }
+          if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">No submissions found</td></tr>`;
+            return;
+          }
 
-    for (const sub of data) {
-      const institution = sub.type === "study" ? sub.university_name : sub.company_name;
-      const fullType = sub.type === "study" ? "Study Abroad" : "Internship Abroad";
-      const date = new Date(sub.created_at).toLocaleDateString("en-GB");
+          for (const sub of data) {
+            const institution =
+              sub.type === "study" ? sub.university_name : sub.company_name;
+            const fullType =
+              sub.type === "study" ? "Study Abroad" : "Internship Abroad";
+            const date = new Date(sub.created_at).toLocaleDateString("en-GB");
 
-      const row = document.createElement("tr");
-      row.innerHTML = `
+            const row = document.createElement("tr");
+            row.innerHTML = `
         <td>${sub.first_name}</td>
         <td>${sub.last_name}</td>
         <td>${institution}</td>
@@ -216,69 +224,71 @@ document.addEventListener("DOMContentLoaded", () => {
           </span>
         </td>
       `;
-      tbody.appendChild(row);
-    }
+            tbody.appendChild(row);
+          }
 
-    document.querySelectorAll(".submission-action-link").forEach(link => {
-      link.addEventListener("click", () => {
-        const userId = link.dataset.userId;
-        const type = link.dataset.type;
-        const status = link.dataset.status;
-        const viewOnly = status !== "pending" ? "?mode=view" : "";
-        const url = type === "study"
-          ? `consultant-preview-study.html?user_id=${userId}${viewOnly}`
-          : `consultant-preview-internship.html?user_id=${userId}${viewOnly}`;
-        window.location.href = url;
+          document
+            .querySelectorAll(".submission-action-link")
+            .forEach((link) => {
+              link.addEventListener("click", () => {
+                const userId = link.dataset.userId;
+                const type = link.dataset.type;
+                const status = link.dataset.status;
+                const viewOnly = status !== "pending" ? "?mode=view" : "";
+                const url =
+                  type === "study"
+                    ? `consultant-preview-study.html?user_id=${userId}${viewOnly}`
+                    : `consultant-preview-internship.html?user_id=${userId}${viewOnly}`;
+                window.location.href = url;
+              });
+            });
+        }
+
+        function setActiveTab(status) {
+          tabButtons.forEach((btn) =>
+            btn.classList.toggle("active", btn.dataset.status === status)
+          );
+        }
+
+        function setupTabListeners() {
+          tabButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+              const status = button.dataset.status;
+              window.history.replaceState({}, "", `?status=${status}`);
+              setActiveTab(status);
+              fetchSubmissions(status);
+            });
+          });
+        }
+
+        function setupFilterListener() {
+          typeFilter?.addEventListener("change", filterAndRender);
+        }
+
+        async function init() {
+          await checkAdminAccess();
+
+          const initialStatus =
+            new URLSearchParams(window.location.search).get("status") ||
+            "pending";
+          setActiveTab(initialStatus);
+          setupTabListeners();
+          setupFilterListener();
+          fetchSubmissions(initialStatus);
+        }
+
+        init();
       });
-    });
-  }
+    </script>
 
-  function setActiveTab(status) {
-    tabButtons.forEach(btn =>
-      btn.classList.toggle("active", btn.dataset.status === status)
-    );
-  }
-
-  function setupTabListeners() {
-    tabButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        const status = button.dataset.status;
-        window.history.replaceState({}, "", `?status=${status}`);
-        setActiveTab(status);
-        fetchSubmissions(status);
-      });
-    });
-  }
-
-  function setupFilterListener() {
-    typeFilter?.addEventListener("change", filterAndRender);
-  }
-
-  async function init() {
-    await checkAdminAccess();
-
-    const initialStatus = new URLSearchParams(window.location.search).get("status") || "pending";
-    setActiveTab(initialStatus);
-    setupTabListeners();
-    setupFilterListener(); 
-    fetchSubmissions(initialStatus);
-  }
-
-  init();
-});
-</script>
-
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-    
-</body>
+  </body>
 </html>

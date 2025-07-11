@@ -1,180 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Register</title>
+    <link rel="icon" type="image/png" href="images/favicon.png" >
+    <link rel="stylesheet" href="css/styles.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
 
-  <style>
-    .error-message {
-      color: #e74c3c;
-      font-size: 0.9rem;
-      margin-top: 4px;
-      margin-bottom: 10px;
-      display: none;
-    }
-  </style>
-</head>
+    <style>
+      .error-message {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 4px;
+        margin-bottom: 10px;
+        display: none;
+      }
+    </style>
+  </head>
 
-<body>
-  <header>
-    <a href="/" class="to_the_main">
-      <div class="logo">
-        <img src="images/logo.png" alt="" class="pic_logo" />
+  <body>
+    <header>
+      <a href="/" class="to_the_main">
+        <div class="logo">
+          <img src="images/logo.png" alt="" class="pic_logo" >
+        </div>
+      </a>
+    </header>
+
+    <div class="container_input">
+      <label for="name">Name</label>
+      <input
+        type="text"
+        class="name_input"
+        id="name"
+        placeholder="Enter your name"
+      />
+      <p class="error-message" id="name-error"></p>
+
+      <label for="surname">Surname</label>
+      <input
+        type="text"
+        id="surname"
+        class="name_input"
+        placeholder="Enter your surname"
+      />
+      <p class="error-message" id="surname-error"></p>
+
+      <label>Role selection</label>
+      <div class="radio-group">
+        <label
+          ><input type="radio" name="role" value="student" checked >
+          Student</label
+        >
+        <label
+          ><input type="radio" name="role" value="consultant" >
+          Consultant</label
+        >
       </div>
-    </a>
-  </header>
 
-  <div class="container_input">
-    <label for="name">Name</label>
-    <input type="text" class="name_input" id="name" placeholder="Enter your name" />
-    <p class="error-message" id="name-error"></p>
+      <label for="birthday">Birthday</label>
+      <input type="date" class="name_input" id="birthday" name="birthday" >
+      <p class="error-message" id="birthday-error"></p>
 
-    <label for="surname">Surname</label>
-    <input type="text" id="surname" class="name_input" placeholder="Enter your surname" />
-    <p class="error-message" id="surname-error"></p>
+      <label for="email-id">Email</label>
+      <input
+        type="email"
+        id="email-id"
+        placeholder="Enter email"
+        oninput="checker()"
+      />
+      <div id="icon"></div>
+      <p class="error-message" id="email-error"></p>
 
-    <label>Role selection</label>
-    <div class="radio-group">
-      <label><input type="radio" name="role" value="student" checked /> Student</label>
-      <label><input type="radio" name="role" value="consultant" /> Consultant</label>
+      <label class="pass_label_V3" for="password-id">Password</label>
+      <div class="password-wrapper">
+        <input
+          type="password"
+          class="password_class"
+          id="password-id"
+          placeholder="Enter Password"
+        />
+        <i class="fas fa-eye toggle-password" toggle="#password-id"></i>
+      </div>
+      <p class="error-message" id="password-error"></p>
+
+      <label class="label_repeat" for="repeat">Repeat</label>
+      <div class="password-wrapper">
+        <input
+          type="password"
+          id="repeat"
+          class="password_class"
+          placeholder="Repeat your password"
+        />
+        <i class="fas fa-eye toggle-password" toggle="#repeat"></i>
+      </div>
+      <p class="error-message" id="repeat-error"></p>
+
+      <div class="terms-checkbox">
+        <label>
+          <input type="checkbox" id="terms-checkbox" >
+          I agree to the
+          <a href="terms-conditions.html" target="_blank"
+            >Terms and Conditions</a
+          >
+        </label>
+      </div>
+      <p class="error-message" id="terms-error"></p>
+
+      <a href="#" id="registerLink">
+        <button class="login_link_page" type="button">Register</button>
+      </a>
+      <br >
+      <a href="log-in.html" class="forgot"
+        >Already have an account? Click here to log in!</a
+      >
     </div>
-
-    <label for="birthday">Birthday</label>
-    <input type="date" class="name_input" id="birthday" name="birthday" />
-    <p class="error-message" id="birthday-error"></p>
-
-    <label for="email-id">Email</label>
-    <input type="email" id="email-id" placeholder="Enter email" oninput="checker()" />
-    <div id="icon"></div>
-    <p class="error-message" id="email-error"></p>
-
-    <label class="pass_label_V3" for="password-id">Password</label>
-    <div class="password-wrapper">
-      <input type="password" class="password_class" id="password-id" placeholder="Enter Password" />
-      <i class="fas fa-eye toggle-password" toggle="#password-id"></i>
-    </div>
-    <p class="error-message" id="password-error"></p>
-
-    <label class="label_repeat" for="repeat">Repeat</label>
-    <div class="password-wrapper">
-      <input type="password" id="repeat" class="password_class" placeholder="Repeat your password" />
-      <i class="fas fa-eye toggle-password" toggle="#repeat"></i>
-    </div>
-    <p class="error-message" id="repeat-error"></p>
-
-    <div class="terms-checkbox">
-      <label>
-        <input type="checkbox" id="terms-checkbox" />
-        I agree to the <a href="terms-conditions.html" target="_blank">Terms and Conditions</a>
-      </label>
-    </div>
-    <p class="error-message" id="terms-error"></p>
-
-    <a href="#" id="registerLink">
-      <button class="login_link_page" type="button">Register</button>
-    </a>
-    <br />
-    <a href="log-in.html" class="forgot">Already have an account? Click here to log in!</a>
-  </div>
-
-  
 
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
 
-<script src="js/config.js"></script>
-<script src="js/script.js"></script>
-<script src="js/auth.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/auth.js"></script>
 
-  <script>
-  redirectIfAuthenticated(); // Prevent logged-in users from accessing this
-    window.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("registerLink")?.addEventListener("click", async ev => {
-        ev.preventDefault();
+    <script>
+      redirectIfAuthenticated(); // Prevent logged-in users from accessing this
+      window.addEventListener("DOMContentLoaded", () => {
+        document
+          .getElementById("registerLink")
+          ?.addEventListener("click", async (ev) => {
+            ev.preventDefault();
 
-        // Clear Terms error
-        const termsError = document.getElementById("terms-error");
-        termsError.style.display = "none";
-        termsError.textContent = "";
+            // Clear Terms error
+            const termsError = document.getElementById("terms-error");
+            termsError.style.display = "none";
+            termsError.textContent = "";
 
-        // Run form validation
-        if (!validateRegisterForm()) return;
+            // Run form validation
+            if (!validateRegisterForm()) return;
 
-        // Terms & Conditions validation
-        if (!document.getElementById("terms-checkbox").checked) {
-          termsError.textContent = "You must agree to the Terms and Conditions.";
-          termsError.style.display = "block";
-          return;
-        }
+            // Terms & Conditions validation
+            if (!document.getElementById("terms-checkbox").checked) {
+              termsError.textContent =
+                "You must agree to the Terms and Conditions.";
+              termsError.style.display = "block";
+              return;
+            }
 
-        // If all passed
-        await registerUser();
+            // If all passed
+            await registerUser();
+          });
       });
-    });
 
-    document.addEventListener("DOMContentLoaded", () => {
-    const birthdayInput = document.getElementById("birthday");
-    const birthdayError = document.getElementById("birthday-error");
+      document.addEventListener("DOMContentLoaded", () => {
+        const birthdayInput = document.getElementById("birthday");
+        const birthdayError = document.getElementById("birthday-error");
 
-    birthdayInput.addEventListener("change", () => {
-        const birthdayValue = birthdayInput.value;
-        birthdayError.textContent = "";
-        birthdayError.style.display = "none";
+        birthdayInput.addEventListener("change", () => {
+          const birthdayValue = birthdayInput.value;
+          birthdayError.textContent = "";
+          birthdayError.style.display = "none";
 
-        if (!birthdayValue) return;
+          if (!birthdayValue) return;
 
-        const birthdayDate = new Date(birthdayValue);
-        const today = new Date();
+          const birthdayDate = new Date(birthdayValue);
+          const today = new Date();
 
-        if (birthdayDate > today) {
-        birthdayError.textContent = "Birthday cannot be in the future.";
-        birthdayError.style.display = "block";
-        return;
-        }
+          if (birthdayDate > today) {
+            birthdayError.textContent = "Birthday cannot be in the future.";
+            birthdayError.style.display = "block";
+            return;
+          }
 
-        const age = new Date(today - birthdayDate).getUTCFullYear() - 1970;
-        if (age < 18) {
-        birthdayError.textContent = "You must be at least 18 years old.";
-        birthdayError.style.display = "block";
-        return;
-        }
-    });
-    });
-
-  </script>
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+          const age = new Date(today - birthdayDate).getUTCFullYear() - 1970;
+          if (age < 18) {
+            birthdayError.textContent = "You must be at least 18 years old.";
+            birthdayError.style.display = "block";
+            return;
+          }
+        });
+      });
+    </script>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-</body>
+  </body>
 </html>

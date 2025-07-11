@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Create a support Ticket</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
   </head>
   <body>
     <header class="user-header">
       <a href="home.html" class="to_the_main">
         <div class="logo">
-          <img src="../images/logo.png" alt="" class="pic_logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
         </div>
       </a>
       <div class="bell-menu">
@@ -23,7 +26,7 @@
           </i>
         </a>
         <div id="menuHamToggle">
-          <input type="checkbox">
+          <input type="checkbox" >
           <span></span>
           <span></span>
           <span></span>
@@ -51,22 +54,41 @@
 
     <main>
       <section class="support-ticket-list">
-        <div style="margin-bottom: 20px;">
-          <a href="#" onclick="confirmLeaveToTickets(event)" class="save-button_ticket">← Back to Support Tickets</a>
+        <div style="margin-bottom: 20px">
+          <a
+            href="#"
+            onclick="confirmLeaveToTickets(event)"
+            class="save-button_ticket"
+            >← Back to Support Tickets</a
+          >
         </div>
         <h1>Create a Support Ticket</h1>
         <form id="supportTicketForm">
           <div class="form-group">
             <label for="topic">Topic:</label>
-            <input type="text" id="topic" name="topic" required>
+            <input type="text" id="topic" name="topic" required >
           </div>
 
-        <div class="form-group">
-          <label for="message">Your Message:</label>
-          <textarea id="message" name="message" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;" rows="6" required></textarea>
-        </div>
+          <div class="form-group">
+            <label for="message">Your Message:</label>
+            <textarea
+              id="message"
+              name="message"
+              style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                resize: vertical;
+              "
+              rows="6"
+              required
+            ></textarea>
+          </div>
 
-          <p id="supportError" class="warning-text" style="display: none;">Both fields are required.</p>
+          <p id="supportError" class="warning-text" style="display: none">
+            Both fields are required.
+          </p>
 
           <button type="submit" class="save-button_ticket">Send</button>
         </form>
@@ -74,137 +96,143 @@
     </main>
 
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-  (async () => {
-    await autoEnforceRoleFromPath();
-  })();
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-  const supportForm = document.getElementById("supportTicketForm");
-  const topicInput = document.getElementById("topic");
-  const messageInput = document.getElementById("message");
-  const supportError = document.getElementById("supportError");
-  let isSupportDirty = false;
+      const supportForm = document.getElementById("supportTicketForm");
+      const topicInput = document.getElementById("topic");
+      const messageInput = document.getElementById("message");
+      const supportError = document.getElementById("supportError");
+      let isSupportDirty = false;
 
-  supportForm.addEventListener("input", () => {
-    isSupportDirty = true;
-    supportError.style.display = "none";
-  });
-
-  supportForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const topic = topicInput.value.trim();
-    const message = messageInput.value.trim();
-    const token = localStorage.getItem("accessToken");
-
-    if (topic.length < 5) {
-      supportError.textContent = "Topic must be at least 5 characters.";
-      supportError.style.display = "block";
-      return;
-    }
-    if (topic.length > 100) {
-      supportError.textContent = "Topic cannot exceed 100 characters.";
-      supportError.style.display = "block";
-      return;
-    }
-
-    if (message.length < 10) {
-      supportError.textContent = "Message must be at least 10 characters.";
-      supportError.style.display = "block";
-      return;
-    }
-    if (message.length > 500) {
-      supportError.textContent = "Message cannot exceed 500 characters.";
-      supportError.style.display = "block";
-      return;
-    }
-
-    if (!token) {
-      supportError.textContent = "You are not logged in. Please log in first.";
-      supportError.style.display = "block";
-      return;
-    }
-
-    const confirmed = await showInAppConfirm("Are you sure you want to submit this ticket?");
-    if (!confirmed) return;
-
-    try {
-      const res = await fetch(`${AppConfig.SUPPORT}/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ subject: topic, description: message }),
+      supportForm.addEventListener("input", () => {
+        isSupportDirty = true;
+        supportError.style.display = "none";
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        const ticketId = data.ticket_id;
-        await showInAppAlert("Support ticket submitted successfully!");
-        isSupportDirty = false;
-        window.location.replace(`ticket-detail.html?id=${ticketId}`);
-      } else {
-        await showInAppAlert("Failed to create ticket");
+      supportForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const topic = topicInput.value.trim();
+        const message = messageInput.value.trim();
+        const token = localStorage.getItem("accessToken");
+
+        if (topic.length < 5) {
+          supportError.textContent = "Topic must be at least 5 characters.";
+          supportError.style.display = "block";
+          return;
+        }
+        if (topic.length > 100) {
+          supportError.textContent = "Topic cannot exceed 100 characters.";
+          supportError.style.display = "block";
+          return;
+        }
+
+        if (message.length < 10) {
+          supportError.textContent = "Message must be at least 10 characters.";
+          supportError.style.display = "block";
+          return;
+        }
+        if (message.length > 500) {
+          supportError.textContent = "Message cannot exceed 500 characters.";
+          supportError.style.display = "block";
+          return;
+        }
+
+        if (!token) {
+          supportError.textContent =
+            "You are not logged in. Please log in first.";
+          supportError.style.display = "block";
+          return;
+        }
+
+        const confirmed = await showInAppConfirm(
+          "Are you sure you want to submit this ticket?"
+        );
+        if (!confirmed) return;
+
+        try {
+          const res = await fetch(`${AppConfig.SUPPORT}/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ subject: topic, description: message }),
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            const ticketId = data.ticket_id;
+            await showInAppAlert("Support ticket submitted successfully!");
+            isSupportDirty = false;
+            window.location.replace(`ticket-detail.html?id=${ticketId}`);
+          } else {
+            await showInAppAlert("Failed to create ticket");
+          }
+        } catch (error) {
+          supportError.textContent = error.message;
+          supportError.style.display = "block";
+        }
+      });
+
+      window.addEventListener("beforeunload", (e) => {
+        if (isSupportDirty) {
+          e.preventDefault();
+          e.returnValue = "You have unsaved changes.";
+        }
+      });
+
+      async function confirmLeaveToTickets(e) {
+        e.preventDefault();
+        if (isSupportDirty) {
+          const confirmed = await showInAppConfirm(
+            "You have unsaved changes. Are you sure you want to leave this page?"
+          );
+          if (!confirmed) return;
+        }
+        window.location.href = "support-tickets.html";
       }
-    } catch (error) {
-      supportError.textContent = error.message;
-      supportError.style.display = "block";
-    }
-  });
+    </script>
 
-  window.addEventListener("beforeunload", (e) => {
-    if (isSupportDirty) {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes.";
-    }
-  });
-
-  async function confirmLeaveToTickets(e) {
-    e.preventDefault();
-    if (isSupportDirty) {
-      const confirmed = await showInAppConfirm("You have unsaved changes. Are you sure you want to leave this page?");
-      if (!confirmed) return;
-    }
-    window.location.href = "support-tickets.html";
-  }
-</script>
-
-
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-    
   </body>
 </html>

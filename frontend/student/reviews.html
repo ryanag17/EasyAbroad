@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Reviews</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
   </head>
   <body>
     <header class="user-header">
       <a href="home.html" class="to_the_main">
         <div class="logo">
-          <img src="../images/logo.png" alt="" class="pic_logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
         </div>
       </a>
 
@@ -26,7 +28,7 @@
         </a>
 
         <div id="menuHamToggle">
-          <input type="checkbox">
+          <input type="checkbox" >
           <span></span>
           <span></span>
           <span></span>
@@ -54,108 +56,122 @@
     </div>
 
     <main class="reviews-container">
-      <h2 class="reviews-title">Reviews of<span id="consultantName">[Consultant Name]</span></h2>
+      <h2 class="reviews-title">
+        Reviews of<span id="consultantName">[Consultant Name]</span>
+      </h2>
       <div class="reviews-summary" id="reviewsSummary"></div>
       <section id="reviewsContainer"></section>
       <div id="pagination" class="pagination"></div>
     </main>
 
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-  (async () => {
-    await autoEnforceRoleFromPath();
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
 
-    const token = localStorage.getItem("accessToken");
-    const urlParams = new URLSearchParams(window.location.search);
-    const consultantPublicId = urlParams.get("id");
-    const consultantName = urlParams.get("name");
+        const token = localStorage.getItem("accessToken");
+        const urlParams = new URLSearchParams(window.location.search);
+        const consultantPublicId = urlParams.get("id");
+        const consultantName = urlParams.get("name");
 
-    if (!consultantPublicId) {
-      const errorContainer = document.createElement("div");
-      errorContainer.innerHTML = "<p style='color: red;'>Error: Missing consultant ID. Please check the URL and try again.</p>";
-      document.body.prepend(errorContainer);
-      return;
-    }
+        if (!consultantPublicId) {
+          const errorContainer = document.createElement("div");
+          errorContainer.innerHTML =
+            "<p style='color: red;'>Error: Missing consultant ID. Please check the URL and try again.</p>";
+          document.body.prepend(errorContainer);
+          return;
+        }
 
-    let currentPage = 1;
-    const itemsPerPage = 5;
-    let reviews = [];
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        let reviews = [];
 
-    try {
-      const nameElement = document.getElementById("consultantName");
-      nameElement.innerText = ` ${consultantName || "Consultant"}`;
+        try {
+          const nameElement = document.getElementById("consultantName");
+          nameElement.innerText = ` ${consultantName || "Consultant"}`;
 
-      const avgRatingRes = await fetch(`${AppConfig.APPOINTMENTS}/consultant/public/${consultantPublicId}/consultant-average-rating`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+          const avgRatingRes = await fetch(
+            `${AppConfig.APPOINTMENTS}/consultant/public/${consultantPublicId}/consultant-average-rating`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
 
+          if (!avgRatingRes.ok) {
+            showInAppAlert("Failed to fetch average rating.");
+            return;
+          }
 
-      if (!avgRatingRes.ok) {
-        showInAppAlert("Failed to fetch average rating.");
-        return;
-      }
+          const avgRating = await avgRatingRes.json();
+          const reviewsSummary = document.getElementById("reviewsSummary");
 
-      const avgRating = await avgRatingRes.json();
-      const reviewsSummary = document.getElementById("reviewsSummary");
+          if (!avgRating || avgRating.total_reviews === 0) {
+            reviewsSummary.innerHTML =
+              "<p>This consultant has no reviews yet.</p>";
+            return;
+          }
 
-      if (!avgRating || avgRating.total_reviews === 0) {
-        reviewsSummary.innerHTML = "<p>This consultant has no reviews yet.</p>";
-        return;
-      }
-
-      reviewsSummary.innerHTML = `
+          reviewsSummary.innerHTML = `
         <p>Average Rating: ${avgRating.average_rating} (${avgRating.total_reviews} reviews)</p>
         <div id="ratingDistribution"></div>
       `;
 
-      const reviewsRes = await fetch(`${AppConfig.APPOINTMENTS}/consultant/public/${consultantPublicId}/reviews`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+          const reviewsRes = await fetch(
+            `${AppConfig.APPOINTMENTS}/consultant/public/${consultantPublicId}/reviews`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
 
+          if (!reviewsRes.ok) {
+            showInAppAlert("Failed to fetch reviews.");
+            return;
+          }
 
-      if (!reviewsRes.ok) {
-        showInAppAlert("Failed to fetch reviews.");
-        return;
-      }
+          reviews = await reviewsRes.json();
 
-      reviews = await reviewsRes.json();
+          if (reviews.length === 0) {
+            document.getElementById("reviewsContainer").innerHTML =
+              "<p>No reviews available for this consultant yet.</p>";
+            return;
+          }
 
-      if (reviews.length === 0) {
-        document.getElementById("reviewsContainer").innerHTML = "<p>No reviews available for this consultant yet.</p>";
-        return;
-      }
+          const ratingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+          reviews.forEach((review) => {
+            ratingCounts[review.rating]++;
+          });
 
-      const ratingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-      reviews.forEach((review) => {
-        ratingCounts[review.rating]++;
-      });
-
-      const ratingDistribution = document.getElementById("ratingDistribution");
-      ratingDistribution.innerHTML = `
+          const ratingDistribution =
+            document.getElementById("ratingDistribution");
+          ratingDistribution.innerHTML = `
         <p>1 Star: ${ratingCounts[1]}</p>
         <p>2 Stars: ${ratingCounts[2]}</p>
         <p>3 Stars: ${ratingCounts[3]}</p>
@@ -163,103 +179,101 @@
         <p>5 Stars: ${ratingCounts[5]}</p>
       `;
 
-      renderReviews();
-      renderPagination(reviews.length);
+          renderReviews();
+          renderPagination(reviews.length);
+        } catch (error) {
+          showInAppAlert("Error loading reviews: " + error.message);
+        }
 
-    } catch (error) {
-      showInAppAlert("Error loading reviews: " + error.message);
-    }
+        function paginate(data) {
+          const start = (currentPage - 1) * itemsPerPage;
+          return data.slice(start, start + itemsPerPage);
+        }
 
-    function paginate(data) {
-      const start = (currentPage - 1) * itemsPerPage;
-      return data.slice(start, start + itemsPerPage);
-    }
+        function renderReviews() {
+          const container = document.getElementById("reviewsContainer");
+          const paginated = paginate(reviews);
+          container.innerHTML = "";
 
-    function renderReviews() {
-      const container = document.getElementById("reviewsContainer");
-      const paginated = paginate(reviews);
-      container.innerHTML = '';
+          paginated.forEach((review) => {
+            const div = document.createElement("div");
+            div.classList.add("reviews-item", "review-box");
 
-      paginated.forEach((review) => {
-        const div = document.createElement("div");
-        div.classList.add("reviews-item", "review-box");
-
-        const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
-        div.innerHTML = `
+            const stars =
+              "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
+            div.innerHTML = `
           <div class="reviews-header">
             <h3>${review.student_name || "Anonymous"}</h3>
             <p>${stars}</p>
           </div>
           <p>${review.review_text}</p>
-          <small>Submitted on: ${new Date(review.submitted_at).toLocaleString()}</small>
+          <small>Submitted on: ${new Date(
+            review.submitted_at
+          ).toLocaleString()}</small>
         `;
-        container.appendChild(div);
-      });
-    }
-
-    function renderPagination(totalItems) {
-      const pagination = document.getElementById("pagination");
-      const totalPages = Math.ceil(totalItems / itemsPerPage);
-      pagination.innerHTML = "";
-
-      if (totalPages <= 1) {
-        pagination.style.display = "none";
-        return;
-      }
-
-      pagination.style.display = "flex";
-
-      if (currentPage > 1) {
-        const prev = document.createElement("button");
-        prev.textContent = "Previous";
-        prev.onclick = () => {
-          currentPage--;
-          renderReviews();
-          renderPagination(totalItems);
-        };
-        pagination.appendChild(prev);
-      }
-
-      for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement("button");
-        btn.textContent = i;
-        if (i === currentPage) {
-          btn.disabled = true;
+            container.appendChild(div);
+          });
         }
-        btn.onclick = () => {
-          currentPage = i;
-          renderReviews();
-          renderPagination(totalItems);
-        };
-        pagination.appendChild(btn);
-      }
 
-      if (currentPage < totalPages) {
-        const next = document.createElement("button");
-        next.textContent = "Next";
-        next.onclick = () => {
-          currentPage++;
-          renderReviews();
-          renderPagination(totalItems);
-        };
-        pagination.appendChild(next);
-      }
-    }
-  })();
-</script>
+        function renderPagination(totalItems) {
+          const pagination = document.getElementById("pagination");
+          const totalPages = Math.ceil(totalItems / itemsPerPage);
+          pagination.innerHTML = "";
 
+          if (totalPages <= 1) {
+            pagination.style.display = "none";
+            return;
+          }
 
+          pagination.style.display = "flex";
 
+          if (currentPage > 1) {
+            const prev = document.createElement("button");
+            prev.textContent = "Previous";
+            prev.onclick = () => {
+              currentPage--;
+              renderReviews();
+              renderPagination(totalItems);
+            };
+            pagination.appendChild(prev);
+          }
 
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+          for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            if (i === currentPage) {
+              btn.disabled = true;
+            }
+            btn.onclick = () => {
+              currentPage = i;
+              renderReviews();
+              renderPagination(totalItems);
+            };
+            pagination.appendChild(btn);
+          }
+
+          if (currentPage < totalPages) {
+            const next = document.createElement("button");
+            next.textContent = "Next";
+            next.onclick = () => {
+              currentPage++;
+              renderReviews();
+              renderPagination(totalItems);
+            };
+            pagination.appendChild(next);
+          }
+        }
+      })();
+    </script>
+
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
   </body>
 </html>

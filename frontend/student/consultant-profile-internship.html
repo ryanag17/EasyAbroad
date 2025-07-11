@@ -1,242 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Consultant Internship Profile</title>
-  <link rel="icon" type="image/png" href="../images/favicon.png" />
-  <link rel="stylesheet" href="../css/styles.css" />
-  <link rel="stylesheet" href="../css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-</head>
-<body>
-  <header class="user-header">
-    <a href="home.html" class="to_the_main">
-      <div class="logo"><img src="../images/logo.png" alt="" class="pic_logo" /></div>
-    </a>
-    <div class="bell-menu">
-      <a href="notifications.html" class="bell-div notif-bell-wrapper">
-        <i class="far fa-bell bell-icon">
-          <span id="notifBadge" class="notification-badge"></span>
-        </i>
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Consultant Internship Profile</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="user-header">
+      <a href="home.html" class="to_the_main">
+        <div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
       </a>
-      <div id="menuHamToggle">
-        <input type="checkbox" />
-        <span></span>
-        <span></span>
-        <span></span>
-        <ul id="mainMenu">
-          <a href="profile.html"><li>Profile</li></a>
-          <a href="appointments.html"><li>Appointments</li></a>
-          <a href="messages.html"><li>Messages</li></a>
-          <a href="support-tickets.html"><li>Support Tickets</li></a>
-          <a href="settings.html"><li>Settings</li></a>
-          <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-  <div id="signOutModal" class="modal-overlay">
-    <div class="modal-content">
-      <p>Are you sure you want to sign out?</p>
-      <div class="modal-buttons">
-        <button onclick="confirmSignOut()">Yes</button>
-        <button onclick="closeModal()">No</button>
-      </div>
-    </div>
-  </div>
-
-  <main class="consultant-profile">
-    <a href="find-consultants.html" class="back-link">← Back to Consultant Search</a>
-    <section class="profile-box">
-      <div class="profile-header">
-        <img src="../images/avatar.png" alt="Consultant Avatar" class="avatar" />
-        <div>
-          <h2 id="consultantNameHeader"></h2>
-          <div class="info-row"><strong>Focus of Consultancy:</strong> Internship Abroad</div>
-          <div class="info-row"><strong>Company Name:</strong> </div>
-          <div class="info-row"><strong>Department Name:</strong> </div>
-          <div class="info-row"><strong>Work Period:</strong> </div>
-          <div class="info-row"><strong>Location of Internship Abroad:</strong> </div>
-          <div class="info-row"><strong>Current Location:</strong> </div>
-          <div class="info-row"><strong>Languages:</strong> </div>
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+          <span></span>
+          <span></span>
+          <span></span>
+          <ul id="mainMenu">
+            <a href="profile.html"><li>Profile</li></a>
+            <a href="appointments.html"><li>Appointments</li></a>
+            <a href="messages.html"><li>Messages</li></a>
+            <a href="support-tickets.html"><li>Support Tickets</li></a>
+            <a href="settings.html"><li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
+          </ul>
         </div>
       </div>
-      <div class="help-contact">
-        <div class="help-list">
-          <h3>[First name] can help you with:</h3>
-          <ul></ul>
-        </div>
-        <div class="call-list">
-          <h3>[First name] can call you via:</h3>
-          <ul></ul>
+    </header>
+
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
         </div>
       </div>
-      <div class="button-container">
-        <a id="bookBtn" href="#"><button class="save-button_ticket">Book a consultation meeting!</button></a>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();
-
-document.addEventListener("DOMContentLoaded", async () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    await showInAppAlert("You are not logged in. Please log in first.", () => {
-      window.location.href = "../log-in.html";
-    });
-    return;
-  }
-
-  const userId = new URLSearchParams(window.location.search).get("id");
-  if (!userId) {
-    await showInAppAlert("Missing consultant ID in URL.", () => {
-      window.location.href = "find-consultants.html";
-    });
-    return;
-  }
-
-  async function fetchAverageRating(consultantId) {
-    try {
-      const res = await fetch(`${AppConfig.APPOINTMENTS}/consultant/public/${consultantId}/average-rating`);
-      const data = await res.json();
-      return data.average_rating ?? null;
-    } catch (e) {
-      console.warn("Rating fetch failed:", e);
-      return null;
-    }
-  }
-
-  try {
-    const response = await fetch(`${AppConfig.CONSULTANCY}/internship/public/${userId}`);
-    if (!response.ok) throw new Error("Profile not found or not accepted.");
-    const data = await response.json();
-
-    const {
-      first_name,
-      last_name,
-      profile_picture,
-      company_name,
-      department_name,
-      internship_start,
-      internship_finish,
-      city_of_internship,
-      country_of_internship,
-      current_city,
-      current_country,
-      languages = []
-    } = data;
-
-    // Avatar
-    document.querySelector(".avatar").src = profile_picture?.startsWith("/static/")
-      ? `${AppConfig.API_BASE}${profile_picture}`
-      : "../images/avatar.png";
-
-    // Name
-    const avgRating = await fetchAverageRating(userId);
-    const ratingText = avgRating ? `(${avgRating.toFixed(1)}/5 ★)` : "(currently has no reviews)";
-    document.getElementById("consultantNameHeader").innerHTML =
-      `${first_name} ${last_name} <a href="reviews.html?id=${userId}&name=${encodeURIComponent(first_name + ' ' + last_name)}" class="review">${ratingText}</a>`;
-
-    // Info fields
-    document.querySelectorAll(".info-row")[1].innerHTML =
-      `<strong>Company name:</strong> ${company_name}`;
-    document.querySelectorAll(".info-row")[2].innerHTML =
-      `<strong>Department name:</strong> ${department_name}`;
-    document.querySelectorAll(".info-row")[3].innerHTML =
-      `<strong>Internship period:</strong> From ${formatDate(internship_start)} to ${formatDate(internship_finish)}`;
-    document.querySelectorAll(".info-row")[4].innerHTML =
-      `<strong>Location of internship:</strong> ${city_of_internship}, ${country_of_internship}`;
-    document.querySelectorAll(".info-row")[5].innerHTML =
-      `<strong>Current location:</strong> ${current_city || "–"}, ${current_country || "–"}`;
-    document.querySelectorAll(".info-row")[6].innerHTML =
-      `<strong>Languages:</strong> ${languages.length ? languages.join(", ") : "–"}`;
-
-    // Dynamic section titles
-    document.querySelector(".help-list h3").textContent = `${first_name} can help you with:`;
-    document.querySelector(".call-list h3").textContent = `${first_name} can call you via:`;
-
-    // Help topics for internship
-    const helpMap = {
-      accommodation: "Finding accommodation",
-      social_life: "Social life and making friends",
-      company_info: "Company information",
-      travel_info: "Best and worst city spots including travel and weekend plans"
-    };
-    document.querySelector(".help-list ul").innerHTML = Object.entries(helpMap)
-      .filter(([key]) => data[key])
-      .map(([, label]) => `<li>${label}</li>`)
-      .join("");
-
-    // Contact platforms
-    const callMap = {
-      zoom: "Zoom",
-      microsoft_teams: "Microsoft Teams",
-      google_meet: "Google Meet",
-      apple_facetime: "Apple FaceTime"
-    };
-    document.querySelector(".call-list ul").innerHTML = Object.entries(callMap)
-      .filter(([key]) => data[key])
-      .map(([, label]) => `<li>${label}</li>`)
-      .join("");
-
-  } catch (err) {
-    console.error("Error loading consultant profile:", err);
-    await showInAppAlert("Failed to load consultant profile.", () => {
-      window.location.href = "find-consultants.html";
-    });
-    return;
-  }
-
-  document.getElementById("bookBtn").href = `make-appointment.html?id=${userId}&type=internship`;
-
-  function formatDate(dateStr) {
-    const d = new Date(dateStr);
-    if (isNaN(d)) return "–";
-    return `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
-  }
-});
-</script>
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
     </div>
-  </div>
-</div>
 
-</body>
+    <main class="consultant-profile">
+      <a href="find-consultants.html" class="back-link"
+        >← Back to Consultant Search</a
+      >
+      <section class="profile-box">
+        <div class="profile-header">
+          <img
+            src="../images/avatar.png"
+            alt="Consultant Avatar"
+            class="avatar"
+          />
+          <div>
+            <h2 id="consultantNameHeader"></h2>
+            <div class="info-row">
+              <strong>Focus of Consultancy:</strong> Internship Abroad
+            </div>
+            <div class="info-row"><strong>Company Name:</strong></div>
+            <div class="info-row"><strong>Department Name:</strong></div>
+            <div class="info-row"><strong>Work Period:</strong></div>
+            <div class="info-row">
+              <strong>Location of Internship Abroad:</strong>
+            </div>
+            <div class="info-row"><strong>Current Location:</strong></div>
+            <div class="info-row"><strong>Languages:</strong></div>
+          </div>
+        </div>
+        <div class="help-contact">
+          <div class="help-list">
+            <h3>[First name] can help you with:</h3>
+            <ul></ul>
+          </div>
+          <div class="call-list">
+            <h3>[First name] can call you via:</h3>
+            <ul></ul>
+          </div>
+        </div>
+        <div class="button-container">
+          <a id="bookBtn" href="#"
+            ><button class="save-button_ticket">
+              Book a consultation meeting!
+            </button></a
+          >
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          await showInAppAlert(
+            "You are not logged in. Please log in first.",
+            () => {
+              window.location.href = "../log-in.html";
+            }
+          );
+          return;
+        }
+
+        const userId = new URLSearchParams(window.location.search).get("id");
+        if (!userId) {
+          await showInAppAlert("Missing consultant ID in URL.", () => {
+            window.location.href = "find-consultants.html";
+          });
+          return;
+        }
+
+        async function fetchAverageRating(consultantId) {
+          try {
+            const res = await fetch(
+              `${AppConfig.APPOINTMENTS}/consultant/public/${consultantId}/average-rating`
+            );
+            const data = await res.json();
+            return data.average_rating ?? null;
+          } catch (e) {
+            console.warn("Rating fetch failed:", e);
+            return null;
+          }
+        }
+
+        try {
+          const response = await fetch(
+            `${AppConfig.CONSULTANCY}/internship/public/${userId}`
+          );
+          if (!response.ok)
+            throw new Error("Profile not found or not accepted.");
+          const data = await response.json();
+
+          const {
+            first_name,
+            last_name,
+            profile_picture,
+            company_name,
+            department_name,
+            internship_start,
+            internship_finish,
+            city_of_internship,
+            country_of_internship,
+            current_city,
+            current_country,
+            languages = [],
+          } = data;
+
+          // Avatar
+          document.querySelector(".avatar").src = profile_picture?.startsWith(
+            "/static/"
+          )
+            ? `${AppConfig.API_BASE}${profile_picture}`
+            : "../images/avatar.png";
+
+          // Name
+          const avgRating = await fetchAverageRating(userId);
+          const ratingText = avgRating
+            ? `(${avgRating.toFixed(1)}/5 ★)`
+            : "(currently has no reviews)";
+          document.getElementById(
+            "consultantNameHeader"
+          ).innerHTML = `${first_name} ${last_name} <a href="reviews.html?id=${userId}&name=${encodeURIComponent(
+            first_name + " " + last_name
+          )}" class="review">${ratingText}</a>`;
+
+          // Info fields
+          document.querySelectorAll(
+            ".info-row"
+          )[1].innerHTML = `<strong>Company name:</strong> ${company_name}`;
+          document.querySelectorAll(
+            ".info-row"
+          )[2].innerHTML = `<strong>Department name:</strong> ${department_name}`;
+          document.querySelectorAll(
+            ".info-row"
+          )[3].innerHTML = `<strong>Internship period:</strong> From ${formatDate(
+            internship_start
+          )} to ${formatDate(internship_finish)}`;
+          document.querySelectorAll(
+            ".info-row"
+          )[4].innerHTML = `<strong>Location of internship:</strong> ${city_of_internship}, ${country_of_internship}`;
+          document.querySelectorAll(
+            ".info-row"
+          )[5].innerHTML = `<strong>Current location:</strong> ${
+            current_city || "–"
+          }, ${current_country || "–"}`;
+          document.querySelectorAll(
+            ".info-row"
+          )[6].innerHTML = `<strong>Languages:</strong> ${
+            languages.length ? languages.join(", ") : "–"
+          }`;
+
+          // Dynamic section titles
+          document.querySelector(
+            ".help-list h3"
+          ).textContent = `${first_name} can help you with:`;
+          document.querySelector(
+            ".call-list h3"
+          ).textContent = `${first_name} can call you via:`;
+
+          // Help topics for internship
+          const helpMap = {
+            accommodation: "Finding accommodation",
+            social_life: "Social life and making friends",
+            company_info: "Company information",
+            travel_info:
+              "Best and worst city spots including travel and weekend plans",
+          };
+          document.querySelector(".help-list ul").innerHTML = Object.entries(
+            helpMap
+          )
+            .filter(([key]) => data[key])
+            .map(([, label]) => `<li>${label}</li>`)
+            .join("");
+
+          // Contact platforms
+          const callMap = {
+            zoom: "Zoom",
+            microsoft_teams: "Microsoft Teams",
+            google_meet: "Google Meet",
+            apple_facetime: "Apple FaceTime",
+          };
+          document.querySelector(".call-list ul").innerHTML = Object.entries(
+            callMap
+          )
+            .filter(([key]) => data[key])
+            .map(([, label]) => `<li>${label}</li>`)
+            .join("");
+        } catch (err) {
+          console.error("Error loading consultant profile:", err);
+          await showInAppAlert("Failed to load consultant profile.", () => {
+            window.location.href = "find-consultants.html";
+          });
+          return;
+        }
+
+        document.getElementById(
+          "bookBtn"
+        ).href = `make-appointment.html?id=${userId}&type=internship`;
+
+        function formatDate(dateStr) {
+          const d = new Date(dateStr);
+          if (isNaN(d)) return "–";
+          return `${String(d.getMonth() + 1).padStart(
+            2,
+            "0"
+          )}.${d.getFullYear()}`;
+        }
+      });
+    </script>
+
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

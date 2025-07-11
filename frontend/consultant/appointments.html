@@ -1,468 +1,514 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Appointments</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-</head>
-<body>
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
-    
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
 
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
-    </header>
-    
-    
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
-    </div>
-  </div>
-</div>
+        <div id="menuHamToggle">
+          <input type="checkbox" >
 
-    
-    
-    <section class="appointments-section">
+          <span></span>
+          <span></span>
+          <span></span>
 
-        
-        <div class="appointment-tabs">
-          <button class="tab active" data-status="upcoming">Upcoming</button>
-          <button class="tab" data-status="previous">Previous</button>
-          <button class="tab" data-status="pending">Pending</button>
-          <button class="tab" data-status="rejected">Rejected</button>
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="appointments.html"> <li>Appointments</li></a>
+            <a href="messages.html"> <li>Messages</li></a>
+            <a href="consultancy-areas.html"> <li>Consultancy Areas</li></a>
+            <a href="timetable.html"> <li>Timetable</li></a>
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
         </div>
-      
-        
-       
-        <div class="appointments-container"></div>
-        <div id="pagination" class="pagination"></div>
+      </div>
+    </header>
 
-      
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="appointments-section">
+      <div class="appointment-tabs">
+        <button class="tab active" data-status="upcoming">Upcoming</button>
+        <button class="tab" data-status="previous">Previous</button>
+        <button class="tab" data-status="pending">Pending</button>
+        <button class="tab" data-status="rejected">Rejected</button>
+      </div>
+
+      <div class="appointments-container"></div>
+      <div id="pagination" class="pagination"></div>
     </section>
-    
-    
-      
-<div class="modal" id="linkModal">
-  <div class="modal-content">
-    <span class="close-button" onclick="closeLinkModal()">&times;</span>
-    <h3>Meeting link:</h3>
-    <input type="text" id="meetingLinkInput" placeholder="Paste your meeting link here..." />
-    <button onclick="sendMeetingLink()">Send</button>
-  </div>
-</div>
 
-
-
-<div id="rejectModal" class="modal">
-  <div class="modal-content">
-    <span class="close-button" onclick="closeRejectModal()">&times;</span>
-    <p>Are you sure you want to reject this appointment?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmRejection()">Yes, Reject</button>
-      <button onclick="closeRejectModal()">Cancel</button>
+    <div class="modal" id="linkModal">
+      <div class="modal-content">
+        <span class="close-button" onclick="closeLinkModal()">&times;</span>
+        <h3>Meeting link:</h3>
+        <input
+          type="text"
+          id="meetingLinkInput"
+          placeholder="Paste your meeting link here..."
+        />
+        <button onclick="sendMeetingLink()">Send</button>
+      </div>
     </div>
-  </div>
-</div>
-        
-<div id="cancelModal" class="modal">
-  <div class="modal-content">
-    <span class="close-button" onclick="closeCancelModal()">&times;</span>
-    <p>Please enter a reason for cancellation:</p>
-    <textarea id="cancelReasonInput" rows="3" style="width:100%;"></textarea>
-    <div class="modal-buttons">
-      <button onclick="confirmCancellation()">Confirm Cancel</button>
-      <button onclick="closeCancelModal()">Cancel</button>
+
+    <div id="rejectModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="closeRejectModal()">&times;</span>
+        <p>Are you sure you want to reject this appointment?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmRejection()">Yes, Reject</button>
+          <button onclick="closeRejectModal()">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-      
+
+    <div id="cancelModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="closeCancelModal()">&times;</span>
+        <p>Please enter a reason for cancellation:</p>
+        <textarea
+          id="cancelReasonInput"
+          rows="3"
+          style="width: 100%"
+        ></textarea>
+        <div class="modal-buttons">
+          <button onclick="confirmCancellation()">Confirm Cancel</button>
+          <button onclick="closeCancelModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-let appointments = [];
-let tempAcceptedData = null;
+      let appointments = [];
+      let tempAcceptedData = null;
 
-let currentPage = 1;
-const itemsPerPage = 4;
+      let currentPage = 1;
+      const itemsPerPage = 4;
 
-async function loadAppointments() {
-  const token = localStorage.getItem("accessToken");
-  const res = await fetch(`${AppConfig.APPOINTMENTS}/consultant/appointments`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  if (!res.ok) {
-    document.querySelector('.appointments-container').innerHTML = '<p>Failed to load appointments.</p>';
-    return;
-  }
-  appointments = await res.json();
-  renderAppointments(getCurrentTab());
-}
+      async function loadAppointments() {
+        const token = localStorage.getItem("accessToken");
+        const res = await fetch(
+          `${AppConfig.APPOINTMENTS}/consultant/appointments`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (!res.ok) {
+          document.querySelector(".appointments-container").innerHTML =
+            "<p>Failed to load appointments.</p>";
+          return;
+        }
+        appointments = await res.json();
+        renderAppointments(getCurrentTab());
+      }
 
-function paginate(data) {
-  const start = (currentPage - 1) * itemsPerPage;
-  return data.slice(start, start + itemsPerPage);
-}
+      function paginate(data) {
+        const start = (currentPage - 1) * itemsPerPage;
+        return data.slice(start, start + itemsPerPage);
+      }
 
-function renderPagination(totalItems, status) {
-  const pagination = document.getElementById("pagination");
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  pagination.innerHTML = "";
+      function renderPagination(totalItems, status) {
+        const pagination = document.getElementById("pagination");
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        pagination.innerHTML = "";
 
-  if (totalPages <= 1) {
-    pagination.style.display = "none";
-    return;
-  }
+        if (totalPages <= 1) {
+          pagination.style.display = "none";
+          return;
+        }
 
-  pagination.style.display = "flex";
+        pagination.style.display = "flex";
 
-  if (currentPage > 1) {
-    const prev = document.createElement("button");
-    prev.textContent = "Previous";
-    prev.onclick = () => {
-      currentPage--;
-      renderAppointments(status);
-    };
-    pagination.appendChild(prev);
-  }
+        if (currentPage > 1) {
+          const prev = document.createElement("button");
+          prev.textContent = "Previous";
+          prev.onclick = () => {
+            currentPage--;
+            renderAppointments(status);
+          };
+          pagination.appendChild(prev);
+        }
 
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = i;
-    if (i === currentPage) {
-      btn.disabled = true;
-    }
-    btn.onclick = () => {
-      currentPage = i;
-      renderAppointments(status);
-    };
-    pagination.appendChild(btn);
-  }
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.textContent = i;
+          if (i === currentPage) {
+            btn.disabled = true;
+          }
+          btn.onclick = () => {
+            currentPage = i;
+            renderAppointments(status);
+          };
+          pagination.appendChild(btn);
+        }
 
-  if (currentPage < totalPages) {
-    const next = document.createElement("button");
-    next.textContent = "Next";
-    next.onclick = () => {
-      currentPage++;
-      renderAppointments(status);
-    };
-    pagination.appendChild(next);
-  }
-}
+        if (currentPage < totalPages) {
+          const next = document.createElement("button");
+          next.textContent = "Next";
+          next.onclick = () => {
+            currentPage++;
+            renderAppointments(status);
+          };
+          pagination.appendChild(next);
+        }
+      }
 
-function renderAppointments(status) {
-  const container = document.querySelector('.appointments-container');
-  container.innerHTML = '';
+      function renderAppointments(status) {
+        const container = document.querySelector(".appointments-container");
+        container.innerHTML = "";
 
-  const filteredAppointments = appointments
-    .filter(app => app.status === status)
-    .sort((a, b) => {
-      const dateA = new Date(`${a.date}T${a.start_time || '00:00'}`);
-      const dateB = new Date(`${b.date}T${b.start_time || '00:00'}`);
-      return dateA - dateB;
-    });
+        const filteredAppointments = appointments
+          .filter((app) => app.status === status)
+          .sort((a, b) => {
+            const dateA = new Date(`${a.date}T${a.start_time || "00:00"}`);
+            const dateB = new Date(`${b.date}T${b.start_time || "00:00"}`);
+            return dateA - dateB;
+          });
 
-  const paginated = paginate(filteredAppointments);
+        const paginated = paginate(filteredAppointments);
 
-  if (!paginated.length) {
-    container.innerHTML = '<p>No appointments found in this category.</p>';
-    renderPagination(filteredAppointments.length, status);
-    return;
-  }
+        if (!paginated.length) {
+          container.innerHTML =
+            "<p>No appointments found in this category.</p>";
+          renderPagination(filteredAppointments.length, status);
+          return;
+        }
 
-  paginated.forEach(app => {
-    const card = document.createElement('div');
-    card.className = 'appointment-card';
+        paginated.forEach((app) => {
+          const card = document.createElement("div");
+          card.className = "appointment-card";
 
-    let meetingLinkBlock = '';
-    if (status === 'upcoming' && app.meeting_link) {
-      meetingLinkBlock = `
+          let meetingLinkBlock = "";
+          if (status === "upcoming" && app.meeting_link) {
+            meetingLinkBlock = `
         <label>Meeting Link:</label>
         <input type="text" value="${app.meeting_link}" readonly onclick="window.open('${app.meeting_link}')">
       `;
-    }
+          }
 
-    let reasonBlock = '';
-    if (app.cancellation_reason) {
-      reasonBlock = `
+          let reasonBlock = "";
+          if (app.cancellation_reason) {
+            reasonBlock = `
         <label class="add_label" style="margin-top:10px;">Cancellation Reason:</label>
         <textarea disabled>${app.cancellation_reason}</textarea>
       `;
-    } else if (app.rejection_reason) {
-      reasonBlock = `
+          } else if (app.rejection_reason) {
+            reasonBlock = `
         <label class="add_label" style="margin-top:10px;">Reason of rejection:</label>
         <textarea disabled>${app.rejection_reason}</textarea>
       `;
-    }
+          }
 
-    card.innerHTML = `
+          card.innerHTML = `
       <div class="appointment-info">
-        <p class="appointment-date">${formatDate(app.date)}, ${app.start_time} - ${getOneHourLater(app.start_time)}</p>
+        <p class="appointment-date">${formatDate(app.date)}, ${
+            app.start_time
+          } - ${getOneHourLater(app.start_time)}</p>
         <p class="consultant-name"><b>${app.student_name || "Student"}</b></p>
         <p class="appointment-type" style="margin-bottom:8px; color:#d62d81; font-weight:bold;">
-          ${app.type === "study" ? "Consultation for Study" : app.type === "internship" ? "Consultation for Internship" : ""}
+          ${
+            app.type === "study"
+              ? "Consultation for Study"
+              : app.type === "internship"
+              ? "Consultation for Internship"
+              : ""
+          }
         </p>
         <label class="meeting_label">Meeting Topic:</label>
         <select disabled><option selected>${app.reason || ""}</option></select>
         <label class="add_label">Additional Info:</label>
         <textarea disabled>${app.info || ""}</textarea>
-        ${(app.platform && (app.status === "pending" || app.status === "upcoming")) ? `
+        ${
+          app.platform &&
+          (app.status === "pending" || app.status === "upcoming")
+            ? `
           <label class="add_label">Meeting Platform:</label>
-          <input type="text" value="${app.platform}" disabled />
-        ` : ""}
+          <input type="text" value="${app.platform}" disabled >
+        `
+            : ""
+        }
         ${reasonBlock}
       </div>
       <div class="appointment-actions">
-        ${status === 'pending' ? `
+        ${
+          status === "pending"
+            ? `
           <div class="pending-actions">
             <button class="accept-btn" onclick="openLinkModal('${app.public_id}', 'accept')">Approve & Send Link</button>
             <button class="reject-btn" onclick="openLinkModal('${app.public_id}', 'reject')">Reject</button>
           </div>
-        ` : `
-          ${status === 'upcoming' ? meetingLinkBlock : ''}
-          ${['upcoming', 'rejected', 'previous'].includes(status) ? `
+        `
+            : `
+          ${status === "upcoming" ? meetingLinkBlock : ""}
+          ${
+            ["upcoming", "rejected", "previous"].includes(status)
+              ? `
             <button class="message-btn" onclick="startMessage(event, ${app.student_id})">Send message</button>
-          ` : ''}
-          ${status === 'upcoming' && canCancel(app) ? `
+          `
+              : ""
+          }
+          ${
+            status === "upcoming" && canCancel(app)
+              ? `
             <a class="message-btn" style="margin-left:10px;" onclick="openLinkModal('${app.public_id}', 'cancel')">Cancel</a>
-          ` : ''}
-        `}
+          `
+              : ""
+          }
+        `
+        }
       </div>
     `;
-    container.appendChild(card);
-  });
+          container.appendChild(card);
+        });
 
-  renderPagination(filteredAppointments.length, status);
-}
+        renderPagination(filteredAppointments.length, status);
+      }
 
-const tabs = document.querySelectorAll('.tab');
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    currentPage = 1;
-    renderAppointments(tab.getAttribute('data-status'));
-  });
-});
+      const tabs = document.querySelectorAll(".tab");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          currentPage = 1;
+          renderAppointments(tab.getAttribute("data-status"));
+        });
+      });
 
-function getCurrentTab() {
-  const active = document.querySelector('.tab.active');
-  return active ? active.getAttribute('data-status') : 'upcoming';
-}
+      function getCurrentTab() {
+        const active = document.querySelector(".tab.active");
+        return active ? active.getAttribute("data-status") : "upcoming";
+      }
 
-function openLinkModal(appId, mode = "accept") {
-  tempAcceptedData = appId;
-  document.getElementById('linkModal').style.display = 'flex';
-  const input = document.getElementById('meetingLinkInput');
-  const title = document.querySelector('#linkModal h3');
-  const button = document.querySelector('#linkModal button');
+      function openLinkModal(appId, mode = "accept") {
+        tempAcceptedData = appId;
+        document.getElementById("linkModal").style.display = "flex";
+        const input = document.getElementById("meetingLinkInput");
+        const title = document.querySelector("#linkModal h3");
+        const button = document.querySelector("#linkModal button");
 
-  if (mode === "accept") {
-    title.textContent = "Meeting link:";
-    input.placeholder = "Paste your meeting link here...";
-    button.textContent = "Send";
-  } else if (mode === "reject") {
-    title.textContent = "Reason for rejection:";
-    input.placeholder = "Enter reason for rejection...";
-    button.textContent = "Reject";
-  } else if (mode === "cancel") {
-    title.textContent = "Reason for cancellation:";
-    input.placeholder = "Enter reason for cancellation...";
-    button.textContent = "Cancel Appointment";
-  }
+        if (mode === "accept") {
+          title.textContent = "Meeting link:";
+          input.placeholder = "Paste your meeting link here...";
+          button.textContent = "Send";
+        } else if (mode === "reject") {
+          title.textContent = "Reason for rejection:";
+          input.placeholder = "Enter reason for rejection...";
+          button.textContent = "Reject";
+        } else if (mode === "cancel") {
+          title.textContent = "Reason for cancellation:";
+          input.placeholder = "Enter reason for cancellation...";
+          button.textContent = "Cancel Appointment";
+        }
 
-  input.type = "text";
-  input.value = "";
-  document.getElementById('linkModal').dataset.mode = mode;
-}
+        input.type = "text";
+        input.value = "";
+        document.getElementById("linkModal").dataset.mode = mode;
+      }
 
-function closeLinkModal() {
-  document.getElementById('linkModal').style.display = 'none';
-  tempAcceptedData = null;
-}
+      function closeLinkModal() {
+        document.getElementById("linkModal").style.display = "none";
+        tempAcceptedData = null;
+      }
 
-async function sendMeetingLink() {
-  const input = document.getElementById('meetingLinkInput').value.trim();
-  const mode = document.getElementById('linkModal').dataset.mode;
-  const token = localStorage.getItem("accessToken");
+      async function sendMeetingLink() {
+        const input = document.getElementById("meetingLinkInput").value.trim();
+        const mode = document.getElementById("linkModal").dataset.mode;
+        const token = localStorage.getItem("accessToken");
 
-  if (!input) {
-    showInAppAlert("Please fill in the field.");
-    return;
-  }
+        if (!input) {
+          showInAppAlert("Please fill in the field.");
+          return;
+        }
 
-  let url = "";
-  let body = {};
-  let successMsg = "";
+        let url = "";
+        let body = {};
+        let successMsg = "";
 
-  if (mode === "accept") {
-    url = `${AppConfig.APPOINTMENTS}/approve/${tempAcceptedData}`;
-    body = { meeting_link: input };
-    successMsg = "Appointment approved and link sent!";
-  } else if (mode === "reject") {
-    url = `${AppConfig.APPOINTMENTS}/reject/${tempAcceptedData}`;
-    body = { reason: input };
-    successMsg = "Appointment rejected.";
-  } else if (mode === "cancel") {
-    url = `${AppConfig.APPOINTMENTS}/${tempAcceptedData}/cancel`;
-    body = { reason: input };
-    successMsg = "Appointment cancelled.";
-  }
+        if (mode === "accept") {
+          url = `${AppConfig.APPOINTMENTS}/approve/${tempAcceptedData}`;
+          body = { meeting_link: input };
+          successMsg = "Appointment approved and link sent!";
+        } else if (mode === "reject") {
+          url = `${AppConfig.APPOINTMENTS}/reject/${tempAcceptedData}`;
+          body = { reason: input };
+          successMsg = "Appointment rejected.";
+        } else if (mode === "cancel") {
+          url = `${AppConfig.APPOINTMENTS}/${tempAcceptedData}/cancel`;
+          body = { reason: input };
+          successMsg = "Appointment cancelled.";
+        }
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        });
 
-  closeLinkModal();
+        closeLinkModal();
 
-  if (res.ok) {
-    showInAppAlert(successMsg);
-    loadAppointments();
-  } else {
-    const data = await res.json().catch(() => ({}));
-    showInAppAlert(data.detail || "Failed to process request.");
-  }
-}
+        if (res.ok) {
+          showInAppAlert(successMsg);
+          loadAppointments();
+        } else {
+          const data = await res.json().catch(() => ({}));
+          showInAppAlert(data.detail || "Failed to process request.");
+        }
+      }
 
-function getOneHourLater(startTime) {
-  const [hour, minute] = startTime.split(':').map(Number);
-  const end = new Date();
-  end.setHours(hour + 1, minute);
-  return end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-}
+      function getOneHourLater(startTime) {
+        const [hour, minute] = startTime.split(":").map(Number);
+        const end = new Date();
+        end.setHours(hour + 1, minute);
+        return end.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+      }
 
-window.onload = () => {
-  const defaultTab = window.location.hash.replace("#", "") || "upcoming";
-  tabs.forEach(t => {
-    if (t.dataset.status === defaultTab) t.classList.add('active');
-    else t.classList.remove('active');
-  });
-  loadAppointments();
-};
+      window.onload = () => {
+        const defaultTab = window.location.hash.replace("#", "") || "upcoming";
+        tabs.forEach((t) => {
+          if (t.dataset.status === defaultTab) t.classList.add("active");
+          else t.classList.remove("active");
+        });
+        loadAppointments();
+      };
 
-function formatDate(dateStr) {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (isNaN(d)) return dateStr;
-  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
-}
+      function formatDate(dateStr) {
+        if (!dateStr) return "";
+        const d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        return `${String(d.getDate()).padStart(2, "0")}.${String(
+          d.getMonth() + 1
+        ).padStart(2, "0")}.${d.getFullYear()}`;
+      }
 
-function canCancel(app) {
-  const meetingDateTime = new Date(`${app.date}T${app.start_time || app.time}:00`);
-  const now = new Date();
-  return app.status === "upcoming" && (meetingDateTime - now > 24 * 60 * 60 * 1000);
-}
+      function canCancel(app) {
+        const meetingDateTime = new Date(
+          `${app.date}T${app.start_time || app.time}:00`
+        );
+        const now = new Date();
+        return (
+          app.status === "upcoming" &&
+          meetingDateTime - now > 24 * 60 * 60 * 1000
+        );
+      }
 
-async function startMessage(e, studentId) {
-  e.preventDefault();
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    showInAppAlert("⚠️ Not authenticated");
-    return;
-  }
+      async function startMessage(e, studentId) {
+        e.preventDefault();
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          showInAppAlert("⚠️ Not authenticated");
+          return;
+        }
 
-  try {
-    const res = await fetch(`${AppConfig.MESSAGES}/start-conversation`, {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ receiver_id: studentId })
-    });
+        try {
+          const res = await fetch(`${AppConfig.MESSAGES}/start-conversation`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ receiver_id: studentId }),
+          });
 
-    if (res.ok) {
-      const data = await res.json();
-      window.location.href = `chat.html?conversationId=${data.conversation_public_id}`;
-    } else {
-      const errorData = await res.json().catch(() => ({}));
-      showInAppAlert("❌ Failed to start chat: " + (errorData.detail || res.status));
-    }
-  } catch (err) {
-    console.error("Error starting conversation:", err);
-    showInAppAlert("❌ Error starting conversation");
-  }
-}
+          if (res.ok) {
+            const data = await res.json();
+            window.location.href = `chat.html?conversationId=${data.conversation_public_id}`;
+          } else {
+            const errorData = await res.json().catch(() => ({}));
+            showInAppAlert(
+              "❌ Failed to start chat: " + (errorData.detail || res.status)
+            );
+          }
+        } catch (err) {
+          console.error("Error starting conversation:", err);
+          showInAppAlert("❌ Error starting conversation");
+        }
+      }
 
-window.addEventListener("click", function(e) {
-  const modal = document.getElementById('linkModal');
-  if (e.target === modal) closeLinkModal();
-});
-</script>
+      window.addEventListener("click", function (e) {
+        const modal = document.getElementById("linkModal");
+        if (e.target === modal) closeLinkModal();
+      });
+    </script>
 
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

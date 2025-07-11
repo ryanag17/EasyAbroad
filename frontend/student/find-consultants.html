@@ -1,550 +1,623 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consultants Map</title>
-  <link rel="icon" type="image/png" href="../images/favicon.png">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/all.min.css">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Consultants Map</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
 
-  <link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha512-pw5I+P6Sx3rIEQ3nFmy5j5...=="
-  crossorigin=""/>
-
-</head>
-<style>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha512-pw5I+P6Sx3rIEQ3nFmy5j5...=="
+      crossorigin=""
+    />
+  </head>
+  <style>
     html {
-  height: 100%;
-  overflow-x: hidden;
-}
+      height: 100%;
+      overflow-x: hidden;
+    }
 
-.body_map {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+    .body_map {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
-.page-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
+    .page-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
-.map_city{
-    height: 25px;
-    margin: 0 auto;
-    padding: 0;
-    max-width: 150px;
-    width: 100%;
-}
+    .map_city {
+      height: 25px;
+      margin: 0 auto;
+      padding: 0;
+      max-width: 150px;
+      width: 100%;
+    }
 
-.filter-container {
-    display: flex;
-    gap: 15px;
-    margin: 20px auto;
-    padding: 10px 20px;
-    justify-content: center;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    flex-wrap: wrap;
-  }
+    .filter-container {
+      display: flex;
+      gap: 15px;
+      margin: 20px auto;
+      padding: 10px 20px;
+      justify-content: center;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      flex-wrap: wrap;
+    }
 
-  .filter-container select,
-  .filter-container input {
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f4f4f4;
-    color: #333;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    min-width: 160px;
-  }
+    .filter-container select,
+    .filter-container input {
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f4f4f4;
+      color: #333;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      min-width: 160px;
+    }
 
-  .filter-container select:focus,
-  .filter-container input:focus {
-    border-color: #cc2f8b;
-    box-shadow: 0 0 5px rgba(204, 47, 139, 0.3);
-    outline: none;
-  }
+    .filter-container select:focus,
+    .filter-container input:focus {
+      border-color: #cc2f8b;
+      box-shadow: 0 0 5px rgba(204, 47, 139, 0.3);
+      outline: none;
+    }
 
+    /* Customize Leaflet zoom buttons */
+    .leaflet-control-zoom {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
 
-  /* Customize Leaflet zoom buttons */
-  .leaflet-control-zoom {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
+    .leaflet-control-zoom-in,
+    .leaflet-control-zoom-out {
+      background-color: #ffffff;
+      color: #333;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      padding-right: 45px;
+    }
 
-  .leaflet-control-zoom-in,
-  .leaflet-control-zoom-out {
-    background-color: #ffffff;
-    color: #333;
-    font-size: 20px;
-    font-weight: bold;
-    border: none;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    padding-right: 45px;
-  }
+    .leaflet-control-zoom-in:hover,
+    .leaflet-control-zoom-out:hover {
+      background-color: #f0f0f0;
+    }
 
-  .leaflet-control-zoom-in:hover,
-  .leaflet-control-zoom-out:hover {
-    background-color: #f0f0f0;
-  }
+    .leaflet-control-zoom-in:focus,
+    .leaflet-control-zoom-out:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #cc2f8b;
+    }
 
-  .leaflet-control-zoom-in:focus,
-  .leaflet-control-zoom-out:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #cc2f8b;
-  }
+    #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-  #loadingOverlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(255, 255, 255, 0.8);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #cc2f8b;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
 
-  .spinner {
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #cc2f8b;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-  }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+    .consultant-list-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 20px;
+    }
 
+    .consultant-card {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 15px;
+      width: 260px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
 
-.consultant-list-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  margin: 30px 20px;
-}
+    .consultant-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
 
-.consultant-card {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 15px;
-  width: 260px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  text-align: center;
-}
+    #consultant-list-wrapper {
+      max-height: 320px; /* or any height you prefer */
+      overflow-y: auto;
+      padding: 0 10px;
+      margin-bottom: 30px;
+    }
 
-.consultant-card img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
-}
+    #consultant-list-wrapper::-webkit-scrollbar {
+      width: 6px;
+    }
 
-#consultant-list-wrapper {
-  max-height: 320px; /* or any height you prefer */
-  overflow-y: auto;
-  padding: 0 10px;
-  margin-bottom: 30px;
-}
+    #consultant-list-wrapper::-webkit-scrollbar-thumb {
+      background: #cc2f8b;
+      border-radius: 4px;
+    }
 
-#consultant-list-wrapper::-webkit-scrollbar {
-  width: 6px;
-}
+    #consultant-list-wrapper::-webkit-scrollbar-track {
+      background: #f0f0f0;
+    }
 
-#consultant-list-wrapper::-webkit-scrollbar-thumb {
-  background: #cc2f8b;
-  border-radius: 4px;
-}
+    .map-wrapper {
+      position: relative;
+      height: 500px; /* adjust as needed */
+    }
 
-#consultant-list-wrapper::-webkit-scrollbar-track {
-  background: #f0f0f0;
-}
+    #map {
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+    }
 
-.map-wrapper {
-  position: relative;
-  height: 500px; /* adjust as needed */
-}
+    .profile-btn {
+      margin-top: 10px;
+      padding: 6px 12px;
+      background-color: #cc2f8b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
-#map {
-  height: 100%;
-  width: 100%;
-  z-index: 1;
-}
+    /* Properly style and position the Leaflet close button */
+    .leaflet-popup-content-wrapper {
+      padding-right: 1.8em !important; /* give room for the × */
+    }
 
-
-.profile-btn {
-  margin-top: 10px;
-  padding: 6px 12px;
-  background-color: #cc2f8b;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* Properly style and position the Leaflet close button */
-.leaflet-popup-content-wrapper {
-  padding-right: 1.8em !important;  /* give room for the × */
-}
-
-.leaflet-popup-close-button {
-  top: 10px !important;
-  right: 10px !important;
-  font-size: 20px !important;
-  font-weight: bold;
-  color: #333;
-}
-
-</style>
-<body class="body_map">
+    .leaflet-popup-close-button {
+      top: 10px !important;
+      right: 10px !important;
+      font-size: 20px !important;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+  <body class="body_map">
     <header class="user-header">
-        <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-        
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-        
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
+
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
         <div id="menuHamToggle">
-            
-            <input type="checkbox">
+          <input type="checkbox" >
 
-            <span></span>
-            <span></span>
-            <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
 
-            
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="support-tickets.html"><li>Support Tickets</li></a>
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="appointments.html"> <li>Appointments</li></a>
+            <a href="messages.html"> <li>Messages</li></a>
+            <a href="support-tickets.html"><li>Support Tickets</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
         </div>
-        
-        </div>
-
+      </div>
     </header>
-    
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
-    </div>
-  </div>
-</div>
-
-<div id="loadingOverlay">
-  <div class="spinner"></div>
-</div>
-
-<div class="page-wrapper">
-    <div class="filter-container">
-      <div class="select_country">
-        <label for="country">Country:</label>
-        <select id="country">
-          <option value="">Select</option>
-        </select>
-      </div>
-
-      <div class="select_country">
-        <label for="city">City:</label>
-        <input type="text" class="map_city" id="city" placeholder="Enter city">
-      </div>
-      <div class="select_country">
-        <label for="focus">Focus:</label>
-        <select id="focus">
-          <option value="">Select</option>
-          <option value="study">Study Abroad</option>
-          <option value="internship">Internship Abroad</option>
-        </select>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
         </div>
       </div>
-    
-<div class="map-wrapper">
-  <div id="map"></div>
-</div>
+    </div>
+
+    <div id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="page-wrapper">
+      <div class="filter-container">
+        <div class="select_country">
+          <label for="country">Country:</label>
+          <select id="country">
+            <option value="">Select</option>
+          </select>
+        </div>
+
+        <div class="select_country">
+          <label for="city">City:</label>
+          <input
+            type="text"
+            class="map_city"
+            id="city"
+            placeholder="Enter city"
+          />
+        </div>
+        <div class="select_country">
+          <label for="focus">Focus:</label>
+          <select id="focus">
+            <option value="">Select</option>
+            <option value="study">Study Abroad</option>
+            <option value="internship">Internship Abroad</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="map-wrapper">
+        <div id="map"></div>
+      </div>
 
       <div id="consultant-list-wrapper">
         <div id="consultant-list" class="consultant-list-section"></div>
       </div>
+    </div>
 
-</div>
-  
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-  (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-  function goToConsultantProfile(publicId, focus) {
-    const page = focus === 'internship'
-      ? 'consultant-profile-internship.html'
-      : 'consultant-profile-study.html';
-    window.location.href = `${page}?id=${publicId}`;
-  }
-
-  window.onload = async function () {
-    document.getElementById("loadingOverlay").style.display = "flex";
-    
-    const map = L.map('map').setView([50, 10], 4);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    delete L.Icon.Default.prototype._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-    });
-
-    const countryFilter = document.getElementById('country');
-    const cityFilter = document.getElementById('city');
-    const focusFilter = document.getElementById('focus');
-    const token = localStorage.getItem("accessToken");
-
-    let allConsultants = [];
-
-    async function fetchAverageRating(consultantPublicId) {
-      try {
-        const res = await fetch(`${AppConfig.APPOINTMENTS}/consultant/public/${consultantPublicId}/average-rating`);
-        const data = await res.json();
-        return data.average_rating ?? null;
-      } catch (e) {
-        console.warn("Rating fetch failed:", e);
-        return null;
+      function goToConsultantProfile(publicId, focus) {
+        const page =
+          focus === "internship"
+            ? "consultant-profile-internship.html"
+            : "consultant-profile-study.html";
+        window.location.href = `${page}?id=${publicId}`;
       }
-    }
 
+      window.onload = async function () {
+        document.getElementById("loadingOverlay").style.display = "flex";
 
+        const map = L.map("map").setView([50, 10], 4);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
 
-    async function fetchConsultants() {
-      try {
-        const [studyRes, internshipRes] = await Promise.all([
-          fetch(`${AppConfig.CONSULTANCY}/study/approved`, { headers: { Authorization: `Bearer ${token}` }}),
-          fetch(`${AppConfig.CONSULTANCY}/internship/approved`, { headers: { Authorization: `Bearer ${token}` }})
-        ]);
-
-        const studyData = await studyRes.json();
-        const internshipData = await internshipRes.json();
-
-        const studyMapped = await Promise.all(studyData.map(async s => ({
-          public_id: s.public_id,
-          name: s.first_name + " " + s.last_name,
-          profilePic: s.profile_picture ? `${AppConfig.API_BASE}${s.profile_picture}` : "../images/avatar.png",
-          city: s.city_of_study,
-          country: s.country_of_study,
-          focus: "study",
-          institution: s.university_name,
-          period: { from: formatDate(s.education_start), to: formatDate(s.education_finish) },
-          rating: await fetchAverageRating(s.public_id),
-          location: await geocode(s.city_of_study, s.country_of_study)
-        })));
-
-        const internshipMapped = await Promise.all(internshipData.map(async i => ({
-          public_id: i.public_id,
-          name: i.first_name + " " + i.last_name,
-          profilePic: i.profile_picture ? `${AppConfig.API_BASE}${i.profile_picture}` : "../images/avatar.png",
-          city: i.city_of_internship,
-          country: i.country_of_internship,
-          focus: "internship",
-          institution: i.company_name,
-          period: { from: formatDate(i.internship_start), to: formatDate(i.internship_finish) },
-          rating: await fetchAverageRating(i.public_id),
-          location: await geocode(i.city_of_internship, i.country_of_internship)
-        })));
-
-        allConsultants = [...studyMapped, ...internshipMapped].filter(c => c.location);
-
-        const countrySet = new Set(allConsultants.map(c => c.country).filter(Boolean));
-        countryFilter.innerHTML = `<option value="">Select</option>`;
-        countrySet.forEach(country => {
-          const opt = document.createElement("option");
-          opt.value = country;
-          opt.textContent = country;
-          countryFilter.appendChild(opt);
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl:
+            "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+          iconUrl:
+            "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+          shadowUrl:
+            "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
         });
 
-        applyFilters();
-      } catch (err) {
-        console.error("Failed to Fetch Consultants:", err);
-        showInAppAlert("❌ Failed to fetch consultants. Please try again later.");
-      }
-    }
+        const countryFilter = document.getElementById("country");
+        const cityFilter = document.getElementById("city");
+        const focusFilter = document.getElementById("focus");
+        const token = localStorage.getItem("accessToken");
 
-    async function geocode(city, country) {
-      try {
-        const query = `${city}, ${country}`;
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-        const data = await res.json();
-        if (data.length > 0) {
-          return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        let allConsultants = [];
+
+        async function fetchAverageRating(consultantPublicId) {
+          try {
+            const res = await fetch(
+              `${AppConfig.APPOINTMENTS}/consultant/public/${consultantPublicId}/average-rating`
+            );
+            const data = await res.json();
+            return data.average_rating ?? null;
+          } catch (e) {
+            console.warn("Rating fetch failed:", e);
+            return null;
+          }
         }
-      } catch (e) {
-        console.warn("Geocoding Failed:", e);
-      }
-      return null;
-    }
 
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      if (isNaN(date)) return "-";
-      return `${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
-    }
+        async function fetchConsultants() {
+          try {
+            const [studyRes, internshipRes] = await Promise.all([
+              fetch(`${AppConfig.CONSULTANCY}/study/approved`, {
+                headers: { Authorization: `Bearer ${token}` },
+              }),
+              fetch(`${AppConfig.CONSULTANCY}/internship/approved`, {
+                headers: { Authorization: `Bearer ${token}` },
+              }),
+            ]);
 
-    let markers = [];
+            const studyData = await studyRes.json();
+            const internshipData = await internshipRes.json();
 
-    function addMarkers(filteredConsultants) {
-      markers.forEach(marker => map.removeLayer(marker));
-      markers = [];
+            const studyMapped = await Promise.all(
+              studyData.map(async (s) => ({
+                public_id: s.public_id,
+                name: s.first_name + " " + s.last_name,
+                profilePic: s.profile_picture
+                  ? `${AppConfig.API_BASE}${s.profile_picture}`
+                  : "../images/avatar.png",
+                city: s.city_of_study,
+                country: s.country_of_study,
+                focus: "study",
+                institution: s.university_name,
+                period: {
+                  from: formatDate(s.education_start),
+                  to: formatDate(s.education_finish),
+                },
+                rating: await fetchAverageRating(s.public_id),
+                location: await geocode(s.city_of_study, s.country_of_study),
+              }))
+            );
 
-      filteredConsultants.forEach((consultant) => {
-        const marker = L.marker(consultant.location).addTo(map);
-        marker.bindPopup(`<strong>${consultant.name}</strong><br>${consultant.city}, ${consultant.country}`);
-        marker.on('click', () => showConsultantDetails(consultant));
-        markers.push(marker);
-      });
-    }
+            const internshipMapped = await Promise.all(
+              internshipData.map(async (i) => ({
+                public_id: i.public_id,
+                name: i.first_name + " " + i.last_name,
+                profilePic: i.profile_picture
+                  ? `${AppConfig.API_BASE}${i.profile_picture}`
+                  : "../images/avatar.png",
+                city: i.city_of_internship,
+                country: i.country_of_internship,
+                focus: "internship",
+                institution: i.company_name,
+                period: {
+                  from: formatDate(i.internship_start),
+                  to: formatDate(i.internship_finish),
+                },
+                rating: await fetchAverageRating(i.public_id),
+                location: await geocode(
+                  i.city_of_internship,
+                  i.country_of_internship
+                ),
+              }))
+            );
 
-    function showConsultantDetails(consultant) {
-      const popupContent = `
+            allConsultants = [...studyMapped, ...internshipMapped].filter(
+              (c) => c.location
+            );
+
+            const countrySet = new Set(
+              allConsultants.map((c) => c.country).filter(Boolean)
+            );
+            countryFilter.innerHTML = `<option value="">Select</option>`;
+            countrySet.forEach((country) => {
+              const opt = document.createElement("option");
+              opt.value = country;
+              opt.textContent = country;
+              countryFilter.appendChild(opt);
+            });
+
+            applyFilters();
+          } catch (err) {
+            console.error("Failed to Fetch Consultants:", err);
+            showInAppAlert(
+              "❌ Failed to fetch consultants. Please try again later."
+            );
+          }
+        }
+
+        async function geocode(city, country) {
+          try {
+            const query = `${city}, ${country}`;
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+                query
+              )}`
+            );
+            const data = await res.json();
+            if (data.length > 0) {
+              return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+            }
+          } catch (e) {
+            console.warn("Geocoding Failed:", e);
+          }
+          return null;
+        }
+
+        function formatDate(dateStr) {
+          const date = new Date(dateStr);
+          if (isNaN(date)) return "-";
+          return `${String(date.getMonth() + 1).padStart(
+            2,
+            "0"
+          )}.${date.getFullYear()}`;
+        }
+
+        let markers = [];
+
+        function addMarkers(filteredConsultants) {
+          markers.forEach((marker) => map.removeLayer(marker));
+          markers = [];
+
+          filteredConsultants.forEach((consultant) => {
+            const marker = L.marker(consultant.location).addTo(map);
+            marker.bindPopup(
+              `<strong>${consultant.name}</strong><br>${consultant.city}, ${consultant.country}`
+            );
+            marker.on("click", () => showConsultantDetails(consultant));
+            markers.push(marker);
+          });
+        }
+
+        function showConsultantDetails(consultant) {
+          const popupContent = `
         <div style="min-width: 260px; max-width: 300px; font-family: sans-serif; font-size: 14px;">
           <div style="display: flex; align-items: center; margin-bottom: 10px;">
-            <img src="${consultant.profilePic}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;" />
+            <img src="${
+              consultant.profilePic
+            }" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;" />
             <div>
               <strong>${consultant.name}</strong><br>
               ${consultant.country}, ${consultant.city}
             </div>
           </div>
           <div style="margin-bottom: 8px;">
-            <div><strong>Focus:</strong> ${consultant.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</div>
+            <div><strong>Focus:</strong> ${
+              consultant.focus === "study"
+                ? "Study Abroad"
+                : "Internship Abroad"
+            }</div>
             <div><strong>Institution:</strong> ${consultant.institution}</div>
-            <div><strong>Date of Mobility:</strong> ${consultant.period.from} – ${consultant.period.to}</div>
-            <div style="margin-top: 4px;"><strong>${consultant.rating ? `Currently Rated ${consultant.rating}/5` : 'Currently Have No Reviews'}</strong></div>
+            <div><strong>Date of Mobility:</strong> ${
+              consultant.period.from
+            } – ${consultant.period.to}</div>
+            <div style="margin-top: 4px;"><strong>${
+              consultant.rating
+                ? `Currently Rated ${consultant.rating}/5`
+                : "Currently Have No Reviews"
+            }</strong></div>
           </div>
-          <button class="profile-btn" onclick="goToConsultantProfile('${consultant.public_id}', '${consultant.focus}')">View Profile</button>
+          <button class="profile-btn" onclick="goToConsultantProfile('${
+            consultant.public_id
+          }', '${consultant.focus}')">View Profile</button>
         </div>
       `;
 
-      const popup = L.popup({ maxWidth: 300, closeButton: true, offset: [0, -10] })
-        .setLatLng(consultant.location)
-        .setContent(popupContent)
-        .openOn(map);
-    }
+          const popup = L.popup({
+            maxWidth: 300,
+            closeButton: true,
+            offset: [0, -10],
+          })
+            .setLatLng(consultant.location)
+            .setContent(popupContent)
+            .openOn(map);
+        }
 
-    function applyFilters() {
-      const countryVal = countryFilter.value.toLowerCase();
-      const cityVal = cityFilter.value.toLowerCase();
-      const focusVal = focusFilter.value.toLowerCase();
+        function applyFilters() {
+          const countryVal = countryFilter.value.toLowerCase();
+          const cityVal = cityFilter.value.toLowerCase();
+          const focusVal = focusFilter.value.toLowerCase();
 
-      const filtered = allConsultants.filter(c => {
-        const countryMatch = !countryVal || c.country.toLowerCase() === countryVal;
-        const cityMatch = !cityVal || c.city.toLowerCase().includes(cityVal);
-        const focusMatch = !focusVal || c.focus === focusVal;
-        return countryMatch && cityMatch && focusMatch;
-      });
+          const filtered = allConsultants.filter((c) => {
+            const countryMatch =
+              !countryVal || c.country.toLowerCase() === countryVal;
+            const cityMatch =
+              !cityVal || c.city.toLowerCase().includes(cityVal);
+            const focusMatch = !focusVal || c.focus === focusVal;
+            return countryMatch && cityMatch && focusMatch;
+          });
 
-      addMarkers(filtered);
+          addMarkers(filtered);
 
-      const listContainer = document.getElementById("consultant-list");
-      listContainer.innerHTML = "";  
+          const listContainer = document.getElementById("consultant-list");
+          listContainer.innerHTML = "";
 
-      if (filtered.length === 0) {
-        listContainer.innerHTML = "<p>No consultants found for the selected filters.</p>";
-      } else {
-        filtered.forEach(c => {
-          const div = document.createElement("div");
-          div.className = "consultant-card";
-          div.innerHTML = `
+          if (filtered.length === 0) {
+            listContainer.innerHTML =
+              "<p>No consultants found for the selected filters.</p>";
+          } else {
+            filtered.forEach((c) => {
+              const div = document.createElement("div");
+              div.className = "consultant-card";
+              div.innerHTML = `
             <img src="${c.profilePic}" alt="Avatar">
             <h4>${c.name}</h4>
             <p><strong>${c.city}, ${c.country}</strong></p>
-            <p>${c.focus === 'study' ? 'Study Abroad' : 'Internship Abroad'}</p>
+            <p>${c.focus === "study" ? "Study Abroad" : "Internship Abroad"}</p>
             <p>${c.institution}</p>
             <p><small>${c.period.from} – ${c.period.to}</small></p>
-            <p style="margin: 6px 0;"><strong>${c.rating ? `${c.rating.toFixed(1)}/5 ★` : 'No Reviews Yet'}</strong></p>
-            <button class="profile-btn" onclick="goToConsultantProfile('${c.public_id}', '${c.focus}')">View Profile</button>
+            <p style="margin: 6px 0;"><strong>${
+              c.rating ? `${c.rating.toFixed(1)}/5 ★` : "No Reviews Yet"
+            }</strong></p>
+            <button class="profile-btn" onclick="goToConsultantProfile('${
+              c.public_id
+            }', '${c.focus}')">View Profile</button>
           `;
-          listContainer.appendChild(div);
-        });
-      }
-    }
+              listContainer.appendChild(div);
+            });
+          }
+        }
 
-    countryFilter.addEventListener('change', applyFilters);
-    cityFilter.addEventListener('input', applyFilters);
-    focusFilter.addEventListener('change', applyFilters);
+        countryFilter.addEventListener("change", applyFilters);
+        cityFilter.addEventListener("input", applyFilters);
+        focusFilter.addEventListener("change", applyFilters);
 
-    try {
-      await fetchConsultants();
-    } finally {
-      document.getElementById("loadingOverlay").style.display = "none";
-    }
+        try {
+          await fetchConsultants();
+        } finally {
+          document.getElementById("loadingOverlay").style.display = "none";
+        }
 
-    setTimeout(() => {
-      map.invalidateSize();
-    }, 300);
-  };
-</script>
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 300);
+      };
+    </script>
 
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-</body>
+  </body>
 </html>

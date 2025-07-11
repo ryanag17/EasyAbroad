@@ -259,3 +259,20 @@ window.injectHeader = injectHeader;
 window.showSignOutModal = showSignOutModal;
 window.closeModal = closeModal;
 window.confirmSignOut = confirmSignOut;
+
+// 5) Cross-tab session enforcement and focus check
+window.addEventListener("storage", (event) => {
+  if (event.key === "accessToken" || event.key === "userType") {
+    console.log("🔄 Detected login change in another tab, reloading...");
+    window.location.reload();
+  }
+});
+
+window.addEventListener("focus", () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    console.log("⚠️ No token on focus, redirecting to login...");
+    localStorage.clear();
+    window.location.href = "/log-in.html";
+  }
+});

@@ -1,488 +1,538 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Timetable</title>
-<link href="../images/favicon.png" rel="icon" type="image/png"/>
-<link href="../css/styles.css" rel="stylesheet"/>
-<link href="../css/all.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <head>
+    <meta charset="utf-8" >
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" >
+    <title>Timetable</title>
+    <link href="../images/favicon.png" rel="icon" type="image/png" >
+    <link href="../css/styles.css" rel="stylesheet" >
+    <link href="../css/all.min.css" rel="stylesheet" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
 
-<style>
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            }
-/* for modal window */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 10;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-  }
-  .modal-content {
-    background-color: #fff0f5;
-    padding: 30px;
-    border-radius: 12px;
-    width: 95%;
-    max-width: 500px;
-    text-align: left;
-    font-family: 'Segoe UI', sans-serif;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .modal h3 {
-    margin-bottom: 10px;
-    text-align: center;
-  }
-  .modal label {
-    display: block;
-    font-weight: bold;
-    margin-top: 15px;
-    margin-bottom: 5px;
-  }
-  .modal select, .modal textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    resize: vertical;
-  }
-  .modal .button-group {
-    text-align: center;
-    margin-top: 20px;
-  }
-  .modal .confirm {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  .modal .cancel {
-    background-color: #ccc;
-    color: black;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    margin-left: 10px;
-    cursor: pointer;
-    font-size: 14px;
-  }         
-    
-
-.fc-timegrid-col {
-  border-right: 1px solid #ccc !important;
-}
-.fc-timegrid-col:last-child {
-  border-right: none !important;
-}
-</style>
-</head>
-<body>
-<header class="user-header">
-<a class="to_the_main" href="home.html"><div class="logo"><img alt="" class="pic_logo" src="../images/logo.png"/></div></a>
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-
-<div id="menuHamToggle">
-
-<input type="checkbox"/>
-
-<span></span>
-<span></span>
-<span></span>
-
-<ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
-                    <a href="settings.html"> <li> Settings </li></a>
-<a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-</ul>
-</div>
-
-</div>
-</header>
-
-<div class="modal-overlay" id="signOutModal">
-<div class="modal-content">
-<p>Are you sure you want to sign out?</p>
-<div class="modal-buttons">
-<button onclick="confirmSignOut()">Yes</button>
-<button onclick="closeModal()">No</button>
-</div>
-</div>
-</div>
-
-<div class="modal" id="bookingModal">
-<div class="modal-content">
-<h3>Book a Consultation</h3>
-<p id="selectedTimeText">Selected Time: </p>
-<label>Please provide the reason of your request.</label>
-<select>
-<option value="">-- Select an Option --</option>
-<option value="accommodation">Finding accommodation</option>
-<option value="social">Social life and making friends</option>
-<option value="university">University information</option>
-<option value="cityspots">Best/worst city spots, weekend plans</option>
-</select>
-<label>Which video chat platform would you prefer?</label>
-<select>
-<option value="">-- Select a Platform --</option>
-<option value="zoom">Zoom</option>
-<option value="teams">Microsoft Teams</option>
-<option value="meet">Google Meet</option>
-<option value="facetime">Apple FaceTime</option>
-</select>
-<label>Anything else the consultant should know?</label>
-<textarea placeholder="Your message to the consultant..." rows="3"></textarea>
-<div class="button-group">
-<button class="confirm" onclick="confirmBooking()">Confirm</button>
-<button class="cancel" onclick="closeModal()">Cancel</button>
-</div>
-</div>
-</div>
-
-  <div class="calendar-scroll-container">
-<div class="calendar-wrapper">
-<div class="header">
-<h2>Timetable of<span id="consultant-name"></span></h2>
-<div class="form-buttons-timetable">
-<button class="edit-btn" type="button">Edit</button>
-</div>
-</div>
-
-<div id="calendar"></div>
-</div>
-  </div>
-
-<div class="modal" id="confirmSlotModal">
-<div class="modal-content">
-<h3 id="confirmSlotText">Are you sure to book this timeslot?</h3>
-<div class="button-group">
-<button class="confirm" onclick="confirmSlotBooking()">Yes</button>
-<button class="cancel" onclick="closeSlotModal()">No</button>
-</div>
-</div>
-</div>
-
-<div class="modal" id="discardModal">
-<div class="modal-content">
-<h3 id="discardSlotText">Are you sure to discard this timeslot of availability?</h3>
-<div class="button-group">
-<button class="confirm" onclick="confirmDiscard()">Yes</button>
-<button class="cancel" onclick="closeDiscardModal()">No</button>
-</div>
-</div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
- (async () => {
-    await autoEnforceRoleFromPath();
-  })();
-    let calendar;
-    let currentDate = new Date();
-    let pendingSlot = null;
-    let events = [];
-    let isEditable = false;
-    let maxSlotsAlertShown = false;
-
-    
-    async function loadConsultantName() {
-      const token = localStorage.getItem('accessToken');
-      const res = await fetch(`${AppConfig.PROFILE}/consultant`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (!res.ok) return; 
-      const data = await res.json();
-      document.getElementById('consultant-name').textContent =
-        `${data.first_name} ${data.last_name}`;
-    }
-
-    
-    async function loadAvailability() {
-      const token = localStorage.getItem('accessToken');
-      const res = await fetch(`${AppConfig.APPOINTMENTS}/consultant/timetable`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!res.ok) throw new Error('Failed to load timetable');
-      const slots = await res.json();
-      events = slots.map(s => ({
-      title: 'Available',
-      daysOfWeek: s.days_of_week,
-      startTime:  s.start_time,
-      endTime:    s.end_time,
-      color:      '#28a745',
-      extendedProps: {
-        daysOfWeek: s.days_of_week,
-        startTime: s.start_time,
-        endTime: s.end_time
-        }
-      }));
-      renderCalendar(currentDate);
-    }
-
-    
-    async function saveAvailability() {
-      const token = localStorage.getItem('accessToken');
-      const slots = events.map(ev => ({
-       days_of_week: ev.extendedProps.daysOfWeek,
-       start_time:   ev.extendedProps.startTime,
-       end_time:     ev.extendedProps.endTime
-      }));
-
-      const res = await fetch(`${AppConfig.APPOINTMENTS}/consultant/timetable`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(slots)
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || 'Save failed');
+    <style>
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
       }
-      showInAppAlert('✅ Timetable saved!');
-    }
-
-    
-    function renderCalendar(startDate) {
-      const calendarEl = document.getElementById('calendar');
-      if (calendar) calendar.destroy();
-      calendar = new FullCalendar.Calendar(calendarEl, {
-        locale: 'en-gb',
-        initialView: 'timeGridWeek',
-        initialDate: startDate,
-        slotMinTime: '00:00:00',
-        slotMaxTime: '24:00:00',
-        slotDuration: '00:30:00',
-        expandRows: true,
-        allDaySlot: false,
-        firstDay: 1,
-        nowIndicator: true,
-        selectable: isEditable,
-        selectMirror: true,
-        selectAllow: function(selectionInfo) {
-  const selectionStart = selectionInfo.start;
-  const selectionEnd = new Date(selectionStart.getTime() + 60 * 60 * 1000);
-  const selectionDay = selectionStart.getDay();
-
-  
-  let slotsToday = 0;
-  for (const ev of events) {
-    const evDay = Array.isArray(ev.daysOfWeek) ? ev.daysOfWeek[0] : ev.daysOfWeek;
-    if (evDay === selectionDay) {
-      slotsToday++;
-    }
-  }
-  if (slotsToday >= 10) {
-    if (!maxSlotsAlertShown) {
-      showInAppAlert("❗ You cannot have more than 10 available slots on a single day.");
-      maxSlotsAlertShown = true;
-      setTimeout(() => { maxSlotsAlertShown = false; }, 1500); 
-    }
-    return false;
-  }
-
-  
-  for (const ev of events) {
-    const evDay = Array.isArray(ev.daysOfWeek) ? ev.daysOfWeek[0] : ev.daysOfWeek;
-    if (evDay !== selectionDay) continue;
-
-    const [evStartH, evStartM] = ev.startTime.split(':').map(Number);
-    const [evEndH, evEndM] = ev.endTime.split(':').map(Number);
-    const evStart = new Date(selectionStart);
-    evStart.setHours(evStartH, evStartM, 0, 0);
-    const evEnd = new Date(selectionStart);
-    evEnd.setHours(evEndH, evEndM, 0, 0);
-
-    if ((selectionStart < evEnd) && (selectionEnd > evStart)) {
-      return false;
-    }
-  }
-
-  
-  return selectionStart.getHours() < 23;
-},
-
-
-
-select: function(info) {
-  if (!isEditable) return;
-
-  const fixedEnd = new Date(info.start.getTime() + 60 * 60 * 1000);
-
-  pendingSlot = {
-    start: info.start,
-    end: fixedEnd
-  };
-
-  const text = info.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
-               '–' +
-               fixedEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-  document.getElementById('confirmSlotText').textContent = `Mark availability for ${text}?`;
-  document.getElementById('confirmSlotModal').style.display = 'flex';
-},
-        headerToolbar: false,
-        eventClick: handleEventClick,
-        events: events,
-        eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
-        slotLabelFormat:  { hour: '2-digit', minute: '2-digit', hour12: false },
-        dayHeaderFormat:  { weekday: 'long' },
-        dayCellDidMount: function(info) {
-          info.el.style.borderRight = '1px solid #ccc';
-        },
-        slotLaneClassNames: 'fc-slot-lane-border'
-      });
-      calendarEl.classList.toggle('calendar-disabled', !isEditable);
-      calendar.render();
-    }
-
-    
-    function handleSlotClick(info) {
-      
-      pendingSlot = {
-        start: info.start,
-        end:   info.end
-      };
-      const text = info.start.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) +
-                   '–' +
-                   info.end.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-      document.getElementById('confirmSlotText').textContent =
-        `Mark availability for ${text}?`;
-      document.getElementById('confirmSlotModal').style.display = 'flex';
-    }
-
-    function closeSlotModal() {
-      pendingSlot = null;
-      document.getElementById('confirmSlotModal').style.display = 'none';
-    }
-
-    
-    function confirmSlotBooking() {
-      if (!pendingSlot) return;
-      const dow = pendingSlot.start.getDay();
-      const startStr = pendingSlot.start.toTimeString().slice(0,5);
-      const endStr   = pendingSlot.end  .toTimeString().slice(0,5);
-
-      
-      events.push({
-        title: 'Available',
-        daysOfWeek: [dow],
-        startTime:  startStr,
-        endTime:    endStr,
-        color: '#28a745',
-        extendedProps: { daysOfWeek: [dow], startTime: startStr, endTime: endStr }
-      });
-
-      closeSlotModal();
-      renderCalendar(currentDate);
-    }
-
-    
-    let slotToDiscard = null;
-    function handleEventClick(info) {
-      const { daysOfWeek, startTime, endTime } = info.event.extendedProps;
-      slotToDiscard = { dow: daysOfWeek[0], start: startTime, end: endTime };
-      document.getElementById('discardModal').style.display = 'flex';
-    }
-    function closeDiscardModal() {
-      slotToDiscard = null;
-      document.getElementById('discardModal').style.display = 'none';
-    }
-    function confirmDiscard() {
-      events = events.filter(ev =>
-        !(ev.extendedProps.daysOfWeek[0] === slotToDiscard.dow &&
-          ev.extendedProps.startTime === slotToDiscard.start &&
-          ev.extendedProps.endTime   === slotToDiscard.end)
-      );
-      closeDiscardModal();
-      renderCalendar(currentDate);
-    }
-
-    
-    document.querySelector('.edit-btn').addEventListener('click', async () => {
-      if (isEditable) {
-        try {
-          await saveAvailability();
-        } catch (e) {
-          return showInAppAlert('❌ ' + e.message);
-        }
+      /* for modal window */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 10;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
       }
-      isEditable = !isEditable;
-      document.querySelector('.edit-btn').textContent = isEditable ? 'Save' : 'Edit';
-      renderCalendar(currentDate);
-    });
+      .modal-content {
+        background-color: #fff0f5;
+        padding: 30px;
+        border-radius: 12px;
+        width: 95%;
+        max-width: 500px;
+        text-align: left;
+        font-family: "Segoe UI", sans-serif;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .modal h3 {
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      .modal label {
+        display: block;
+        font-weight: bold;
+        margin-top: 15px;
+        margin-bottom: 5px;
+      }
+      .modal select,
+      .modal textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        resize: vertical;
+      }
+      .modal .button-group {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .modal .confirm {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .modal .cancel {
+        background-color: #ccc;
+        color: black;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        margin-left: 10px;
+        cursor: pointer;
+        font-size: 14px;
+      }
 
-    
-    document.addEventListener('DOMContentLoaded', () => {
-      loadConsultantName();
-      loadAvailability().catch(e => showInAppAlert('⚠️ ' + e.message));
-    });
-  </script>
+      .fc-timegrid-col {
+        border-right: 1px solid #ccc !important;
+      }
+      .fc-timegrid-col:last-child {
+        border-right: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="user-header">
+      <a class="to_the_main" href="home.html"
+        ><div class="logo">
+          <img alt="" class="pic_logo" src="../images/logo.png" ></div
+      ></a>
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
 
+        <div id="menuHamToggle">
+          <input type="checkbox" >
 
+          <span></span>
+          <span></span>
+          <span></span>
 
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="appointments.html"> <li>Appointments</li></a>
+            <a href="messages.html"> <li>Messages</li></a>
+            <a href="consultancy-areas.html"> <li>Consultancy Areas</li></a>
+            <a href="timetable.html"> <li>Timetable</li></a>
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <div class="modal-overlay" id="signOutModal">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</body>
+
+    <div class="modal" id="bookingModal">
+      <div class="modal-content">
+        <h3>Book a Consultation</h3>
+        <p id="selectedTimeText">Selected Time:</p>
+        <label>Please provide the reason of your request.</label>
+        <select>
+          <option value="">-- Select an Option --</option>
+          <option value="accommodation">Finding accommodation</option>
+          <option value="social">Social life and making friends</option>
+          <option value="university">University information</option>
+          <option value="cityspots">
+            Best/worst city spots, weekend plans
+          </option>
+        </select>
+        <label>Which video chat platform would you prefer?</label>
+        <select>
+          <option value="">-- Select a Platform --</option>
+          <option value="zoom">Zoom</option>
+          <option value="teams">Microsoft Teams</option>
+          <option value="meet">Google Meet</option>
+          <option value="facetime">Apple FaceTime</option>
+        </select>
+        <label>Anything else the consultant should know?</label>
+        <textarea
+          placeholder="Your message to the consultant..."
+          rows="3"
+        ></textarea>
+        <div class="button-group">
+          <button class="confirm" onclick="confirmBooking()">Confirm</button>
+          <button class="cancel" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="calendar-scroll-container">
+      <div class="calendar-wrapper">
+        <div class="header">
+          <h2>Timetable of<span id="consultant-name"></span></h2>
+          <div class="form-buttons-timetable">
+            <button class="edit-btn" type="button">Edit</button>
+          </div>
+        </div>
+
+        <div id="calendar"></div>
+      </div>
+    </div>
+
+    <div class="modal" id="confirmSlotModal">
+      <div class="modal-content">
+        <h3 id="confirmSlotText">Are you sure to book this timeslot?</h3>
+        <div class="button-group">
+          <button class="confirm" onclick="confirmSlotBooking()">Yes</button>
+          <button class="cancel" onclick="closeSlotModal()">No</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="discardModal">
+      <div class="modal-content">
+        <h3 id="discardSlotText">
+          Are you sure to discard this timeslot of availability?
+        </h3>
+        <div class="button-group">
+          <button class="confirm" onclick="confirmDiscard()">Yes</button>
+          <button class="cancel" onclick="closeDiscardModal()">No</button>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
+      let calendar;
+      let currentDate = new Date();
+      let pendingSlot = null;
+      let events = [];
+      let isEditable = false;
+      let maxSlotsAlertShown = false;
+
+      async function loadConsultantName() {
+        const token = localStorage.getItem("accessToken");
+        const res = await fetch(`${AppConfig.PROFILE}/consultant`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        document.getElementById(
+          "consultant-name"
+        ).textContent = `${data.first_name} ${data.last_name}`;
+      }
+
+      async function loadAvailability() {
+        const token = localStorage.getItem("accessToken");
+        const res = await fetch(
+          `${AppConfig.APPOINTMENTS}/consultant/timetable`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!res.ok) throw new Error("Failed to load timetable");
+        const slots = await res.json();
+        events = slots.map((s) => ({
+          title: "Available",
+          daysOfWeek: s.days_of_week,
+          startTime: s.start_time,
+          endTime: s.end_time,
+          color: "#28a745",
+          extendedProps: {
+            daysOfWeek: s.days_of_week,
+            startTime: s.start_time,
+            endTime: s.end_time,
+          },
+        }));
+        renderCalendar(currentDate);
+      }
+
+      async function saveAvailability() {
+        const token = localStorage.getItem("accessToken");
+        const slots = events.map((ev) => ({
+          days_of_week: ev.extendedProps.daysOfWeek,
+          start_time: ev.extendedProps.startTime,
+          end_time: ev.extendedProps.endTime,
+        }));
+
+        const res = await fetch(
+          `${AppConfig.APPOINTMENTS}/consultant/timetable`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(slots),
+          }
+        );
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || "Save failed");
+        }
+        showInAppAlert("✅ Timetable saved!");
+      }
+
+      function renderCalendar(startDate) {
+        const calendarEl = document.getElementById("calendar");
+        if (calendar) calendar.destroy();
+        calendar = new FullCalendar.Calendar(calendarEl, {
+          locale: "en-gb",
+          initialView: "timeGridWeek",
+          initialDate: startDate,
+          slotMinTime: "00:00:00",
+          slotMaxTime: "24:00:00",
+          slotDuration: "00:30:00",
+          expandRows: true,
+          allDaySlot: false,
+          firstDay: 1,
+          nowIndicator: true,
+          selectable: isEditable,
+          selectMirror: true,
+          selectAllow: function (selectionInfo) {
+            const selectionStart = selectionInfo.start;
+            const selectionEnd = new Date(
+              selectionStart.getTime() + 60 * 60 * 1000
+            );
+            const selectionDay = selectionStart.getDay();
+
+            let slotsToday = 0;
+            for (const ev of events) {
+              const evDay = Array.isArray(ev.daysOfWeek)
+                ? ev.daysOfWeek[0]
+                : ev.daysOfWeek;
+              if (evDay === selectionDay) {
+                slotsToday++;
+              }
+            }
+            if (slotsToday >= 10) {
+              if (!maxSlotsAlertShown) {
+                showInAppAlert(
+                  "❗ You cannot have more than 10 available slots on a single day."
+                );
+                maxSlotsAlertShown = true;
+                setTimeout(() => {
+                  maxSlotsAlertShown = false;
+                }, 1500);
+              }
+              return false;
+            }
+
+            for (const ev of events) {
+              const evDay = Array.isArray(ev.daysOfWeek)
+                ? ev.daysOfWeek[0]
+                : ev.daysOfWeek;
+              if (evDay !== selectionDay) continue;
+
+              const [evStartH, evStartM] = ev.startTime.split(":").map(Number);
+              const [evEndH, evEndM] = ev.endTime.split(":").map(Number);
+              const evStart = new Date(selectionStart);
+              evStart.setHours(evStartH, evStartM, 0, 0);
+              const evEnd = new Date(selectionStart);
+              evEnd.setHours(evEndH, evEndM, 0, 0);
+
+              if (selectionStart < evEnd && selectionEnd > evStart) {
+                return false;
+              }
+            }
+
+            return selectionStart.getHours() < 23;
+          },
+
+          select: function (info) {
+            if (!isEditable) return;
+
+            const fixedEnd = new Date(info.start.getTime() + 60 * 60 * 1000);
+
+            pendingSlot = {
+              start: info.start,
+              end: fixedEnd,
+            };
+
+            const text =
+              info.start.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }) +
+              "–" +
+              fixedEnd.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+            document.getElementById(
+              "confirmSlotText"
+            ).textContent = `Mark availability for ${text}?`;
+            document.getElementById("confirmSlotModal").style.display = "flex";
+          },
+          headerToolbar: false,
+          eventClick: handleEventClick,
+          events: events,
+          eventTimeFormat: {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          },
+          slotLabelFormat: {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          },
+          dayHeaderFormat: { weekday: "long" },
+          dayCellDidMount: function (info) {
+            info.el.style.borderRight = "1px solid #ccc";
+          },
+          slotLaneClassNames: "fc-slot-lane-border",
+        });
+        calendarEl.classList.toggle("calendar-disabled", !isEditable);
+        calendar.render();
+      }
+
+      function handleSlotClick(info) {
+        pendingSlot = {
+          start: info.start,
+          end: info.end,
+        };
+        const text =
+          info.start.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }) +
+          "–" +
+          info.end.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        document.getElementById(
+          "confirmSlotText"
+        ).textContent = `Mark availability for ${text}?`;
+        document.getElementById("confirmSlotModal").style.display = "flex";
+      }
+
+      function closeSlotModal() {
+        pendingSlot = null;
+        document.getElementById("confirmSlotModal").style.display = "none";
+      }
+
+      function confirmSlotBooking() {
+        if (!pendingSlot) return;
+        const dow = pendingSlot.start.getDay();
+        const startStr = pendingSlot.start.toTimeString().slice(0, 5);
+        const endStr = pendingSlot.end.toTimeString().slice(0, 5);
+
+        events.push({
+          title: "Available",
+          daysOfWeek: [dow],
+          startTime: startStr,
+          endTime: endStr,
+          color: "#28a745",
+          extendedProps: {
+            daysOfWeek: [dow],
+            startTime: startStr,
+            endTime: endStr,
+          },
+        });
+
+        closeSlotModal();
+        renderCalendar(currentDate);
+      }
+
+      let slotToDiscard = null;
+      function handleEventClick(info) {
+        const { daysOfWeek, startTime, endTime } = info.event.extendedProps;
+        slotToDiscard = { dow: daysOfWeek[0], start: startTime, end: endTime };
+        document.getElementById("discardModal").style.display = "flex";
+      }
+      function closeDiscardModal() {
+        slotToDiscard = null;
+        document.getElementById("discardModal").style.display = "none";
+      }
+      function confirmDiscard() {
+        events = events.filter(
+          (ev) =>
+            !(
+              ev.extendedProps.daysOfWeek[0] === slotToDiscard.dow &&
+              ev.extendedProps.startTime === slotToDiscard.start &&
+              ev.extendedProps.endTime === slotToDiscard.end
+            )
+        );
+        closeDiscardModal();
+        renderCalendar(currentDate);
+      }
+
+      document
+        .querySelector(".edit-btn")
+        .addEventListener("click", async () => {
+          if (isEditable) {
+            try {
+              await saveAvailability();
+            } catch (e) {
+              return showInAppAlert("❌ " + e.message);
+            }
+          }
+          isEditable = !isEditable;
+          document.querySelector(".edit-btn").textContent = isEditable
+            ? "Save"
+            : "Edit";
+          renderCalendar(currentDate);
+        });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadConsultantName();
+        loadAvailability().catch((e) => showInAppAlert("⚠️ " + e.message));
+      });
+    </script>
+
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

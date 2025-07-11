@@ -1,55 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Add Consultancy Internship</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
-    
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
+
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="appointments.html"> <li>Appointments</li></a>
+            <a href="messages.html"> <li>Messages</li></a>
+            <a href="consultancy-areas.html"> <li>Consultancy Areas</li></a>
+            <a href="timetable.html"> <li>Timetable</li></a>
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
-    
-      
-  <div id="signOutModal" class="modal-overlay">
+
+    <div id="signOutModal" class="modal-overlay">
       <div class="modal-content">
         <p>Are you sure you want to sign out?</p>
         <div class="modal-buttons">
@@ -58,353 +57,437 @@
         </div>
       </div>
     </div>
-  
- <main class="consultancy-form-container">
-    <h2 class="form-title">Consultancy for Internship Abroad</h2>
-    <form id="consultancyForm" class="form-block" onsubmit="return false;">
-      <div class="form-group">
-        <label for="focus">Focus of Consultancy:</label>
-        <input type="text" id="focus" value="Internship abroad" disabled />
-      </div>
 
-      <div class="form-group">
-        <label for="company">Company Name:</label>
-        <input type="text" id="company" name="company_name" required />
-        <p id="company-warning" class="warning-text" style="display:none;">Please enter the company name.</p>
-      </div>
-
-      <div class="form-group">
-        <label for="department">Department Name:</label>
-        <input type="text" id="department" name="department_name" required />
-        <p id="department-warning" class="warning-text" style="display:none;">Please enter the department name.</p>
-      </div>
-
-      <div class="form-group education-period">
-        <label>Employment Period:</label>
-        <div class="period-inputs">
-          <label for="internship_start">From:</label>
-          <input type="month" id="internship_start" name="internship_start" required />
-          <label for="internship_finish">To:</label>
-          <input type="month" id="internship_finish" name="internship_finish" required />
+    <main class="consultancy-form-container">
+      <h2 class="form-title">Consultancy for Internship Abroad</h2>
+      <form id="consultancyForm" class="form-block" onsubmit="return false;">
+        <div class="form-group">
+          <label for="focus">Focus of Consultancy:</label>
+          <input type="text" id="focus" value="Internship abroad" disabled >
         </div>
-        <p id="date-warning" class="warning-text" style="display:none;">
-          You cannot offer consultancy if your work experience is older than 5 years based on our Terms and Conditions.
-        </p>
-        <p id="period-warning" class="warning-text" style="display:none;">Please enter a valid start and end period.</p>
-      </div>
 
-      <div class="form-group">
-        <label>Location of Company:</label>
-        <div class="horizontal-fields">
-          <div class="half-width">
-            <label for="country">Country:</label>
-            <select id="country" name="country_of_internship" required>
-              <option value="">Select country</option>
-            </select>
-            <p id="country-warning" class="warning-text" style="display:none;">Please select a country.</p>
+        <div class="form-group">
+          <label for="company">Company Name:</label>
+          <input type="text" id="company" name="company_name" required >
+          <p id="company-warning" class="warning-text" style="display: none">
+            Please enter the company name.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="department">Department Name:</label>
+          <input type="text" id="department" name="department_name" required >
+          <p id="department-warning" class="warning-text" style="display: none">
+            Please enter the department name.
+          </p>
+        </div>
+
+        <div class="form-group education-period">
+          <label>Employment Period:</label>
+          <div class="period-inputs">
+            <label for="internship_start">From:</label>
+            <input
+              type="month"
+              id="internship_start"
+              name="internship_start"
+              required
+            />
+            <label for="internship_finish">To:</label>
+            <input
+              type="month"
+              id="internship_finish"
+              name="internship_finish"
+              required
+            />
+          </div>
+          <p id="date-warning" class="warning-text" style="display: none">
+            You cannot offer consultancy if your work experience is older than 5
+            years based on our Terms and Conditions.
+          </p>
+          <p id="period-warning" class="warning-text" style="display: none">
+            Please enter a valid start and end period.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label>Location of Company:</label>
+          <div class="horizontal-fields">
+            <div class="half-width">
+              <label for="country">Country:</label>
+              <select id="country" name="country_of_internship" required>
+                <option value="">Select country</option>
+              </select>
+              <p
+                id="country-warning"
+                class="warning-text"
+                style="display: none"
+              >
+                Please select a country.
+              </p>
+            </div>
+
+            <div class="half-width">
+              <label for="city">City:</label>
+              <input type="text" id="city" name="city_of_internship" required >
+              <p id="city-warning" class="warning-text" style="display: none">
+                Please enter the city.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="proof">Proof of Employment:</label>
+          <input
+            type="file"
+            id="proof"
+            name="proof_of_internship"
+            accept=".pdf,.jpg,.jpeg,.png"
+            required
+          />
+          <p id="proof-warning" class="warning-text" style="display: none">
+            Please upload proof of employment.
+          </p>
+        </div>
+
+        <div class="options-section">
+          <div class="options-box">
+            <p>
+              <strong>You can help students with:</strong> <br >(Choose at
+              least 2)
+            </p>
+            <label
+              ><input type="checkbox" name="help[]" value="Accommodation" >
+              Finding accommodation</label
+            >
+            <label
+              ><input type="checkbox" name="help[]" value="Social" > Social
+              life and making friends</label
+            >
+            <label
+              ><input type="checkbox" name="help[]" value="Company Info" >
+              Company information</label
+            >
+            <label
+              ><input type="checkbox" name="help[]" value="City Tips" > Best
+              and worst city spots</label
+            >
+            <p id="help-warning" class="warning-text" style="display: none">
+              Please select at least 2 help topics.
+            </p>
           </div>
 
-          <div class="half-width">
-            <label for="city">City:</label>
-            <input type="text" id="city" name="city_of_internship" required />
-            <p id="city-warning" class="warning-text" style="display:none;">Please enter the city.</p>
+          <div class="options-box">
+            <p>
+              <strong>You can call students via:</strong> <br >(Choose at least
+              2)
+            </p>
+            <label
+              ><input type="checkbox" name="call[]" value="Zoom" > Zoom</label
+            >
+            <label
+              ><input type="checkbox" name="call[]" value="Teams" > Microsoft
+              Teams</label
+            >
+            <label
+              ><input type="checkbox" name="call[]" value="Google Meet" >
+              Google Meet</label
+            >
+            <label
+              ><input type="checkbox" name="call[]" value="FaceTime" > Apple
+              FaceTime</label
+            >
+            <p id="call-warning" class="warning-text" style="display: none">
+              Please select at least 2 call options.
+            </p>
           </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="proof">Proof of Employment:</label>
-        <input type="file" id="proof" name="proof_of_internship" accept=".pdf,.jpg,.jpeg,.png" required />
-        <p id="proof-warning" class="warning-text" style="display:none;">Please upload proof of employment.</p>
-      </div>
-
-
-      
-      <div class="options-section">
-        <div class="options-box">
-          <p><strong>You can help students with:</strong> <br />(Choose at least 2)</p>
-          <label><input type="checkbox" name="help[]" value="Accommodation" /> Finding accommodation</label>
-          <label><input type="checkbox" name="help[]" value="Social" /> Social life and making friends</label>
-          <label><input type="checkbox" name="help[]" value="Company Info" /> Company information</label>
-          <label><input type="checkbox" name="help[]" value="City Tips" /> Best and worst city spots</label>
-          <p id="help-warning" class="warning-text" style="display:none;">Please select at least 2 help topics.</p>
+        <div class="form-buttons">
+          <button
+            type="button"
+            class="consult-button"
+            onclick="validateThenSubmit()"
+          >
+            Save
+          </button>
         </div>
-
-        <div class="options-box">
-          <p><strong>You can call students via:</strong> <br />(Choose at least 2)</p>
-          <label><input type="checkbox" name="call[]" value="Zoom" /> Zoom</label>
-          <label><input type="checkbox" name="call[]" value="Teams" /> Microsoft Teams</label>
-          <label><input type="checkbox" name="call[]" value="Google Meet" /> Google Meet</label>
-          <label><input type="checkbox" name="call[]" value="FaceTime" /> Apple FaceTime</label>
-          <p id="call-warning" class="warning-text" style="display:none;">Please select at least 2 call options.</p>
-        </div>
-      </div>
-
-      <div class="form-buttons">
-        <button type="button" class="consult-button" onclick="validateThenSubmit()">Save</button>
-      </div>
-    </form>
+      </form>
     </main>
 
-
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
 
-  
-  <div id="confirmModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <p>Are you sure all the information is correct?</p>
-      <div class="modal-buttons">
-        <button onclick="submitForm()">Yes</button>
-        <button onclick="closeConfirmModal()">No</button>
+    <div id="confirmModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <p>Are you sure all the information is correct?</p>
+        <div class="modal-buttons">
+          <button onclick="submitForm()">Yes</button>
+          <button onclick="closeConfirmModal()">No</button>
+        </div>
       </div>
     </div>
-  </div>
 
-
-  
-  <div id="submittedModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <p>Your consultancy profile has been submitted.<br />Once approved by the admin, it will become visible.</p>
-      <div class="modal-buttons">
-        <button onclick="closeSubmittedModal()">OK</button>
+    <div id="submittedModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <p>
+          Your consultancy profile has been submitted.<br >Once approved by the
+          admin, it will become visible.
+        </p>
+        <div class="modal-buttons">
+          <button onclick="closeSubmittedModal()">OK</button>
+        </div>
       </div>
     </div>
-  </div>
 
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
 
-<script>
-  (async () => {
-    await autoEnforceRoleFromPath();
-  })();  
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-  function closeConfirmModal() {
-    document.getElementById("confirmModal").style.display = "none";
-  }
-  function closeSubmittedModal() {
-    document.getElementById("submittedModal").style.display = "none";
-    window.location.href = "consultancy-areas.html";
-  }
-
-  function validateThenSubmit() {
-    const toDate = new Date(document.getElementById("internship_finish").value);
-    const limitDate = new Date();
-    limitDate.setFullYear(limitDate.getFullYear() - 5);
-
-    const helpOptions = document.querySelectorAll('input[name="help[]"]:checked').length;
-    const callOptions = document.querySelectorAll('input[name="call[]"]:checked').length;
-
-    let valid = true;
-
-    const company = document.getElementById("company");
-    if (!company.value.trim()) {
-      document.getElementById("company-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("company-warning").style.display = "none";
-    }
-
-    const department = document.getElementById("department");
-    if (!department.value.trim()) {
-      document.getElementById("department-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("department-warning").style.display = "none";
-    }
-
-    const start = document.getElementById("internship_start");
-    const finish = document.getElementById("internship_finish");
-    if (!start.value || !finish.value) {
-      document.getElementById("period-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("period-warning").style.display = "none";
-    }
-
-    const country = document.getElementById("country");
-    if (!country.value) {
-      document.getElementById("country-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("country-warning").style.display = "none";
-    }
-
-    const city = document.getElementById("city");
-    if (!city.value.trim()) {
-      document.getElementById("city-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("city-warning").style.display = "none";
-    }
-
-    const proof = document.getElementById("proof");
-    if (!proof.value) {
-      document.getElementById("proof-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("proof-warning").style.display = "none";
-    }
-
-
-    if (toDate < limitDate) {
-      document.getElementById("date-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("date-warning").style.display = "none";
-    }
-
-    if (helpOptions < 2) {
-      document.getElementById("help-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("help-warning").style.display = "none";
-    }
-
-    if (callOptions < 2) {
-      document.getElementById("call-warning").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("call-warning").style.display = "none";
-    }
-
-    const requiredFields = [
-      "company_name",
-      "department_name",
-      "internship_start",
-      "internship_finish",
-      "country_of_internship",
-      "city_of_internship",
-      "proof_of_internship"
-    ];
-    for (const id of requiredFields) {
-      const el = document.getElementsByName(id)[0];
-      if (!el || !el.value) {
-        valid = false;
-        el?.classList.add("input-error");
-      } else {
-        el?.classList.remove("input-error");
-      }
-    }
-
-    if (valid) {
-      document.getElementById("confirmModal").style.display = "flex";
-    }
-  }
-
-  async function submitForm() {
-    const form = document.getElementById("consultancyForm");
-    const formData = new FormData(form);
-    const token = localStorage.getItem("accessToken");
-
-    const helpValues = Array.from(document.querySelectorAll('input[name="help[]"]:checked')).map(cb => cb.value);
-    const callValues = Array.from(document.querySelectorAll('input[name="call[]"]:checked')).map(cb => cb.value);
-
-    formData.set("accommodation", helpValues.includes("Accommodation"));
-    formData.set("social_life", helpValues.includes("Social"));
-    formData.set("company_info", helpValues.includes("Company Info"));  
-    formData.set("travel_info", helpValues.includes("City Tips"));
-
-    formData.set("zoom", callValues.includes("Zoom"));
-    formData.set("microsoft_teams", callValues.includes("Teams"));
-    formData.set("google_meet", callValues.includes("Google Meet"));
-    formData.set("apple_facetime", callValues.includes("FaceTime"));
-
-    try {
-      const res = await fetch(`${AppConfig.CONSULTANCY}/internship`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        body: formData
-      });
-
-      const data = await res.json();
-      if (res.ok) {
+      function closeConfirmModal() {
         document.getElementById("confirmModal").style.display = "none";
-        document.getElementById("submittedModal").style.display = "flex";
-      } else {
-        showInAppAlert("Error: " + (data?.detail || "Unknown error"));
-        console.error(data);
       }
-    } catch (err) {
-      showInAppAlert("Failed to submit form. " + err.message);
-      console.error(err);
-    }
-  }
+      function closeSubmittedModal() {
+        document.getElementById("submittedModal").style.display = "none";
+        window.location.href = "consultancy-areas.html";
+      }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) return;
+      function validateThenSubmit() {
+        const toDate = new Date(
+          document.getElementById("internship_finish").value
+        );
+        const limitDate = new Date();
+        limitDate.setFullYear(limitDate.getFullYear() - 5);
 
-  try {
-    // Check if consultant already has an internship profile
-    const profileRes = await fetch(`${AppConfig.CONSULTANCY}/internship/me`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+        const helpOptions = document.querySelectorAll(
+          'input[name="help[]"]:checked'
+        ).length;
+        const callOptions = document.querySelectorAll(
+          'input[name="call[]"]:checked'
+        ).length;
 
-    if (profileRes.ok) {
-      // Profile exists — redirect to preview page
-      window.location.href = "preview-internship.html";
-      return; // Stop further execution
-    }
-    // If 404, continue to load form as normal
+        let valid = true;
 
-  } catch (err) {
-    console.error("Failed to check internship consultancy profile:", err);
-  }
+        const company = document.getElementById("company");
+        if (!company.value.trim()) {
+          document.getElementById("company-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("company-warning").style.display = "none";
+        }
 
-  // -------- Load country list if no existing profile --------
-  const countrySel = document.getElementById("country");
-  if (!countrySel) return;
+        const department = document.getElementById("department");
+        if (!department.value.trim()) {
+          document.getElementById("department-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("department-warning").style.display = "none";
+        }
 
-  try {
-    const res = await fetch(`${AppConfig.PROFILE}/countries`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error("Failed to fetch countries");
+        const start = document.getElementById("internship_start");
+        const finish = document.getElementById("internship_finish");
+        if (!start.value || !finish.value) {
+          document.getElementById("period-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("period-warning").style.display = "none";
+        }
 
-    const countries = await res.json();
-    countries.forEach(c => {
-      const o = new Option(c, c);
-      countrySel.appendChild(o);
-    });
-  } catch (err) {
-    console.error("Could not load countries:", err);
-  }
-});
-</script>
+        const country = document.getElementById("country");
+        if (!country.value) {
+          document.getElementById("country-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("country-warning").style.display = "none";
+        }
 
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+        const city = document.getElementById("city");
+        if (!city.value.trim()) {
+          document.getElementById("city-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("city-warning").style.display = "none";
+        }
+
+        const proof = document.getElementById("proof");
+        if (!proof.value) {
+          document.getElementById("proof-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("proof-warning").style.display = "none";
+        }
+
+        if (toDate < limitDate) {
+          document.getElementById("date-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("date-warning").style.display = "none";
+        }
+
+        if (helpOptions < 2) {
+          document.getElementById("help-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("help-warning").style.display = "none";
+        }
+
+        if (callOptions < 2) {
+          document.getElementById("call-warning").style.display = "block";
+          valid = false;
+        } else {
+          document.getElementById("call-warning").style.display = "none";
+        }
+
+        const requiredFields = [
+          "company_name",
+          "department_name",
+          "internship_start",
+          "internship_finish",
+          "country_of_internship",
+          "city_of_internship",
+          "proof_of_internship",
+        ];
+        for (const id of requiredFields) {
+          const el = document.getElementsByName(id)[0];
+          if (!el || !el.value) {
+            valid = false;
+            el?.classList.add("input-error");
+          } else {
+            el?.classList.remove("input-error");
+          }
+        }
+
+        if (valid) {
+          document.getElementById("confirmModal").style.display = "flex";
+        }
+      }
+
+      async function submitForm() {
+        const form = document.getElementById("consultancyForm");
+        const formData = new FormData(form);
+        const token = localStorage.getItem("accessToken");
+
+        const helpValues = Array.from(
+          document.querySelectorAll('input[name="help[]"]:checked')
+        ).map((cb) => cb.value);
+        const callValues = Array.from(
+          document.querySelectorAll('input[name="call[]"]:checked')
+        ).map((cb) => cb.value);
+
+        formData.set("accommodation", helpValues.includes("Accommodation"));
+        formData.set("social_life", helpValues.includes("Social"));
+        formData.set("company_info", helpValues.includes("Company Info"));
+        formData.set("travel_info", helpValues.includes("City Tips"));
+
+        formData.set("zoom", callValues.includes("Zoom"));
+        formData.set("microsoft_teams", callValues.includes("Teams"));
+        formData.set("google_meet", callValues.includes("Google Meet"));
+        formData.set("apple_facetime", callValues.includes("FaceTime"));
+
+        try {
+          const res = await fetch(`${AppConfig.CONSULTANCY}/internship`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          });
+
+          const data = await res.json();
+          if (res.ok) {
+            document.getElementById("confirmModal").style.display = "none";
+            document.getElementById("submittedModal").style.display = "flex";
+          } else {
+            showInAppAlert("Error: " + (data?.detail || "Unknown error"));
+            console.error(data);
+          }
+        } catch (err) {
+          showInAppAlert("Failed to submit form. " + err.message);
+          console.error(err);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) return;
+
+        try {
+          // Check if consultant already has an internship profile
+          const profileRes = await fetch(
+            `${AppConfig.CONSULTANCY}/internship/me`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          if (profileRes.ok) {
+            // Profile exists — redirect to preview page
+            window.location.href = "preview-internship.html";
+            return; // Stop further execution
+          }
+          // If 404, continue to load form as normal
+        } catch (err) {
+          console.error("Failed to check internship consultancy profile:", err);
+        }
+
+        // -------- Load country list if no existing profile --------
+        const countrySel = document.getElementById("country");
+        if (!countrySel) return;
+
+        try {
+          const res = await fetch(`${AppConfig.PROFILE}/countries`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("Failed to fetch countries");
+
+          const countries = await res.json();
+          countries.forEach((c) => {
+            const o = new Option(c, c);
+            countrySel.appendChild(o);
+          });
+        } catch (err) {
+          console.error("Could not load countries:", err);
+        }
+      });
+    </script>
+
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

@@ -1,341 +1,415 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Study Abroad Consultant Preview</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
-    
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="user-management.html"> <li> User Management </li></a>
-                    <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>
-                    <a href="statistics.html"> <li> Platform Statistics </li></a>
-                    <a href="settings.html"> <li> Settings</li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
+
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="user-management.html"> <li>User Management</li></a>
+            <a href="consultant-verification.html">
+              <li>Consultant Verification</li></a
+            >
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="statistics.html"> <li>Platform Statistics</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
-    
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
-    </div>
-  </div>
-</div>
-      
-      
-      <a href="consultant-verification.html" class="back-button">⬅ To the previous page</a>
-
-  <div class="preview-container">
-    <div class="preview-section">
-      <div class="section-title">Consultant Details</div>
-      <div class="info-grid">
-        <div class="info-label">First Name:</div><div id="firstName"></div>
-        <div class="info-label">Last Name:</div><div id="lastName"></div>
-        <div class="info-label">Role:</div><div id="type"></div>
-        <div class="info-label">Email:</div><div id="email"></div>
-
-      </div>
-    </div>
-
-    <div class="preview-section">
-      <div class="section-title">Academic & Location Info</div>
-      <div class="info-grid">
-        <div class="info-label">University:</div><div id="university"></div>
-        <div class="info-label">Course:</div><div id="course"></div>
-        <div class="info-label">Period:</div><div id="period"></div>
-        <div class="info-label">Location Abroad:</div><div id="locationAbroad"></div>
-        <div class="info-label">Current Location:</div><div id="currentLocation"></div>
-        <div class="info-label">Languages:</div><div id="languages"></div>
-        <div class="info-label">Short Note:</div>
-        <div><textarea id="shortNoteInput" placeholder="Write a short note..." rows="4" style="width: 100%; resize: vertical;"></textarea></div>
-        <div id="proofContainer">
-          <div class="info-label">Proof Document:</div>
-          <div><a id="proofLink" href="#" download>Download experience.pdf</a></div>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
         </div>
       </div>
     </div>
 
-    <div class="preview-section">
-      <div class="section-title">Expertise & Contact</div>
-      <div class="checkbox-lists">
-        <div class="checkbox-column">
-          <strong>Areas the consultant can help with:</strong>
-          <label id="accommodationLabel"></label>
-          <label id="socialLifeLabel"></label>
-          <label id="uniInfoLabel"></label>
-          <label id="travelInfoLabel"></label>
+    <a href="consultant-verification.html" class="back-button"
+      >⬅ To the previous page</a
+    >
+
+    <div class="preview-container">
+      <div class="preview-section">
+        <div class="section-title">Consultant Details</div>
+        <div class="info-grid">
+          <div class="info-label">First Name:</div>
+          <div id="firstName"></div>
+          <div class="info-label">Last Name:</div>
+          <div id="lastName"></div>
+          <div class="info-label">Role:</div>
+          <div id="type"></div>
+          <div class="info-label">Email:</div>
+          <div id="email"></div>
         </div>
-        <div class="checkbox-column">
-          <strong>Can be contacted via:</strong>
-          <label id="zoomLabel"></label>
-          <label id="teamsLabel"></label>
-          <label id="meetLabel"></label>
-          <label id="facetimeLabel"></label>
+      </div>
+
+      <div class="preview-section">
+        <div class="section-title">Academic & Location Info</div>
+        <div class="info-grid">
+          <div class="info-label">University:</div>
+          <div id="university"></div>
+          <div class="info-label">Course:</div>
+          <div id="course"></div>
+          <div class="info-label">Period:</div>
+          <div id="period"></div>
+          <div class="info-label">Location Abroad:</div>
+          <div id="locationAbroad"></div>
+          <div class="info-label">Current Location:</div>
+          <div id="currentLocation"></div>
+          <div class="info-label">Languages:</div>
+          <div id="languages"></div>
+          <div class="info-label">Short Note:</div>
+          <div>
+            <textarea
+              id="shortNoteInput"
+              placeholder="Write a short note..."
+              rows="4"
+              style="width: 100%; resize: vertical"
+            ></textarea>
+          </div>
+          <div id="proofContainer">
+            <div class="info-label">Proof Document:</div>
+            <div>
+              <a id="proofLink" href="#" download>Download experience.pdf</a>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div class="preview-section">
+        <div class="section-title">Expertise & Contact</div>
+        <div class="checkbox-lists">
+          <div class="checkbox-column">
+            <strong>Areas the consultant can help with:</strong>
+            <label id="accommodationLabel"></label>
+            <label id="socialLifeLabel"></label>
+            <label id="uniInfoLabel"></label>
+            <label id="travelInfoLabel"></label>
+          </div>
+          <div class="checkbox-column">
+            <strong>Can be contacted via:</strong>
+            <label id="zoomLabel"></label>
+            <label id="teamsLabel"></label>
+            <label id="meetLabel"></label>
+            <label id="facetimeLabel"></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="approve-btn" onclick="confirmAction('accepted')">
+          ✔ Accept
+        </button>
+        <button class="reject-btn" onclick="confirmAction('rejected')">
+          ✖ Reject
+        </button>
       </div>
     </div>
 
-    <div class="button-group">
-      <button class="approve-btn" onclick="confirmAction('accepted')">✔ Accept</button>
-      <button class="reject-btn" onclick="confirmAction('rejected')">✖ Reject</button>
+    <div class="modal_preview" id="confirmModal">
+      <div class="modal-content_preview">
+        <p id="modalText">Are you sure?</p>
+        <button onclick="processDecision(true)">Yes</button>
+        <button onclick="processDecision(false)">No</button>
+      </div>
     </div>
-  </div>
 
-  <div class="modal_preview" id="confirmModal">
-    <div class="modal-content_preview">
-      <p id="modalText">Are you sure?</p>
-      <button onclick="processDecision(true)">Yes</button>
-      <button onclick="processDecision(false)">No</button>
-    </div>
-  </div>
-
-    
-    
-  
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>  
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
 
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
 
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();  
+      const token = localStorage.getItem("accessToken");
+      const userId = new URLSearchParams(window.location.search).get("user_id");
+      const isViewOnly =
+        new URLSearchParams(window.location.search).get("mode") === "view";
 
-const token = localStorage.getItem("accessToken");
-const userId = new URLSearchParams(window.location.search).get("user_id");
-const isViewOnly = new URLSearchParams(window.location.search).get("mode") === "view";
+      if (!token || !userId) {
+        showInAppAlert("Unauthorized or invalid link.", () => {
+          window.location.href = "consultant-verification.html";
+        });
+      }
 
-if (!token || !userId) {
-  showInAppAlert("Unauthorized or invalid link.", () => {
-    window.location.href = "consultant-verification.html";
-  });
-}
+      fetch(`${AppConfig.CONSULTANCY}/study/full/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Not found");
+          return res.json();
+        })
+        .then(async (data) => {
+          let { profile, study } = data;
+          const status = study.status;
 
-fetch(`${AppConfig.CONSULTANCY}/study/full/${userId}`, {
-    headers: {
-    Authorization: `Bearer ${token}`
-  }
-})
-.then(res => {
-  if (!res.ok) throw new Error("Not found");
-  return res.json();
-})
-.then(async data => {
-  let { profile, study } = data;
-  const status = study.status;
+          const proofContainer = document.getElementById("proofContainer");
 
-  const proofContainer = document.getElementById("proofContainer");
+          if (status === "pending") {
+            proofContainer.style.display = "block";
+            const proofLink = document.getElementById("proofLink");
+            proofLink.href = `${AppConfig.CONSULTANCY}/download-proof/study/${userId}`;
+            proofLink.setAttribute("download", "");
+          } else {
+            proofContainer.style.display = "none";
+          }
 
-  if (status === "pending") {
-    proofContainer.style.display = "block";
-    const proofLink = document.getElementById("proofLink");
-    proofLink.href = `${AppConfig.CONSULTANCY}/download-proof/study/${userId}`;
-    proofLink.setAttribute("download", "");
-  } else {
-    proofContainer.style.display = "none";
-  }
+          const noteInput = document.getElementById("shortNoteInput");
+          noteInput.readOnly = status === "rejected";
+          noteInput.value = study.short_note || "";
 
-  const noteInput = document.getElementById("shortNoteInput");
-  noteInput.readOnly = (status === "rejected");
-  noteInput.value = study.short_note || "";
-
-  const buttonGroup = document.querySelector(".button-group");
-  if (status === "pending") {
-    buttonGroup.innerHTML = `
+          const buttonGroup = document.querySelector(".button-group");
+          if (status === "pending") {
+            buttonGroup.innerHTML = `
       <button class="approve-btn" onclick="confirmAction('accepted')">✔ Accept</button>
       <button class="reject-btn" onclick="confirmAction('rejected')">✖ Reject</button>
     `;
-  } else if (status === "accepted") {
-    buttonGroup.innerHTML = `
+          } else if (status === "accepted") {
+            buttonGroup.innerHTML = `
       <button class="reject-btn" onclick="confirmAction('rejected')">↩ Revoke</button>
     `;
-  } else {
-    buttonGroup.style.display = "none";
-  }
+          } else {
+            buttonGroup.style.display = "none";
+          }
 
-  if (!profile.city || !profile.languages) {
-    try {
-      const extra = await fetch(`${AppConfig.PROFILE}/admin/view/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
+          if (!profile.city || !profile.languages) {
+            try {
+              const extra = await fetch(
+                `${AppConfig.PROFILE}/admin/view/${userId}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              ).then((r) => (r.ok ? r.json() : {}));
+              profile = {
+                ...profile,
+                ...extra,
+                languages:
+                  profile.languages && profile.languages.length > 0
+                    ? profile.languages
+                    : extra.languages,
+              };
+            } catch (e) {
+              console.warn("Fallback profile fetch failed", e);
+            }
+          }
+
+          document.getElementById("firstName").textContent = profile.first_name;
+          document.getElementById("lastName").textContent = profile.last_name;
+          document.getElementById("email").textContent = profile.email;
+          document.getElementById("type").textContent = profile.role;
+
+          document.getElementById("university").textContent =
+            study.university_name;
+          document.getElementById("course").textContent = study.course_name;
+          document.getElementById("period").textContent = `${formatDate(
+            study.education_start
+          )} - ${formatDate(study.education_finish)}`;
+          document.getElementById(
+            "locationAbroad"
+          ).textContent = `${study.city_of_study}, ${study.country_of_study}`;
+
+          const currentLoc = [profile.city, profile.country]
+            .filter(Boolean)
+            .join(", ");
+          document.getElementById("currentLocation").textContent =
+            currentLoc || "-";
+
+          const languagesText =
+            Array.isArray(profile.languages) && profile.languages.length > 0
+              ? profile.languages.join(", ")
+              : "-";
+          document.getElementById("languages").textContent = languagesText;
+
+          updateCheckbox(
+            "accommodationLabel",
+            study.accommodation,
+            "✔ Finding accommodation"
+          );
+          updateCheckbox(
+            "socialLifeLabel",
+            study.social_life,
+            "✔ Social life and making friends"
+          );
+          updateCheckbox(
+            "uniInfoLabel",
+            study.uni_info,
+            "✔ University information"
+          );
+          updateCheckbox(
+            "travelInfoLabel",
+            study.travel_info,
+            "✔ Travel and weekend plans"
+          );
+          updateCheckbox("zoomLabel", study.zoom, "✔ Zoom");
+          updateCheckbox(
+            "teamsLabel",
+            study.microsoft_teams,
+            "✔ Microsoft Teams"
+          );
+          updateCheckbox("meetLabel", study.google_meet, "✔ Google Meet");
+          updateCheckbox(
+            "facetimeLabel",
+            study.apple_facetime,
+            "✔ Apple FaceTime"
+          );
+        })
+        .catch((err) => {
+          console.error(err);
+          showInAppAlert("Failed to load consultant details.", () => {
+            window.location.href = "consultant-verification.html";
+          });
+        });
+
+      if (isViewOnly) {
+        document.querySelector(".button-group").style.display = "none";
+        document
+          .getElementById("shortNoteInput")
+          .setAttribute("readonly", true);
+      }
+
+      function updateCheckbox(id, condition, labelText) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = condition ? labelText : "";
+      }
+
+      function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        if (isNaN(date)) return "-";
+        return `${String(date.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}.${date.getFullYear()}`;
+      }
+
+      let selectedAction = "";
+
+      function confirmAction(action) {
+        selectedAction = action;
+        document.getElementById(
+          "modalText"
+        ).textContent = `Are you sure you want to ${action}?`;
+        document.getElementById("confirmModal").style.display = "flex";
+      }
+
+      async function processDecision(confirm) {
+        document.getElementById("confirmModal").style.display = "none";
+        if (!confirm) return;
+
+        const shortNote = document
+          .getElementById("shortNoteInput")
+          .value.trim();
+
+        try {
+          const cleanUserId = userId.split("?")[0];
+          const res = await fetch(
+            `${AppConfig.CONSULTANCY}/study/${cleanUserId}/status`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                user_id: parseInt(userId),
+                short_note: shortNote,
+                status: selectedAction,
+              }),
+            }
+          );
+
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || "Failed to update");
+          }
+
+          showInAppAlert(`Successfully ${selectedAction}.`, () => {
+            window.location.href = "consultant-verification.html";
+          });
+        } catch (err) {
+          showInAppAlert("Error submitting decision: " + err.message);
         }
-      }).then(r => r.ok ? r.json() : {});
-      profile = {
-        ...profile,
-        ...extra,
-        languages: profile.languages && profile.languages.length > 0 ? profile.languages : extra.languages
-      };
-    } catch (e) {
-      console.warn("Fallback profile fetch failed", e);
-    }
-  }
+      }
 
-  document.getElementById("firstName").textContent = profile.first_name;
-  document.getElementById("lastName").textContent = profile.last_name;
-  document.getElementById("email").textContent = profile.email;
-  document.getElementById("type").textContent = profile.role;
+      window.confirmAction = confirmAction;
+      window.processDecision = processDecision;
+    </script>
 
-  document.getElementById("university").textContent = study.university_name;
-  document.getElementById("course").textContent = study.course_name;
-  document.getElementById("period").textContent = `${formatDate(study.education_start)} - ${formatDate(study.education_finish)}`;
-  document.getElementById("locationAbroad").textContent = `${study.city_of_study}, ${study.country_of_study}`;
-
-  const currentLoc = [profile.city, profile.country].filter(Boolean).join(", ");
-  document.getElementById("currentLocation").textContent = currentLoc || "-";
-
-  const languagesText = Array.isArray(profile.languages) && profile.languages.length > 0
-    ? profile.languages.join(", ")
-    : "-";
-  document.getElementById("languages").textContent = languagesText;
-
-  updateCheckbox("accommodationLabel", study.accommodation, "✔ Finding accommodation");
-  updateCheckbox("socialLifeLabel", study.social_life, "✔ Social life and making friends");
-  updateCheckbox("uniInfoLabel", study.uni_info, "✔ University information");
-  updateCheckbox("travelInfoLabel", study.travel_info, "✔ Travel and weekend plans");
-  updateCheckbox("zoomLabel", study.zoom, "✔ Zoom");
-  updateCheckbox("teamsLabel", study.microsoft_teams, "✔ Microsoft Teams");
-  updateCheckbox("meetLabel", study.google_meet, "✔ Google Meet");
-  updateCheckbox("facetimeLabel", study.apple_facetime, "✔ Apple FaceTime");
-})
-.catch(err => {
-  console.error(err);
-  showInAppAlert("Failed to load consultant details.", () => {
-    window.location.href = "consultant-verification.html";
-  });
-});
-
-if (isViewOnly) {
-  document.querySelector(".button-group").style.display = "none";
-  document.getElementById("shortNoteInput").setAttribute("readonly", true);
-}
-
-function updateCheckbox(id, condition, labelText) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = condition ? labelText : "";
-}
-
-function formatDate(dateStr) {
-  const date = new Date(dateStr);
-  if (isNaN(date)) return "-";
-  return `${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
-}
-
-let selectedAction = "";
-
-function confirmAction(action) {
-  selectedAction = action;
-  document.getElementById("modalText").textContent = `Are you sure you want to ${action}?`;
-  document.getElementById("confirmModal").style.display = "flex";
-}
-
-async function processDecision(confirm) {
-  document.getElementById("confirmModal").style.display = "none";
-  if (!confirm) return;
-
-  const shortNote = document.getElementById("shortNoteInput").value.trim();
-
-  try {
-    const cleanUserId = userId.split("?")[0];
-    const res = await fetch(`${AppConfig.CONSULTANCY}/study/${cleanUserId}/status`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        user_id: parseInt(userId),
-        short_note: shortNote,
-        status: selectedAction
-      })
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || "Failed to update");
-    }
-
-    showInAppAlert(`Successfully ${selectedAction}.`, () => {
-      window.location.href = "consultant-verification.html";
-    });
-  } catch (err) {
-    showInAppAlert("Error submitting decision: " + err.message);
-  }
-}
-
-window.confirmAction = confirmAction;
-window.processDecision = processDecision;
-</script>
-
-
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

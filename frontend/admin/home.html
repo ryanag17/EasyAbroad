@@ -1,160 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Home</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
 
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="user-management.html"> <li> User Management </li></a>
-                    <a href="consultant-verification.html"> <li> Consultant Verification </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>
-                    <a href="statistics.html"> <li> Platform Statistics </li></a>
-                    <a href="settings.html"> <li> Settings</li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="user-management.html"> <li>User Management</li></a>
+            <a href="consultant-verification.html">
+              <li>Consultant Verification</li></a
+            >
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="statistics.html"> <li>Platform Statistics</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
-    
-    
 
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-  
-    
-    
-<div class="main-container">
-  <section class="user-section">
-    <img id="userAvatar" src="../images/avatar.png" alt="User Avatar" class="user-avatar">
-    <h2 class="welcome">Welcome</h2>
-    <h2 class="user-fullname">Name!</h2>
-    
-    <div class="button-group">
-      <a href="profile.html" class="action-button">Profile</a>
-      <a href="user-management.html" class="action-button">User Management</a>
-      <a href="consultant-verification.html" class="action-button">Consultant Verification</a>
-      <a href="support-tickets.html" class="action-button">Support Tickets</a>
-      <a href="statistics.html" class="action-button">Platform Statistics</a>
-      <a href="settings.html" class="action-button">Settings</a>
-      <a href="#" onclick="showSignOutModal()" class="action-button">Sign Out</a>
-    </div>
-  </section>
-</div>
 
-    
+    <div class="main-container">
+      <section class="user-section">
+        <img
+          id="userAvatar"
+          src="../images/avatar.png"
+          alt="User Avatar"
+          class="user-avatar"
+        />
+        <h2 class="welcome">Welcome</h2>
+        <h2 class="user-fullname">Name!</h2>
+
+        <div class="button-group">
+          <a href="profile.html" class="action-button">Profile</a>
+          <a href="user-management.html" class="action-button"
+            >User Management</a
+          >
+          <a href="consultant-verification.html" class="action-button"
+            >Consultant Verification</a
+          >
+          <a href="support-tickets.html" class="action-button"
+            >Support Tickets</a
+          >
+          <a href="statistics.html" class="action-button"
+            >Platform Statistics</a
+          >
+          <a href="settings.html" class="action-button">Settings</a>
+          <a href="#" onclick="showSignOutModal()" class="action-button"
+            >Sign Out</a
+          >
+        </div>
+      </section>
+    </div>
+
     <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>  
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
 
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();  
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    showInAppAlert("Please log in first.", () => {
-      window.location.href = "../log-in.html";
-    });
-    return;
-  }
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          showInAppAlert("Please log in first.", () => {
+            window.location.href = "../log-in.html";
+          });
+          return;
+        }
 
-  const headers = {
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json"
-  };
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
 
-  try {
-    const res = await fetch(`${AppConfig.PROFILE}/admin`, { headers });
-    if (!res.ok) throw new Error("Unauthorized");
+        try {
+          const res = await fetch(`${AppConfig.PROFILE}/admin`, { headers });
+          if (!res.ok) throw new Error("Unauthorized");
 
-    const profile = await res.json();
-    const name = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
-    document.querySelector(".user-fullname").textContent = name || "Admin";
+          const profile = await res.json();
+          const name = `${profile.first_name || ""} ${
+            profile.last_name || ""
+          }`.trim();
+          document.querySelector(".user-fullname").textContent =
+            name || "Admin";
 
-    const avatarEl = document.getElementById("userAvatar");
-    avatarEl.src = profile.profile_picture
-      ? `${AppConfig.API_BASE}${profile.profile_picture}?t=${new Date().getTime()}`
-      : "../images/avatar.png";
-  } catch (err) {
-    console.error("Failed to load profile:", err);
-    showInAppAlert("Failed to load user info. Please log in again.", () => {
-      localStorage.clear();
-      window.location.href = "../log-in.html";
-    });
-  }
-});
-</script>
+          const avatarEl = document.getElementById("userAvatar");
+          avatarEl.src = profile.profile_picture
+            ? `${AppConfig.API_BASE}${
+                profile.profile_picture
+              }?t=${new Date().getTime()}`
+            : "../images/avatar.png";
+        } catch (err) {
+          console.error("Failed to load profile:", err);
+          showInAppAlert(
+            "Failed to load user info. Please log in again.",
+            () => {
+              localStorage.clear();
+              window.location.href = "../log-in.html";
+            }
+          );
+        }
+      });
+    </script>
 
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>  
-</body>
+  </body>
 </html>

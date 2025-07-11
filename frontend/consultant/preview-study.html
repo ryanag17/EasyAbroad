@@ -1,233 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Preview - study abroad</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
 
-</head>
-
-
-
-
-<body>
+  <body>
     <header class="user-header">
-            <a href="home.html" class="to_the_main"><div class="logo"><img src="../images/logo.png" alt="" class="pic_logo"></div></a>
-            
-            <div class="bell-menu">
-              <a href="notifications.html" class="bell-div notif-bell-wrapper">
-                  <i class="far fa-bell bell-icon">
-                    <span id="notifBadge" class="notification-badge"></span>
-                  </i>
-              </a>
-            
-            <div id="menuHamToggle">
-                
-                <input type="checkbox">
-    
-                <span></span>
-                <span></span>
-                <span></span>
-    
-                
-                <ul id="mainMenu">
-                    <a href="profile.html"> <li> Profile </li></a>
-                    <a href="appointments.html"> <li> Appointments </li></a>
-                    <a href="messages.html"> <li> Messages </li></a>
-                    <a href="consultancy-areas.html"> <li> Consultancy Areas </li></a>
-                    <a href="timetable.html"> <li> Timetable </li></a>
-                    <a href="support-tickets.html"> <li> Support Tickets </li></a>  
-                    <a href="settings.html"> <li> Settings </li></a>
-                    <a href="#" onclick="showSignOutModal()"> <li> Sign Out </li></a>
-                </ul>
-            </div>
-            
-            </div>
- 
+      <a href="home.html" class="to_the_main"
+        ><div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" ></div
+      ></a>
+
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <ul id="mainMenu">
+            <a href="profile.html"> <li>Profile</li></a>
+            <a href="appointments.html"> <li>Appointments</li></a>
+            <a href="messages.html"> <li>Messages</li></a>
+            <a href="consultancy-areas.html"> <li>Consultancy Areas</li></a>
+            <a href="timetable.html"> <li>Timetable</li></a>
+            <a href="support-tickets.html"> <li>Support Tickets</li></a>
+            <a href="settings.html"> <li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"> <li>Sign Out</li></a>
+          </ul>
+        </div>
+      </div>
     </header>
 
-
-<div id="signOutModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to sign out?</p>
-    <div class="modal-buttons">
-      <button onclick="confirmSignOut()">Yes</button>
-      <button onclick="closeModal()">No</button>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-    
     <main class="consultant-profile">
-        <a href="consultancy-areas.html" class="back-link">← Back to Consultancy Areas page</a>
-      
-        <section class="profile-box">
-          <div class="profile-header">
-            <img src="../images/avatar.png" alt="Consultant Avatar" class="avatar">
-            <div>
-              <h2>First name, Last name <a href="reviews.html" class="review">(currently have no review or 4.5/5)</a></h2>
-              <div class="info-row"><strong>Focus of consultancy:</strong> Study abroad</div>
-              <div class="info-row"><strong>University name:</strong> [University Name]</div>
-              <div class="info-row"><strong>Course name:</strong> [Course Name]</div>
-              <div class="info-row"><strong>Education period:</strong> From [mm.yyyy] to [mm.yyyy]</div>
-              <div class="info-row"><strong>Location of study abroad:</strong> [City], [Country]</div>
-              <div class="info-row"><strong>Current location:</strong> [City], [Country]</div>
-              <div class="info-row"><strong>Languages:</strong> [English], [German], [Russian]</div>
+      <a href="consultancy-areas.html" class="back-link"
+        >← Back to Consultancy Areas page</a
+      >
+
+      <section class="profile-box">
+        <div class="profile-header">
+          <img
+            src="../images/avatar.png"
+            alt="Consultant Avatar"
+            class="avatar"
+          />
+          <div>
+            <h2>
+              First name, Last name
+              <a href="reviews.html" class="review"
+                >(currently have no review or 4.5/5)</a
+              >
+            </h2>
+            <div class="info-row">
+              <strong>Focus of consultancy:</strong> Study abroad
             </div>
-          </div>
-      
-        <div class="help-contact">
-          <div class="help-list">
-            <h3>[First name] can help you with:</h3>
-            <ul></ul> 
-          </div>
-          <div class="call-list">
-            <h3>[First name] can call you via:</h3>
-            <ul></ul> 
+            <div class="info-row">
+              <strong>University name:</strong> [University Name]
+            </div>
+            <div class="info-row">
+              <strong>Course name:</strong> [Course Name]
+            </div>
+            <div class="info-row">
+              <strong>Education period:</strong> From [mm.yyyy] to [mm.yyyy]
+            </div>
+            <div class="info-row">
+              <strong>Location of study abroad:</strong> [City], [Country]
+            </div>
+            <div class="info-row">
+              <strong>Current location:</strong> [City], [Country]
+            </div>
+            <div class="info-row">
+              <strong>Languages:</strong> [English], [German], [Russian]
+            </div>
           </div>
         </div>
 
-        </section>
-      
-      </main>
-      
-      
-      <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>    
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-})();
+        <div class="help-contact">
+          <div class="help-list">
+            <h3>[First name] can help you with:</h3>
+            <ul></ul>
+          </div>
+          <div class="call-list">
+            <h3>[First name] can call you via:</h3>
+            <ul></ul>
+          </div>
+        </div>
+      </section>
+    </main>
 
-async function loadPreview() {
-  const token = localStorage.getItem("accessToken");
-  if (!token) return window.location.href = "../log-in.html";
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+      })();
 
-  const headers = { Authorization: `Bearer ${token}` };
+      async function loadPreview() {
+        const token = localStorage.getItem("accessToken");
+        if (!token) return (window.location.href = "../log-in.html");
 
-  try {
-    const [profileRes, studyRes] = await Promise.all([
-      fetch(`${AppConfig.PROFILE}/consultant`, { headers }),
-      fetch(`${AppConfig.CONSULTANCY}/study/me`, { headers })
-    ]);
+        const headers = { Authorization: `Bearer ${token}` };
 
-    if (!profileRes.ok || !studyRes.ok) {
-      showInAppAlert("❌ Failed to load profile data.");
-      return;
-    }
+        try {
+          const [profileRes, studyRes] = await Promise.all([
+            fetch(`${AppConfig.PROFILE}/consultant`, { headers }),
+            fetch(`${AppConfig.CONSULTANCY}/study/me`, { headers }),
+          ]);
 
-    const profile = await profileRes.json();
-    const study = await studyRes.json();
+          if (!profileRes.ok || !studyRes.ok) {
+            showInAppAlert("❌ Failed to load profile data.");
+            return;
+          }
 
-    const avatar = document.querySelector(".avatar");
-    avatar.src = profile.profile_picture?.startsWith("/static/")
-      ? `${AppConfig.API_BASE}${profile.profile_picture}`
-      : "../images/avatar.png";
+          const profile = await profileRes.json();
+          const study = await studyRes.json();
 
-    const firstName = profile.first_name || "Consultant";
-    const lastName = profile.last_name || "";
+          const avatar = document.querySelector(".avatar");
+          avatar.src = profile.profile_picture?.startsWith("/static/")
+            ? `${AppConfig.API_BASE}${profile.profile_picture}`
+            : "../images/avatar.png";
 
-    document.querySelector("h2").innerHTML = `
+          const firstName = profile.first_name || "Consultant";
+          const lastName = profile.last_name || "";
+
+          document.querySelector("h2").innerHTML = `
       ${firstName} ${lastName}
       <a href="reviews.html" class="review">(currently have no review)</a>`;
 
-    document.querySelector(".info-row:nth-of-type(1)").innerHTML =
-      `<strong>Focus of consultancy:</strong> Study abroad`;
+          document.querySelector(
+            ".info-row:nth-of-type(1)"
+          ).innerHTML = `<strong>Focus of consultancy:</strong> Study abroad`;
 
-    document.querySelector(".info-row:nth-of-type(2)").innerHTML =
-      `<strong>University name:</strong> ${study.university_name || "–"}`;
+          document.querySelector(
+            ".info-row:nth-of-type(2)"
+          ).innerHTML = `<strong>University name:</strong> ${
+            study.university_name || "–"
+          }`;
 
-    document.querySelector(".info-row:nth-of-type(3)").innerHTML =
-      `<strong>Course name:</strong> ${study.course_name || "–"}`;
+          document.querySelector(
+            ".info-row:nth-of-type(3)"
+          ).innerHTML = `<strong>Course name:</strong> ${
+            study.course_name || "–"
+          }`;
 
-    document.querySelector(".info-row:nth-of-type(4)").innerHTML =
-      `<strong>Education period:</strong> From ${formatDate(study.education_start)} to ${formatDate(study.education_finish)}`;
+          document.querySelector(
+            ".info-row:nth-of-type(4)"
+          ).innerHTML = `<strong>Education period:</strong> From ${formatDate(
+            study.education_start
+          )} to ${formatDate(study.education_finish)}`;
 
-    document.querySelector(".info-row:nth-of-type(5)").innerHTML =
-      `<strong>Location of study abroad:</strong> ${study.city_of_study || "–"}, ${study.country_of_study || "–"}`;
+          document.querySelector(
+            ".info-row:nth-of-type(5)"
+          ).innerHTML = `<strong>Location of study abroad:</strong> ${
+            study.city_of_study || "–"
+          }, ${study.country_of_study || "–"}`;
 
-    document.querySelector(".info-row:nth-of-type(6)").innerHTML =
-      `<strong>Current location:</strong> ${profile.city || "–"}, ${profile.country || "–"}`;
+          document.querySelector(
+            ".info-row:nth-of-type(6)"
+          ).innerHTML = `<strong>Current location:</strong> ${
+            profile.city || "–"
+          }, ${profile.country || "–"}`;
 
-    document.querySelector(".info-row:nth-of-type(7)").innerHTML =
-      `<strong>Languages:</strong> ${profile.languages.length ? profile.languages.join(", ") : "–"}`;
+          document.querySelector(
+            ".info-row:nth-of-type(7)"
+          ).innerHTML = `<strong>Languages:</strong> ${
+            profile.languages.length ? profile.languages.join(", ") : "–"
+          }`;
 
-    document.querySelector(".help-list h3").textContent = `${firstName} can help you with:`;
-    document.querySelector(".call-list h3").textContent = `${firstName} can call you via:`;
+          document.querySelector(
+            ".help-list h3"
+          ).textContent = `${firstName} can help you with:`;
+          document.querySelector(
+            ".call-list h3"
+          ).textContent = `${firstName} can call you via:`;
 
-    const helpMap = {
-      accommodation: "Finding accommodation",
-      social_life: "Social life and making friends",
-      uni_info: "University information",
-      travel_info: "Best and worst city spots including travel and weekend plans"
-    };
-    const helpItems = Object.entries(helpMap).filter(([key]) => study[key]);
-    document.querySelector(".help-list ul").innerHTML = helpItems.length
-      ? helpItems.map(([, label]) => `<li>${label}</li>`).join("")
-      : "<li>–</li>";
+          const helpMap = {
+            accommodation: "Finding accommodation",
+            social_life: "Social life and making friends",
+            uni_info: "University information",
+            travel_info:
+              "Best and worst city spots including travel and weekend plans",
+          };
+          const helpItems = Object.entries(helpMap).filter(
+            ([key]) => study[key]
+          );
+          document.querySelector(".help-list ul").innerHTML = helpItems.length
+            ? helpItems.map(([, label]) => `<li>${label}</li>`).join("")
+            : "<li>–</li>";
 
-    const callMap = {
-      zoom: "Zoom",
-      microsoft_teams: "Microsoft Teams",
-      google_meet: "Google Meet",
-      apple_facetime: "Apple FaceTime"
-    };
-    const callItems = Object.entries(callMap).filter(([key]) => study[key]);
-    document.querySelector(".call-list ul").innerHTML = callItems.length
-      ? callItems.map(([, label]) => `<li>${label}</li>`).join("")
-      : "<li>–</li>";
+          const callMap = {
+            zoom: "Zoom",
+            microsoft_teams: "Microsoft Teams",
+            google_meet: "Google Meet",
+            apple_facetime: "Apple FaceTime",
+          };
+          const callItems = Object.entries(callMap).filter(
+            ([key]) => study[key]
+          );
+          document.querySelector(".call-list ul").innerHTML = callItems.length
+            ? callItems.map(([, label]) => `<li>${label}</li>`).join("")
+            : "<li>–</li>";
+        } catch (err) {
+          console.error("Error loading preview:", err);
+          showInAppAlert(
+            "❌ Something went wrong loading your consultancy profile."
+          );
+        }
+      }
 
-  } catch (err) {
-    console.error("Error loading preview:", err);
-    showInAppAlert("❌ Something went wrong loading your consultancy profile.");
-  }
-}
+      function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        if (isNaN(d)) return "–";
+        return `${String(d.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}.${d.getFullYear()}`;
+      }
 
-function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  if (isNaN(d)) return "–";
-  return `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
-}
+      document.addEventListener("DOMContentLoaded", loadPreview);
+    </script>
 
-document.addEventListener("DOMContentLoaded", loadPreview);
-</script>
-
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>  
-</body>    
+  </body>
 </html>

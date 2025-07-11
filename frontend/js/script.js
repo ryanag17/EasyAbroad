@@ -7,22 +7,22 @@
 let currentIndex = 0;
 
 function moveSlide(direction) {
-    const slides = document.getElementById("slider-track");
-    const totalSlides = slides.children.length;
-    const slideWidth = slides.children[0].offsetWidth + 50;
+  const slides = document.getElementById("slider-track");
+  const totalSlides = slides.children.length;
+  const slideWidth = slides.children[0].offsetWidth + 50;
 
-    currentIndex += direction;
+  currentIndex += direction;
 
-    if (currentIndex < 0) {
-        currentIndex = totalSlides - 1;
-    } else if (currentIndex >= totalSlides) {
-        currentIndex = 0;
-    }
+  if (currentIndex < 0) {
+    currentIndex = totalSlides - 1;
+  } else if (currentIndex >= totalSlides) {
+    currentIndex = 0;
+  }
 
-    slides.scrollTo({
-        left: slideWidth * currentIndex,
-        behavior: 'smooth'
-    });
+  slides.scrollTo({
+    left: slideWidth * currentIndex,
+    behavior: 'smooth'
+  });
 }
 
 // Register password icon btn
@@ -86,27 +86,27 @@ document.addEventListener("DOMContentLoaded", () => {
 let emailId = document.getElementById("email-id");
 let errorMsg = document.getElementById("error-msg");
 let icon = document.getElementById("icon");
-let mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$/;
+let mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}$/;
 
-function checker(){
-    icon.style.display="none";
-    if(emailId.value.match(mailRegex)){
-        icon.innerHTML = '<i class="fas fa-check-circle"></i>';
-        icon.style.color = '#2ecc71';
-        errorMsg.style.display = 'none';
-        emailId.style.border = '2px solid #2ecc71';
-    }
-    else if(emailId.value == ""){
-        icon.style.display = 'none';
-        errorMsg.style.display = 'none';
-        emailId.style.border = '2px solid #d1d3d4';
-    }
-    else{
-        icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
-        icon.style.color = '#ff2851';
-        errorMsg.style.display = 'block';
-        emailId.style.border = '2px solid #ff2851';
-    }
+function checker() {
+  icon.style.display = "none";
+  if (emailId.value.match(mailRegex)) {
+    icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+    icon.style.color = '#2ecc71';
+    errorMsg.style.display = 'none';
+    emailId.style.border = '2px solid #2ecc71';
+  }
+  else if (emailId.value == "") {
+    icon.style.display = 'none';
+    errorMsg.style.display = 'none';
+    emailId.style.border = '2px solid #d1d3d4';
+  }
+  else {
+    icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+    icon.style.color = '#ff2851';
+    errorMsg.style.display = 'block';
+    emailId.style.border = '2px solid #ff2851';
+  }
 
 }
 
@@ -185,19 +185,22 @@ async function loginUser() {
 
   try {
     const res = await fetch(`${AppConfig.AUTH}/login`, {
-      method:      "POST",
-      headers:     { "Content-Type": "application/json" },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body:        JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password })
     });
 
     const data = await res.json();
     if (res.ok && data.access_token) {
-      // 1) store the JWT + role
+      // Clear local storage first to remove any old tokens
+      localStorage.clear();
+
+      // Now store the new JWT + role
       localStorage.setItem("accessToken", data.access_token);
       localStorage.setItem("userType", data.role);
 
-      // 2) redirect
+      // Redirect
       if (data.role === "student") {
         window.location.href = "student/home.html";
       } else if (data.role === "consultant") {
@@ -241,12 +244,12 @@ function validateRegisterForm() {
     p.textContent = '';
   });
 
-  const nameVal      = document.getElementById("name").value.trim();
-  const surnameVal   = document.getElementById("surname").value.trim();
-  const emailVal     = document.getElementById("email-id").value.trim();
-  const pwVal        = document.getElementById("password-id").value;
-  const repeatVal    = document.getElementById("repeat").value;
-  const birthdayVal  = document.getElementById("birthday").value;
+  const nameVal = document.getElementById("name").value.trim();
+  const surnameVal = document.getElementById("surname").value.trim();
+  const emailVal = document.getElementById("email-id").value.trim();
+  const pwVal = document.getElementById("password-id").value;
+  const repeatVal = document.getElementById("repeat").value;
+  const birthdayVal = document.getElementById("birthday").value;
 
   let isValid = true;
 
@@ -260,7 +263,7 @@ function validateRegisterForm() {
     isValid = false;
   }
 
-  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$/;
+  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}$/;
   if (!emailVal.match(mailRegex)) {
     showError("email-error", "Please enter a valid email address.");
     isValid = false;
@@ -276,26 +279,26 @@ function validateRegisterForm() {
     isValid = false;
   }
 
-if (!birthdayVal) {
-  showError('birthday-error', 'Please enter your date of birth.');
-  isValid = false;
-} else {
-  const bday = new Date(birthdayVal);
-  const today = new Date();
-  if (bday > today) {
-    showError('birthday-error', 'Birthday cannot be in the future.');
+  if (!birthdayVal) {
+    showError('birthday-error', 'Please enter your date of birth.');
     isValid = false;
   } else {
-    const age = new Date(today - bday).getUTCFullYear() - 1970;
-    if (age < 18) {
-      showError('birthday-error', 'User must be at least 18 years old.');
+    const bday = new Date(birthdayVal);
+    const today = new Date();
+    if (bday > today) {
+      showError('birthday-error', 'Birthday cannot be in the future.');
       isValid = false;
-    } else if (age > 100) {
-      showError('birthday-error', 'User must be younger than 100 years old.');
-      isValid = false;
+    } else {
+      const age = new Date(today - bday).getUTCFullYear() - 1970;
+      if (age < 18) {
+        showError('birthday-error', 'User must be at least 18 years old.');
+        isValid = false;
+      } else if (age > 100) {
+        showError('birthday-error', 'User must be younger than 100 years old.');
+        isValid = false;
+      }
     }
   }
-}
 
   return isValid;
 }
@@ -312,10 +315,10 @@ function showError(id, message) {
 
 function validateLoginForm() {
   const email = document.getElementById("email-id").value.trim();
-  const pw    = document.getElementById("password-id").value;
+  const pw = document.getElementById("password-id").value;
 
   // 1) Basic email check
-  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}$/;
+  const mailRegex = /^[a-zA-Z][a-zA-Z0-9\-\_\.]*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}$/;
   if (!email.match(mailRegex)) {
     showInAppAlert("Please enter a valid email address.");
     document.getElementById("email-id").focus();
@@ -337,9 +340,9 @@ function validateLoginForm() {
 window.validateLoginForm = validateLoginForm;
 
 // Expose functions for inline use
-window.registerUser   = registerUser;
-window.loginUser      = loginUser;
-window.fetchProfile   = fetchProfile;
+window.registerUser = registerUser;
+window.loginUser = loginUser;
+window.fetchProfile = fetchProfile;
 window.validateRegisterForm = validateRegisterForm;
 window.validateLoginForm = validateLoginForm;
 

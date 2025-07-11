@@ -1,237 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat</title>
-  <link rel="icon" type="image/png" href="../images/favicon.png" />
-  <link rel="stylesheet" href="../css/styles.css" />
-  <link rel="stylesheet" href="../css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-</head>
-<body>
-  <header class="user-header">
-    <a href="home.html" class="to_the_main">
-      <div class="logo"><img src="../images/logo.png" alt="" class="pic_logo" /></div>
-    </a>
-    <div class="bell-menu">
-      <a href="notifications.html" class="bell-div notif-bell-wrapper">
-        <i class="far fa-bell bell-icon">
-          <span id="notifBadge" class="notification-badge"></span>
-        </i>
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Chat</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png" >
+    <link rel="stylesheet" href="../css/styles.css" >
+    <link rel="stylesheet" href="../css/all.min.css" >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="user-header">
+      <a href="home.html" class="to_the_main">
+        <div class="logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
       </a>
-      <div id="menuHamToggle">
-        <input type="checkbox" />
-        <span></span>
-        <span></span>
-        <span></span>
-        <ul id="mainMenu">
-          <a href="profile.html"><li>Profile</li></a>
-          <a href="appointments.html"><li>Appointments</li></a>
-          <a href="messages.html"><li>Messages</li></a>
-          <a href="support-tickets.html"><li>Support Tickets</li></a>
-          <a href="settings.html"><li>Settings</li></a>
-          <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
-        </ul>
+      <div class="bell-menu">
+        <a href="notifications.html" class="bell-div notif-bell-wrapper">
+          <i class="far fa-bell bell-icon">
+            <span id="notifBadge" class="notification-badge"></span>
+          </i>
+        </a>
+        <div id="menuHamToggle">
+          <input type="checkbox" >
+          <span></span>
+          <span></span>
+          <span></span>
+          <ul id="mainMenu">
+            <a href="profile.html"><li>Profile</li></a>
+            <a href="appointments.html"><li>Appointments</li></a>
+            <a href="messages.html"><li>Messages</li></a>
+            <a href="support-tickets.html"><li>Support Tickets</li></a>
+            <a href="settings.html"><li>Settings</li></a>
+            <a href="#" onclick="showSignOutModal()"><li>Sign Out</li></a>
+          </ul>
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <div id="signOutModal" class="modal-overlay">
-    <div class="modal-content">
-      <p>Are you sure you want to sign out?</p>
-      <div class="modal-buttons">
-        <button onclick="confirmSignOut()">Yes</button>
-        <button onclick="closeModal()">No</button>
-      </div>
-    </div>
-  </div>
-
-  <section class="chat-conversation-section">
-    <div class="chat-header">
-      <button class="back-button" onclick="goBackToInbox()">← Back to Messages</button>
-      <div class="consultant-info">
-        <img src="../images/avatar.png" alt="Consultant" class="avatar" />
-        <a href="#" class="consultant-name">User</a>
+    <div id="signOutModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <div class="modal-buttons">
+          <button onclick="confirmSignOut()">Yes</button>
+          <button onclick="closeModal()">No</button>
+        </div>
       </div>
     </div>
 
-    <div class="chat-messages" id="chatMessages"></div>
+    <section class="chat-conversation-section">
+      <div class="chat-header">
+        <button class="back-button" onclick="goBackToInbox()">
+          ← Back to Messages
+        </button>
+        <div class="consultant-info">
+          <img src="../images/avatar.png" alt="Consultant" class="avatar" >
+          <a href="#" class="consultant-name">User</a>
+        </div>
+      </div>
 
-    <div class="chat-input">
-      <textarea id="messageInput" placeholder="Type a message..."></textarea>
-      <button id="sendBtn">Send</button>
+      <div class="chat-messages" id="chatMessages"></div>
+
+      <div class="chat-input">
+        <textarea id="messageInput" placeholder="Type a message..."></textarea>
+        <button id="sendBtn">Send</button>
+      </div>
+    </section>
+
+    <footer>
+      <div class="logo_icons">
+        <div class="footer-logo">
+          <img src="../images/logo.png" alt="" class="pic_logo" >
+        </div>
+        <p class="follow-text">Follow us!</p>
+        <div class="social-icons">
+          <a href="http://www.instagram.com/easyabroad_" target="_blank">
+            <img src="../images/instagram.png" alt="Instagram" >
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4 class="h4_service">Service & Contacts</h4>
+        <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
+        <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
+        <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
+        <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
+        <a href="../privacy-policy.html" class="class_footer"
+          ><p>Privacy Policy</p></a
+        >
+        <a href="../terms-conditions.html" class="class_footer"
+          ><p>Terms and Conditions</p></a
+        >
+      </div>
+    </footer>
+    <script src="../js/config.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (async () => {
+        await autoEnforceRoleFromPath();
+
+        const token = localStorage.getItem("accessToken");
+        const params = new URLSearchParams(window.location.search);
+        const conversationId = params.get("conversationId");
+
+        if (!conversationId) {
+          await showInAppAlert("No conversation selected.", () => {
+            window.location.href = "messages.html";
+          });
+          return;
+        }
+
+        async function loadThread() {
+          try {
+            const res = await fetch(
+              `${AppConfig.MESSAGES}/with/${conversationId}`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
+            if (!res.ok) throw new Error("Failed to load thread");
+            const msgs = await res.json();
+            renderChat(msgs);
+
+            await fetchPartnerInfo();
+          } catch (e) {
+            console.error("Error loading thread:", e);
+            await showInAppAlert("Failed to load chat messages.");
+          }
+        }
+
+        async function fetchPartnerInfo() {
+          try {
+            const res = await fetch(`${AppConfig.MESSAGES}/${conversationId}/partner`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Failed to fetch user info");
+            const user = await res.json();
+            updateHeader(user.first_name, user.last_name);
+            document.querySelector(".avatar").src = user.profile_picture
+              ? AppConfig.API_BASE + user.profile_picture
+              : "../images/avatar.png";
+          } catch (e) {
+            console.error("Error fetching partner info:", e);
+            document.querySelector(".partner-name").textContent = "User";
+            document.querySelector(".avatar").src = "../images/avatar.png";
+          }
+        }
+
+        function updateHeader(firstName, lastName) {
+          const fullName = `${firstName} ${lastName}`.trim();
+          document.querySelector(".consultant-name").textContent =
+            fullName || "User";
+        }
+
+        function formatToLocal(utcString) {
+          return new Date(utcString + "Z").toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });
+        }
+
+        function renderChat(messages) {
+          const container = document.getElementById("chatMessages");
+          container.innerHTML = "";
+          messages.forEach((m) => {
+            const bubble = document.createElement("div");
+            bubble.className =
+              "message-bubble " + (m.from_me ? "me" : "partner");
+            bubble.innerHTML = `
+              <div class="bubble-content">
+                <p>${m.message}</p>
+                <span class="timestamp">
+                  ${formatToLocal(m.sent_at)}
+                </span>
+              </div>`;
+            container.appendChild(bubble);
+          });
+          container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendMessage() {
+          const input = document.getElementById("messageInput");
+          const text = input.value.trim();
+          if (!text) return;
+
+          if (text.length > 500) {
+            await showInAppAlert("Message cannot exceed 500 characters.");
+            return;
+          }
+
+          const payload = {
+            conversation_id: conversationId,
+            message: text,
+            booking_id: null,
+          };
+
+          try {
+            const res = await fetch(`${AppConfig.MESSAGES}/send`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(payload),
+            });
+            if (!res.ok) {
+              const errorText = await res.text();
+              await showInAppAlert("Failed to send message: " + errorText);
+              return;
+            }
+
+            input.value = "";
+            await loadThread();
+          } catch (e) {
+            console.error("Error sending message:", e);
+            await showInAppAlert(
+              "Failed to send message due to network error."
+            );
+          }
+        }
+
+        document
+          .getElementById("sendBtn")
+          .addEventListener("click", sendMessage);
+        document
+          .getElementById("messageInput")
+          .addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          });
+
+        window.goBackToInbox = () => (window.location.href = "messages.html");
+
+        await loadThread();
+        setInterval(loadThread, 3000);
+      })();
+    </script>
+
+    <div id="inAppModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="modalMessage">Message here</p>
+        <div id="modalButtons" class="modal-buttons">
+          <button id="modalConfirmButton" style="display: none">OK</button>
+          <button id="modalCancelButton" style="display: none">Cancel</button>
+        </div>
+      </div>
     </div>
-    
-  </section>
-
-  <footer>
-<div class="logo_icons">
-  <div class="footer-logo">
-    <img src="../images/logo.png" alt="" class="pic_logo">
-  </div>
-  <p class="follow-text">Follow us!</p>
-  <div class="social-icons">
-    <a href="http://www.instagram.com/easyabroad_" target="_blank">
-      <img src="../images/instagram.png" alt="Instagram">
-    </a>
-  </div>
-</div>
-  <div class="footer-links">
-      <h4 class="h4_service">Service & Contacts</h4>
-      <a href="../faq.html" class="class_footer"><p>FAQ</p></a>
-      <a href="../contact-us.html" class="class_footer"><p>Contact Us</p></a>
-      <a href="../support-us.html" class="class_footer"><p>Support Us</p></a>
-      <a href="../about-us.html" class="class_footer"><p>About Us</p></a>
-      <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
-      <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
-  </div>
-</footer>
-<script src="../js/config.js"></script>
-<script src="../js/script.js"></script>
-<script src="../js/auth.js"></script>
-<script>
-(async () => {
-  await autoEnforceRoleFromPath();
-
-  const token = localStorage.getItem("accessToken");
-  const params = new URLSearchParams(window.location.search);
-  const conversationId = params.get("conversationId");
-
-  if (!conversationId) {
-    await showInAppAlert("No conversation selected.", () => {
-      window.location.href = "messages.html";
-    });
-    return;
-  }
-
-async function loadThread() {
-  try {
-    const res = await fetch(`${AppConfig.MESSAGES}/with/${conversationId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error("Failed to load thread");
-    const msgs = await res.json();
-    renderChat(msgs);
-
-    if (msgs.length > 0) {
-      const lastMsg = msgs[msgs.length - 1];
-      updateHeader(lastMsg.first_name, lastMsg.last_name);
-    } else {
-      // Fetch partner info manually when no messages
-      await fetchPartnerInfo();
-    }
-  } catch (e) {
-    console.error("Error loading thread:", e);
-    await showInAppAlert("Failed to load messages.");
-  }
-}
-
-async function fetchPartnerInfo() {
-  try {
-    const res = await fetch(`${AppConfig.MESSAGES}/${conversationId}/partner`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error("Failed to fetch partner info");
-    const user = await res.json();
-    updateHeader(user.first_name, user.last_name);
-  } catch (e) {
-    console.error("Error fetching partner info:", e);
-  }
-}
-
-
-  function updateHeader(firstName, lastName) {
-    const fullName = `${firstName} ${lastName}`.trim();
-    document.querySelector(".consultant-name").textContent = fullName || "User";
-  }
-
-  function renderChat(messages) {
-    const container = document.getElementById("chatMessages");
-    container.innerHTML = "";
-    messages.forEach(m => {
-      const bubble = document.createElement("div");
-      bubble.className = "message-bubble " + (m.from_me ? "me" : "partner");
-      bubble.innerHTML = `
-        <div class="bubble-content">
-          <p>${m.message}</p>
-          <span class="timestamp">
-            ${new Date(m.sent_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
-          </span>
-        </div>`;
-      container.appendChild(bubble);
-    });
-    container.scrollTop = container.scrollHeight;
-  }
-
-async function sendMessage() {
-  const input = document.getElementById("messageInput");
-  const text = input.value.trim();
-  if (!text) return;
-
-  if (text.length > 500) {
-    await showInAppAlert("Message cannot exceed 500 characters.");
-    return;
-  }
-
-  const payload = {
-    conversation_id: conversationId,
-    message: text,
-    booking_id: null
-  };
-
-  try {
-    const res = await fetch(`${AppConfig.MESSAGES}/send`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) {
-      const errorText = await res.text();
-      await showInAppAlert("Failed to send message: " + errorText);
-      return;
-    }
-
-    input.value = "";
-    await loadThread();
-  } catch (e) {
-    console.error("Error sending message:", e);
-    await showInAppAlert("Failed to send message due to network error.");
-  }
-}
-
-
-  document.getElementById("sendBtn").addEventListener("click", sendMessage);
-  document.getElementById("messageInput").addEventListener("keydown", e => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-
-  window.goBackToInbox = () => window.location.href = "messages.html";
-
-  await loadThread();
-  setInterval(loadThread, 3000);
-})();
-</script>
-
-
-
-
-
-
-<div id="inAppModal" class="modal-overlay">
-  <div class="modal-content">
-    <p id="modalMessage">Message here</p>
-    <div id="modalButtons" class="modal-buttons">
-      <button id="modalConfirmButton" style="display: none;">OK</button>
-      <button id="modalCancelButton" style="display: none;">Cancel</button>
-    </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>
