@@ -14,7 +14,9 @@ from app.auth.schemas import (
 from app.auth.token_service import create_access_token, create_refresh_token
 from app.auth.token_verification import get_current_user
 from app.db import get_db
-
+import uuid
+from PIL import Image
+import io
 
 
 router = APIRouter(
@@ -24,8 +26,6 @@ router = APIRouter(
 
 UPLOAD_DIR = Path("static/uploads/profile_pictures")
 
-from PIL import Image
-import io
 
 @router.post("/upload-picture", summary="Upload profile picture")
 async def upload_profile_picture(
@@ -40,7 +40,10 @@ async def upload_profile_picture(
         raise HTTPException(status_code=400, detail="Unsupported file format")
 
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    file_path = UPLOAD_DIR / f"user_{user_id}.jpg"  # Always save as JPEG
+
+    # Generate a secure UUID for file name
+    unique_id = str(uuid.uuid4())
+    file_path = UPLOAD_DIR / f"{unique_id}.jpg"
 
     contents = await file.read()
     try:
@@ -48,30 +51,24 @@ async def upload_profile_picture(
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid image file")
 
-    # Convert to RGB to remove alpha if necessary
+    # Convert to RGB if needed
     if image.mode in ("RGBA", "LA"):
         image = image.convert("RGB")
 
-    # Resize to max 800×800
     image.thumbnail((800, 800))
 
-    # Prepare in-memory buffer
     buffer = io.BytesIO()
     quality = 85
 
-    # Try saving and check size
     while True:
         buffer.seek(0)
         buffer.truncate(0)
         image.save(buffer, format="JPEG", quality=quality)
-
         size_in_mb = buffer.tell() / (1024 * 1024)
         if size_in_mb <= 2 or quality <= 40:
             break
-        # Reduce quality if still too big
         quality -= 5
 
-    # Save final image to disk
     with file_path.open("wb") as f:
         f.write(buffer.getvalue())
 

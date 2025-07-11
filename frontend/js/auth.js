@@ -267,12 +267,3 @@ window.addEventListener("storage", (event) => {
     window.location.reload();
   }
 });
-
-window.addEventListener("focus", () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    console.log("⚠️ No token on focus, redirecting to login...");
-    localStorage.clear();
-    window.location.href = "/log-in.html";
-  }
-});
