@@ -104,8 +104,9 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
-    <script src="../auth.js"></script>
-    <script src="../script.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
@@ -119,8 +120,8 @@ async function loadPreview() {
 
   try {
     const [profileRes, internshipRes] = await Promise.all([
-      fetch("http://localhost:8000/profile/consultant", { headers }),
-      fetch("http://localhost:8000/consultancy/internship/me", { headers })
+      fetch(`${AppConfig.PROFILE}/consultant`, { headers }),
+      fetch(`${AppConfig.CONSULTANCY}/internship/me`, { headers })
     ]);
     
     if (!profileRes.ok || !internshipRes.ok) {
@@ -133,7 +134,7 @@ async function loadPreview() {
 
     const avatar = document.querySelector(".avatar");
     avatar.src = profile.profile_picture?.startsWith("/static/")
-      ? `http://localhost:8000${profile.profile_picture}`
+      ? `${AppConfig.API_BASE}${profile.profile_picture}`
       : "../images/avatar.png";
 
     const firstName = profile.first_name || "Consultant";

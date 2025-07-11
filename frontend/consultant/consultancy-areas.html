@@ -106,8 +106,10 @@
       <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
-</footer>  <script src="../auth.js"></script>
-  <script src="../script.js"></script>   
+</footer>  
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
@@ -124,8 +126,8 @@ async function deleteProfile(type) {
 
   const token = localStorage.getItem("accessToken");
   const endpoint = type === "study"
-    ? "http://localhost:8000/consultancy/study"
-    : "http://localhost:8000/consultancy/internship";
+    ? `${AppConfig.CONSULTANCY}/study`
+    : `${AppConfig.CONSULTANCY}/internship`;
 
   try {
     const res = await fetch(endpoint, {
@@ -201,10 +203,10 @@ async function fetchAndRenderProfiles() {
 
   try {
     const [studyRes, internRes] = await Promise.all([
-      fetch("http://localhost:8000/consultancy/study/me", {
+      fetch(`${AppConfig.CONSULTANCY}/study/me`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      fetch("http://localhost:8000/consultancy/internship/me", {
+      fetch(`${AppConfig.CONSULTANCY}/internship/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
     ]);

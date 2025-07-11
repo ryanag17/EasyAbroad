@@ -144,15 +144,17 @@
       <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
-</footer>  <script src="../auth.js"></script>
-  <script src="../script.js"></script>  
+</footer>  
+
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
 })();  
 
-const API = "http://localhost:8000";
 const token = localStorage.getItem("accessToken");
 const userId = new URLSearchParams(window.location.search).get("user_id");
 const isViewOnly = new URLSearchParams(window.location.search).get("mode") === "view";
@@ -163,7 +165,7 @@ if (!token || !userId) {
   });
 }
 
-fetch(`${API}/consultancy/internship/full/${userId}`, {
+fetch(`${AppConfig.CONSULTANCY}/internship/full/${userId}`, {
   headers: {
     Authorization: `Bearer ${token}`
   }
@@ -180,7 +182,7 @@ fetch(`${API}/consultancy/internship/full/${userId}`, {
   if (status === "pending") {
     proofContainer.style.display = "block";
     const proofLink = document.getElementById("proofLink");
-    proofLink.href = `${API}/consultancy/download-proof/internship/${userId}`;
+    proofLink.href = `${AppConfig.CONSULTANCY}/download-proof/internship/${userId}`;
     proofLink.setAttribute("download", "");
   } else {
     proofContainer.style.display = "none";
@@ -206,7 +208,7 @@ fetch(`${API}/consultancy/internship/full/${userId}`, {
 
   if (!profile.city || !profile.languages) {
     try {
-      const extra = await fetch(`${API}/profile/admin/view/${userId}`, {
+      const extra = await fetch(`${AppConfig.PROFILE}/admin/view/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       }).then(r => r.ok ? r.json() : {});
       profile = {
@@ -284,7 +286,7 @@ async function processDecision(confirm) {
 
   try {
     const cleanUserId = userId.split("?")[0];
-    const url = `${API}/consultancy/internship/${cleanUserId}/status?status=${selectedAction}&short_note=${encodeURIComponent(shortNote)}`;
+    const url = `${AppConfig.CONSULTANCY}/internship/${cleanUserId}/status?status=${selectedAction}&short_note=${encodeURIComponent(shortNote)}`;
 
     const res = await fetch(url, {
       method: "PATCH",

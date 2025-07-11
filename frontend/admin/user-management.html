@@ -128,8 +128,12 @@
       <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
-</footer>  <script src="../auth.js"></script>
-<script src="../script.js"></script>
+</footer>  
+
+
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
   (async () => {
     await autoEnforceRoleFromPath();
@@ -213,7 +217,7 @@ function renderPagination(totalItems) {
       if (role) queryParams.append('role', role);
       if (status) queryParams.append('status', status);
 
-      const response = await fetch(`http://localhost:8000/admin/users?${queryParams.toString()}`, {
+      const response = await fetch(`${AppConfig.ADMIN}/users?${queryParams.toString()}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

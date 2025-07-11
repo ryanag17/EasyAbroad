@@ -137,8 +137,9 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
-  <script src="../auth.js"></script>
-  <script src="../script.js"></script>   
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
@@ -152,7 +153,7 @@ const itemsPerPage = 4;
 
 async function loadAppointments() {
   const token = localStorage.getItem("accessToken");
-  const res = await fetch("http://localhost:8000/appointment/consultant/appointments", {
+  const res = await fetch(`${AppConfig.APPOINTMENTS}/consultant/appointments`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   if (!res.ok) {
@@ -360,15 +361,15 @@ async function sendMeetingLink() {
   let successMsg = "";
 
   if (mode === "accept") {
-    url = `http://localhost:8000/appointment/approve/${tempAcceptedData}`;
+    url = `${AppConfig.APPOINTMENTS}/approve/${tempAcceptedData}`;
     body = { meeting_link: input };
     successMsg = "Appointment approved and link sent!";
   } else if (mode === "reject") {
-    url = `http://localhost:8000/appointment/reject/${tempAcceptedData}`;
+    url = `${AppConfig.APPOINTMENTS}/reject/${tempAcceptedData}`;
     body = { reason: input };
     successMsg = "Appointment rejected.";
   } else if (mode === "cancel") {
-    url = `http://localhost:8000/appointment/${tempAcceptedData}/cancel`;
+    url = `${AppConfig.APPOINTMENTS}/${tempAcceptedData}/cancel`;
     body = { reason: input };
     successMsg = "Appointment cancelled.";
   }
@@ -428,7 +429,7 @@ async function startMessage(e, studentId) {
   }
 
   try {
-    const res = await fetch("http://localhost:8000/messages/start-conversation", {
+    const res = await fetch(`${AppConfig.MESSAGES}/start-conversation`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ receiver_id: studentId })

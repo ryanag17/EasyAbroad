@@ -81,8 +81,9 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
-  <script src="../auth.js"></script>
-  <script src="../script.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 
   <script>
 (async () => {
@@ -102,7 +103,7 @@ async function loadUserData() {
   }
 
   try {
-    const response = await fetch(`http://localhost:8000/admin/users/${userId}`, {
+    const response = await fetch(`${AppConfig.ADMIN}/users/${userId}`, {
       headers: { Authorization: "Bearer " + token }
     });
 
@@ -116,7 +117,7 @@ async function loadUserData() {
     const user = await response.json();
 
     const imageUrl = user.profile_picture && user.profile_picture.startsWith("/static/")
-      ? `http://localhost:8000${user.profile_picture}`
+      ? `${AppConfig.API_BASE}${user.profile_picture}`
       : "../images/avatar.png";
 
     userData.innerHTML = `
@@ -161,7 +162,7 @@ async function loadUserData() {
 function confirmStatusChange(action) {
   showInAppConfirm(`Are you sure you want to ${action} this account?`, async () => {
     try {
-      const response = await fetch(`http://localhost:8000/admin/users/${userId}/status`, {
+      const response = await fetch(`${AppConfig.ADMIN}/users/${userId}/status`, {
         method: "PATCH",
         headers: { Authorization: "Bearer " + token }
       });
@@ -185,7 +186,7 @@ function confirmStatusChange(action) {
 function confirmDelete() {
   showInAppConfirm("Are you sure you want to permanently delete this account?", async () => {
     try {
-      const response = await fetch(`http://localhost:8000/admin/users/${userId}`, {
+      const response = await fetch(`${AppConfig.ADMIN}/users/${userId}`, {
         method: "DELETE",
         headers: { Authorization: "Bearer " + token }
       });

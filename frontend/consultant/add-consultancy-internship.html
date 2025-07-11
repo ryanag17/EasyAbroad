@@ -192,6 +192,10 @@
     </div>
   </div>
 
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
+
 <script>
   (async () => {
     await autoEnforceRoleFromPath();
@@ -329,7 +333,7 @@
     formData.set("apple_facetime", callValues.includes("FaceTime"));
 
     try {
-      const res = await fetch("http://localhost:8000/consultancy/internship", {
+      const res = await fetch(`${AppConfig.CONSULTANCY}/internship`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`
@@ -357,7 +361,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     // Check if consultant already has an internship profile
-    const profileRes = await fetch("http://localhost:8000/consultancy/internship/me", {
+    const profileRes = await fetch(`${AppConfig.CONSULTANCY}/internship/me`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -377,7 +381,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!countrySel) return;
 
   try {
-    const res = await fetch("http://localhost:8000/profile/countries", {
+    const res = await fetch(`${AppConfig.PROFILE}/countries`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error("Failed to fetch countries");
@@ -392,10 +396,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
-
-
-  <script src="../auth.js"></script>
-
 
 <div id="inAppModal" class="modal-overlay">
   <div class="modal-content">

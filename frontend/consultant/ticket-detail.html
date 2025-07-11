@@ -103,8 +103,9 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
-  <script src="../auth.js"></script>
-  <script src="../script.js"></script>    
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script> 
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
@@ -133,7 +134,7 @@ function formatStatus(status) {
 
 async function loadTicket() {
   try {
-    const res = await fetch(`http://localhost:8000/support/${ticketId}`, {
+    const res = await fetch(`${AppConfig.SUPPORT}/${ticketId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -175,7 +176,7 @@ async function submitReply() {
     return;
   }
 
-  const res = await fetch(`http://localhost:8000/support/${ticketId}/reply`, {
+  const res = await fetch(`${AppConfig.SUPPORT}/${ticketId}/reply`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

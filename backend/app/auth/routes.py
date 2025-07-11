@@ -26,7 +26,7 @@ from app.auth.token_service import create_access_token, create_refresh_token
 from fastapi.responses import RedirectResponse
 
 
-router = APIRouter(tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 from app.auth.models import User
 
@@ -83,7 +83,7 @@ async def register(db: AsyncSession, user_in: UserCreate):
     await db.refresh(new_user)
 
     verification_token = secrets.token_hex(16)
-    expiry = datetime.now() + timedelta(minutes=2)
+    expiry = datetime.now(timezone.utc) + timedelta(hours=24)
 
     await db.execute(
         text("UPDATE users SET verification_token=:t, verification_token_expiry=:e WHERE id=:uid"),
@@ -179,13 +179,15 @@ async def verify_email(
     )
     row = result.first()
 
-    # Check if no user found
     if not row:
         raise HTTPException(status_code=400, detail="Invalid verification token")
 
-    # Check if token expired
-    if row.verification_token_expiry < datetime.now():
-        # HARD DELETE expired user
+    # Convert DB datetime to aware
+    expiry = row.verification_token_expiry
+    if expiry.tzinfo is None:
+        expiry = expiry.replace(tzinfo=timezone.utc)
+
+    if expiry < datetime.now(timezone.utc):
         await db.execute(
             text("DELETE FROM users WHERE id=:uid"),
             {"uid": row.id}
@@ -193,7 +195,6 @@ async def verify_email(
         await db.commit()
         raise HTTPException(status_code=400, detail="Verification token expired")
 
-    # Verification successful
     await db.execute(
         text(
             "UPDATE users "
@@ -302,18 +303,22 @@ async def require_admin_user(user=Depends(get_current_user)):
 
 
 async def forgot_password(db: AsyncSession, data: ForgotPasswordRequest):
-    # 1. Check if the email exists
+    # 1. Check if the email exists and user is active
     result = await db.execute(
-        text("SELECT first_name, last_name FROM users WHERE email=:em"),
+        text("SELECT first_name, last_name, is_active FROM users WHERE email=:em"),
         {"em": data.email}
     )
     row = result.first()
+
     if not row:
         raise HTTPException(status_code=404, detail="Email not registered")
 
+    if row.is_active != "active":
+        raise HTTPException(status_code=403, detail="Account is not active or has been deleted. Password reset is not allowed.")
+
     # 2. Generate a one-time token for password reset
     token  = secrets.token_hex(16)
-    expiry = datetime.now() + timedelta(minutes=1)
+    expiry = datetime.now(timezone.utc) + timedelta(hours=1)
 
     # 3. Save it into the users table
     await db.execute(
@@ -399,7 +404,7 @@ async def delete_expired_unverified_users(db: AsyncSession):
             WHERE is_verified = 0
               AND verification_token_expiry < :now
         """),
-        {"now": datetime.now()}
+        {"now": datetime.now(timezone.utc)}
     )
     await db.commit()
     print("✅ Expired unverified users cleaned up.")

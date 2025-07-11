@@ -192,6 +192,10 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
+
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
@@ -309,7 +313,7 @@ async function submitForm() {
   formData.set("apple_facetime", callValues.includes("FaceTime"));
 
   try {
-    const res = await fetch("http://localhost:8000/consultancy/study", {
+    const res = await fetch(`${AppConfig.CONSULTANCY}/study`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
@@ -343,7 +347,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     // Check if consultant already has a study profile
-    const profileRes = await fetch("http://localhost:8000/consultancy/study/me", {
+    const profileRes = await fetch(`${AppConfig.CONSULTANCY}/study/me`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -363,7 +367,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!countrySel) return;
 
   try {
-    const res = await fetch("http://localhost:8000/profile/countries", {
+    const res = await fetch(`${AppConfig.PROFILE}/countries`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error("Failed to fetch countries");
@@ -380,8 +384,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 </script>
 
 
-    
-  <script src="../auth.js"></script>  
 
 <div id="inAppModal" class="modal-overlay">
   <div class="modal-content">

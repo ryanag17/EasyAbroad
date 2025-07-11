@@ -139,8 +139,9 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
-<script src="../auth.js"></script>
-<script src="../script.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
   (async () => {
     await autoEnforceRoleFromPath();
@@ -162,7 +163,7 @@
     const token = localStorage.getItem("accessToken");
 
     try {
-      const res = await fetch("http://localhost:8000/profile/upload-picture", {
+      const res = await fetch(`${AppConfig.PROFILE}/upload-picture`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -188,7 +189,6 @@
   });
 
   document.addEventListener("DOMContentLoaded", async () => {
-    const API_BASE = "http://localhost:8000";
     const token = localStorage.getItem("accessToken");
     if (!token) {
       showInAppAlert("Please log in first.");
@@ -247,7 +247,7 @@
       };
 
       try {
-        const res = await fetch(`${API_BASE}/profile/student`, {
+        const res = await fetch(`${AppConfig.PROFILE}/student`, {
           method: "PUT",
           headers,
           body: JSON.stringify(payload),
@@ -271,7 +271,7 @@
     });
 
     try {
-      const profRes = await fetch(`${API_BASE}/profile/student`, { headers });
+    const profRes = await fetch(`${AppConfig.PROFILE}/student`, { headers });
       if (!profRes.ok) {
         showInAppAlert("Not authenticated — please log in again.");
         return (window.location.href = "../log-in.html");
@@ -285,12 +285,12 @@
       document.getElementById("gender").value = profile.gender || "";
       document.getElementById("email-id").value = profile.email || "";
       document.getElementById("profilePic").src = profile.profile_picture
-        ? `http://localhost:8000${profile.profile_picture}`
+        ? `${AppConfig.API_BASE}${profile.profile_picture}`
         : "../images/avatar.png";
 
       const countrySel = document.getElementById("country");
       countrySel.innerHTML = `<option value="">Select</option>`;
-      const countries = await (await fetch(`${API_BASE}/profile/countries`, { headers })).json();
+      const countries = await (await fetch(`${AppConfig.PROFILE}/countries`, { headers })).json();
       countries.forEach((c) => {
         const opt = document.createElement("option");
         opt.value = c;

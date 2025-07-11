@@ -66,11 +66,11 @@ async def preflight_handler(full_path: str):
 
 # 5) Routers
 app.include_router(profile_router)
-app.include_router(auth_router, prefix="/auth")
+app.include_router(auth_router)
 app.include_router(consultancy_router)
 app.include_router(support_router)
 app.include_router(admin_user_management_router)
-app.include_router(admin_routes.router, prefix="/admin")
+app.include_router(admin_routes.router)
 app.include_router(appointment_router)
 app.include_router(messages_router)
 app.include_router(users_router)

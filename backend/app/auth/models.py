@@ -31,14 +31,14 @@ class User(Base):
     is_active = Column(PgEnum(UserStatusEnum, name="user_status_enum"), default=UserStatusEnum.active, nullable=False)
 
     reset_token = Column(String(255), nullable=True)
-    token_expiry = Column(DateTime, nullable=True)
+    token_expiry = Column(DateTime(timezone=True), nullable=True)
 
     is_verified = Column(Boolean, default=False, nullable=False)
     verification_token = Column(String(255), nullable=True)
-    verification_token_expiry = Column(DateTime, nullable=True)
+    verification_token_expiry = Column(DateTime(timezone=True), nullable=True)
     
-    created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
-    updated_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"), nullable=False)
 
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
     languages = relationship("UserLanguage", back_populates="user")
@@ -81,6 +81,6 @@ class RefreshToken(Base):
     token = Column(String(64), unique=True, nullable=False, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user = relationship("User", back_populates="refresh_tokens")
-    issued_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    expires_at = Column(DateTime, nullable=False)
+    issued_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
     revoked = Column(Boolean, default=False, nullable=False)

@@ -39,6 +39,8 @@ services:
 
       MESSAGE_ENCRYPTION_KEY: ${MESSAGE_ENCRYPTION_KEY}
 
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+
   frontend:
     build:
       context: .

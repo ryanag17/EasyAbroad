@@ -27,8 +27,8 @@ async def create_support_ticket(
             subject=ticket.subject,
             description=ticket.description,
             status="open",
-            created_at=datetime.utcnow().replace(tzinfo=timezone.utc),
-            updated_at=datetime.utcnow().replace(tzinfo=timezone.utc),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
         )
         db.add(new_ticket)
 
@@ -238,11 +238,11 @@ async def update_ticket_status(
 
     new_status = status_update.get("status", ticket.status)
     ticket.status = new_status
-    ticket.updated_at = datetime.utcnow()
+    ticket.updated_at = datetime.now(timezone.utc)
 
     if new_status in ("resolved", "closed"):
         ticket.resolved_by = current_user["user_id"]
-        ticket.resolved_at = datetime.utcnow()
+        ticket.resolved_at = datetime.now(timezone.utc)
 
     notif_content = f"The status of your support ticket '{ticket.subject}' has been updated to '{new_status}'."
     user_folder = "student" if user.role == "student" else "consultant"

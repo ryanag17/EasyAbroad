@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     # ─── Frontend ─────────────────────────────
     FRONTEND_BASE_URL: str
 
+    # ─── Payment ─────────────────────────────
+    STRIPE_SECRET_KEY: str
+
     # ─── Enable .env support (optional for local dev) ──
     model_config = SettingsConfigDict(env_file=".env")
 

@@ -95,15 +95,15 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
-    <script src="../auth.js"></script>
-    <script src="../script.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
     <script>
         (async () => {
             await autoEnforceRoleFromPath();
         })();
 
         document.addEventListener("DOMContentLoaded", async () => {
-            const API_BASE = "http://localhost:8000";
             const token = localStorage.getItem("accessToken");
 
             if (!token) {
@@ -117,7 +117,7 @@
             };
 
             try {
-                const res = await fetch(`${API_BASE}/profile/student`, { headers });
+                const res = await fetch(`${AppConfig.PROFILE}/student`, { headers });
                 if (!res.ok) throw new Error("Unauthorized");
 
                 const profile = await res.json();
@@ -127,7 +127,7 @@
 
                 const avatarEl = document.getElementById("userAvatar");
                 avatarEl.src = profile.profile_picture
-                    ? `http://localhost:8000${profile.profile_picture}?t=${new Date().getTime()}`
+                    ? `${AppConfig.API_BASE}${profile.profile_picture}?t=${new Date().getTime()}`
                     : "../images/avatar.png";
 
             } catch (err) {

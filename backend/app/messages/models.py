@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, LargeBinary, String, Boolean, Index, JSON
 from app.db import Base
 import uuid
@@ -10,7 +10,7 @@ class Conversation(Base):
     public_id = Column(String(36), unique=True, default=lambda: str(uuid.uuid4()), nullable=False)
     user_a_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     user_b_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
 
     __table_args__ = (
         Index("ix_conversations_users", "user_a_id", "user_b_id"),
@@ -28,9 +28,9 @@ class Message(Base):
     encrypted_message = Column(LargeBinary(512), nullable=False)
     encryption_iv     = Column(LargeBinary(16), nullable=False)
     is_reported       = Column(Boolean, default=False)
-    reported_at       = Column(DateTime, nullable=True)
-    sent_at           = Column(DateTime, default=datetime.utcnow, nullable=False)
-    expires_at        = Column(DateTime, default=lambda: datetime.utcnow() + timedelta(days=365 * 3), nullable=False)
+    reported_at = Column(DateTime(timezone=True), nullable=True)
+    sent_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc), nullable=False)
+    expires_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc) + timedelta(days=365 * 3), nullable=False)
     hidden_for_user_ids = Column(JSON, default=list)    
 
     __table_args__ = (

@@ -82,8 +82,9 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
-<script src="../auth.js"></script>
-<script src="../script.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
   (async () => {
     await autoEnforceRoleFromPath();
@@ -108,10 +109,10 @@
       const nameElement = document.getElementById("consultantName");
       nameElement.innerText = ` ${consultantName || "Consultant"}`;
 
-      // ✅ Use correct public ID endpoint
-      const avgRatingRes = await fetch(`http://localhost:8000/appointment/consultant/public/${consultantPublicId}/consultant-average-rating`, {
+      const avgRatingRes = await fetch(`${AppConfig.APPOINTMENTS}/consultant/public/${consultantPublicId}/consultant-average-rating`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
 
       if (!avgRatingRes.ok) {
         showInAppAlert("Failed to fetch average rating.");
@@ -131,10 +132,10 @@
         <div id="ratingDistribution"></div>
       `;
 
-      // ✅ Fetch reviews using correct public ID endpoint
-      const reviewsRes = await fetch(`http://localhost:8000/appointment/consultant/public/${consultantPublicId}/reviews`, {
+      const reviewsRes = await fetch(`${AppConfig.APPOINTMENTS}/consultant/public/${consultantPublicId}/reviews`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
 
       if (!reviewsRes.ok) {
         showInAppAlert("Failed to fetch reviews.");

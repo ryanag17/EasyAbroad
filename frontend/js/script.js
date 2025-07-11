@@ -137,17 +137,13 @@ if (toggleCheckbox && passwordInput) {
 // ─────────────────────────────────────────────────────────────
 // Backend JS Functions START
 // ─────────────────────────────────────────────────────────────
-
-// 1) YOUR API BASE URL
-const API_BASE = "http://localhost:8000/auth";
-
-// 2) PING BACKEND
-fetch("http://localhost:8000/")
+// 1) PING BACKEND
+fetch(`${AppConfig.API_BASE}/`)
   .then((res) => res.json())
   .then((data) => console.log("Backend is running:", data))
   .catch(() => console.warn("Backend ping failed"));
 
-// 3) REGISTER USER
+// 2) REGISTER USER
 async function registerUser() {
   const payload = {
     name: document.getElementById("name").value.trim(),
@@ -161,7 +157,7 @@ async function registerUser() {
   console.log("📡 POST /auth/register payload:", payload);
 
   try {
-    const res = await fetch(`${API_BASE}/register`, {
+    const res = await fetch(`${AppConfig.AUTH}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include", // HttpOnly refresh_token cookie
@@ -182,13 +178,13 @@ async function registerUser() {
   }
 }
 
-// 4) LOGIN USER
+// 3) LOGIN USER
 async function loginUser() {
   const email = document.getElementById("email-id").value.trim();
   const password = document.getElementById("password-id").value;
 
   try {
-    const res = await fetch(`${API_BASE}/login`, {
+    const res = await fetch(`${AppConfig.AUTH}/login`, {
       method:      "POST",
       headers:     { "Content-Type": "application/json" },
       credentials: "include",
@@ -222,10 +218,10 @@ async function loginUser() {
   }
 }
 
-// 5) FETCH PROFILE
+// 4) FETCH PROFILE
 async function fetchProfile(role) {
   const token = localStorage.getItem("accessToken");
-  const res = await fetch(`${API_BASE}/${role}/profile`, {
+  const res = await fetch(`${AppConfig.PROFILE}/${role}/profile`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -237,7 +233,7 @@ async function fetchProfile(role) {
   return await res.json();
 }
 
-// 6) Validate Register Form
+// 5) Validate Register Form
 function validateRegisterForm() {
   // Clear previous messages
   document.querySelectorAll('.error-message').forEach(p => {
@@ -348,7 +344,7 @@ window.validateRegisterForm = validateRegisterForm;
 window.validateLoginForm = validateLoginForm;
 
 async function fetchMessages() {
-  const res = await fetch("http://localhost:8000/messages", {
+  const res = await fetch(`${AppConfig.MESSAGES}`, {
     headers: {
       "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
     }
@@ -376,7 +372,7 @@ async function updateNotificationBadge() {
   if (!token) return;
 
   try {
-    const res = await fetch("http://localhost:8000/notifications/me", {
+    const res = await fetch(`${AppConfig.NOTIFICATIONS}/me`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

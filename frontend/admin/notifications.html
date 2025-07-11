@@ -88,8 +88,9 @@
 </footer>
 
 
-<script src="../auth.js"></script>
-<script src="../script.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
@@ -104,7 +105,7 @@ async function loadNotifications() {
 
   try {
     const token = localStorage.getItem("accessToken");
-    const res = await fetch("http://localhost:8000/notifications/me", {
+    const res = await fetch(`${AppConfig.NOTIFICATIONS}/me`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -134,7 +135,7 @@ async function openNotification(id, redirectUrl) {
   const token = localStorage.getItem("accessToken");
   try {
     if (!notif.read) {
-      const res = await fetch(`http://localhost:8000/notifications/${id}/mark-read`, {
+      const res = await fetch(`${AppConfig.NOTIFICATIONS}/${id}/mark-read`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -235,8 +236,8 @@ function setupEventListeners() {
 
       try {
         const url = allRead 
-          ? `http://localhost:8000/notifications/${id}/mark-unread`
-          : `http://localhost:8000/notifications/${id}/mark-read`;
+          ? `${AppConfig.NOTIFICATIONS}/${id}/mark-unread`
+          : `${AppConfig.NOTIFICATIONS}/${id}/mark-read`;
 
         const res = await fetch(url, {
           method: "PATCH",
@@ -270,7 +271,7 @@ function setupEventListeners() {
 
     for (const id of idsToDelete) {
       try {
-        const res = await fetch(`http://localhost:8000/notifications/${id}`, {
+        const res = await fetch(`${AppConfig.NOTIFICATIONS}/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -295,8 +296,8 @@ async function toggleRead(id) {
   const token = localStorage.getItem("accessToken");
   try {
     const url = notif.read 
-      ? `http://localhost:8000/notifications/${id}/mark-unread`
-      : `http://localhost:8000/notifications/${id}/mark-read`;
+      ? `${AppConfig.NOTIFICATIONS}/${id}/mark-unread`
+      : `${AppConfig.NOTIFICATIONS}/${id}/mark-read`;
 
     const res = await fetch(url, {
       method: "PATCH",
@@ -319,7 +320,7 @@ async function deleteNotification(id) {
 
   const token = localStorage.getItem("accessToken");
   try {
-    const res = await fetch(`http://localhost:8000/notifications/${id}`, {
+    const res = await fetch(`${AppConfig.NOTIFICATIONS}/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     });

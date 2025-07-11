@@ -1,5 +1,5 @@
 import os, base64
-from datetime import datetime
+from datetime import datetime,timezone
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Body
@@ -92,7 +92,7 @@ async def send_message(
         booking_id=data.booking_id,
         encrypted_message=token,
         encryption_iv=iv,
-        sent_at=datetime.utcnow()
+        sent_at=datetime.now(timezone.utc)
     )
     db.add(msg)
 

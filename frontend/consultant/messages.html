@@ -85,18 +85,18 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
-  <script src="../auth.js"></script>
-  <script src="../script.js"></script>     
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>    
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
 })();
 
-const MESSAGES_API_BASE = "http://localhost:8000/messages";
 const token = localStorage.getItem("accessToken");
 
 async function fetchThreads() {
-  const res = await fetch(MESSAGES_API_BASE, {
+  const res = await fetch(`${AppConfig.MESSAGES}`, {
     headers: { "Authorization": `Bearer ${token}` }
   });
   if (!res.ok) {
@@ -126,13 +126,13 @@ function renderThreads(threads) {
 
     let profilePic = "../images/avatar.png";
     try {
-      const res = await fetch(`http://localhost:8000/users/${partnerId}`, {
+      const res = await fetch(`${AppConfig.USERS}/${partnerId}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) {
         const user = await res.json();
         if (user.profile_picture) {
-          profilePic = "http://localhost:8000" + user.profile_picture;
+          profilePic = AppConfig.API_BASE + user.profile_picture;
         }
       }
     } catch (e) {
@@ -170,7 +170,7 @@ async function confirmDelete(event, conversationPublicId) {
   if (!confirmed) return;
 
   try {
-    const res = await fetch(`http://localhost:8000/messages/with/${conversationPublicId}`, {
+    const res = await fetch(`${AppConfig.MESSAGES}/with/${conversationPublicId}`, {
       method: "DELETE",
       headers: { "Authorization": `Bearer ${token}` }
     });

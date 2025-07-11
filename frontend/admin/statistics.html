@@ -273,22 +273,25 @@
       <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
-</footer><script src="../auth.js"></script>
-<script src="../script.js"></script>
+</footer>
+
+
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
 })();
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const API_BASE = "http://localhost:8000/statistics";
   const token = localStorage.getItem("accessToken");
   if (!token) return;
 
   const headers = { "Authorization": `Bearer ${token}` };
 
   try {
-const resUsers = await fetch(`${API_BASE}/users`, { headers });
+const resUsers = await fetch(`${AppConfig.STATISTICS}/users`, { headers });
 const users = await resUsers.json();
 
 const totalActiveUsers = Object.entries(users.role_status_details).reduce((sum, [, statuses]) => {
@@ -342,7 +345,7 @@ userFilterSelect.addEventListener("change", () => {
 
 
     // Consultancy stats
-const resConsult = await fetch(`${API_BASE}/consultancies`, { headers });
+const resConsult = await fetch(`${AppConfig.STATISTICS}/consultancies`, { headers });
 const consult = await resConsult.json();
 
 // Show total accepted profiles
@@ -378,7 +381,7 @@ consultancyFilterSelect.addEventListener("change", () => {
 
 
 // Support ticket stats
-const resTickets = await fetch(`${API_BASE}/support-tickets`, { headers });
+const resTickets = await fetch(`${AppConfig.STATISTICS}/support-tickets`, { headers });
 const tickets = await resTickets.json();
 const totalTickets = tickets.total_tickets || 0;
 document.getElementById("totalTicketsCount").textContent = totalTickets;
@@ -418,7 +421,7 @@ ticketFilterSelect.addEventListener("change", () => {
 }); 
 
 // Appointments stats
-const resAppointments = await fetch(`${API_BASE}/appointments/summary`, { headers });
+const resAppointments = await fetch(`${AppConfig.STATISTICS}/appointments/summary`, { headers });
 const appointments = await resAppointments.json();
 document.getElementById("totalAppointmentsCount").textContent = appointments.total_appointments || 0;
 

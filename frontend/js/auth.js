@@ -34,9 +34,9 @@ async function requireRole(requiredRole) {
   }
 
   const endpointMap = {
-    student: "http://localhost:8000/profile/student",
-    consultant: "http://localhost:8000/profile/consultant",
-    admin: "http://localhost:8000/profile/admin"
+    student: `${AppConfig.PROFILE}/student`,
+    consultant: `${AppConfig.PROFILE}/consultant`,
+    admin: `${AppConfig.PROFILE}/admin`
   };
 
   try {
@@ -73,12 +73,10 @@ async function redirectIfAuthenticated() {
 
   if (!token || !role) return;
 
-  const API_BASE = "http://localhost:8000/profile";
-
   const profileEndpoints = {
-    student: `${API_BASE}/student`,
-    consultant: `${API_BASE}/consultant`,
-    admin: `${API_BASE}/admin`
+    student: `${AppConfig.PROFILE}/student`,
+    consultant: `${AppConfig.PROFILE}/consultant`,
+    admin: `${AppConfig.PROFILE}/admin`
   };
 
   const redirectPaths = {
@@ -237,7 +235,7 @@ function closeModal() {
 
 async function confirmSignOut() {
   try {
-    await fetch("http://localhost:8000/auth/logout", {
+    await fetch(`${AppConfig.AUTH}/logout`, {
       method: "POST",
       credentials: "include", // Needed to send the refresh_token cookie
     });

@@ -68,8 +68,9 @@ If you appreciate what we do and want to help us continue connecting students pl
       </div>
     </footer>
     
-    <script src="auth.js"></script>
-    <script src="script.js"></script>    
+<script src="js/config.js"></script>
+<script src="js/script.js"></script>
+<script src="js/auth.js"></script>  
 <script>
   injectHeader();
 
@@ -153,7 +154,7 @@ If you appreciate what we do and want to help us continue connecting students pl
       showInAppAlert("❌ " + error.message);
     } else {
       try {
-        const response = await fetch("http://localhost:8000/create-payment-intent", {
+        const response = await fetch(`${AppConfig.PAYMENT}/create-payment-intent`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

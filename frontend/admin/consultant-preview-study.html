@@ -149,8 +149,11 @@
       <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
-</footer>  <script src="../auth.js"></script>
-  <script src="../script.js"></script> 
+</footer>  
+
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 
 
 <script>
@@ -158,7 +161,6 @@
   await autoEnforceRoleFromPath();
 })();  
 
-const API = "http://localhost:8000";
 const token = localStorage.getItem("accessToken");
 const userId = new URLSearchParams(window.location.search).get("user_id");
 const isViewOnly = new URLSearchParams(window.location.search).get("mode") === "view";
@@ -169,8 +171,8 @@ if (!token || !userId) {
   });
 }
 
-fetch(`${API}/consultancy/study/full/${userId}`, {
-  headers: {
+fetch(`${AppConfig.CONSULTANCY}/study/full/${userId}`, {
+    headers: {
     Authorization: `Bearer ${token}`
   }
 })
@@ -187,7 +189,7 @@ fetch(`${API}/consultancy/study/full/${userId}`, {
   if (status === "pending") {
     proofContainer.style.display = "block";
     const proofLink = document.getElementById("proofLink");
-    proofLink.href = `${API}/consultancy/download-proof/study/${userId}`;
+    proofLink.href = `${AppConfig.CONSULTANCY}/download-proof/study/${userId}`;
     proofLink.setAttribute("download", "");
   } else {
     proofContainer.style.display = "none";
@@ -213,7 +215,7 @@ fetch(`${API}/consultancy/study/full/${userId}`, {
 
   if (!profile.city || !profile.languages) {
     try {
-      const extra = await fetch(`${API}/profile/admin/view/${userId}`, {
+      const extra = await fetch(`${AppConfig.PROFILE}/admin/view/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -294,7 +296,7 @@ async function processDecision(confirm) {
 
   try {
     const cleanUserId = userId.split("?")[0];
-    const res = await fetch(`${API}/consultancy/study/${cleanUserId}/status`, {
+    const res = await fetch(`${AppConfig.CONSULTANCY}/study/${cleanUserId}/status`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

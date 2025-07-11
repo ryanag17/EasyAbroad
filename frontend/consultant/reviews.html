@@ -86,8 +86,11 @@
       <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
-</footer>  <script src="../auth.js"></script>
-  <script src="../script.js"></script>
+</footer>  
+
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
@@ -99,7 +102,7 @@
   let reviews = [];
 
   try {
-    const reviewsRes = await fetch("http://localhost:8000/appointment/consultant/reviews/me", {
+    const reviewsRes = await fetch(`${AppConfig.APPOINTMENTS}/consultant/reviews/me`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 

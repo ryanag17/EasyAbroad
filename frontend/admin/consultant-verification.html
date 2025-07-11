@@ -115,8 +115,11 @@
       <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
-</footer>  <script src="../auth.js"></script>
-  <script src="../script.js"></script>
+</footer>  
+
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 
 <script>
 (async () => {
@@ -124,7 +127,6 @@
 })();  
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_BASE = "http://localhost:8000";
   const tbody = document.getElementById('submissionBody');
   const tabButtons = document.querySelectorAll('.tab-button');
   const typeFilter = document.getElementById('typeFilter'); 
@@ -145,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   async function checkAdminAccess() {
-    const res = await fetch(`${API_BASE}/profile/admin`, { headers });
+    fetch(`${AppConfig.PROFILE}/admin`, { headers });
     if (!res.ok) {
       showInAppAlert("Admin access only. Please log in.", () => {
         localStorage.clear();
@@ -157,8 +159,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchSubmissions(status) {
     try {
       const [studyRes, internshipRes] = await Promise.all([
-        fetch(`${API_BASE}/consultancy/study?status=${status}`, { headers }),
-        fetch(`${API_BASE}/consultancy/internship?status=${status}`, { headers })
+        fetch(`${AppConfig.CONSULTANCY}/study?status=${status}`, { headers }),
+        fetch(`${AppConfig.CONSULTANCY}/internship?status=${status}`, { headers })
       ]);
 
       const [studyData, internshipData] = await Promise.all([

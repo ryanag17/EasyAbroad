@@ -137,8 +137,9 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>  
-<script src="../auth.js"></script>
-  <script src="../script.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
 (async () => {
   await autoEnforceRoleFromPath();
@@ -156,7 +157,7 @@
 
   async function loadThread() {
     try {
-      const res = await fetch(`http://localhost:8000/messages/with/${conversationId}`, {
+    const res = await fetch(`${AppConfig.MESSAGES}/with/${conversationId}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) throw new Error("Failed to load thread");
@@ -177,7 +178,7 @@
 
   async function fetchPartnerInfo() {
     try {
-      const res = await fetch(`http://localhost:8000/messages/${conversationId}/partner`, {
+      const res = await fetch(`${AppConfig.MESSAGES}/${conversationId}/partner`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) throw new Error("Failed to fetch user info");
@@ -185,7 +186,7 @@
       updateHeader(user.first_name, user.last_name);
 
       document.querySelector(".avatar").src =
-        user.profile_picture ? "http://localhost:8000" + user.profile_picture : "../images/avatar.png";
+        user.profile_picture ? AppConfig.API_BASE + user.profile_picture : "../images/avatar.png";
     } catch (e) {
       console.error("Error fetching partner info:", e);
       document.querySelector(".partner-name").textContent = "User";
@@ -233,7 +234,7 @@
     };
 
     try {
-      const res = await fetch("http://localhost:8000/messages/send", {
+      const res = await fetch(`${AppConfig.MESSAGES}/send`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

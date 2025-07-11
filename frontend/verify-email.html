@@ -55,8 +55,9 @@
   </div>
 </footer>
 
-<script src="script.js"></script>
-<script src="auth.js"></script>
+<script src="js/config.js"></script>
+<script src="js/script.js"></script>
+<script src="js/auth.js"></script>
 <script>
   injectHeader();
 
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const res = await fetch(`http://localhost:8000/auth/verify-email?token=${token}`);
+  const res = await fetch(`${AppConfig.AUTH}/verify-email?token=${token}`);
 
     if (res.ok) {
       showInAppAlert("✅ Your email has been successfully verified!", () => {

@@ -218,9 +218,11 @@
       <a href="../privacy-policy.html" class="class_footer"><p>Privacy Policy</p></a>
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
-</footer><script src="../auth.js"></script>
+</footer>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script src="../script.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
  (async () => {
     await autoEnforceRoleFromPath();
@@ -235,7 +237,7 @@
     
     async function loadConsultantName() {
       const token = localStorage.getItem('accessToken');
-      const res = await fetch('http://localhost:8000/profile/consultant', {
+      const res = await fetch(`${AppConfig.PROFILE}/consultant`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!res.ok) return; 
@@ -247,7 +249,7 @@
     
     async function loadAvailability() {
       const token = localStorage.getItem('accessToken');
-      const res = await fetch('http://localhost:8000/appointment/consultant/timetable', {
+      const res = await fetch(`${AppConfig.APPOINTMENTS}/consultant/timetable`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -279,7 +281,7 @@
        end_time:     ev.extendedProps.endTime
       }));
 
-      const res = await fetch('http://localhost:8000/appointment/consultant/timetable', {
+      const res = await fetch(`${AppConfig.APPOINTMENTS}/consultant/timetable`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

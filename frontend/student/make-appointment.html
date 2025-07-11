@@ -187,8 +187,9 @@
       <a href="../terms-conditions.html" class="class_footer"><p>Terms and Conditions</p></a>
   </div>
 </footer>
-<script src="../auth.js"></script>
-<script src="../script.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/auth.js"></script>
 <script>
 (async () => {
     await autoEnforceRoleFromPath();
@@ -207,10 +208,10 @@ async function fetchConsultantName() {
     let res;
 
     if (type === "internship") {
-        res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
+        res = await fetch(`${AppConfig.CONSULTANCY}/internship/public/${consultantId}`);
     } else {
         // Default to study if type is missing or explicitly "study"
-        res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
+        res = await fetch(`${AppConfig.CONSULTANCY}/study/public/${consultantId}`);
     }
 
     if (res.ok) {
@@ -223,10 +224,10 @@ async function fetchConsultantName() {
 
 
 async function fetchAndRenderCalendar(startDate) {
-    const res = await fetch(`http://localhost:8000/appointment/consultant/timetable/${consultantId}`);
+    const res = await fetch(`${AppConfig.APPOINTMENT}/consultant/timetable/${consultantId}`);
     const slots = await res.json();
 
-    const apptRes = await fetch(`http://localhost:8000/appointment/consultant/${consultantId}/appointments`);
+    const apptRes = await fetch(`${AppConfig.APPOINTMENT}/consultant/${consultantId}/appointments`);
     const appointments = apptRes.ok ? await apptRes.json() : [];
 
     const booked = new Set(
@@ -362,7 +363,7 @@ async function confirmBooking() {
 
     const token = localStorage.getItem('accessToken');
     try {
-        const res = await fetch('http://localhost:8000/appointment/book', {
+        const res = await fetch(`${AppConfig.APPOINTMENT}/book`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -443,7 +444,7 @@ if (type === "internship") {
         company_info: "Company information",
         travel_info: "Best and worst city spots"
     };
-    res = await fetch(`http://localhost:8000/consultancy/internship/public/${consultantId}`);
+    res = await fetch(`${AppConfig.CONSULTANCY}/internship/public/${consultantId}`);
 } else {
     helpMap = {
         accommodation: "Finding accommodation",
@@ -451,7 +452,7 @@ if (type === "internship") {
         uni_info: "University information",
         travel_info: "Best/worst city spots, weekend plans"
     };
-    res = await fetch(`http://localhost:8000/consultancy/study/public/${consultantId}`);
+    res = await fetch(`${AppConfig.CONSULTANCY}/study/public/${consultantId}`);
 }
 
 
