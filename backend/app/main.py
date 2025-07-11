@@ -46,9 +46,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # 3) CORS setup
-# 3) CORS setup
 origins = [
-    #"http://localhost:8080",         # keep if you still test locally
+    #"http://localhost:8080",         # test locally
     "https://easy-abroad.de",
     "https://www.easy-abroad.de",
 ]
