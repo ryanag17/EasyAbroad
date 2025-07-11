@@ -46,14 +46,16 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # 3) CORS setup
+# 3) CORS setup
 origins = [
-    "http://localhost:8080",
-    # add other allowed origins if needed, e.g. prod domain
+    #"http://localhost:8080",         # keep if you still test locally
+    "https://easy-abroad.de",
+    "https://www.easy-abroad.de",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # ← update for prod
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

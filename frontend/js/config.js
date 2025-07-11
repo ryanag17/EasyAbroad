@@ -1,4 +1,5 @@
-const API_BASE = "http://localhost:8000";
+// const API_BASE = "http://localhost:8000";
+const API_BASE = "https://easy-abroad.de/api";
 
 const AUTH_API        = `${API_BASE}/auth`;
 const PROFILE_API     = `${API_BASE}/profile`;
