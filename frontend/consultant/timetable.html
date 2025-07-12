@@ -139,39 +139,7 @@
       </div>
     </div>
 
-    <div class="modal" id="bookingModal">
-      <div class="modal-content">
-        <h3>Book a Consultation</h3>
-        <p id="selectedTimeText">Selected Time:</p>
-        <label>Please provide the reason of your request.</label>
-        <select>
-          <option value="">-- Select an Option --</option>
-          <option value="accommodation">Finding accommodation</option>
-          <option value="social">Social life and making friends</option>
-          <option value="university">University information</option>
-          <option value="cityspots">
-            Best/worst city spots, weekend plans
-          </option>
-        </select>
-        <label>Which video chat platform would you prefer?</label>
-        <select>
-          <option value="">-- Select a Platform --</option>
-          <option value="zoom">Zoom</option>
-          <option value="teams">Microsoft Teams</option>
-          <option value="meet">Google Meet</option>
-          <option value="facetime">Apple FaceTime</option>
-        </select>
-        <label>Anything else the consultant should know?</label>
-        <textarea
-          placeholder="Your message to the consultant..."
-          rows="3"
-        ></textarea>
-        <div class="button-group">
-          <button class="confirm" onclick="confirmBooking()">Confirm</button>
-          <button class="cancel" onclick="closeModal()">Cancel</button>
-        </div>
-      </div>
-    </div>
+ 
 
     <div class="calendar-scroll-container">
       <div class="calendar-wrapper">
@@ -181,7 +149,6 @@
             <button class="edit-btn" type="button">Edit</button>
           </div>
         </div>
-
         <div id="calendar"></div>
       </div>
     </div>
@@ -331,6 +298,7 @@
           nowIndicator: true,
           selectable: isEditable,
           selectMirror: true,
+          selectLongPressDelay: 50,
           selectAllow: function (selectionInfo) {
             const selectionStart = selectionInfo.start;
             const selectionEnd = new Date(
