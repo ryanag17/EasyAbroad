@@ -35,9 +35,15 @@ async def get_timetable(
         .where(ConsultantAvailability.consultant_id == current_user["user_id"])
     )).scalars().all()
     return [
-        {"days_of_week": r.days_of_week, "start_time": r.start_time, "end_time": r.end_time}
+        {
+            "days_of_week": r.days_of_week,
+            "start_time": r.start_time,
+            "end_time": r.end_time,
+            "timezone": r.timezone
+        }
         for r in rows
     ]
+
 
 # Consultant updates their own timetable
 @router.put(
@@ -65,7 +71,8 @@ async def update_timetable(
             consultant_id=uid,
             days_of_week=s.days_of_week,
             start_time=s.start_time,
-            end_time=s.end_time
+            end_time=s.end_time,
+            timezone=s.timezone
         ))
     await db.commit()
     return slots
@@ -104,7 +111,12 @@ async def get_consultant_timetable(
     )).scalars().all()
 
     return [
-        {"days_of_week": r.days_of_week, "start_time": r.start_time, "end_time": r.end_time}
+        {
+            "days_of_week": r.days_of_week,
+            "start_time": r.start_time,
+            "end_time": r.end_time,
+            "timezone": r.timezone
+        }
         for r in rows
     ]
 
@@ -121,7 +133,6 @@ async def book_appointment(
         raise HTTPException(403, "Only students can book appointments")
 
     # Lookup consultant_id using public_id
-    # First try Education
     result = await db.execute(
         select(User.id)
         .join(User.education)
@@ -130,7 +141,6 @@ async def book_appointment(
     row = result.first()
 
     if row is None:
-        # Try Internship
         result = await db.execute(
             select(User.id)
             .join(User.internship)
@@ -142,7 +152,6 @@ async def book_appointment(
         raise HTTPException(404, "Consultant not found")
 
     consultant_id = row[0]
-
 
     # Check for overlapping appointment
     q = select(Appointment).where(
@@ -158,6 +167,14 @@ async def book_appointment(
     if result.scalars().first():
         raise HTTPException(409, "This slot is already booked or pending approval.")
 
+    # Fetch consultant's timezone
+    timezone_result = await db.execute(
+        select(ConsultantAvailability.timezone)
+        .where(ConsultantAvailability.consultant_id == consultant_id)
+    )
+    timezone_row = timezone_result.first()
+    consultant_timezone = timezone_row[0] if timezone_row and timezone_row[0] else None
+
     # Create appointment
     appt = Appointment(
         public_id=str(uuid.uuid4()),
@@ -171,7 +188,8 @@ async def book_appointment(
         info=data.info,
         platform=data.platform,
         status=AppointmentStatus.pending,
-        type=data.type
+        type=data.type,
+        timezone=consultant_timezone
     )
     db.add(appt)
     await db.commit()
@@ -196,7 +214,6 @@ async def book_appointment(
     await db.refresh(new_notif)
 
     return appt
-
 
 
 # Student fetches their own appointments

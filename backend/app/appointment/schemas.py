@@ -8,6 +8,7 @@ class ConsultantAvailabilityOut(BaseModel):
     days_of_week: List[int]
     start_time: str
     end_time: str
+    timezone: Optional[str] = None
 
 class AppointmentCreate(BaseModel):
     consultant_public_id: str    
@@ -39,6 +40,7 @@ class AppointmentOut(BaseModel):
     consultant_name: Optional[str] = None
     student_name: Optional[str] = None
     type: str
+    timezone: Optional[str] = None
     
     class Config:
         orm_mode = True

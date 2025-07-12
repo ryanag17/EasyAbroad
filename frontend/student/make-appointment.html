@@ -178,8 +178,6 @@
     </div>
     <button class="continue-btn">Continue</button>
 
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-
     <footer>
       <div class="logo_icons">
         <div class="footer-logo">
@@ -206,6 +204,8 @@
         >
       </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js"></script>    
     <script src="../js/config.js"></script>
     <script src="../js/script.js"></script>
     <script src="../js/auth.js"></script>
@@ -248,68 +248,80 @@
         }
       }
 
-      async function fetchAndRenderCalendar(startDate) {
-        const res = await fetch(
-          `${AppConfig.APPOINTMENTS}/consultant/timetable/${consultantId}`
-        );
-        const slots = await res.json();
+        async function fetchAndRenderCalendar(startDate) {
+          const res = await fetch(`${AppConfig.APPOINTMENTS}/consultant/timetable/${consultantId}`);
+          const slots = await res.json();
 
-        const apptRes = await fetch(
-          `${AppConfig.APPOINTMENTS}/consultant/${consultantId}/appointments`
-        );
-        const appointments = apptRes.ok ? await apptRes.json() : [];
+          const apptRes = await fetch(`${AppConfig.APPOINTMENTS}/consultant/${consultantId}/appointments`);
+          const appointments = apptRes.ok ? await apptRes.json() : [];
 
-        const booked = new Set(
-          appointments
-            .filter((a) => a.status === "pending" || a.status === "upcoming")
-            .map((a) => `${a.date}|${a.start_time}|${a.end_time}`)
-        );
+          const booked = new Set(
+            appointments
+              .filter((a) => a.status === "pending" || a.status === "upcoming")
+              .map((a) => `${a.date}|${a.start_time}|${a.end_time}`)
+          );
 
-        const events = [];
-        slots.forEach((slot) => {
-          slot.days_of_week.forEach((day) => {
-            for (let week = 0; week < 4; week++) {
-              const base = new Date(startDate);
-              const monday = new Date(base);
-              monday.setDate(
-                base.getDate() - ((base.getDay() + 6) % 7) + week * 7
-              );
-              const slotDate = new Date(monday);
-              slotDate.setDate(monday.getDate() + (day - 1));
-              const dateStr = slotDate.toISOString().slice(0, 10);
-              const key = `${dateStr}|${slot.start_time}|${slot.end_time}`;
-              const isBooked = booked.has(key);
+          const events = [];
+          slots.forEach((slot) => {
+            slot.days_of_week.forEach((day) => {
+              for (let week = 0; week < 4; week++) {
+                const base = new Date(startDate);
+                const monday = new Date(base);
+                monday.setDate(base.getDate() - ((base.getDay() + 6) % 7) + week * 7);
+                const slotDate = new Date(monday);
+                slotDate.setDate(monday.getDate() + (day - 1));
 
-              const slotStart = new Date(`${dateStr}T${slot.start_time}`);
-              const now = new Date();
-              let eventColor = "#28a745";
+                const dateStr = slotDate.toISOString().slice(0, 10);
+                const key = `${dateStr}|${slot.start_time}|${slot.end_time}`;
+                const isBooked = booked.has(key);
 
-              if (isBooked) {
-                eventColor = "#000";
-              } else if (slotStart < now) {
-                eventColor = "#bbb";
+                // ⬇️ Convert start & end times to local using luxon
+                const { DateTime } = luxon;
+                const [startHour, startMinute] = slot.start_time.split(":").map(Number);
+                const [endHour, endMinute] = slot.end_time.split(":").map(Number);
+
+                const consultantZone = slot.timezone;
+
+                const localStart = DateTime.fromObject(
+                  { year: slotDate.getFullYear(), month: slotDate.getMonth() + 1, day: slotDate.getDate(), hour: startHour, minute: startMinute },
+                  { zone: consultantZone }
+                ).setZone(DateTime.local().zoneName);
+
+                const localEnd = DateTime.fromObject(
+                  { year: slotDate.getFullYear(), month: slotDate.getMonth() + 1, day: slotDate.getDate(), hour: endHour, minute: endMinute },
+                  { zone: consultantZone }
+                ).setZone(DateTime.local().zoneName);
+
+                const now = DateTime.local();
+                let eventColor = "#28a745";
+
+                if (isBooked) {
+                  eventColor = "#000";
+                } else if (localStart < now) {
+                  eventColor = "#bbb";
+                }
+
+                events.push({
+                  title: isBooked ? "Booked" : "Available",
+                  start: localStart.toISO(),
+                  end: localEnd.toISO(),
+                  color: eventColor,
+                  editable: false,
+                  display: "block",
+                  extendedProps: {
+                    dayOfWeek: day,
+                    startTime: slot.start_time,
+                    endTime: slot.end_time,
+                    timezone: consultantZone,
+                    isBooked: isBooked,
+                  },
+                });
               }
-
-              events.push({
-                title: isBooked ? "Booked" : "Available",
-                start: `${dateStr}T${slot.start_time}`,
-                end: `${dateStr}T${slot.end_time}`,
-                color: eventColor,
-                editable: false,
-                display: "block",
-                extendedProps: {
-                  dayOfWeek: day,
-                  startTime: slot.start_time,
-                  endTime: slot.end_time,
-                  isBooked: isBooked,
-                },
-              });
-            }
+            });
           });
-        });
 
-        renderCalendar(startDate, events);
-      }
+          renderCalendar(startDate, events);
+        }
 
       function renderCalendar(startDate, events) {
         const calendarEl = document.getElementById("calendar");

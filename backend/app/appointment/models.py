@@ -16,6 +16,7 @@ class ConsultantAvailability(Base):
     days_of_week   = Column(JSON, nullable=False)  # e.g. [1,3,5]
     start_time     = Column(String(5), nullable=False)  # "09:30"
     end_time       = Column(String(5), nullable=False)  # "10:30"
+    timezone       = Column(String(50), nullable=True)  # e.g., "Europe/Berlin"
 
     consultant = relationship("User", back_populates="availability")
 
@@ -51,6 +52,8 @@ class Appointment(Base):
     rejection_reason = Column(String, nullable=True)
     cancellation_reason = Column(String, nullable=True) 
     type = Column(String, nullable=False)
+    
+    timezone = Column(String(50), nullable=True)
 
     student = relationship("User", foreign_keys=[student_id])
     consultant = relationship("User", foreign_keys=[consultant_id])

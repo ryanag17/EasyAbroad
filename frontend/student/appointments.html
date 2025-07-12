@@ -92,6 +92,7 @@
         >
       </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js"></script>
     <script src="../js/config.js"></script>
     <script src="../js/script.js"></script>
     <script src="../js/auth.js"></script>
@@ -181,6 +182,25 @@
         ).padStart(2, "0")}.${d.getFullYear()}`;
       }
 
+      function formatTimeLocal(dateStr, timeStr, timezone) {
+        if (!dateStr || !timeStr) return "";
+        const { DateTime } = luxon;
+        const [hour, minute] = timeStr.split(":").map(Number);
+
+        const localDT = DateTime.fromObject(
+          {
+            year: Number(dateStr.slice(0, 4)),
+            month: Number(dateStr.slice(5, 7)),
+            day: Number(dateStr.slice(8, 10)),
+            hour,
+            minute,
+          },
+          { zone: timezone }
+        ).setZone(DateTime.local().zoneName);
+
+        return localDT.toFormat("HH:mm");
+      }      
+
       function canCancel(app) {
         const meetingDateTime = new Date(
           `${app.date}T${app.start_time || app.time}:00`
@@ -239,9 +259,11 @@
 
           card.innerHTML = `
       <div class="appointment-info">
-        <p class="appointment-date">${formatDate(app.date)}, ${
-            app.start_time || app.time
-          } - ${app.end_time || ""}</p>
+      <p class="appointment-date">${formatDate(app.date)}, ${
+          app.start_time ? formatTimeLocal(app.date, app.start_time, app.timezone) : app.time
+        } - ${
+          app.end_time ? formatTimeLocal(app.date, app.end_time, app.timezone) : ""
+        }</p>
         <p class="consultant-name"><b>${
           app.consultant_name || "Consultant"
         }</b></p>

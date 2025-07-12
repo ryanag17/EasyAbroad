@@ -481,6 +481,7 @@ CREATE TABLE IF NOT EXISTS consultant_availability (
   days_of_week   JSON     NOT NULL,    -- e.g. [1,3,5]
   start_time     VARCHAR(5) NOT NULL,  -- "09:30"
   end_time       VARCHAR(5) NOT NULL,  -- "10:30"
+  timezone       VARCHAR(50) DEFAULT NULL, -- e.g. "Europe/Berlin"  
   FOREIGN KEY (consultant_id) REFERENCES users(id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
@@ -503,6 +504,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   rejection_reason VARCHAR(255),
   cancellation_reason VARCHAR(255),
   type VARCHAR(32) NOT NULL,
+  timezone VARCHAR(50) DEFAULT NULL,
   FOREIGN KEY (consultant_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
   info VARCHAR(255) NULL

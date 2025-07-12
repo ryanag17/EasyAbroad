@@ -202,6 +202,7 @@
       </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js"></script>
     <script src="../js/config.js"></script>
     <script src="../js/script.js"></script>
     <script src="../js/auth.js"></script>
@@ -241,18 +242,40 @@
         );
         if (!res.ok) throw new Error("Failed to load timetable");
         const slots = await res.json();
-        events = slots.map((s) => ({
-          title: "Available",
-          daysOfWeek: s.days_of_week,
-          startTime: s.start_time,
-          endTime: s.end_time,
-          color: "#28a745",
-          extendedProps: {
+
+        events = slots.map((s) => {
+          const { DateTime } = luxon;
+
+          // Example: Convert 09:00 from Europe/Berlin to browser local
+          const localStart = DateTime.fromObject(
+            { hour: parseInt(s.start_time.split(":")[0]), minute: parseInt(s.start_time.split(":")[1]) },
+            { zone: s.timezone }
+          ).setZone(DateTime.local().zoneName);
+
+          const localEnd = DateTime.fromObject(
+            { hour: parseInt(s.end_time.split(":")[0]), minute: parseInt(s.end_time.split(":")[1]) },
+            { zone: s.timezone }
+          ).setZone(DateTime.local().zoneName);
+
+          // Convert back to string
+          const startStr = localStart.toFormat("HH:mm");
+          const endStr = localEnd.toFormat("HH:mm");
+
+          return {
+            title: "Available",
             daysOfWeek: s.days_of_week,
-            startTime: s.start_time,
-            endTime: s.end_time,
-          },
-        }));
+            startTime: startStr,
+            endTime: endStr,
+            color: "#28a745",
+            extendedProps: {
+              daysOfWeek: s.days_of_week,
+              startTime: startStr,
+              endTime: endStr,
+              timezone: s.timezone,
+            },
+          };
+        });
+
         renderCalendar(currentDate);
       }
 
@@ -262,6 +285,7 @@
           days_of_week: ev.extendedProps.daysOfWeek,
           start_time: ev.extendedProps.startTime,
           end_time: ev.extendedProps.endTime,
+          timezone: ev.extendedProps.timezone,
         }));
 
         const res = await fetch(
@@ -440,6 +464,7 @@
             daysOfWeek: [dow],
             startTime: startStr,
             endTime: endStr,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           },
         });
 
