@@ -111,21 +111,27 @@
 
       window.addEventListener("DOMContentLoaded", fetchThreads);
 
+      function escapeHtml(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
       function renderThreads(threads) {
         const container = document.querySelector(".chat-list-container");
         container.innerHTML = "";
 
         if (threads.length === 0) {
-          container.innerHTML =
-            "<p class='no-messages'>You have no messages.</p>";
+          container.innerHTML = "<p class='no-messages'>You have no messages.</p>";
           return;
         }
 
         threads.forEach(async (t) => {
           const partnerId = t.from_me ? t.receiver_id : t.sender_id;
-          const partnerName = `${t.first_name ?? ""} ${
-            t.last_name ?? ""
-          }`.trim();
+          const partnerName = `${t.first_name ?? ""} ${t.last_name ?? ""}`.trim();
           const conversationPublicId = t.conversation_public_id;
 
           let profilePic = "../images/avatar.png";
@@ -143,25 +149,24 @@
             console.error("Failed to fetch user picture", e);
           }
 
+          const previewText = t.message.length > 50 ? t.message.substring(0, 50) + "..." : t.message || "";
+          const safePreview = escapeHtml(previewText);
+
           const card = document.createElement("div");
           card.className = "message-card";
           card.innerHTML = `
-      <div class="chat-avatar">
-        <img src="${profilePic}" alt="Avatar">
-      </div>
-      <div class="chat-content">
-        <h3>${partnerName}</h3>
-        <p class="message-preview">${
-          t.message.length > 50 ? t.message.substring(0, 50) + "..." : t.message
-        }</p>
-        <span class="message-date">${new Date(
-          t.sent_at
-        ).toLocaleDateString()}</span>
-      </div>
-      <div class="chat-actions">
-        <button onclick="confirmDelete(event, '${conversationPublicId}')"><i class="fas fa-trash-alt delete-icon"></i></button>
-      </div>
-    `;
+            <div class="chat-avatar">
+              <img src="${profilePic}" alt="Avatar">
+            </div>
+            <div class="chat-content">
+              <h3>${partnerName}</h3>
+              <p class="message-preview">${safePreview}</p>
+              <span class="message-date">${new Date(t.sent_at).toLocaleDateString()}</span>
+            </div>
+            <div class="chat-actions">
+              <button onclick="confirmDelete(event, '${conversationPublicId}')"><i class="fas fa-trash-alt delete-icon"></i></button>
+            </div>
+          `;
 
           card.addEventListener("click", () => {
             window.location.href = `chat.html?conversationId=${conversationPublicId}`;
