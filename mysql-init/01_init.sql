@@ -7,10 +7,6 @@
 -- CREATE SCHEMA IF NOT EXISTS easyabroad;
 USE easyabroad;
 
-ALTER USER 'user'@'%' IDENTIFIED WITH mysql_native_password BY 'userpassword';
-GRANT ALL PRIVILEGES ON easyabroad.* TO 'user'@'%';
-FLUSH PRIVILEGES;
-
 -- 2) COUNTRIES table
 --    Must come before any table that references countries(country_name).
 CREATE TABLE IF NOT EXISTS countries (

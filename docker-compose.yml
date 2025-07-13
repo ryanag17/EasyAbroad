@@ -54,7 +54,7 @@ services:
     container_name: easyabroad-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: armani
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE:      ${DB_NAME}
       MYSQL_USER:          ${DB_USER}
       MYSQL_PASSWORD:      ${DB_PASSWORD}
